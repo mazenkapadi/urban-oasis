@@ -1,4 +1,3 @@
-// src/firebaseInit.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -10,7 +9,7 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signInWithRedirect,
-    getRedirectResult
+    getRedirectResult,
 } from 'firebase/auth';
 
 const app = initializeApp(FIREBASE_KEY);
@@ -28,7 +27,6 @@ export {
     getRedirectResult
 };
 
-s
 const db = getFirestore(app);
 
 const analytics = getAnalytics(app);
