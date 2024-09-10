@@ -20,18 +20,6 @@ class signIn {
             throw error;
         }
     }
-
-    const
-    async signInWithApple() {
-        try {
-            const appleSignInResult = await signInWithPopup(auth, googleProvider); //default temp. Change for Apple
-            return appleSignInResult;
-        } catch (error) {
-            console.error('Error signing in with Apple', error);
-            throw error;
-        }
-    }
 }
-
 
 export default new signIn();
