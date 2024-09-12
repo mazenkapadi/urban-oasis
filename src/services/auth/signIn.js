@@ -21,5 +21,3 @@ class signIn {
         }
     }
 }
-
-export default new signIn();
