@@ -9,6 +9,11 @@ function App() {
     return (
         <>
             <div >
+
+                <h1 className="text-5xl font-bold text-sky-600" >
+                    Tailwind Test
+                </h1 >
+
                 <a href="https://vitejs.dev" target="_blank" >
                     <img src={viteLogo} className="logo" alt="Vite logo" />
                 </a >
@@ -25,7 +30,7 @@ function App() {
                     Edit <code >src/App.jsx</code > and save to test PRs
                 </p >
             </div >
-            <p className="read-the-docs">
+            <p className="read-the-docs" >
                 Click on the Vite and React logos to learn more
             </p >
         </>
