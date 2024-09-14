@@ -1,6 +1,22 @@
 import {useState} from 'react';
-import eventCreation from "../services/eventCreation.js";
+import '../styles.css';
+import {initializeApp} from "firebase/app";
+import FIREBASE_KEY from "../APIKEY_SECRETS/FIREBASE_KEY.js";
+import {getFirestore} from "firebase/firestore";
 
+const app = initializeApp(FIREBASE_KEY);
+const db = getFirestore(app);
+
+const writeEventData = async (eventData) => {
+    try {
+        const eventsRef = db.collection('events');
+        const newEventRef = eventsRef.doc();
+        await newEventRef.set(eventData);
+        console.log('Event created successfully!');
+    } catch (error) {
+        console.error('Error creating event:', error);
+    }
+};
 
 function EventCreationPage() {
     const [eventTitle, setEventTitle] = useState('');
@@ -12,15 +28,20 @@ function EventCreationPage() {
     const [eventImage, setEventImage] = useState(null);
     const [eventPrice, setEventPrice] = useState('');
     const [isPaidEvent, setIsPaidEvent] = useState(false);
-    const [setError] = useState(null);
 
-
-
-    const handleSubmit = async () => {
-        if (!eventTitle || !eventDescription || !eventLocation || !eventDate || !eventTime || !eventCapacity) {
-            setError('Event Title, Event Description, Event Location, Event Date, Event Time, and Event Capacity are required');
-            return;
-        }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log({
+            eventTitle,
+            eventDescription,
+            eventLocation,
+            eventDate,
+            eventTime,
+            eventCapacity,
+            eventImage,
+            eventPrice,
+            isPaidEvent,
+        });
 
         const eventData = {
             title: eventTitle,
@@ -30,176 +51,162 @@ function EventCreationPage() {
             time: eventTime,
             capacity: eventCapacity,
             image: eventImage,
-            paidEvent: isPaidEvent,
+            isPaidEvent,
             eventPrice: isPaidEvent ? eventPrice : null,
         };
 
-        try {
-            await eventCreation.writeEventData(eventData);
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        }
-
+        await writeEventData(eventData);
     };
 
     return (
-        <>
-            <div className="event-creation-page p-4">
-                <div className="box-border rounded-lg bg-slate-300 p-6">
-                    <h1 className="text-4xl text-slate-900 font-bold pb-3">Create Your Event</h1>
-                    <form onSubmit={handleSubmit} className="flex flex-col space-y-4 pt-4">
-                        <div className="flex flex-col">
-                            <label htmlFor="eventTitle" className="text-italic font-bold text-slate-900">
-                                Title
-                            </label>
-                            <input
-                                type="text"
-                                id="eventTitle"
-                                value={eventTitle}
-                                onChange={(e) => setEventTitle(e.target.value)}
-                                placeholder="Enter event title"
-                                className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="eventDescription" className="text-italic font-bold text-slate-900">
-                                Description
-                            </label>
-                            <input
-                                id="eventDescription"
-                                value={eventDescription}
-                                onChange={(e) => setEventDescription(e.target.value)}
-                                placeholder="Enter event description"
-
-                                className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="eventLocation" className="text-italic font-bold text-slate-900">
-                                Location
-                            </label>
-                            <input
-                                type="text"
-                                id="eventLocation"
-                                value={eventLocation}
-                                onChange={(e) => setEventLocation(e.target.value)}
-                                placeholder="Enter event location"
-                                className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                        </div>
-
-                        <div
-                            className="flex flex-row items-center pt-3">
-                            <label htmlFor="eventDate" className="text-italic font-bold text-slate-900 mr-4">
-                                Date
-                            </label>
-                            <input
-                                type="date"
-                                id="eventDate"
-                                value={eventDate}
-                                onChange={(e) => setEventDate(e.target.value)}
-                                className="pb-3 rounded-lg w-full border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                            <label htmlFor="eventTime" className="pe-3 text-italic font-bold text-slate-900 ml-4">
-                                Time
-                            </label>
-                            <input
-                                type="time"
-                                id="eventTime"
-                                value={eventTime}
-                                onChange={(e) => setEventTime(e.target.value)}
-                                className="pb-3 rounded-lg w-full border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="eventCapacity" className="text-italic font-bold text-slate-900">
-                                Capacity
-                            </label>
-                            <input
-                                type="number"
-                                id="eventCapacity"
-                                value={eventCapacity}
-                                onChange={(e) => setEventCapacity(e.target.value)}
-                                placeholder="Enter event capacity"
-                                className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="eventImage" className="text-italic font-bold text-slate-900">
-                                Image
-                            </label>
-                            <input
-                                type="file"
-                                id="eventImage"
-                                accept="image/*"
-                                onChange={(e) => setEventImage(e.target.files[0])}
-                                className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="isPaidEvent" className="text-italic font-bold text-slate-900">
-                                Is this a paid event?
-                            </label>
-
-                            <div className="flex flex-row space-x-3">
-                                <label htmlFor="isPaidEventNo">Yes </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventYes"
-                                    name="isPaidEvent"
-                                    value="true"
-                                    checked={isPaidEvent}
-                                    onChange={() => setIsPaidEvent(true)}
-                                />
-                            </div>
-
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="isPaidEventNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventNo"
-                                    name="isPaidEvent"
-                                    value="false"
-                                    checked={!isPaidEvent}
-                                    onChange={() => setIsPaidEvent(false)}
-                                />
-                            </div>
-
-                            {isPaidEvent && (
-                                <div className="flex flex-col">
-                                    <label htmlFor="eventPrice" className="pt-3 text-italic font-bold text-slate-900">
-                                        Ticket Price
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="eventPrice"
-                                        value={eventPrice}
-                                        onChange={(e) => {
-                                            const price = e.target.value.replace(/[^0-9.]/g, '');
-                                            setEventPrice(`$${price}`);
-                                        }}
-                                        placeholder="Enter ticket price"
-                                        className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        <button type="submit"
-                                className="bg-slate-900 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg"
-                                onClick={handleSubmit}>Create Event
-                        </button>
-                    </form>
+        <div className="event-creation-page">
+            <h1>Create Your Event</h1>
+            <form onSubmit={handleSubmit}>
+                <div className="input-container">
+                    <label htmlFor="eventTitle">Event Title <br/><br/> </label>
+                    <input
+                        type="text"
+                        id="eventTitle"
+                        value={eventTitle}
+                        onChange={(e) => setEventTitle(e.target.value)}
+                        placeholder="Enter event title"
+                        className="rounded"
+                    />
                 </div>
-            </div>
-        </>
+
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventDescription">Event Description <br/><br/></label>
+                    <input
+                        id="eventDescription"
+                        value={eventDescription}
+                        onChange={(e) => setEventDescription(e.target.value)}
+                        placeholder="Enter event description"
+                        className="rounded"
+                    />
+                </div>
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventLocation">Event Location <br/> <br/></label>
+                    <input
+                        type="text"
+                        id="eventLocation"
+                        value={eventLocation}
+                        onChange={(e) => setEventLocation(e.target.value)}
+                        placeholder="Enter event location"
+                        className="rounded"
+                    />
+                </div>
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventDate">Event Date <br/><br/> </label>
+                    <input
+                        type="date"
+                        id="eventDate"
+                        value={eventDate}
+                        onChange={(e) => setEventDate(e.target.value)}
+                        className="rounded"
+                    />
+                </div>
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventTime">Event Time <br/><br/> </label>
+                    <input
+                        type="time"
+                        id="eventTime"
+                        value={eventTime}
+                        onChange={(e) => setEventTime(e.target.value)}
+                        className="rounded"
+                    />
+                </div>
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventCapacity">Event Capacity <br/> <br/></label>
+                    <input
+                        type="number"
+                        id="eventCapacity"
+                        value={eventCapacity}
+                        onChange={(e) => setEventCapacity(e.target.value)}
+                        placeholder="Enter event capacity"
+                        className="rounded"
+                    />
+                </div>
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="eventImage">Event Image <br/><br/> </label>
+                    <input
+                        type="file"
+                        id="eventImage"
+                        accept="image/*"
+                        onChange={(e) => setEventImage(e.target.files[0])}
+                    />
+                </div>
+
+                <br/>
+                <br/>
+
+                <div className="input-container">
+                    <label htmlFor="isPaidEvent">Is this a paid event?<br/><br/></label>
+
+                    <label htmlFor="isPaidEventNo">Yes</label>
+
+                    <input
+                        type="radio"
+                        id="isPaidEventYes"
+                        name="isPaidEvent"
+                        value="true"
+                        checked={isPaidEvent}
+                        onChange={() => setIsPaidEvent(true)}
+                    />
+                    <br/>
+                    <label htmlFor="isPaidEventNo">No </label>
+
+                    <input
+                        type="radio"
+                        id="isPaidEventNo"
+                        name="isPaidEvent"
+                        value="false"
+                        checked={!isPaidEvent}
+                        onChange={() => setIsPaidEvent(false)}
+                    />
+                    <br/>
+                    <br/>
+                    <br/>
+
+                    {isPaidEvent && (
+                        <div>
+                            <label htmlFor="eventPrice">Ticket Price <br/><br/></label>
+                            <input
+                                type="text"
+                                id="eventPrice"
+                                value={eventPrice}
+                                onChange={(e) => {
+                                    const price = e.target.value.replace(/[^0-9.]/g, '');
+                                    setEventPrice(`$${price}`);
+                                }}
+                                placeholder="Enter ticket price"
+                                className="rounded"
+                            />
+                        </div>
+                    )}
+                </div>
+                <br/>
+
+                <button type="submit">Create Event</button>
+            </form>
+        </div>
     );
 }
 
