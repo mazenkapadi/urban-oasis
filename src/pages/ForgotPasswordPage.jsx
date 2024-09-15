@@ -1,25 +1,13 @@
 import React, { useState } from 'react';
-import signIn from "../services/auth/signIn.js";
 import LeftComponent from "../components/LeftComponent.jsx";
+import { useNavigate} from "react-router-dom";
 
 function SignInPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
 
-    const handleSignInWithEmail = async () => {
-        if (!email || !password) {
-            setError('Email and password are required');
-            return;
-        }
-
-        try {
-            await signIn.signInWithEmail(email, password);
-            setError(null);
-        } catch (error) {
-            setError(error.message);
-        }
-    };
+    const navigate = useNavigate();
+    const handleResetPassword = () => {
+        navigate('/signIn')
+    }
 
     return (
         <>
@@ -28,25 +16,25 @@ function SignInPage() {
                 <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center">
                     <div className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto">
                         <div className="content w-full">
-                            <h2 className="text-3xl font-bold text-white mb-6 px-2">Forgot Password</h2>
+                            <h2 className="text-3xl font-bold text-white pb-4 px-2">Forgot Password</h2>
                             <div className="p-2">
-                                <label className="block text-gray-300 pb-1" htmlFor="email">Email</label>
+                                <label className="block text-gray-300 pb-10" htmlFor="email">If the email address you provided is associated with an account, you will receive a password reset email shortly. </label>
                                 <input
                                     className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    // value={email}
+                                    // onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                             <div className="flex flex-col items-center justify-center px-2">
                                 <button
                                     className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4"
                                     aria-label="Sign In"
-                                    onClick={handleSignInWithEmail}
+                                    onClick={handleResetPassword}
                                 >
-                                    Send a Rest Link
+                                    Reset Password
                                 </button>
                             </div>
                         </div>

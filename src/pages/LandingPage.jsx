@@ -1,14 +1,12 @@
-import { useState } from 'react'
-
 function LandingPage() {
 
     return (
         <>
-            <HeaderCompopnent />
-            <HeroComponent />
-            <FooterCompopnent />
+            <div>
+                Hey welcome to the landing page
+            </div>
         </>
     )
 }
 
-export default LandingPage
+export default LandingPage;
