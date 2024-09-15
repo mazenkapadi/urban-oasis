@@ -1,22 +1,22 @@
 import {useState} from 'react';
 import '../styles.css';
-import {initializeApp} from "firebase/app";
-import FIREBASE_KEY from "../APIKEY_SECRETS/FIREBASE_KEY.js";
-import {getFirestore} from "firebase/firestore";
+import {collection, getFirestore, doc, setDoc} from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import FIREBASE_KEY from "../APIKEY_SECRETS/FIREBASE_KEY.js"
 
 const app = initializeApp(FIREBASE_KEY);
 const db = getFirestore(app);
 
 const writeEventData = async (eventData) => {
     try {
-        const eventsRef = db.collection('events');
-        const newEventRef = eventsRef.doc();
-        await newEventRef.set(eventData);
-        console.log('Event created successfully!');
+        const eventRef = doc(collection(db, "Events"));
+        await setDoc(eventRef, eventData);
+        console.log('Event created successfully! ID: ', eventRef.id);
     } catch (error) {
         console.error('Error creating event:', error);
     }
 };
+
 
 function EventCreationPage() {
     const [eventTitle, setEventTitle] = useState('');
@@ -204,7 +204,7 @@ function EventCreationPage() {
                 </div>
                 <br/>
 
-                <button type="submit">Create Event</button>
+                <button type="submit" onClick={handleSubmit}>Create Event</button>
             </form>
         </div>
     );
