@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
 import { useNavigate} from "react-router-dom";
+import PasswordReset from "../services/auth/ResetPassword.js";
 
 function SignInPage() {
 
     const navigate = useNavigate();
-    const handleResetPassword = () => {
-        navigate('/signIn')
+    const [email, setEmail] = useState('');
+
+    //TODO: Fix resetPasswordHandler
+
+    const handleResetPassword = async () => {
+        if(!email){
+            alert("Email is required")
+            return
+        }
+        try {
+            await PasswordReset.resetPassword(email);
+            navigate('/signIn')
+        } catch (error) {
+            console.error('Error resetting password', error);
+        }
     }
+
 
     return (
         <>
@@ -24,14 +39,13 @@ function SignInPage() {
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
-                                    // value={email}
-                                    // onChange={(e) => setEmail(e.target.value)}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                             <div className="flex flex-col items-center justify-center px-2">
                                 <button
                                     className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4"
-                                    aria-label="Sign In"
                                     onClick={handleResetPassword}
                                 >
                                     Reset Password

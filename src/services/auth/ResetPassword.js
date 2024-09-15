@@ -7,7 +7,6 @@ class PasswordReset {
             await sendPasswordResetEmail(auth, email);
         } catch (error) {
             console.error('Error resetting password', error);
-            throw error; // Re-throw the error to handle it in the calling code if needed
         }
     }
 }
