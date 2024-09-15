@@ -1,14 +1,20 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
 
-import "./index.css";
+import './index.css'
 import SignInPage from "./pages/SignInPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
+import NotFoundPage from "./pages/404NotFound.jsx";
 import NotFound from "./pages/404NotFound.jsx";
-import UserPage from "./pages/UserProfile.jsx";
+import EventCard from "./components/EventCard.jsx";
+import EventCardPage from "./pages/EventCardPage.jsx";
+
 
 const router = createBrowserRouter([
     {
@@ -28,8 +34,8 @@ const router = createBrowserRouter([
         element: <ForgotPasswordPage />
     },
     {
-        path: "/userPage",
-        element: <UserPage />
+        path: "/eventCard",
+        element: <EventCardPage />
     },
     {
         path: "*",
@@ -37,8 +43,9 @@ const router = createBrowserRouter([
     },
 ]);
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
-);
+
+createRoot(document.getElementById('root')).render(
+    <StrictMode >
+        <RouterProvider router={router} />
+    </StrictMode >
+)
