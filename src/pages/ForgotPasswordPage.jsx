@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import LeftComponent from "../components/LeftComponent.jsx";
+import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
 import { useNavigate} from "react-router-dom";
 
 function SignInPage() {
@@ -12,7 +12,7 @@ function SignInPage() {
     return (
         <>
             <div className="flex items-center w-screen">
-                <LeftComponent />
+                <AuthLeftComponent />
                 <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center">
                     <div className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto">
                         <div className="content w-full">
