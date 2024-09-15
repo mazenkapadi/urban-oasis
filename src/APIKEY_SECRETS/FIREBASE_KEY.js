@@ -10,6 +10,7 @@
 //
 // export default FIREBASE_KEY;
 
+
 const FIREBASE_KEY = {
     apiKey: import.meta.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
