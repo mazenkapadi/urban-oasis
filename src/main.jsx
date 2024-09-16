@@ -12,6 +12,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFoundPage from "./pages/404NotFound.jsx";
 import NotFound from "./pages/404NotFound.jsx";
+import UserProfilePage from "./pages/UserProfilePage.jsx";
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     {
         path: "/forgotPassword",
         element: <ForgotPasswordPage />
+    },
+    {
+        path: "/profile",
+        element: <UserProfilePage />
     },
     {
         path: "*",
