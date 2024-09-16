@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import signUp from "../services/auth/signUp.js";
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
+import signIn from "../services/auth/signIn.js";
 
 function SignUpPage() {
 
@@ -73,22 +74,21 @@ function SignUpPage() {
     }
 
 
-    // const handleSignInWithGoogle = async () => {
-    //     try {
-    //         await signIn.signInWithGoogle();
-    //         setError(null);
-    //     } catch (error) {
-    //         setError(error.message);
-    //     }
-    // };
-
+    const handleSignInWithGoogle = async () => {
+        try {
+            await signIn.signInWithGoogle();
+            setError(null);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
     return (
         <>
             <div className="flex items-center w-screen" >
                 <AuthLeftComponent />
                 <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center" >
                     <div
-                        className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
+                        className="signUBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
                         <div className="content w-full" >
                             <h2 className="text-3xl font-bold text-white mb-6 px-2" >Sign Up</h2 >
 
@@ -121,8 +121,8 @@ function SignUpPage() {
                                     onChange={(e) => setPassword(e.target.value)}
 
                                 />
-                                <div className="pb-1" >
-                                    <div className="flex justify-between" >
+                                <div className="pb-1 pt-2" >
+                                    <div className="flex justify-between " >
                                         <label className="text-gray-300" htmlFor="password" >Re-enter Password</label >
                                     </div >
                                 </div >
@@ -158,7 +158,7 @@ function SignUpPage() {
                                 <button
                                     className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center"
                                     aria-label="Sign In with Google"
-
+                                    onClick={handleSignInWithGoogle}
                                 >
                                     <img src="src/assets/google.svg" alt="Google logo" className="pr-0.5" width="24"
                                          height="24" />

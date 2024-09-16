@@ -6,7 +6,7 @@ import {
 
 function AuthLeftComponent() {
     return (
-        <div className="flex items-center justify-center w-full h-screen bg-black p-8" >
+        <div className="flex w-2/3 items-center justify-center h-screen bg-gray-900 p-8" >
             <div className="leftColumn w-full max-w-lg p-8" >
                 <h2 className="text-4xl text-gray-500 mb-8 font-archivo" >Urban Oasis</h2 >
                 <div className="flex items-start mb-6" >
