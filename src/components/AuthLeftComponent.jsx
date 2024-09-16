@@ -12,26 +12,24 @@ function AuthLeftComponent() {
                 <div className="flex items-start mb-6" >
                     <CalendarDaysIcon className="h-6 w-6 text-gray-400 mr-4 mt-1" />
                     <div >
-                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >Community Centered Design</h4 >
-                        <p className="text-gray-400" >Tailored for local connections and easy event management</p >
+                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >Connect Your Community</h4 >
+                        <p className="text-gray-400" >Discover local events and connect with your neighbors</p >
                     </div >
                 </div >
 
                 <div className="flex items-start mb-6" >
                     <UserGroupIcon className="h-6 w-6 text-gray-400 mr-4 mt-1"/>
                     <div >
-                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >User Friendly Experience</h4 >
-                        <p className="text-gray-400" >Intuitive interface for effortless event creation and
-                            participation</p >
+                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >Ease of Use</h4 >
+                        <p className="text-gray-400" >Effortless event creation and seamless registration</p >
                     </div >
                 </div >
 
                 <div className="flex items-start mb-6" >
                     <PresentationChartLineIcon className="h-6 w-6 text-gray-400 mr-4 mt-1"/>
                     <div >
-                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >Flexible Scalability</h4 >
-                        <p className="text-gray-400" >Adaptable to events of any size, from small gatherings to
-                            large-scale festivals</p >
+                        <h4 className="text-lg font-semibold text-gray-300 mb-2" >Flexibility</h4 >
+                        <p className="text-gray-400" >From block parties to music festivals, we've got you covered</p >
                     </div >
                 </div >
             </div >
