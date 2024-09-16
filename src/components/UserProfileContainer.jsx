@@ -11,7 +11,7 @@ const UserProfileContainer = () => {
             <div className="flex flex-col items-center">
                 <img
                     src="https://via.placeholder.com/150"
-                    alt="User Profile"
+                    alt="User ProfileContent"
                     className="rounded-full w-32 h-32 object-cover mb-4"
                 />
                 {/* User Info */}
