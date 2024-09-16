@@ -96,11 +96,11 @@ function SignInPage() {
                                     Sign In
                                 </button >
 
-                                <p className="text-sm text-gray-400 my-4" >
-                                    Don’t have an account? <a href="/signUp" className="text-blue-500" >Sign Up</a >
+                                <p className="text-sm text-gray-400 mt-4 mb-2" >
+                                    Already have an account? <a href="/signUp" className="text-blue-500" >Sign Up</a >
                                 </p >
 
-                                <div className="flex items-center w-full my-2" >
+                                <div className="flex items-center w-full mb-2 " >
                                     <hr className="flex-grow border-t border-gray-400" />
                                     <span className="mx-4 text-gray-400" >or</span >
                                     <hr className="flex-grow border-t border-gray-400" />
