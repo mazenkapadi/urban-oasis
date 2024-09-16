@@ -60,7 +60,7 @@ function SignInPage() {
                             <div className="p-2" >
                                 <label className="block text-gray-300 pb-1" htmlFor="email" >Email</label >
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
@@ -78,7 +78,7 @@ function SignInPage() {
                                     </div >
                                 </div >
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="password"
                                     type="password"
                                     placeholder="••••••"
