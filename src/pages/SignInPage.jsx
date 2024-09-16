@@ -49,7 +49,7 @@ function SignInPage() {
         <>
             <div className="flex items-center w-screen" >
                 <AuthLeftComponent />
-                <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center" >
+                <div className="w-2/3 h-screen bg-blue-800 p-4 flex items-center justify-center" >
                     <div
                         className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
                         <div className="content w-full" >
