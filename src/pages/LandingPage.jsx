@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
+  return (
+    <>
+      <div>Hey welcome to the landing page</div>
+    </>
+  );
 
     const navigate = useNavigate();
 
@@ -24,6 +29,7 @@ function LandingPage() {
             {/*<FooterComponent />*/}
         </>
     )
+
 }
 
 export default LandingPage;

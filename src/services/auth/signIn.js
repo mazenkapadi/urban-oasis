@@ -19,6 +19,7 @@ class SignIn {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             console.log('Email sign-in successful:', userCredential);
+            localStorage.setItem('user', userCredential.user);
             return userCredential.user;
         } catch (error) {
             console.error('Error signing in with email:', error);
