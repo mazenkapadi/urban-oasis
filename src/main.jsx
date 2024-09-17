@@ -8,7 +8,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
-import UserPage from "./pages/UserProfile.jsx";
+import UserProfilePage from "./pages/UserProfilePage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -28,8 +28,8 @@ const router = createBrowserRouter([
         element: <ForgotPasswordPage />
     },
     {
-        path: "/userPage",
-        element: <UserPage />
+        path: "/userProfilePage",
+        element: <UserProfilePage />
     },
     {
         path: "*",
