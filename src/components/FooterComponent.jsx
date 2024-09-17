@@ -1,6 +1,6 @@
 // import React from 'react';
 
-function Footer() {
+function FooterComponent() {
     return (
         <footer className="bg-gray-900 text-white py-12" >
             <div className="container mx-auto px-6 md:px-12" >
@@ -87,7 +87,7 @@ function Footer() {
                     </div >
                 </div >
 
-                {/* Footer Bottom */}
+                {/* FooterComponent Bottom */}
                 <div className="mt-8 border-t border-gray-700 pt-6" >
                     <div className="flex flex-col md:flex-row justify-between items-center" >
                         <p className="mb-4 md:mb-0" >
@@ -111,4 +111,4 @@ function Footer() {
     );
 }
 
-export default Footer;
+export default FooterComponent;

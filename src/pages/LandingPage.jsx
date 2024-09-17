@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/navbar.jsx";
-import Footer from "../components/Footer.jsx";
+import HeaderComponent from "../components/HeaderComponent.jsx";
+import FooterComponent from "../components/FooterComponent.jsx";
 
 function LandingPage() {
 
@@ -12,7 +12,7 @@ function LandingPage() {
 
     return (
         <>
-            <Navbar />
+            <HeaderComponent />
             <div className="p-8" >
                 <h3 className="text-5xl text-slate-700" >Hey welcome to the landing page</h3 >
                 <div className="pt-8" >
@@ -24,7 +24,7 @@ function LandingPage() {
                     </button >
                 </div >
             </div >
-            <Footer />
+            <FooterComponent />
         </>
     )
 
