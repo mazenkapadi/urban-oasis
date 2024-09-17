@@ -1,11 +1,11 @@
 import React from 'react';
-import Sidebar from '../components/Sidebar';
+import SideBar from '../components/SideBar';
 import ProfileContent from '../components/ProfileContent';
 
 const UserProfilePage = () => {
     return (
         <div className="flex">
-            <Sidebar />
+            <SideBar />
             <ProfileContent />
         </div>
     );
