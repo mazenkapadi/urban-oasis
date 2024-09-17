@@ -8,28 +8,33 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
+import UserPage from "./pages/UserProfile.jsx";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/signIn",
-    element: <SignInPage />,
-  },
-  {
-    path: "/signUp",
-    element: <SignUpPage />,
-  },
-  {
-    path: "/forgotPassword",
-    element: <ForgotPasswordPage />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+    {
+        path: "/",
+        element: <LandingPage />
+    },
+    {
+        path: "/signIn",
+        element: <SignInPage />
+    },
+    {
+        path: "/signUp",
+        element: <SignUpPage />
+    },
+    {
+        path: "/forgotPassword",
+        element: <ForgotPasswordPage />
+    },
+    {
+        path: "/userPage",
+        element: <UserPage />
+    },
+    {
+        path: "*",
+        element: <NotFound />
+    },
 ]);
 
 createRoot(document.getElementById("root")).render(
