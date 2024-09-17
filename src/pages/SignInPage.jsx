@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import signIn from "../services/auth/signIn.js";
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid/index.js";
 
 function SignInPage() {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState(null);
+    const [ showPassword, setShowPassword ] = useState(false);
+
 
     const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    }
 
     const validateEmail = (email) => EMAIL_REGEX.test(email);
 
@@ -77,14 +84,23 @@ function SignInPage() {
                                             password?</a >
                                     </div >
                                 </div >
-                                <input
-                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
+                                <div className="relative" >
+                                    <input
+                                        // className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10" // Add padding-right for the button
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <button className="absolute right-3 top-2 text-sm text-black"
+                                            onClick={toggleShowPassword}
+                                    >
+                                        {showPassword ? <EyeSlashIcon className="h-5 w-5" /> :
+                                            <EyeIcon className="h-5 w-5" />}
+                                    </button >
+                                </div >
                             </div >
 
                             <div className="flex flex-col items-center justify-center px-2" >
