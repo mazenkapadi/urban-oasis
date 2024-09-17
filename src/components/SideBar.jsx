@@ -1,6 +1,6 @@
 import React from 'react';
 import {BiHome, BiTask, BiCreditCard, BiCog, BiSupport, BiBookAlt} from 'react-icons/bi';
-import "../styles/sidebar.css";
+
 
 const Sidebar = () => {
     return (
