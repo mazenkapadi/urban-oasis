@@ -9,10 +9,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
 import UserPage from "./pages/UserProfile.jsx";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import EventPage from "./pages/EventPage.jsx";
-
 
 const router = createBrowserRouter([
     {
