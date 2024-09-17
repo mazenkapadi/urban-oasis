@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import signIn from "../services/auth/signIn.js";
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
 
@@ -7,7 +7,7 @@ function SignInPage() {
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState(null);
 
-    const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@(.+)$/;
+    const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     const validateEmail = (email) => EMAIL_REGEX.test(email);
 
