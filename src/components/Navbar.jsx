@@ -1,25 +1,82 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    setIsLoggedIn(!!user);
+  }, []);
+
+  const handleSignIn = () => {
+    navigate("/signIn");
+  };
+
+  const handleSearch = () => {
+    console.log("searching");
+    // navigate("/signIn");
+  };
   return (
     <div className="w-full bg-gray-800 text-white relative">
-      <div className="flex flex-col md:flex-row justify-between items-center p-4">
-        <div className="flex items-center mb-4 md:mb-0">
-          <img
-            src="https://picsum.photos/50"
-            alt="Random Network File"
-            className="w-12 h-12 rounded-full"
-          />
+      <div className="p-4">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+          <div className="flex items-center mb-4 md:mb-0">
+            <img
+              src="https://picsum.photos/32"
+              alt="Random Network File"
+              className="w-12 h-12 rounded-full"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            {isLoggedIn ? (
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                <img
+                  src="https://picsum.photos/32"
+                  alt="Network"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <button
+                className=" rounded-lg bg-gray-900 text-gray-200 px-6 py-2 flex items-center justify-center"
+                onClick={handleSignIn}
+              >
+                {" "}
+                Sign In
+              </button>
+            )}
+
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="focus:outline-none"
+            >
+              <svg
+                className="w-10 h-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4 flex-grow mx-4">
+        <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4 flex-grow mx-16">
           <div className="bg-gray-700 p-2 rounded-md">
             <input
               type="text"
               value="zip/city"
               readOnly
-              className="bg-transparent border-none outline-none text-white w-20"
+              className="bg-transparent border-none outline-none text-white w-32 text-center"
             />
           </div>
 
@@ -30,37 +87,15 @@ const Navbar = () => {
 
           <input
             type="text"
-            placeholder="Search..."
-            className="bg-gray-700 p-2 rounded-md flex-grow outline-none"
+            placeholder="Search for events..."
+            className="bg-gray-700 p-2 rounded-full flex-grow outline-none"
           />
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div className="w-8 h-8 rounded-full overflow-hidden">
-            <img
-              src="https://picsum.photos/32"
-              alt="Network"
-              className="w-full h-full object-cover"
-            />
-          </div>
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="focus:outline-none"
+            className=" rounded-lg bg-white text-gray-800 px-6 py-2 flex items-center justify-center"
+            onClick={handleSearch}
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
+            {" "}
+            Search
           </button>
         </div>
       </div>
