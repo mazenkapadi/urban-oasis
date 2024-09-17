@@ -18,7 +18,7 @@ function EventPage() {
 
     return (
         <>
-            <div className="event--page">
+            <div className="event-page">
                 <div className="flex h-full w-full">
                     <div className="bg-blue-800 p-6 flex flex-col w-full h-full gap-3">
                         <div
