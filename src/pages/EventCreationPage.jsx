@@ -51,7 +51,7 @@ function EventCreationPage() {
                     <form onSubmit={handleSubmit} className="flex flex-col space-y-4 pt-4">
                         <div className="flex flex-col">
                             <label htmlFor="eventTitle" className="text-italic font-bold text-slate-900">
-                                Event Title
+                                Title
                             </label>
                             <input
                                 type="text"
@@ -65,7 +65,7 @@ function EventCreationPage() {
 
                         <div className="flex flex-col">
                             <label htmlFor="eventDescription" className="text-italic font-bold text-slate-900">
-                                Event Description
+                                Description
                             </label>
                             <input
                                 id="eventDescription"
@@ -79,7 +79,7 @@ function EventCreationPage() {
 
                         <div className="flex flex-col">
                             <label htmlFor="eventLocation" className="text-italic font-bold text-slate-900">
-                                Event Location
+                                Location
                             </label>
                             <input
                                 type="text"
@@ -94,7 +94,7 @@ function EventCreationPage() {
                         <div
                             className="flex flex-row items-center pt-3">
                             <label htmlFor="eventDate" className="text-italic font-bold text-slate-900 mr-4">
-                                Event Date
+                                Date
                             </label>
                             <input
                                 type="date"
@@ -104,7 +104,7 @@ function EventCreationPage() {
                                 className="pb-3 rounded-lg w-full border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                             />
                             <label htmlFor="eventTime" className="pe-3 text-italic font-bold text-slate-900 ml-4">
-                                Event Time
+                                Time
                             </label>
                             <input
                                 type="time"
@@ -117,7 +117,7 @@ function EventCreationPage() {
 
                         <div className="flex flex-col">
                             <label htmlFor="eventCapacity" className="text-italic font-bold text-slate-900">
-                                Event Capacity
+                                Capacity
                             </label>
                             <input
                                 type="number"
@@ -131,7 +131,7 @@ function EventCreationPage() {
 
                         <div className="flex flex-col">
                             <label htmlFor="eventImage" className="text-italic font-bold text-slate-900">
-                                Event Image
+                                Image
                             </label>
                             <input
                                 type="file"
