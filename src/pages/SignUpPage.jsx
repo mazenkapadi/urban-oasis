@@ -6,6 +6,8 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid/index.js";
 
 function SignUpPage() {
 
+    const [ firstName, setFirstName ] = useState('');
+    const [ lastName, setLastName ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ confirmPassword, setConfirmPassword ] = useState('');
@@ -100,6 +102,60 @@ function SignUpPage() {
                             <h2 className="text-3xl font-bold text-white mb-6 px-2" >Sign Up</h2 >
 
                             {error && <div className="text-red-500 text-sm p-2" >{error}</div >}
+
+                            {/*<div className="p-2" >*/}
+                            {/*    <label className="block text-gray-300 pb-1" htmlFor="email" >First Name</label >*/}
+                            {/*    <input*/}
+                            {/*        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"*/}
+                            {/*        id="firstName"*/}
+                            {/*        type="text"*/}
+                            {/*        placeholder="your@email.com"*/}
+                            {/*        value={firstName}*/}
+                            {/*        onChange={(e) => setFirstName(e.target.value)}*/}
+                            {/*    />*/}
+                            {/*    <label className="block text-gray-300 pb-1" htmlFor="email" >Last Name</label >*/}
+                            {/*    <input*/}
+                            {/*        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"*/}
+                            {/*        id="lastName"*/}
+                            {/*        type="text"*/}
+                            {/*        placeholder="your@email.com"*/}
+                            {/*        value={lastName}*/}
+                            {/*        onChange={(e) => setLastName(e.target.value)}*/}
+                            {/*    />*/}
+                            {/*</div >*/}
+
+                            <div className="p-2" >
+                                <div className="flex space-x-4" >
+                                    {/* First Name */}
+                                    <div className="flex-1" >
+                                        <label className="block text-gray-300 pb-1" htmlFor="firstName" >First
+                                            Name</label >
+                                        <input
+                                            className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            id="firstName"
+                                            type="text"
+                                            placeholder="First Name"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                        />
+                                    </div >
+
+                                    {/* Last Name */}
+                                    <div className="flex-1" >
+                                        <label className="block text-gray-300 pb-1" htmlFor="lastName" >Last
+                                            Name</label >
+                                        <input
+                                            className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            id="lastName"
+                                            type="text"
+                                            placeholder="Last Name"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                        />
+                                    </div >
+                                </div >
+                            </div >
+
 
                             <div className="p-2" >
                                 <label className="block text-gray-300 pb-1" htmlFor="email" >Email</label >
