@@ -112,16 +112,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('attendingEvents', 'updates')}
                                         className="mr-2"
                                     />
-                                    Updates about new Eventbrite features and announcements
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.attendingEvents.guide}
-                                        onChange={() => togglePreference('attendingEvents', 'guide')}
-                                        className="mr-2"
-                                    />
-                                    Eventbrite's weekly event guide: A digest of personalized event recommendations
+                                    Updates about new UrbanOasis features and announcements
                                 </label>
                                 <label className="block">
                                     <input
@@ -139,7 +130,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('attendingEvents', 'unsubscribe')}
                                         className="mr-2"
                                     />
-                                    Unsubscribe from all Eventbrite newsletters and updates for attendees
+                                    Unsubscribe from all UrbanOasis' newsletters and updates for attendees
                                 </label>
                             </div>
                         </div>
@@ -199,7 +190,7 @@ const SettingsPage = () => {
                         {/* Organizing Events */}
                         <div>
                             <h3 className="text-lg font-semibold mb-2">Organizing Events</h3>
-                            <p className="text-gray-600 mb-2">Helpful updates and tips for organizing events on Eventbrite</p>
+                            <p className="text-gray-600 mb-2">Helpful updates and tips for organizing events on UrbanOasis</p>
                             <div className="space-y-2">
                                 <label className="block">
                                     <input
@@ -208,7 +199,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'updates')}
                                         className="mr-2"
                                     />
-                                    Updates about new Eventbrite features and announcements
+                                    Updates about new UrbanOasis features and announcements
                                 </label>
                                 <label className="block">
                                     <input
@@ -235,7 +226,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'unsubscribe')}
                                         className="mr-2"
                                     />
-                                    Unsubscribe from all Eventbrite newsletters and updates for event organizers
+                                    Unsubscribe from all UrbanOasis newsletters and updates for event organizers
                                 </label>
                                 <label className="block">
                                     <input
