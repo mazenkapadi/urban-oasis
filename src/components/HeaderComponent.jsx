@@ -124,8 +124,8 @@ import SearchBarComponent from "./SearchBarComponent"; // Import the new compone
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [ menuOpen, setMenuOpen ] = useState(false);
+    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
 
     useEffect(() => {
         const user = localStorage.getItem("user");
@@ -137,38 +137,43 @@ const HeaderComponent = () => {
     };
 
     return (
-        <div className="w-full bg-gray-800 text-white relative">
-            <div className="p-4">
-                <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <div className="w-full bg-gray-800 text-white relative" >
+            <div className="p-2" >
+                <div className="flex flex-col md:flex-row justify-between items-center" >
                     {/* Logo Section */}
-                    <div className="flex items-center mb-4 md:mb-0">
+                    <div className="flex items-center mb-4 md:mb-0" >
+                        {/* Logo Section */}
                         <img
-                            src="https://picsum.photos/32"
-                            alt="Random Network File"
-                            className="w-12 h-12 rounded-lg"
+                            src="src/assets/Oasis.png"
+                            alt="Oasis Logo"
+                            className="w-12 h-auto" // Increase width to 48px and maintain aspect ratio
                         />
-                    </div>
+
+                        {/* Text Section */}
+                        <span className="ml-2 text-white text-2xl font-archivo" >Urban Oasis</span >
+                    </div >
+
 
                     {/* Search Bar */}
                     <SearchBarComponent />
 
                     {/* User Profile / Sign In and Menu Button */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4" >
                         {isLoggedIn ? (
-                            <div className="w-10 h-10 rounded-lg overflow-hidden">
+                            <div className="w-10 h-10 rounded-lg overflow-hidden" >
                                 <img
                                     src="https://picsum.photos/32"
                                     alt="User Profile"
                                     className="w-full h-full object-cover"
                                 />
-                            </div>
+                            </div >
                         ) : (
                             <button
                                 className="rounded-lg bg-gray-900 text-gray-200 px-6 py-2"
                                 onClick={handleSignIn}
                             >
                                 Sign In
-                            </button>
+                            </button >
                         )}
                         <button
                             onClick={() => setMenuOpen(!menuOpen)}
@@ -187,62 +192,62 @@ const HeaderComponent = () => {
                                     strokeWidth={2}
                                     d="M4 6h16M4 12h16m-7 6h7"
                                 />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
+                            </svg >
+                        </button >
+                    </div >
+                </div >
+            </div >
 
             {/* Dropdown Menu */}
             {menuOpen && (
-                <div className="absolute left-0 right-0 bg-gray-900 z-10 p-4">
-                    <div className="container mx-auto flex flex-col md:flex-row justify-around text-white">
+                <div className="absolute left-0 right-0 bg-gray-900 z-10 p-4" >
+                    <div className="container mx-auto flex flex-col md:flex-row justify-around text-white" >
                         {/* Categories */}
-                        <div className="w-full md:w-1/4 mb-4">
-                            <h3 className="font-semibold mb-2">Categories</h3>
-                            <ul>
-                                <li className="mb-1 hover:underline cursor-pointer">Category 1</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Category 2</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Category 3</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Category 4</li>
-                            </ul>
-                        </div>
+                        <div className="w-full md:w-1/4 mb-4" >
+                            <h3 className="font-semibold mb-2" >Categories</h3 >
+                            <ul >
+                                <li className="mb-1 hover:underline cursor-pointer" >Category 1</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Category 2</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Category 3</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Category 4</li >
+                            </ul >
+                        </div >
 
                         {/* Genre */}
-                        <div className="w-full md:w-1/4 mb-4">
-                            <h3 className="font-semibold mb-2">Genre</h3>
-                            <ul>
-                                <li className="mb-1 hover:underline cursor-pointer">Genre 1</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Genre 2</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Genre 3</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Genre 4</li>
-                            </ul>
-                        </div>
+                        <div className="w-full md:w-1/4 mb-4" >
+                            <h3 className="font-semibold mb-2" >Genre</h3 >
+                            <ul >
+                                <li className="mb-1 hover:underline cursor-pointer" >Genre 1</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Genre 2</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Genre 3</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Genre 4</li >
+                            </ul >
+                        </div >
 
                         {/* Price */}
-                        <div className="w-full md:w-1/4 mb-4">
-                            <h3 className="font-semibold mb-2">Price</h3>
-                            <ul>
-                                <li className="mb-1 hover:underline cursor-pointer">$0 - $50</li>
-                                <li className="mb-1 hover:underline cursor-pointer">$50 - $100</li>
-                                <li className="mb-1 hover:underline cursor-pointer">$100 - $200</li>
-                                <li className="mb-1 hover:underline cursor-pointer">$200+</li>
-                            </ul>
-                        </div>
+                        <div className="w-full md:w-1/4 mb-4" >
+                            <h3 className="font-semibold mb-2" >Price</h3 >
+                            <ul >
+                                <li className="mb-1 hover:underline cursor-pointer" >$0 - $50</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >$50 - $100</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >$100 - $200</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >$200+</li >
+                            </ul >
+                        </div >
 
                         {/* Miscellaneous Links */}
-                        <div className="w-full md:w-1/4 mb-4">
-                            <ul>
-                                <li className="mb-1 hover:underline cursor-pointer">Upcoming Events</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Post Events</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Event Chat</li>
-                                <li className="mb-1 hover:underline cursor-pointer">Support</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                        <div className="w-full md:w-1/4 mb-4" >
+                            <ul >
+                                <li className="mb-1 hover:underline cursor-pointer" >Upcoming Events</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Post Events</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Event Chat</li >
+                                <li className="mb-1 hover:underline cursor-pointer" >Support</li >
+                            </ul >
+                        </div >
+                    </div >
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 
