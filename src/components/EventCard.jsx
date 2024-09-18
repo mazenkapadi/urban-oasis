@@ -8,7 +8,7 @@ function EventCard() {
     return (
         <>
             <div className="event-card p-5">
-                <div className="box-border rounded-lg bg-gray-900 p-3 flex h-full w-full bg-cover bg-center hover:scale-110"
+                <div className="box-border rounded-lg bg-gray-900 p-2 flex h-52 w-80 bg-cover bg-center hover:scale-110"
                      style={{backgroundImage: "url('src/assets/backgroundTestImage.jpg')"}}>
                     <div className="flex flex-col p-4">
                         <label className="block text-gray-300 pb-1 text-2xl">Event Title</label>
