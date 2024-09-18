@@ -11,7 +11,6 @@ function EventCard() {
                 <div className="box-border rounded-lg bg-gray-900 p-3 flex h-full w-full bg-cover bg-center hover:scale-110"
                      style={{backgroundImage: "url('src/assets/backgroundTestImage.jpg')"}}>
                     <div className="flex flex-col p-4">
-                        <label className="block text-gray-200 opacity-50 pb-1">Date</label>
                         <label className="block text-gray-300 pb-1 text-2xl">Event Title</label>
                         <div className={"flex flex-row"}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
@@ -24,21 +23,15 @@ function EventCard() {
                             <label className="block text-gray-200 opacity-50 pb-1">Event Location</label>
                         </div>
 
-                        <div className="flex flex-row pt-20 gap-32">
-                            <label className="block text-gray-300 opacity-50 pb-1">Capacity</label>
+                        <div className="flex flex-row pt-10 gap-32">
+                            <label className="block text-gray-300 opacity-50 pb-1">Date</label>
                             <label className="block text-gray-300 opacity-50 pb-1">Ticket Price</label>
                         </div>
 
                         <div className="flex flex-row gap-32">
-                            <label className="block text-gray-300 pb-1 text-2xl">{capacity}/{totalCapacity}</label>
+                            <label className="block text-gray-300 pb-1 text-2xl">Date</label>
                             <label className="block text-gray-300 pb-1 text-2xl">${ticketPrice.toFixed(2)}</label>
                         </div>
-                        <button
-                            className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 hover:bg-blue-300"
-                            aria-label="View Event"
-                        >
-                            View Event
-                        </button>
                     </div>
                 </div>
             </div>
