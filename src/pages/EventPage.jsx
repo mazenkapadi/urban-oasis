@@ -116,7 +116,7 @@ function EventPage() {
                                 </svg>
 
                                 <button onClick={handleCheckout}
-                                        style={{color: "white", paddingLeft: "10px", fontWeight: "bold"}}>Add to Cart
+                                        style={{color: "white", paddingLeft: "10px", fontWeight: "bold"}}>RSVP
                                 </button>
                             </div>
                         </div>
