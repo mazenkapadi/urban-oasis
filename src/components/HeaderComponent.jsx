@@ -144,7 +144,7 @@ const HeaderComponent = () => {
                     <div className="flex items-center mb-4 md:mb-0" >
                         {/* Logo Section */}
                         <img
-                            src="src/assets/Oasis.png"
+                            src="../../public/assets/Oasis.png"
                             alt="Oasis Logo"
                             className="w-12 h-auto" // Increase width to 48px and maintain aspect ratio
                         />
