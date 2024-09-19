@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 
 function EventCard() {
-    const [capacity, setCapacity] = useState(23);
-    const [totalCapacity] = useState(50);
     const [ticketPrice, setTicketPrice] = useState(10.99);
 
     return (

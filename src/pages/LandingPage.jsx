@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
+import EventCarousel from "../components/EventCarousel.jsx";
 
 function LandingPage() {
 
@@ -28,12 +29,12 @@ function LandingPage() {
                         onClick={handleSignIn}
                     > Sign In
                     </button >
+                    <EventCarousel />
                 </div >
             </div >
             <FooterComponent />
         </>
     )
-
 }
 
 export default LandingPage;

@@ -1,49 +1,73 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from "react";
+import Slider from "react-slick";
+import { db } from "../firebaseConfig.js";
+import EventCard from "./EventCard.jsx";
+import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@heroicons/react/20/solid/index.js";
 
-function EventCarousel({ events }) {
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const carouselRef = useRef(null);
-
-    const handleScroll = (direction) => {
-        const carousel = carouselRef.current;
-        const scrollAmount = carousel.offsetWidth / 3; // Adjust scroll amount as needed
-
-        setScrollPosition((prevPosition) =>
-            Math.max(0, Math.min(prevPosition + (direction === 'left' ? -scrollAmount : scrollAmount), carousel.scrollWidth - carousel.offsetWidth))
-        );
-    };
+const EventCarousel = () => {
+    const [ events, setEvents ] = useState([]);
 
     useEffect(() => {
-        carouselRef.current.scrollLeft = scrollPosition;
-    }, [scrollPosition]);
+
+        const getStartAndEndOfWeek = () => {
+            const today = new Date();
+            const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1); // Adjust if Sunday should be the first day
+            const startOfWeek = new Date(today.setDate(firstDayOfWeek));
+            const endOfWeek = new Date(today.setDate(firstDayOfWeek + 6));
+            return {startOfWeek, endOfWeek};
+        };
+
+        const {startOfWeek, endOfWeek} = getStartAndEndOfWeek();
+
+        // Fetch events from Firestore
+        const fetchEvents = async () => {
+            try {
+                const snapshot = await db.collection('Events').get();
+                const eventsList = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+
+                const eventsThisWeek = eventsList.filter(event => {
+                    const eventDate = new Date(event.date);
+                    return eventDate >= startOfWeek && eventDate <= endOfWeek;
+                });
+
+                setEvents(eventsThisWeek);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
+
+        fetchEvents();
+    }, []);
+
+    const settings = {
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        swipeToSlide: true,
+        touchThreshold: 10,
+        swipe: true
+    };
 
     return (
-        <div className="relative">
-            <div className="flex overflow-x-auto scroll-smooth" ref={carouselRef}>
-
-            </div>
-
-            <button
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full"
-                onClick={() => handleScroll('left')}
-            >
-                &gt;
-            </button>
-            <button
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-full"
-                onClick={() => handleScroll('right')}
-            >
-                &lt;
-            </button>
-
-            <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                    className="h-full bg-gray-400 rounded-full"
-                    style={{ width: `${(scrollPosition / (carouselRef.current?.scrollWidth - carouselRef.current?.offsetWidth || 1)) * 100}%` }}
-                ></div>
-            </div>
-        </div>
-    );
+        <>
+            <div className="carousel-container py-4 px-2" >
+                <div className="flex justify-between items-center p-5" >
+                    <h2 className="text-3xl font-bold" >Events This Week</h2 >
+                    <Link to="/" className="flex items-center text-blue-500 hover:underline" >
+                        View All Events
+                        <ChevronRightIcon className="ml-1 h-5 w-5" />
+                    </Link >
+                </div >
+                <Slider {...settings}>
+                    {events.map(event => (
+                        <EventCard key={event.id} event={event} />
+                    ))}
+                </Slider >
+            </div >
+        </>
+    )
 }
 
 export default EventCarousel;
