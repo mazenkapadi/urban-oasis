@@ -120,7 +120,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchBarComponent from "./SearchBarComponent"; // Import the new component
+import SearchBarComponent from "./SearchBarComponent";
 
 const HeaderComponent = () => {
     const navigate = useNavigate();

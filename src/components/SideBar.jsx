@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import { BiTask, BiBookAlt } from 'react-icons/bi';
 import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon } from "@heroicons/react/20/solid";
 
-
 const Sidebar = () => {
     return (
-        <div className="menu bg-gray-100 min-h-screen p-4">
+        <div className="menu bg-gray-100 min-h-screen p-4 w-64"> {/* Added width class */}
             <div className="logo flex items-center mb-6">
                 <BiBookAlt className="logo-icon h-6 w-6 text-2xl mr-2" />
                 <h2 className="text-xl font-bold text-gray-700">UrbanOasis</h2>
@@ -39,3 +38,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
