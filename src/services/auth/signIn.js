@@ -12,6 +12,7 @@ class SignIn {
             const userDoc = await getDoc(doc(db,"Users", user.uid));
             if(!userDoc.exists()) {
                 await setDoc(doc(db, "Users", user.uid), {
+                    prefix: "",
                     firstName: user.displayName.split(" ") [0],
                     lastName: user.displayName.split(" ") [1] || "",
                     email: user.email,

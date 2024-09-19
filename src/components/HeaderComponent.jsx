@@ -23,7 +23,7 @@ const HeaderComponent = () => {
                     {/* Logo Section */}
                     <div className="flex items-center mb-4 md:mb-0">
                         <img
-                            src="../../public/assets/Oasis.png"
+                            src="../../assets/Oasis.png"
                             alt="Oasis Logo"
                             className="w-12 h-auto"
                         />
