@@ -11,6 +11,7 @@ import NotFound from "./pages/404NotFound.jsx";
 import UserPage from "./pages/UserProfile.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import EventPage from "./pages/EventPage.jsx";
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
     {
         path: "/userPage",
         element: <UserPage />
+    },
+    {
+        path: "/eventPage",
+        element: <EventPage />
     },
     {
         path: "*",
