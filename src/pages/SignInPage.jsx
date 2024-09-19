@@ -105,7 +105,7 @@ function SignInPage() {
 
                             <div className="flex flex-col items-center justify-center px-2" >
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4"
+                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 hover:bg-black hover:text-white"
                                     aria-label="Sign In"
                                     onClick={handleSignInWithEmail}
                                 >
@@ -123,12 +123,12 @@ function SignInPage() {
                                 </div >
 
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center"
+                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center transition-colors duration-300 hover:bg-black hover:text-white"
                                     aria-label="Sign In with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5" width="24"
-                                         height="24" />
+                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5"
+                                         width="24" height="24" />
                                     <p className="ml-2" >Sign In with Google</p >
                                 </button >
                             </div >

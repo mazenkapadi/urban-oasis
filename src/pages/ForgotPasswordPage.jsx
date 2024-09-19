@@ -7,6 +7,7 @@ function SignInPage() {
 
     const navigate = useNavigate();
     const [ email, setEmail ] = useState('');
+    const [ loading, setLoading ] = useState(false);
 
     //TODO: Fix resetPasswordHandler
 
@@ -15,11 +16,14 @@ function SignInPage() {
             alert("Email is required")
             return
         }
+
         try {
             await PasswordReset.resetPassword(email);
-            navigate('/signIn')
+            navigate('/signin');
         } catch (error) {
             console.error('Error resetting password', error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -48,10 +52,11 @@ function SignInPage() {
                             </div >
                             <div className="flex flex-col items-center justify-center px-2" >
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4"
+                                    className={`bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 ease-in-out ${loading ? 'bg-gray-400' : 'hover:bg-black hover:text-white'}`}
                                     onClick={handleResetPassword}
+                                    disabled={loading}
                                 >
-                                    Reset Password
+                                    {loading ? 'Sending...' : 'Reset Password'}
                                 </button >
                             </div >
                         </div >

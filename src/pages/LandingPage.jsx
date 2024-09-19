@@ -10,6 +10,12 @@ function LandingPage() {
         navigate('/signIn')
     }
 
+    const images = [
+        'https://via.placeholder.com/600x400?text=Slide+1',
+        'https://via.placeholder.com/600x400?text=Slide+2',
+        'https://via.placeholder.com/600x400?text=Slide+3',
+    ];
+
     return (
         <>
             <HeaderComponent />
