@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import SearchBar from "../components/WeatherSearchComponent";
 import CurrentWeather from "../components/CurrentWeatherComponent";
@@ -71,5 +72,4 @@ const WeatherPage = () => {
     </div>
   );
 };
-
 export default WeatherPage;
