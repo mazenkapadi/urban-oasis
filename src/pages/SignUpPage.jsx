@@ -54,7 +54,7 @@ function SignUpPage() {
     const validatePassword = (password) => PASSWORD_REGEX.test(password);
 
     const handleSignUpWithEmail = async () => {
-        if (!email || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword || !firstName || !lastName) {
             setError('All fields are required');
             return;
         }
@@ -74,7 +74,7 @@ function SignUpPage() {
             return;
         }
         try {
-            await signUp.signUpWithEmail(email, password);
+            await signUp.signUpWithEmail(firstName, lastName, email, password);
             setError(null);
         } catch (error) {
             setError(error.message);
