@@ -103,27 +103,6 @@ function SignUpPage() {
 
                             {error && <div className="text-red-500 text-sm p-2" >{error}</div >}
 
-                            {/*<div className="p-2" >*/}
-                            {/*    <label className="block text-gray-300 pb-1" htmlFor="email" >First Name</label >*/}
-                            {/*    <input*/}
-                            {/*        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"*/}
-                            {/*        id="firstName"*/}
-                            {/*        type="text"*/}
-                            {/*        placeholder="your@email.com"*/}
-                            {/*        value={firstName}*/}
-                            {/*        onChange={(e) => setFirstName(e.target.value)}*/}
-                            {/*    />*/}
-                            {/*    <label className="block text-gray-300 pb-1" htmlFor="email" >Last Name</label >*/}
-                            {/*    <input*/}
-                            {/*        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"*/}
-                            {/*        id="lastName"*/}
-                            {/*        type="text"*/}
-                            {/*        placeholder="your@email.com"*/}
-                            {/*        value={lastName}*/}
-                            {/*        onChange={(e) => setLastName(e.target.value)}*/}
-                            {/*    />*/}
-                            {/*</div >*/}
-
                             <div className="p-2" >
                                 <div className="flex space-x-4" >
                                     {/* First Name */}
@@ -209,11 +188,11 @@ function SignUpPage() {
 
                             <div className="flex flex-col items-center justify-center px-2" >
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4"
-                                    aria-label="Sign In"
+                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 hover:bg-black hover:text-white"
+                                    aria-label="Sign Up"
                                     onClick={handleSignUpWithEmail}
                                 >
-                                    Sign In
+                                    Sign Up
                                 </button >
 
                                 <p className="text-sm text-gray-400 mt-4 mb-2" >
@@ -226,14 +205,16 @@ function SignUpPage() {
                                     <hr className="flex-grow border-t border-gray-400" />
                                 </div >
 
+
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center"
-                                    aria-label="Sign In with Google"
+                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center transition-colors duration-300 hover:bg-black hover:text-white"
+                                    aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5" width="24"
+                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5"
+                                         width="24"
                                          height="24" />
-                                    <p className="ml-2" >Sign In with Google</p >
+                                    <p className="ml-2" >Sign Up with Google</p >
                                 </button >
                             </div >
                         </div >
