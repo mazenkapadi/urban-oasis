@@ -18,28 +18,17 @@ import SettingsPage from './pages/SettingsPage.jsx';
 import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
+
+import UserPage from "./pages/UserProfile.jsx";
 import WeatherPage from "./pages/WeatherPage.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
-import HeaderComponent from "./components/HeaderComponent.jsx";
-import FooterComponent from "./components/FooterComponent.jsx";
-import EventPage from "./pages/EventPage.jsx";
-import EventCreationPage from "./pages/EventCreationPage.jsx";
-import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LandingPage />
-    },
-    {
-        path: "/eventPage",
-        element: <EventPage />
-    },
-    {
-        path: "/eventCreation",
-        element: <EventCreationPage />
     },
     {
         path: "/signIn",
@@ -57,12 +46,11 @@ const router = createBrowserRouter([
         path: "/userProfilePage",
         element: <UserProfilePage />,
         children: [
-            {index: true, element: <UserProfileContent />},
-            {path: "contact-info", element: <ContactInfoPage />},
-            {path: "settings", element: <SettingsPage />},
-            {path: "payments", element: <PaymentsPage />},
-            {path: "support", element: <SupportPage />},
-            {path: "host-dashboard", element: <HostSignUpPage />}
+            { index: true, element: <UserProfileContent /> },
+            { path: "contact-info", element: <ContactInfoPage /> },
+            { path: "settings", element: <SettingsPage /> },
+            { path: "payments", element: <PaymentsPage /> },
+            { path: "support", element: <SupportPage /> },
         ]
     },
     {
@@ -80,7 +68,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode >
+    <StrictMode>
         <RouterProvider router={router} />
-    </StrictMode >
+    </StrictMode>
 );
