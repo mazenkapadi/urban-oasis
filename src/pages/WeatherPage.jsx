@@ -72,5 +72,4 @@ const WeatherPage = () => {
     </div>
   );
 };
-
 export default WeatherPage;
