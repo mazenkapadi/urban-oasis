@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 .date-picker::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(100%);
+    filter: invert(1) brightness(100%);
 }
 
+.rotate-180 {
+    transform: rotate(180deg);
+}
