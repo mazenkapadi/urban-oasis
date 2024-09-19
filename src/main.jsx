@@ -18,6 +18,8 @@ import SettingsPage from './pages/SettingsPage.jsx';
 import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
+
+import UserPage from "./pages/UserProfile.jsx";
 import WeatherPage from "./pages/WeatherPage.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
