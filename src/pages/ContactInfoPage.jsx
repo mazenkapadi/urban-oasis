@@ -48,7 +48,7 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value="Deepa"
+                            value=""
                         />
                     </div>
                     <div className="col-span-1">
@@ -56,7 +56,7 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value="Mondal"
+                            value=""
                         />
                     </div>
                     <div className="col-span-1">

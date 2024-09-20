@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 
 const SettingsPage = () => {
-    const [email, setEmail] = useState('deepa.mondal321@gmail.com');
+    const [email, setEmail] = useState('kittymeow@gmail.com');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
     const [preferences, setPreferences] = useState({
         attendingEvents: {
             updates: false,
-            guide: false,
             requests: false,
             unsubscribe: false,
         },
@@ -42,6 +41,10 @@ const SettingsPage = () => {
         alert('Preferences saved!');
     };
 
+    const handleAccountClosure = () => {
+        alert("Account has been closed. We're sorry to see you go.");
+    };
+
     const togglePreference = (category, key) => {
         setPreferences((prev) => ({
             ...prev,
@@ -52,7 +55,7 @@ const SettingsPage = () => {
         }));
     };
 
-    const buttonClass = "bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition w-1/2 max-w-xs";
+    const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
@@ -110,6 +113,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('attendingEvents', 'updates')}
                                         className="mr-2"
                                     />
+                                    Stay updated on the latest UrbanOasis features, announcements, and special offers curated just for you.
                                 </label>
                                 <label className="block">
                                     <input
@@ -152,6 +156,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('notifications', 'organizer')}
                                         className="mr-2"
                                     />
+                                    Receive updates when your favorite hosts announces a new event
                                 </label>
                                 <label className="block">
                                     <input
@@ -160,6 +165,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('notifications', 'collections')}
                                         className="mr-2"
                                     />
+                                    Reminders about the events you have RSVP'd
                                 </label>
                                 <label className="block">
                                     <input
@@ -184,8 +190,7 @@ const SettingsPage = () => {
 
                         {/* Organizing Events */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-2">Organizing Events</h3>
-                            <p className="text-gray-600 mb-2">Helpful updates and tips for organizing events on UrbanOasis</p>
+                            <h3 className="text-lg font-semibold mb-2">Hosting Events</h3>
                             <div className="space-y-2">
                                 <label className="block">
                                     <input
@@ -194,7 +199,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'updates')}
                                         className="mr-2"
                                     />
-                                    Updates about new UrbanOasis features and announcements
+                                    Updates about new UrbanOasis features and announcements for hosts
                                 </label>
                                 <label className="block">
                                     <input
@@ -203,7 +208,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'tips')}
                                         className="mr-2"
                                     />
-                                    Monthly tips and tools for organizing events
+                                    Monthly tips and tools for hosting events
                                 </label>
                                 <label className="block">
                                     <input
@@ -221,7 +226,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'unsubscribe')}
                                         className="mr-2"
                                     />
-                                    Unsubscribe from all UrbanOasis newsletters and updates for event organizers
+                                    Unsubscribe from all UrbanOasis newsletters and updates for hosts
                                 </label>
                                 <label className="block">
                                     <input
@@ -230,7 +235,7 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('organizingEvents', 'reminders')}
                                         className="mr-2"
                                     />
-                                    Important reminders for my next event
+                                    Important reminders for my upcoming events
                                 </label>
                                 <label className="block">
                                     <input
@@ -251,6 +256,18 @@ const SettingsPage = () => {
                             Save Preferences
                         </button>
                     </form>
+                </div>
+
+                {/* Close Account Section */}
+                <div>
+                    <h2 className="text-xl font-bold mb-4">Close Account</h2>
+                    <p className="text-gray-600 mb-4">You must have a password associated with your account prior to being able to close it.</p>
+                    <button
+                        onClick={handleAccountClosure}
+                        className={buttonClass}
+                    >
+                        Close Account
+                    </button>
                 </div>
             </div>
 
