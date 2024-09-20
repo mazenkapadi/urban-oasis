@@ -52,7 +52,6 @@ const SettingsPage = () => {
         }));
     };
 
-
     const buttonClass = "bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition w-1/2 max-w-xs";
 
     return (
@@ -103,7 +102,6 @@ const SettingsPage = () => {
                         {/* Attending Events */}
                         <div>
                             <h3 className="text-lg font-semibold mb-2">Attending Events</h3>
-                            <p className="text-gray-600 mb-2"></p>
                             <div className="space-y-2">
                                 <label className="block">
                                     <input
@@ -112,7 +110,6 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('attendingEvents', 'updates')}
                                         className="mr-2"
                                     />
-                                   Stay updated on the latest UrbanOasis features, announcements, and special offers curated just for you.
                                 </label>
                                 <label className="block">
                                     <input
@@ -155,7 +152,6 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('notifications', 'organizer')}
                                         className="mr-2"
                                     />
-                                    Receive updates when your favorite hosts announces a new event
                                 </label>
                                 <label className="block">
                                     <input
@@ -164,7 +160,6 @@ const SettingsPage = () => {
                                         onChange={() => togglePreference('notifications', 'collections')}
                                         className="mr-2"
                                     />
-                                    Reminders about the events you have RSVP'd
                                 </label>
                                 <label className="block">
                                     <input
