@@ -1,17 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import { BiTask, BiBookAlt } from 'react-icons/bi';
 import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon } from "@heroicons/react/20/solid";
 
 const Sidebar = () => {
     return (
-        <div className="menu bg-gray-100 min-h-screen p-4 w-64"> {/* Added width class */}
-            <div className="logo flex items-center mb-6">
+        <div className="flex flex-col bg-white shadow-lg rounded-lg p-7 w-64 h-full">
+            {/* Logo Section */}
+            <div className="logo flex items-center mb-6 flex-shrink-0">
                 <BiBookAlt className="logo-icon h-6 w-6 text-2xl mr-2" />
                 <h2 className="text-xl font-bold text-gray-700">UrbanOasis</h2>
             </div>
 
-            <div className="menu--list space-y-2">
+            {/* Menu List */}
+            <div className="menu--list space-y-2 flex-grow">
                 <Link to="/userProfilePage" className="item flex items-center p-3 rounded hover:bg-gray-300 transition">
                     <HomeIcon className="h-6 w-6 mr-2" />
                     <span>Profile</span>
