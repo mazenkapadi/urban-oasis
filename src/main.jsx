@@ -16,7 +16,7 @@ import ContactInfoPage from './pages/ContactInfoPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
-import UserProfileContent from './components/UserProfileContent.jsx'; // Use combined component
+import UserProfileContent from './components/UserProfileContent.jsx';
 
 const router = createBrowserRouter([
     {

@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useState } from 'react';
 
 const states = [
     "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
@@ -13,6 +12,24 @@ const states = [
 ];
 
 const ContactInfoPage = () => {
+    const [prefix, setPrefix] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [suffix, setSuffix] = useState('');
+    const [homePhone, setHomePhone] = useState('');
+    const [cellPhone, setCellPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [address2, setAddress2] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+
+    const handleSave = (e) => {
+        e.preventDefault();
+        // Add your save logic here
+        alert("Changes Saved");
+    };
+
     return (
         <div className="p-8 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Account Information</h1>
@@ -33,10 +50,14 @@ const ContactInfoPage = () => {
             {/* Contact Information Section */}
             <div className="mb-10">
                 <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
-                <form className="grid grid-cols-2 gap-6">
+                <form className="grid grid-cols-2 gap-6" onSubmit={handleSave}>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Prefix</label>
-                        <select className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none">
+                        <select
+                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={prefix}
+                            onChange={(e) => setPrefix(e.target.value)} // Added onChange
+                        >
                             <option value="">--</option>
                             <option value="Mr">Mr</option>
                             <option value="Ms">Ms</option>
@@ -48,7 +69,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value=""
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
@@ -56,7 +78,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value=""
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
@@ -64,6 +87,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={suffix}
+                            onChange={(e) => setSuffix(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
@@ -71,6 +96,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={homePhone}
+                            onChange={(e) => setHomePhone(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
@@ -78,6 +105,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={cellPhone}
+                            onChange={(e) => setCellPhone(e.target.value)} // Added onChange
                         />
                     </div>
                 </form>
@@ -92,6 +121,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-2">
@@ -99,6 +130,8 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={address2}
+                            onChange={(e) => setAddress2(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
@@ -106,11 +139,17 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)} // Added onChange
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">State</label>
-                        <select className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none">
+                        <select
+                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={state}
+                            onChange={(e) => setState(e.target.value)} // Added onChange
+                        >
                             <option value="">Select a State</option>
                             {states.map((state) => (
                                 <option key={state} value={state}>
@@ -133,11 +172,12 @@ const ContactInfoPage = () => {
                         <input
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={zip}
+                            onChange={(e) => setZip(e.target.value)} // Added onChange
                         />
                     </div>
                 </form>
             </div>
-
 
             <button
                 type="submit"
