@@ -19,6 +19,8 @@ import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import PhotoCarousel from "./components/PhotoCarousel.jsx";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -46,6 +48,10 @@ const router = createBrowserRouter([
             { path: "payments", element: <PaymentsPage /> },
             { path: "support", element: <SupportPage /> },
         ]
+    },
+    {
+        path: "/photoCarousel",
+        element: <PhotoCarousel />
     },
     {
         path: "*",
