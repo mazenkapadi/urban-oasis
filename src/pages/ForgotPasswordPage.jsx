@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
+import PasswordReset from "../services/auth/ResetPassword.js";
 
 function SignInPage() {
 
@@ -28,9 +29,12 @@ function SignInPage() {
 
     return (
         <>
-            <div className="flex items-center w-screen" >
-                <AuthLeftComponent />
-                <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center" >
+            <div className="flex w-screen h-screen" >
+                <div className="flex-[3]" >
+                    <AuthLeftComponent />
+                </div >
+
+                <div className="flex-[2] h-screen bg-blue-800 p-4 flex items-center justify-center" >
                     <div
                         className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
                         <div className="content w-full" >
