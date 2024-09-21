@@ -1,4 +1,3 @@
-
 import {useState} from 'react';
 import eventCreation from "../services/eventCreation.js";
 
@@ -9,14 +8,19 @@ function EventCreationPage() {
     const [eventLocation, setEventLocation] = useState('');
     const [eventDate, setEventDate] = useState('');
     const [eventTime, setEventTime] = useState('');
-    const [eventCapacity, setEventCapacity] = useState('');
-    const [eventImage, setEventImage] = useState(null);
+    const [eventCapacity, setEventCapacity] = useState(0);
+    const [eventImages, setEventImages] = useState([]);
     const [eventPrice, setEventPrice] = useState('');
     const [isPaidEvent, setIsPaidEvent] = useState(false);
     const [setError] = useState(null);
     const [petAllowance, setPetAllowance] = useState(false);
     const [refundAllowance, setRefundAllowance] = useState(false);
     const [refundPolicy, setRefundPolicy] = useState('');
+    const [ageRestriction, setAgeRestriction] = useState('');
+    const [fbAvail, setFbAvail] = useState(false);
+    const [merchAvailability, setMerchAvailability] = useState(false);
+    const [alcAvail, setAlcAvail] = useState(false);
+    const [alcInfo, setAlcInfo] = useState('');
 
 
     const handleSubmit = async () => {
@@ -32,11 +36,17 @@ function EventCreationPage() {
             date: eventDate,
             time: eventTime,
             capacity: eventCapacity,
-            image: eventImage,
+            image: eventImages,
             paidEvent: isPaidEvent,
             eventPrice: isPaidEvent ? eventPrice : null,
             petAllowance: petAllowance,
-            refundAllowance: refundAllowance ? refundAllowance : null,
+            refundAllowance: refundAllowance,
+            refundPolicy: refundAllowance ? refundPolicy : null,
+            ageRestriction: ageRestriction,
+            fbAvail: fbAvail,
+            merchAvailability: merchAvailability,
+            alcAvail: alcAvail,
+            alcInfo: alcAvail ? alcInfo : null,
         };
 
         try {
@@ -124,25 +134,30 @@ function EventCreationPage() {
                             <label htmlFor="eventCapacity" className="text-italic font-bold text-slate-900">
                                 Capacity
                             </label>
+
                             <input
                                 type="number"
                                 id="eventCapacity"
                                 value={eventCapacity}
-                                onChange={(e) => setEventCapacity(e.target.value)}
+                                onChange={(e) => {
+                                    const parsedValue = parseInt(e.target.value, 10) || 0;
+                                    setEventCapacity(Math.max(parsedValue, 0));
+                                }}
                                 placeholder="Enter event capacity"
-                                className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                                className="pb-3 w-72 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-center"
                             />
                         </div>
 
                         <div className="flex flex-col">
-                            <label htmlFor="eventImage" className="text-italic font-bold text-slate-900">
+                            <label htmlFor="eventImages" className="text-italic font-bold text-slate-900">
                                 Image
                             </label>
                             <input
                                 type="file"
-                                id="eventImage"
+                                id="eventImages"
                                 accept="image/*"
-                                onChange={(e) => setEventImage(e.target.files[0])}
+                                multiple
+                                onChange={(e) => setEventImages(e.target.files)}
                                 className="pb-3 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
 
                             />
@@ -153,29 +168,18 @@ function EventCreationPage() {
                                 Is this a paid event?
                             </label>
 
-                            <div className="flex flex-row space-x-3">
-                                <label htmlFor="isPaidEventNo">Yes </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventYes"
-                                    name="isPaidEvent"
-                                    value="true"
-                                    checked={isPaidEvent}
-                                    onChange={() => setIsPaidEvent(true)}
-                                />
-                            </div>
-
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="isPaidEventNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventNo"
-                                    name="isPaidEvent"
-                                    value="false"
-                                    checked={!isPaidEvent}
-                                    onChange={() => setIsPaidEvent(false)}
-                                />
-                            </div>
+                            <select id="isPaidEvent" value={isPaidEvent} onChange={() => {
+                                setIsPaidEvent(!isPaidEvent)
+                                if (!isPaidEvent) {
+                                    setEventPrice('')
+                                    setRefundAllowance(false)
+                                    setRefundPolicy('')
+                                }
+                            }}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
 
                             {isPaidEvent && (
                                 <div className="flex flex-col">
@@ -191,81 +195,122 @@ function EventCreationPage() {
                                             setEventPrice(`$${price}`);
                                         }}
                                         placeholder="Enter ticket price"
-                                        className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                                        className="w-44 rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                                     />
                                 </div>
                             )}
                         </div>
 
+                        {isPaidEvent && (
+                            <div className="flex flex-col">
+                                <label htmlFor="refundAllowance" className="text-italic font-bold text-slate-900">
+                                    Allow Refunds?
+                                </label>
+                                <select id="refundAllowance" value={refundAllowance}
+                                        onChange={() => {
+                                            setRefundAllowance(!refundAllowance)
+                                            if (!refundAllowance) {
+                                                setRefundPolicy('')
+                                            }
+                                        }}
+                                        className="rounded-lg w-44 h-12 text-2xl text-center">
+                                    <option value={true}>Yes</option>
+                                    <option value={false}>No</option>
+                                </select>
+
+                                {refundAllowance && (
+                                    <div className="flex flex-col">
+                                        <label htmlFor="refundPolicy"
+                                               className="pt-3 text-italic font-bold text-slate-900">
+                                            Refund Policy
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="refundPolicy"
+                                            value={refundPolicy}
+                                            onChange={(e) => setRefundPolicy(e.target.value)}
+                                            placeholder="Enter refund policy"
+                                            className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="flex flex-col">
                             <label htmlFor="petAllowance" className="text-italic font-bold text-slate-900">
                                 Allow Pets?
                             </label>
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="petAllowanceNo">Yes</label>
-                                <input
-                                    type="radio"
-                                    id="petAllowanceNo"
-                                    name="petAllowance"
-                                    value="false"
-                                    checked={petAllowance}
-                                    onChange={() => setPetAllowance(true)}
-                                />
-                            </div>
-                            <div className="flex flex-row space-x-5">
-                                <label htmlFor="petAllowanceNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="petAllowanceNo"
-                                    name="petAllowance"
-                                    value="false"
-                                    checked={!petAllowance}
-                                    onChange={() => setPetAllowance(false)}
-                                />
-                            </div>
+                            <select id="petAllowance" value={petAllowance}
+                                    onChange={() => setPetAllowance(!petAllowance)}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
                         </div>
 
                         <div className="flex flex-col">
-                            <label htmlFor="refundAllowance" className="text-italic font-bold text-slate-900">
-                                Allow Refunds?
+                            <label htmlFor="ageRestriction" className="text-italic font-bold text-slate-900">
+                                What ages are allowed?
                             </label>
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="refundAllowanceNo">Yes</label>
-                                <input
-                                    type="radio"
-                                    id="refundAllowanceNo"
-                                    name="refundAllowance"
-                                    value="false"
-                                    checked={refundAllowance}
-                                    onChange={() => setRefundAllowance(true)}
-                                />
-                            </div>
+                            <select id="ageRestriction" value={ageRestriction}
+                                    onChange={(e) => setAgeRestriction(e.target.value)}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={'All'}>All</option>
+                                <option value={'13+'}>13+</option>
+                                <option value={'18+'}>18+</option>
+                                <option value={'21+'}>21+</option>
+                                ß
+                            </select>
+                        </div>
 
-                            <div className="flex flex-row space-x-5">
-                                <label htmlFor="refundAllowanceNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="refundAllowanceNo"
-                                    name="refundAllowance"
-                                    value="false"
-                                    checked={!refundAllowance}
-                                    onChange={() => setRefundAllowance(false)}
-                                />
-                            </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="fbAvail" className="text-italic font-bold text-slate-900">
+                                Is food and beverage available for purchase?
+                            </label>
+                            <select id="fbAvail" value={fbAvail}
+                                    onChange={() => setFbAvail(!fbAvail)}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
 
-                            {refundAllowance && (
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label htmlFor="merchAvailability" className="text-italic font-bold text-slate-900">
+                                Is merchandise available for purchase?
+                            </label>
+                            <select id="merchAvailability" value={merchAvailability}
+                                    onChange={() => setMerchAvailability(!merchAvailability)}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
+
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label htmlFor="alcAvail" className="text-italic font-bold text-slate-900">
+                                Is alcohol allowed on premises?
+                            </label>
+                            <select id="alcAvail" value={alcAvail}
+                                    onChange={() => setAlcAvail(!alcAvail)}
+                                    className="rounded-lg w-44 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
+                            {alcAvail && (
                                 <div className="flex flex-col">
-                                    <label htmlFor="refundPolicy" className="pt-3 text-italic font-bold text-slate-900">
-                                        Refund Policy
+                                    <label htmlFor="alcInfo" className="text-italic font-bold text-slate-900">
+                                        Is alcohol available for purchase or BYOB?
                                     </label>
-                                    <input
-                                        type="text"
-                                        id="refundPolicy"
-                                        value={refundPolicy}
-                                        onChange={(e) => setRefundPolicy(e.target.value)}
-                                        placeholder="Enter refund policy"
-                                        className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                                    />
+                                    <select id="alcInfo" value={alcInfo}
+                                            onChange={(e) => setAlcInfo(e.target.value)}
+                                            className="rounded-lg w-44 h-12 text-2xl text-center">
+                                        <option value={'Available'}>Available</option>
+                                        <option value={'BYOB'}>BYOB</option>
+                                    </select>
                                 </div>
                             )}
                         </div>
