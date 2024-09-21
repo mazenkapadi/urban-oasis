@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect,  } from "react";
 import Slider from "react-slick";
 import { db } from "../firebaseConfig.js";
 import EventCard from "./EventCard.jsx";

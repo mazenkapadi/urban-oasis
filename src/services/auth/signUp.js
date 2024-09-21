@@ -23,9 +23,9 @@ class SignUp {
             });
 
             console.log('Email sign-up successful:', user);
-            return userCredential;
+            return user;
         } catch (error) {
-            console.error('Error signing up with email', error);// Re-throw the error to handle it in the calling code if needed
+            console.error('Error signing up with email', error);
         }
     }
 }

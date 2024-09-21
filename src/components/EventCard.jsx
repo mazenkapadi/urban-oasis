@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { MapPinIcon } from '@heroicons/react/24/outline'; // Import HeroIcon
 
 function EventCard() {
     const [ticketPrice, setTicketPrice] = useState(10.99);
@@ -6,36 +7,72 @@ function EventCard() {
     return (
         <>
             <div className="event-card p-5">
-                <div className="box-border rounded-lg bg-gray-900 p-2 flex h-52 w-80 bg-cover bg-center hover:scale-110"
-                     style={{backgroundImage: "url('src/assets/backgroundTestImage.jpg')"}}>
-                    <div className="flex flex-col p-4">
-                        <label className="block text-gray-300 pb-1 text-2xl">Event Title</label>
-                        <div className={"flex flex-row"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                                 stroke="white" className="size-6" style={{ opacity: .5}}>
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
-                            </svg>
-                            <label className="block text-gray-200 opacity-50 pb-1">Event Location</label>
+                {/* Card container with background image */}
+                <div
+                    className="box-border rounded-lg bg-gray-900 p-4 flex flex-col justify-between h-52 w-80 bg-cover bg-center hover:scale-105 transition-transform"
+                    style={{ backgroundImage: "url('src/assets/backgroundTestImage.jpg')" }}
+                >
+                    {/* Top section with title and location */}
+                    <div>
+                        <h3 className="text-white text-2xl font-bold">Event Title</h3>
+                        <div className="flex items-center text-gray-300 opacity-75 mt-1">
+                            <MapPinIcon className="w-5 h-5 mr-1" /> {/* HeroIcon map-pin */}
+                            <p>Event Location</p>
                         </div>
+                    </div>
 
-                        <div className="flex flex-row pt-10 gap-32">
-                            <label className="block text-gray-300 opacity-50 pb-1">Date</label>
-                            <label className="block text-gray-300 opacity-50 pb-1">Ticket Price</label>
+
+                    <div className="flex justify-between items-end">
+                        <div className="text-white opacity-75">
+                            <p className="text-lg">Date</p>
                         </div>
-
-                        <div className="flex flex-row gap-32">
-                            <label className="block text-gray-300 pb-1 text-2xl">Date</label>
-                            <label className="block text-gray-300 pb-1 text-2xl">${ticketPrice.toFixed(2)}</label>
+                        <div className="text-white">
+                            <p className="text-lg font-bold">${ticketPrice.toFixed(2)}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </>
-
-    )
+    );
 }
 
 export default EventCard;
+
+
+// import React from "react";
+// import { MapPinIcon } from '@heroicons/react/24/outline'; // Import HeroIcon
+//
+// function EventCard({ event }) {
+//     const { title, location, date, price } = event; // Destructure event data
+//
+//     return (
+//         <div className="event-card p-5">
+//             {/* Card container with background image */}
+//             <div
+//                 className="box-border rounded-lg bg-gray-900 p-4 flex flex-col justify-between h-52 w-80 bg-cover bg-center hover:scale-105 transition-transform"
+//                 style={{ backgroundImage: "url('src/assets/backgroundTestImage.jpg')" }}
+//             >
+//                 {/* Top section with title and location */}
+//                 <div>
+//                     <h3 className="text-white text-2xl font-bold">{title}</h3>
+//                     <div className="flex items-center text-gray-300 opacity-75 mt-1">
+//                         <MapPinIcon className="w-5 h-5 mr-1" /> {/* HeroIcon map-pin */}
+//                         <p>{location}</p>
+//                     </div>
+//                 </div>
+//
+//                 {/* Bottom section with date and ticket price */}
+//                 <div className="flex justify-between items-end">
+//                     <div className="text-white opacity-75">
+//                         <p className="text-lg">{date}</p>
+//                     </div>
+//                     <div className="text-white">
+//                         <p className="text-lg font-bold">${price.toFixed(2)}</p>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+//
+// export default EventCard;
