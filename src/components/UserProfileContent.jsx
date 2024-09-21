@@ -26,7 +26,6 @@ const UserProfileContent = () => {
                         className="rounded-full w-24 h-24 object-cover mb-4"
                     />
                     <h2 className="text-xl font-semibold mb-2">{name}</h2>
-                    <p className="text-gray-500 mb-2">{birthday}</p> {/* Birthday */}
                     <p className="text-gray-700">{phone}</p>
                     <p className="text-gray-700">{email}</p>
                     <button className="mt-4 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition">
