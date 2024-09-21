@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import EventCarousel from "../components/EventCarousel.jsx";
+import PhotoCarousel from "../components/PhotoCarousel.jsx";
 
 function EventPage() {
     const [quantity, setQuantity] = useState(1);
@@ -25,8 +26,9 @@ function EventPage() {
                         <div
                             className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-full h-full gap-4">
 
-                            {/* This is where the photo carousel will go */}
+
                             <div className="box-border rounded-lg bg-amber-500 w-full h-96">
+                                <PhotoCarousel></PhotoCarousel>
                             </div>
 
                             <div className="flex flex-row">
