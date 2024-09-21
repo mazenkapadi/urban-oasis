@@ -1,6 +1,7 @@
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../../firebaseConfig.js";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useNavigate} from "react-router-dom";
 
 class SignIn {
     async signInWithGoogle() {
@@ -19,11 +20,10 @@ class SignIn {
                     createdAt: new Date(),
                     isHost: false,
                 });
-
-                return user;
             }
+            return user;
         } catch (error) {
-            console.error('Errosr signing in with Google:', error);
+            console.error('Error signing in with Google:', error);
             throw new Error('Failed to sign in with Google: ' + error.message);
         }
     }

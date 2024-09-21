@@ -12,6 +12,8 @@ import UserPage from "./pages/UserProfile.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
+import HeaderComponent from "./components/HeaderComponent.jsx";
+import FooterComponent from "./components/FooterComponent.jsx";
 
 
 const router = createBrowserRouter([
