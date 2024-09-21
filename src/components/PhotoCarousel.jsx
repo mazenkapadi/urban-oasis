@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import Slider from 'react-slick';
 
 
@@ -6,10 +6,10 @@ const PhotoCarousel = () => {
     const carouselSettings = {
         dots: true,
         infinite: true,
-        speed: 500,
+        speed: 1000,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 3000,
+        autoplaySpeed: 5000,
         pauseOnHover: true,
         centerMode: true,
         centerPadding: '60px px-20',
@@ -75,7 +75,7 @@ const PhotoCarousel = () => {
                 {images.map((image, index) => (
                     <div key={index}
                          className={`relative ${index === activeSlide ? 'opacity-100' : 'opacity-50 hover:opacity-75 transition duration-300 ease-in-out'} flex px-4`}>
-                        <img src={image} alt={`Image ${index + 1}`}/>
+                        <img src={image} alt={`Imagerwrwerwerwerwe ${index + 1}`} className="w-[400px] h-[300px] object-cover"/>
                     </div>
                 ))}
             </Slider>
