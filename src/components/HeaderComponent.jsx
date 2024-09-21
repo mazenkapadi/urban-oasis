@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchBarComponent from "./SearchBarComponent"; // Import the new component
+import SearchBarComponent from "./SearchBarComponent";
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
@@ -29,10 +29,6 @@ const HeaderComponent = () => {
                         />
                         <span className="ml-2 text-white text-2xl font-archivo">Urban Oasis</span>
                     </div>
-
-                    {/* Search Bar */}
-                    <SearchBarComponent />
-
                     {/* User Profile / Sign In and Menu Button */}
                     <div className="flex items-center space-x-4">
                         {isLoggedIn ? (
