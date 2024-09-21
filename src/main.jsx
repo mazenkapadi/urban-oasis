@@ -20,6 +20,7 @@ import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
+import EventCreationPage from "./pages/EventCreationPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
     {
         path: "/photoCarousel",
         element: <PhotoCarousel />
+    },
+    {
+        path: "/eventCreation",
+        element: <EventCreationPage />
     },
     {
         path: "*",

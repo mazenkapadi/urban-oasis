@@ -1,4 +1,3 @@
-
 import {useState} from 'react';
 import eventCreation from "../services/eventCreation.js";
 
@@ -153,29 +152,11 @@ function EventCreationPage() {
                                 Is this a paid event?
                             </label>
 
-                            <div className="flex flex-row space-x-3">
-                                <label htmlFor="isPaidEventNo">Yes </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventYes"
-                                    name="isPaidEvent"
-                                    value="true"
-                                    checked={isPaidEvent}
-                                    onChange={() => setIsPaidEvent(true)}
-                                />
-                            </div>
-
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="isPaidEventNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="isPaidEventNo"
-                                    name="isPaidEvent"
-                                    value="false"
-                                    checked={!isPaidEvent}
-                                    onChange={() => setIsPaidEvent(false)}
-                                />
-                            </div>
+                            <select id="isPaidEvent" value={isPaidEvent} onChange={() => setIsPaidEvent(!isPaidEvent)}
+                                    className="rounded-lg w-36 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
 
                             {isPaidEvent && (
                                 <div className="flex flex-col">
@@ -197,77 +178,47 @@ function EventCreationPage() {
                             )}
                         </div>
 
+                        {isPaidEvent && (
+                            <div className="flex flex-col">
+                                <label htmlFor="refundAllowance" className="text-italic font-bold text-slate-900">
+                                    Allow Refunds?
+                                </label>
+                                <select id="refundAllowance" value={refundAllowance}
+                                        onChange={() => setRefundAllowance(!refundAllowance)}
+                                        className="rounded-lg w-36 h-12 text-2xl text-center">
+                                    <option value={true}>Yes</option>
+                                    <option value={false}>No</option>
+                                </select>
+
+                                {refundAllowance && (
+                                    <div className="flex flex-col">
+                                        <label htmlFor="refundPolicy"
+                                               className="pt-3 text-italic font-bold text-slate-900">
+                                            Refund Policy
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="refundPolicy"
+                                            value={refundPolicy}
+                                            onChange={(e) => setRefundPolicy(e.target.value)}
+                                            placeholder="Enter refund policy"
+                                            className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="flex flex-col">
                             <label htmlFor="petAllowance" className="text-italic font-bold text-slate-900">
                                 Allow Pets?
                             </label>
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="petAllowanceNo">Yes</label>
-                                <input
-                                    type="radio"
-                                    id="petAllowanceNo"
-                                    name="petAllowance"
-                                    value="false"
-                                    checked={petAllowance}
-                                    onChange={() => setPetAllowance(true)}
-                                />
-                            </div>
-                            <div className="flex flex-row space-x-5">
-                                <label htmlFor="petAllowanceNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="petAllowanceNo"
-                                    name="petAllowance"
-                                    value="false"
-                                    checked={!petAllowance}
-                                    onChange={() => setPetAllowance(false)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label htmlFor="refundAllowance" className="text-italic font-bold text-slate-900">
-                                Allow Refunds?
-                            </label>
-                            <div className="flex flex-row space-x-4">
-                                <label htmlFor="refundAllowanceNo">Yes</label>
-                                <input
-                                    type="radio"
-                                    id="refundAllowanceNo"
-                                    name="refundAllowance"
-                                    value="false"
-                                    checked={refundAllowance}
-                                    onChange={() => setRefundAllowance(true)}
-                                />
-                            </div>
-
-                            <div className="flex flex-row space-x-5">
-                                <label htmlFor="refundAllowanceNo">No </label>
-                                <input
-                                    type="radio"
-                                    id="refundAllowanceNo"
-                                    name="refundAllowance"
-                                    value="false"
-                                    checked={!refundAllowance}
-                                    onChange={() => setRefundAllowance(false)}
-                                />
-                            </div>
-
-                            {refundAllowance && (
-                                <div className="flex flex-col">
-                                    <label htmlFor="refundPolicy" className="pt-3 text-italic font-bold text-slate-900">
-                                        Refund Policy
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="refundPolicy"
-                                        value={refundPolicy}
-                                        onChange={(e) => setRefundPolicy(e.target.value)}
-                                        placeholder="Enter refund policy"
-                                        className="rounded-lg border border-slate-300 py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-                                    />
-                                </div>
-                            )}
+                            <select id="petAllowance" value={petAllowance}
+                                    onChange={() => setPetAllowance(!petAllowance)}
+                                    className="rounded-lg w-36 h-12 text-2xl text-center">
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
                         </div>
 
                         <button type="submit"
