@@ -6,12 +6,6 @@ import PhotoCarousel from "../components/PhotoCarousel.jsx";
 
 function LandingPage() {
 
-    const navigate = useNavigate();
-
-    const handleSignIn = () => {
-        navigate('/signIn')
-    }
-
     const images = [
         'https://via.placeholder.com/600x400?text=Slide+1',
         'https://via.placeholder.com/600x400?text=Slide+2',
