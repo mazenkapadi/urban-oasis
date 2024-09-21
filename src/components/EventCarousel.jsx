@@ -47,7 +47,7 @@ const EventCarousel = () => {
         slidesToScroll: 1,
         swipeToSlide: true,
         touchThreshold: 10,
-        swipe: true
+        swipe: true,
     };
 
     return (
@@ -61,9 +61,15 @@ const EventCarousel = () => {
                     </Link >
                 </div >
                 <Slider {...settings}>
-                    {events.map(event => (
-                        <EventCard key={event.id} event={event} />
-                    ))}
+                    {/*{events.map(event => (*/}
+                    {/*    <EventCard key={event.id} event={event} />*/}
+                    {/*))}*/}
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
                 </Slider >
             </div >
         </>
