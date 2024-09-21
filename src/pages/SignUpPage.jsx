@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import signUp from "../services/auth/signUp.js";
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
-import signIn from "../services/auth/signIn.js";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid/index.js";
 
 function SignUpPage() {
-
     const [ firstName, setFirstName ] = useState('');
     const [ lastName, setLastName ] = useState('');
     const [ email, setEmail ] = useState('');
@@ -91,13 +88,12 @@ function SignUpPage() {
             setError(error.message);
         }
     };
-    return (
+  return (
         <>
-            <div className="flex items-center w-screen" >
+            <div className="flex items-center w-screen">
                 <AuthLeftComponent />
-                <div className="w-2/3 h-screen bg-blue-800 p-4 flex items-center justify-center" >
-                    <div
-                        className="signUBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
+                <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center">
+                    <div className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto">
                         <div className="content w-full" >
                             <h2 className="text-3xl font-bold text-white mb-6 px-2" >Sign Up</h2 >
 
@@ -139,12 +135,12 @@ function SignUpPage() {
                             <div className="p-2" >
                                 <label className="block text-gray-300 pb-1" htmlFor="email" >Email</label >
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    // value={email}
+                                    // onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div >
 
@@ -155,35 +151,23 @@ function SignUpPage() {
                                     </div >
                                 </div >
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="password"
                                     type="password"
                                     placeholder="••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
 
                                 />
-                                <div className="pb-1 pt-2" >
-                                    <div className="flex justify-between " >
-                                        <label className="text-gray-300" htmlFor="password" >Re-enter Password</label >
+                                <div className="pb-1" >
+                                    <div className="flex justify-between" >
+                                        <label className="text-gray-300" htmlFor="password" >Renter Password</label >
                                     </div >
                                 </div >
-                                <div className="relative" >
-                                    <input
-                                        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10" // Add padding-right for the button
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="••••••"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                    />
-                                    <button className="absolute right-3 top-2 text-sm text-black"
-                                            onClick={toggleShowPassword}
-                                    >
-                                        {showPassword ? <EyeSlashIcon className="h-5 w-5" /> :
-                                            <EyeIcon className="h-5 w-5" />}
-                                    </button >
-                                </div >
+                                <input
+                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••"
+                                />
                             </div >
 
                             <div className="flex flex-col items-center justify-center px-2" >
@@ -195,11 +179,11 @@ function SignUpPage() {
                                     Sign Up
                                 </button >
 
-                                <p className="text-sm text-gray-400 mt-4 mb-2" >
+                                <p className="text-sm text-gray-400 my-4" >
                                     Already have an account? <a href="/signIn" className="text-blue-500" >Sign in</a >
                                 </p >
 
-                                <div className="flex items-center w-full mb-2 " >
+                                <div className="flex items-center w-full my-2" >
                                     <hr className="flex-grow border-t border-gray-400" />
                                     <span className="mx-4 text-gray-400" >or</span >
                                     <hr className="flex-grow border-t border-gray-400" />

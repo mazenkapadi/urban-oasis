@@ -17,7 +17,9 @@ import SettingsPage from './pages/SettingsPage.jsx';
 import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
-
+import UserPage from "./pages/UserProfile.jsx";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -39,7 +41,7 @@ const router = createBrowserRouter([
         path: "/userProfilePage",
         element: <UserProfilePage />,
         children: [
-            { index: true, element: <UserProfileContent /> }, // Default route with combined component
+            { index: true, element: <UserProfileContent /> },
             { path: "contact-info", element: <ContactInfoPage /> },
             { path: "settings", element: <SettingsPage /> },
             { path: "payments", element: <PaymentsPage /> },

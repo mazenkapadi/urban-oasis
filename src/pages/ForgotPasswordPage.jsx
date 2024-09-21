@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
-import PasswordReset from "../services/auth/ResetPassword.js";
 
 function SignInPage() {
 
@@ -27,12 +26,11 @@ function SignInPage() {
         }
     }
 
-
     return (
         <>
             <div className="flex items-center w-screen" >
                 <AuthLeftComponent />
-                <div className="w-2/3 h-screen bg-blue-800 p-4 flex items-center justify-center" >
+                <div className="w-full h-screen bg-blue-800 p-4 flex items-center justify-center" >
                     <div
                         className="signInBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto" >
                         <div className="content w-full" >
@@ -42,7 +40,7 @@ function SignInPage() {
                                     provided is associated with an account, you will receive a password reset email
                                     shortly. </label >
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border border-gray-600 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
@@ -52,7 +50,8 @@ function SignInPage() {
                             </div >
                             <div className="flex flex-col items-center justify-center px-2" >
                                 <button
-                                    className={`bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 ease-in-out ${loading ? 'bg-gray-400' : 'hover:bg-black hover:text-white'}`}
+                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 ease-in-out ${loading ? 'bg-gray-400' : 'hover:bg-black hover:text-white'}"
+                                    aria-label="Sign In"
                                     onClick={handleResetPassword}
                                     disabled={loading}
                                 >
