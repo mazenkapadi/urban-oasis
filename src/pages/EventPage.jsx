@@ -28,7 +28,7 @@ function EventPage() {
 
 
                             <div className="box-border rounded-lg bg-amber-500 w-full h-96">
-                                <PhotoCarousel></PhotoCarousel>
+                                <PhotoCarousel />
                             </div>
 
                             <div className="flex flex-row">
