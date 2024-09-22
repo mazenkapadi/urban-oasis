@@ -175,7 +175,7 @@ function SignUpPage() {
                                     Already have an account? <a href="/signIn" className="text-blue-500">Sign in</a>
                                 </p>
 
-                                <div className="flex items-center w-full my-2">
+                                <div className="flex items-cent er w-full my-2">
                                     <hr className="flex-grow border-t border-gray-400" />
                                     <span className="mx-4 text-gray-400">or</span>
                                     <hr className="flex-grow border-t border-gray-400" />
