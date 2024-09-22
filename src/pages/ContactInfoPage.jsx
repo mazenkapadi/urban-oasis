@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, auth } from "../firebaseConfig.js";
 import SelectUSState from 'react-select-us-states';
+import { onAuthStateChanged } from "firebase/auth";
 
 const ContactInfoPage = () => {
+    const [userId, setUserId] = useState(null); // Store the authenticated user's UID
+    const [email, setEmail] = useState('');
+
+    // Form fields
     const [prefix, setPrefix] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -15,72 +20,64 @@ const ContactInfoPage = () => {
     const [state, setState] = useState('');
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
-    const email = auth.currentUser?.email || ''
     const [isHost, setIsHost] = useState(false);
     const [hostType, setHostType] = useState('individual'); // Default type
 
+    // Check authentication state and populate user ID
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserId(user.uid); // Store the user's UID
+                setEmail(user.email); // Store the user's email
+            } else {
+                console.log("User is not signed in.");
+            }
+        });
+        return () => unsubscribe(); // Clean up the listener on unmount
+    }, []);
 
-    const userId = auth.currentUser?.uid;
-
+    // Fetch user data from Firestore when userId is available
     useEffect(() => {
         const fetchData = async () => {
-            if(userId) {
-                const docRef = doc(db, 'Users', userId); // Reference to Firestore document
-                const docSnap = await getDoc(docRef);
+            if (userId) {
+                try {
+                    const docRef = doc(db, 'Users', userId); // Reference to Firestore document
+                    const docSnap = await getDoc(docRef);
 
-
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // this sets the form fields with data from Firestore
-                    setPrefix(data.prefix || '');
-                    setFirstName(data.firstName || '');
-                    setLastName(data.lastName || '');
-                    setSuffix(data.suffix || '');
-                    setCellPhone(data.cellPhone || '');
-                    setAddress(data.address || '');
-                    setAddress2(data.address2 || '');
-                    setCity(data.city || '');
-                    setState(data.state || '');
-                    setZip(data.zip || '');
-                    setBirthday(data.birthday || '');
-                    setIsHost(data.isHost || false);
-                    setHostType(data.hostType || 'individual');
-
-                } else {
-                    console.log('No such document!');
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Populate form fields with Firestore data
+                        setPrefix(data.name?.prefix || '');
+                        setFirstName(data.name?.firstName || '');
+                        setLastName(data.name?.lastName || '');
+                        setSuffix(data.name?.suffix || '');
+                        setCellPhone(data.contact?.cellPhone || '');
+                        setAddress(data.address?.primary?.line1 || '');
+                        setAddress2(data.address?.primary?.line2 || '');
+                        setCity(data.address?.primary?.city || '');
+                        setState(data.address?.primary?.state || '');
+                        setZip(data.address?.primary?.zip || '');
+                        setBirthday(data.birthday || '');
+                        setIsHost(data.isHost || false);
+                        setHostType(data.hostType || 'individual');
+                    } else {
+                        console.log('No such document!');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
                 }
             }
         };
 
-        fetchData(
-
-
-        );
+        if (userId) {
+            fetchData(); // Fetch data when userId is set
+        }
     }, [userId]);
 
+    // Handle save button click to update Firestore with form data
     const handleSave = async (e) => {
         e.preventDefault();
 
-
-        // Your way of storing data
-        // const userData = {
-        //     prefix,
-        //     firstName,
-        //     lastName,
-        //     suffix,
-        //     cellPhone,
-        //     address,
-        //     address2,
-        //     city,
-        //     state,
-        //     zip,
-        //     birthday,
-        // };
-
-
-        // My suggested way to store the data in Firestore (with userId and hashedPassword)
-        // This will not work until you have set up const for all the fields
         const userData = {
             userId,
             name: {
@@ -105,14 +102,11 @@ const ContactInfoPage = () => {
             birthday,
             isHost,
             hostType,
-            createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
 
-
-
         try {
-            if(userId) {
+            if (userId) {
                 await setDoc(doc(db, 'Users', userId), userData, { merge: true });
                 alert('Changes saved!');
             }
@@ -120,9 +114,7 @@ const ContactInfoPage = () => {
             console.error('Error saving data: ', error);
             alert('Error saving changes!');
         }
-    };
-
-    return (
+    };return (
         <div className="p-8 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8">Account Information</h1>
 
