@@ -26,7 +26,8 @@ class SignUp {
             return user;
         } catch (error) {
             console.error('Error signing up with email', error);
-            throw new Error(error.message); // Throw the error for handling in the UI
+            throw new Error(error.message);
+
         }
     }
 }

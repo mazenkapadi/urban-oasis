@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-//import { db } from './firebase'; // Imports the Firestore instance
+import { db } from "../firebaseConfig.js";
 import SelectUSState from 'react-select-us-states';
 
 const ContactInfoPage = () => {
@@ -16,9 +16,8 @@ const ContactInfoPage = () => {
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
 
-    const userId = 'user123'; // this  will be replaced with actual logged-in user ID
+    const userId = 'user123';
 
-    // Fetches user data from Firestore
     useEffect(() => {
         const fetchData = async () => {
             const docRef = doc(db, 'users', userId); // Reference to Firestore document

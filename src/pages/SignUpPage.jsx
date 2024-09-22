@@ -49,7 +49,7 @@ function SignUpPage() {
         try {
             const user = await signUp.signUpWithEmail(firstName, lastName, email, password);
             if (user) {
-                navigate('/ContactInfoPage');
+                navigate('/LandingPage');
             }
             setError(null);
         } catch (error) {
@@ -61,7 +61,7 @@ function SignUpPage() {
         try {
             const user = await SignIn.signInWithGoogle();
             if (user) {
-                navigate('/ContactInfoPage');
+                navigate('/');
             }
         } catch (error) {
             setError(error.message);
