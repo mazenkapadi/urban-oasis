@@ -6,17 +6,15 @@ function EventCard() {
 
     return (
         <>
-            <div className="event-card p-5">
-                {/* Card container with background image */}
+            <div className="event-card">
                 <div
                     className="box-border rounded-lg bg-gray-900 p-4 flex flex-col justify-between h-52 w-80 bg-cover bg-center hover:scale-105 transition-transform"
                     style={{ backgroundImage: "url('src/assets/backgroundTestImage.jpg')" }}
                 >
-                    {/* Top section with title and location */}
                     <div>
                         <h3 className="text-white text-2xl font-bold">Event Title</h3>
                         <div className="flex items-center text-gray-300 opacity-75 mt-1">
-                            <MapPinIcon className="w-5 h-5 mr-1" /> {/* HeroIcon map-pin */}
+                            <MapPinIcon className="w-5 h-5 mr-1" />
                             <p>Event Location</p>
                         </div>
                     </div>

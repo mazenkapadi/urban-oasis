@@ -61,7 +61,7 @@ function SignUpPage() {
         try {
             const user = await SignIn.signInWithGoogle();
             if (user) {
-                navigate('/ContactInfoPage'); // Redirect to profile
+                navigate('/ContactInfoPage');
             }
         } catch (error) {
             setError(error.message);
@@ -186,7 +186,7 @@ function SignUpPage() {
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
+                                    <img src="../assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
                                     <p className="ml-2">Sign Up with Google</p>
                                 </button>
                             </div>
