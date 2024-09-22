@@ -142,14 +142,19 @@ import ProfileOrSignIn from "./ProfileOrSignIn";
 import MenuButton from "./MenuButton";
 import DropdownMenu from "./DropdownMenu";
 import SearchBarComponent from "./SearchBarComponent";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const HeaderComponent = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        const user = localStorage.getItem("user");
-        setIsLoggedIn(!!user);
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setIsLoggedIn(!!user);
+        });
+        return () => unsubscribe();
     }, []);
 
     const toggleMenu = () => {

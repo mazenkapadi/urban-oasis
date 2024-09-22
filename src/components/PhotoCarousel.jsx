@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Slider from 'react-slick';
+import {ChevronRightIcon, ChevronLeftIcon} from "@heroicons/react/20/solid/index.js";
 
 
 const PhotoCarousel = () => {
@@ -12,7 +13,7 @@ const PhotoCarousel = () => {
         autoplaySpeed: 5000,
         pauseOnHover: true,
         centerMode: true,
-        centerPadding: '60px px-20',
+        centerPadding: '20px',
         variableWidth: true,
         responsive: [
             {
@@ -35,27 +36,19 @@ const PhotoCarousel = () => {
             }
         ],
         nextArrow: (
-            <div >
-                <div className="next-slick-arrow" >
-                    <svg xmlns="http://www.w3.org/2000/svg" stroke="black" height="24" viewBox="0 -960 960 960"
-                         width="24" >
-                        <path
-                            d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z" />
-                    </svg >
-                </div >
-            </div >
+            <div>
+                <div className="next-slick-arrow">
+                    <ChevronRightIcon className="h-6 w-6 text-black" />
+                </div>
+            </div>
         ),
 
         prevArrow: (
-            <div >
-                <div className="next-slick-arrow rotate-180" >
-                    <svg xmlns="http://www.w3.org/2000/svg" stroke="black" height="24" viewBox="0 -960 960 960"
-                         width="24" >
-                        <path
-                            d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z" />
-                    </svg >
-                </div >
-            </div >
+            <div>
+                <div className="next-slick-arrow">
+                    <ChevronLeftIcon className="h-6 w-6 text-black" />
+                </div>
+            </div>
         ),
         afterChange: (currentSlide) => {
             setActiveSlide(currentSlide);

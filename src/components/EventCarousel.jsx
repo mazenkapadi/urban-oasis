@@ -20,7 +20,6 @@ const EventCarousel = () => {
 
         const {startOfWeek, endOfWeek} = getStartAndEndOfWeek();
 
-        // Fetch events from Firestore
         const fetchEvents = async () => {
             try {
                 const snapshot = await db.collection('Events').get();

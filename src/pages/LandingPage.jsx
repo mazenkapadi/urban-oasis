@@ -3,6 +3,7 @@ import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import EventCarousel from "../components/EventCarousel.jsx";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
+import React from "react";
 
 function LandingPage() {
 
@@ -15,21 +16,21 @@ function LandingPage() {
     return (
         <>
             <HeaderComponent />
-            <div className="container mx-auto px-6 py-12">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl font-bold mb-4">Welcome to UrbanOasis</h1>
-                    <p className="text-lg text-gray-600">Discover events and manage your community seamlessly</p>
-                </div>
+            <div className="container mx-auto px-6 py-12" >
+                <div className="text-center mb-16" >
+                    <h1 className="text-4xl font-bold mb-4" >Welcome to UrbanOasis</h1 >
+                    <p className="text-lg text-gray-600" >Discover events and manage your community seamlessly</p >
+                </div >
 
-                <div className="space-y-16">
-                    <div className="photo-carousel">
+                <div className="space-y-16" >
+                    <div className="photo-carousel" >
                         <PhotoCarousel images={images} />
-                    </div>
-                    <div className="event-carousel">
+                    </div >
+                    <div className="event-carousel" >
                         <EventCarousel />
-                    </div>
-                </div>
-            </div>
+                    </div >
+                </div >
+            </div >
             <FooterComponent />
         </>
     );
