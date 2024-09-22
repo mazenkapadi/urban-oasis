@@ -8,8 +8,8 @@ const Sidebar = () => {
         <div className="flex flex-col bg-white shadow-lg rounded-lg p-7 w-64 h-full">
             {/* Logo Section */}
             <div className="logo flex items-center mb-6 flex-shrink-0">
-                <BiBookAlt className="logo-icon h-6 w-6 text-2xl mr-2" />
-                <h2 className="text-xl font-bold text-gray-700">UrbanOasis</h2>
+                {/* <BiBookAlt className="logo-icon h-6 w-6 text-2xl mr-2" />
+                  <h2 className="text-xl font-bold text-gray-700">UrbanOasis</h2>*/}
             </div>
 
             {/* Menu List */}

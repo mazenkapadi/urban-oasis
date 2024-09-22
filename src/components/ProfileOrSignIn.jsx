@@ -10,13 +10,17 @@ const ProfileOrSignIn = ({ isLoggedIn }) => {
     return (
         <div className="flex items-center space-x-4">
             {isLoggedIn ? (
-                <div className="w-10 h-10 rounded-lg overflow-hidden">
-                    <img
-                        src="https://picsum.photos/32"
-                        alt="User Profile"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+                // <div className="w-10 h-10 rounded-lg overflow-hidden">
+                    <button
+                    onClick={() => navigate("/userProfilePage")}
+                        className="w-10 h-10 rounded-lg overflow-hidden">
+                        <img
+                            src="https://picsum.photos/32"
+                            alt="User Profile"
+                            className="w-full h-full object-cover"
+                        />
+                    </button>
+                // </div>
             ) : (
                 <button
                     className="rounded-lg bg-gray-900 text-gray-200 px-6 py-2"

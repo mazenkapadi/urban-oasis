@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'; // Import HeroIcons
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 import signIn from "../services/auth/signIn.js";
 import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
+import { useNavigate } from "react-router-dom";
 
 function SignInPage() {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState(null);
     const [ showPassword, setShowPassword ] = useState(false);
+    const navigate = useNavigate();
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -18,9 +20,9 @@ function SignInPage() {
             setError('Email and password are required');
             return;
         }
-
         try {
             await signIn.signInWithEmail(email, password);
+            navigate('/');
             setError(null);
         } catch (error) {
             setError(error.message);
@@ -117,7 +119,7 @@ function SignInPage() {
                                     aria-label="Sign In with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../../assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
+                                    <img src="../assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
                                     <p className="ml-2">Sign In with Google</p>
                                 </button>
                             </div>

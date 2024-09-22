@@ -13,7 +13,6 @@ function SignUpPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const toggleShowConfirmPassword = () => {
@@ -50,7 +49,7 @@ function SignUpPage() {
         try {
             const user = await signUp.signUpWithEmail(firstName, lastName, email, password);
             if (user) {
-                navigate('/ContactInfoPage');
+                navigate('/');
             }
             setError(null);
         } catch (error) {
@@ -62,7 +61,7 @@ function SignUpPage() {
         try {
             const user = await SignIn.signInWithGoogle();
             if (user) {
-                navigate('/ContactInfoPage'); // Redirect to profile
+                navigate('/');
             }
         } catch (error) {
             setError(error.message);
@@ -130,7 +129,7 @@ function SignUpPage() {
                                     <input
                                         className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         id="password"
-                                        type={showPassword ? 'text' : 'password'}
+                                        type="password"
                                         placeholder="••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -176,7 +175,7 @@ function SignUpPage() {
                                     Already have an account? <a href="/signIn" className="text-blue-500">Sign in</a>
                                 </p>
 
-                                <div className="flex items-center w-full my-2">
+                                <div className="flex items-cent er w-full my-2">
                                     <hr className="flex-grow border-t border-gray-400" />
                                     <span className="mx-4 text-gray-400">or</span>
                                     <hr className="flex-grow border-t border-gray-400" />
@@ -187,7 +186,7 @@ function SignUpPage() {
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../../public/assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
+                                    <img src="../assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
                                     <p className="ml-2">Sign Up with Google</p>
                                 </button>
                             </div>

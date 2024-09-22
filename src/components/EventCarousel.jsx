@@ -20,7 +20,6 @@ const EventCarousel = () => {
 
         const {startOfWeek, endOfWeek} = getStartAndEndOfWeek();
 
-        // Fetch events from Firestore
         const fetchEvents = async () => {
             try {
                 const snapshot = await db.collection('Events').get();
@@ -41,19 +40,19 @@ const EventCarousel = () => {
     }, []);
 
     const settings = {
-        infinite: true,
+        // infinite: true,
         speed: 500,
         slidesToShow: 3,
         slidesToScroll: 1,
         swipeToSlide: true,
         touchThreshold: 10,
-        swipe: true,
+        swipe: true
     };
 
     return (
         <>
             <div className="carousel-container py-4 px-2" >
-                <div className="flex justify-between items-center p-5" >
+                <div className="flex justify-between items-center p-2" >
                     <h2 className="text-3xl font-bold" >Events This Week</h2 >
                     <Link to="/" className="flex items-center text-blue-500 hover:underline" >
                         View All Events
@@ -61,6 +60,7 @@ const EventCarousel = () => {
                     </Link >
                 </div >
                 <Slider {...settings}>
+
                     {/*{events.map(event => (*/}
                     {/*    <EventCard key={event.id} event={event} />*/}
                     {/*))}*/}
@@ -68,8 +68,7 @@ const EventCarousel = () => {
                     <EventCard />
                     <EventCard />
                     <EventCard />
-                    <EventCard />
-                    <EventCard />
+
                 </Slider >
             </div >
         </>
