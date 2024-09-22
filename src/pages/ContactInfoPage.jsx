@@ -50,18 +50,62 @@ const ContactInfoPage = () => {
     const handleSave = async (e) => {
         e.preventDefault();
 
+
+        // Your way of storing data
+        // const userData = {
+        //     prefix,
+        //     firstName,
+        //     lastName,
+        //     suffix,
+        //     cellPhone,
+        //     address,
+        //     address2,
+        //     city,
+        //     state,
+        //     zip,
+        //     birthday,
+        // };
+
+
+        // My suggested way to store the data in Firestore (with userId and hashedPassword)
+        // This will not work until you have set up const for all the fields
         const userData = {
-            prefix,
-            firstName,
-            lastName,
-            suffix,
-            cellPhone,
-            address,
-            address2,
-            city,
-            state,
-            zip,
+            userId,
+            name: {
+                prefix,
+                firstName,
+                lastName,
+                suffix,
+            },
+            contact: {
+                cellPhone,
+                email,
+            },
+            address: {
+                line1: address,
+                line2: address2,
+                city,
+                state,
+                zip,
+            },
             birthday,
+            hashedPassword,
+            paymentMethods: [],
+            pastEvents: [],
+            futureEvents: [],
+            isHost: false,
+            hostDetails: {
+                hostType: '',
+                location: {
+                    address: {
+                        line1: '',
+                        line2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                    }
+                }
+            }
         };
 
         try {
