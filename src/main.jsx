@@ -9,6 +9,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
 import UserPage from "./pages/UserProfile.jsx";
+import EventPage from "./pages/EventPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     {
         path: "/userPage",
         element: <UserPage />
+    },
+    {
+        path: "/eventPage",
+        element: <EventPage />
     },
     {
         path: "*",
