@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from "../firebaseConfig.js";
+import { db, auth } from "../firebaseConfig.js";
 import SelectUSState from 'react-select-us-states';
 
 const ContactInfoPage = () => {
@@ -16,36 +16,37 @@ const ContactInfoPage = () => {
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
 
-    const userId = 'user123';
+    const userId = auth.currentUser?.uid;
 
     useEffect(() => {
         const fetchData = async () => {
-            const docRef = doc(db, 'users', userId); // Reference to Firestore document
-            const docSnap = await getDoc(docRef);
+            if(userId) {
+                const docRef = doc(db, 'Users', userId); // Reference to Firestore document
+                const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                // this sets the form fields with data from Firestore
-                setPrefix(data.prefix || '');
-                setFirstName(data.firstName || '');
-                setLastName(data.lastName || '');
-                setSuffix(data.suffix || '');
-                setCellPhone(data.cellPhone || '');
-                setAddress(data.address || '');
-                setAddress2(data.address2 || '');
-                setCity(data.city || '');
-                setState(data.state || '');
-                setZip(data.zip || '');
-                setBirthday(data.birthday || '');
-            } else {
-                console.log('No such document!');
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // this sets the form fields with data from Firestore
+                    setPrefix(data.prefix || '');
+                    setFirstName(data.firstName || '');
+                    setLastName(data.lastName || '');
+                    setSuffix(data.suffix || '');
+                    setCellPhone(data.cellPhone || '');
+                    setAddress(data.address || '');
+                    setAddress2(data.address2 || '');
+                    setCity(data.city || '');
+                    setState(data.state || '');
+                    setZip(data.zip || '');
+                    setBirthday(data.birthday || '');
+                } else {
+                    console.log('No such document!');
+                }
             }
         };
 
         fetchData();
     }, [userId]);
 
-    // this saves user data to Firestore
     const handleSave = async (e) => {
         e.preventDefault();
 
@@ -64,8 +65,10 @@ const ContactInfoPage = () => {
         };
 
         try {
-            await setDoc(doc(db, 'users', userId), userData, { merge: true });
-            alert('Changes saved!');
+            if(userId) {
+                await setDoc(doc(db, 'Users', userId), userData, { merge: true });
+                alert('Changes saved!');
+            }
         } catch (error) {
             console.error('Error saving data: ', error);
             alert('Error saving changes!');

@@ -1,12 +1,10 @@
 import React from 'react';
 import SideBar from '../components/SideBar';
 import { Outlet } from 'react-router-dom';
-import HeaderComponent from '../components/HeaderComponent.jsx';
 
 const UserProfilePage = () => {
     return (
         <div className="bg-gray-100 min-h-screen">
-            <HeaderComponent />
             <div className="flex">
                 {/* Sidebar */}
                 <div className="w-1/4 p-4">

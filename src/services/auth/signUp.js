@@ -18,8 +18,8 @@ class SignUp {
                 lastName: lastName,
                 email: email,
                 password: hashedPassword,
-                createdAt: new Date(),
                 isHost: false,
+                uid: user.uid
             });
 
             console.log('Email sign-up successful:', user);
