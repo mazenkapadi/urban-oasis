@@ -1,33 +1,76 @@
-import React, { useState } from 'react';
-
-const states = [
-    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-    "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-    "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-    "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-    "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-    "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-    "Wisconsin", "Wyoming"
-];
+import React, { useState, useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+//import { db } from './firebase'; // Imports the Firestore instance
+import SelectUSState from 'react-select-us-states';
 
 const ContactInfoPage = () => {
     const [prefix, setPrefix] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [suffix, setSuffix] = useState('');
-    const [homePhone, setHomePhone] = useState('');
     const [cellPhone, setCellPhone] = useState('');
     const [address, setAddress] = useState('');
     const [address2, setAddress2] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zip, setZip] = useState('');
+    const [birthday, setBirthday] = useState('');
 
-    const handleSave = (e) => {
+    const userId = 'user123'; // this  will be replaced with actual logged-in user ID
+
+    // Fetches user data from Firestore
+    useEffect(() => {
+        const fetchData = async () => {
+            const docRef = doc(db, 'users', userId); // Reference to Firestore document
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                // this sets the form fields with data from Firestore
+                setPrefix(data.prefix || '');
+                setFirstName(data.firstName || '');
+                setLastName(data.lastName || '');
+                setSuffix(data.suffix || '');
+                setCellPhone(data.cellPhone || '');
+                setAddress(data.address || '');
+                setAddress2(data.address2 || '');
+                setCity(data.city || '');
+                setState(data.state || '');
+                setZip(data.zip || '');
+                setBirthday(data.birthday || '');
+            } else {
+                console.log('No such document!');
+            }
+        };
+
+        fetchData();
+    }, [userId]);
+
+    // this saves user data to Firestore
+    const handleSave = async (e) => {
         e.preventDefault();
-        // Add your save logic here
-        alert("Changes Saved");
+
+        const userData = {
+            prefix,
+            firstName,
+            lastName,
+            suffix,
+            cellPhone,
+            address,
+            address2,
+            city,
+            state,
+            zip,
+            birthday,
+        };
+
+        try {
+            await setDoc(doc(db, 'users', userId), userData, { merge: true });
+            alert('Changes saved!');
+        } catch (error) {
+            console.error('Error saving data: ', error);
+            alert('Error saving changes!');
+        }
     };
 
     return (
@@ -56,7 +99,7 @@ const ContactInfoPage = () => {
                         <select
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={prefix}
-                            onChange={(e) => setPrefix(e.target.value)} // Added onChange
+                            onChange={(e) => setPrefix(e.target.value)}
                         >
                             <option value="">--</option>
                             <option value="Mr">Mr</option>
@@ -67,46 +110,51 @@ const ContactInfoPage = () => {
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">First Name</label>
                         <input
+                            id="firstName"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)} // Added onChange
+                            onChange={(e) => setFirstName(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Last Name</label>
                         <input
+                            id="lastName"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={lastName}
-                            onChange={(e) => setLastName(e.target.value)} // Added onChange
+                            onChange={(e) => setLastName(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Suffix</label>
                         <input
+                            id="suffix"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={suffix}
-                            onChange={(e) => setSuffix(e.target.value)} // Added onChange
-                        />
-                    </div>
-                    <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Home Phone</label>
-                        <input
-                            type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value={homePhone}
-                            onChange={(e) => setHomePhone(e.target.value)} // Added onChange
+                            onChange={(e) => setSuffix(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Cell Phone</label>
                         <input
+                            id="cellPhone"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={cellPhone}
-                            onChange={(e) => setCellPhone(e.target.value)} // Added onChange
+                            onChange={(e) => setCellPhone(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-span-1">
+                        <label className="block text-gray-700 font-semibold mb-2">Birthday</label>
+                        <input
+                            id="birthday"
+                            type="date"
+                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            value={birthday}
+                            onChange={(e) => setBirthday(e.target.value)}
                         />
                     </div>
                 </form>
@@ -119,48 +167,45 @@ const ContactInfoPage = () => {
                     <div className="col-span-2">
                         <label className="block text-gray-700 font-semibold mb-2">Address</label>
                         <input
+                            id="address"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={address}
-                            onChange={(e) => setAddress(e.target.value)} // Added onChange
+                            onChange={(e) => setAddress(e.target.value)}
                         />
                     </div>
                     <div className="col-span-2">
                         <label className="block text-gray-700 font-semibold mb-2">Address 2</label>
                         <input
+                            id="address2"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={address2}
-                            onChange={(e) => setAddress2(e.target.value)} // Added onChange
+                            onChange={(e) => setAddress2(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">City</label>
                         <input
+                            id="city"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={city}
-                            onChange={(e) => setCity(e.target.value)} // Added onChange
+                            onChange={(e) => setCity(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">State</label>
-                        <select
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
-                            value={state}
-                            onChange={(e) => setState(e.target.value)} // Added onChange
-                        >
-                            <option value="">Select a State</option>
-                            {states.map((state) => (
-                                <option key={state} value={state}>
-                                    {state}
-                                </option>
-                            ))}
-                        </select>
+                        <SelectUSState
+                            id="state"
+                            className="block w-full border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            onChange={(val) => setState(val)}
+                        />
                     </div>
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Country</label>
                         <input
+                            id="country"
                             type="text"
                             value="United States"
                             readOnly
@@ -170,10 +215,11 @@ const ContactInfoPage = () => {
                     <div className="col-span-1">
                         <label className="block text-gray-700 font-semibold mb-2">Zip/Postal Code</label>
                         <input
+                            id="zip"
                             type="text"
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={zip}
-                            onChange={(e) => setZip(e.target.value)} // Added onChange
+                            onChange={(e) => setZip(e.target.value)}
                         />
                     </div>
                 </form>
