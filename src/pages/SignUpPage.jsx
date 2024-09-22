@@ -13,7 +13,6 @@ function SignUpPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const toggleShowConfirmPassword = () => {
@@ -130,7 +129,7 @@ function SignUpPage() {
                                     <input
                                         className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         id="password"
-                                        type={showPassword ? 'text' : 'password'}
+                                        type="password"
                                         placeholder="••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
