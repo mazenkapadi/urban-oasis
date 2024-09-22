@@ -82,31 +82,55 @@ const ContactInfoPage = () => {
                 email,
             },
             address: {
-                line1: address,
-                line2: address2,
-                city,
-                state,
-                zip,
+                primary: {
+                    line1: address,
+                    line2: address2,
+                    city,
+                    state,
+                    zip,
+                },
             },
             birthday,
             hashedPassword,
             paymentMethods: [],
-            pastEvents: [],
-            futureEvents: [],
+            events: {
+                past: [],
+                future: [],
+                favoriteEvents: [], // To track user's favorite events
+            },
             isHost: false,
             hostDetails: {
-                hostType: '',
-                location: {
-                    address: {
-                        line1: '',
-                        line2: '',
-                        city: '',
-                        state: '',
-                        zip: '',
-                    }
-                }
-            }
+                hostType: 'individual', // or 'company'
+                individual: isHost && hostType === 'individual' ? {
+                    bio: '', // Host's biography
+                    profilePicture: '', // URL to the host's profile picture
+                    ratings: {
+                        overall: 0,
+                        reviews: [], // Array to hold user reviews
+                    },
+                } : null,
+                company: isHost && hostType === 'company' ? {
+                    companyName: '',
+                    companyBio: '', // Description of the company
+                    website: '', // URL to the company's website
+                    logo: '', // URL to the company's logo
+                    ratings: {
+                        overall: 0,
+                        reviews: [], // Array to hold company reviews
+                    },
+                } : null,
+                hostLocation: isHost ? {
+                    line1: '',
+                    line2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
+                } : null,
+            },
+            createdAt: new Date().toISOString(), // Timestamp for account creation
+            updatedAt: new Date().toISOString(), // Timestamp for the last update
         };
+
 
         try {
             if(userId) {
