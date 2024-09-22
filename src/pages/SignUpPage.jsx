@@ -49,7 +49,7 @@ function SignUpPage() {
         try {
             const user = await signUp.signUpWithEmail(firstName, lastName, email, password);
             if (user) {
-                navigate('/LandingPage');
+                navigate('/');
             }
             setError(null);
         } catch (error) {

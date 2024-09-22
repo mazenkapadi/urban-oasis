@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
 import FIREBASE_KEY from "./APIKEY_SECRETS/FIREBASE_KEY.js"
 import {
     GoogleAuthProvider,
