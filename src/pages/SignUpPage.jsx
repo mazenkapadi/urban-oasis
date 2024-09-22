@@ -149,8 +149,8 @@ function SignUpPage() {
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
-                                    // value={email}
-                                    // onChange={(e) => setEmail(e.target.value)}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div >
 
@@ -165,7 +165,8 @@ function SignUpPage() {
                                     id="password"
                                     type="password"
                                     placeholder="••••••"
-
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <div className="pb-1" >
                                     <div className="flex justify-between" >
@@ -177,6 +178,8 @@ function SignUpPage() {
                                     id="password"
                                     type="password"
                                     placeholder="••••••"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                 />
                             </div >
 
