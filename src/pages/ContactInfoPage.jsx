@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, auth } from "../firebaseConfig.js";
 import SelectUSState from 'react-select-us-states';
@@ -15,6 +15,10 @@ const ContactInfoPage = () => {
     const [state, setState] = useState('');
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
+    const email = auth.currentUser?.email || ''
+    const [isHost, setIsHost] = useState(false);
+    const [hostType, setHostType] = useState('individual'); // Default type
+
 
     const userId = auth.currentUser?.uid;
 
@@ -23,6 +27,8 @@ const ContactInfoPage = () => {
             if(userId) {
                 const docRef = doc(db, 'Users', userId); // Reference to Firestore document
                 const docSnap = await getDoc(docRef);
+
+
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -38,13 +44,19 @@ const ContactInfoPage = () => {
                     setState(data.state || '');
                     setZip(data.zip || '');
                     setBirthday(data.birthday || '');
+                    setIsHost(data.isHost || false);
+                    setHostType(data.hostType || 'individual');
+
                 } else {
                     console.log('No such document!');
                 }
             }
         };
 
-        fetchData();
+        fetchData(
+
+
+        );
     }, [userId]);
 
     const handleSave = async (e) => {
@@ -91,45 +103,12 @@ const ContactInfoPage = () => {
                 },
             },
             birthday,
-            hashedPassword,
-            paymentMethods: [],
-            events: {
-                past: [],
-                future: [],
-                favoriteEvents: [], // To track user's favorite events
-            },
-            isHost: false,
-            hostDetails: {
-                hostType: 'individual', // or 'company'
-                individual: isHost && hostType === 'individual' ? {
-                    bio: '', // Host's biography
-                    profilePicture: '', // URL to the host's profile picture
-                    ratings: {
-                        overall: 0,
-                        reviews: [], // Array to hold user reviews
-                    },
-                } : null,
-                company: isHost && hostType === 'company' ? {
-                    companyName: '',
-                    companyBio: '', // Description of the company
-                    website: '', // URL to the company's website
-                    logo: '', // URL to the company's logo
-                    ratings: {
-                        overall: 0,
-                        reviews: [], // Array to hold company reviews
-                    },
-                } : null,
-                hostLocation: isHost ? {
-                    line1: '',
-                    line2: '',
-                    city: '',
-                    state: '',
-                    zip: '',
-                } : null,
-            },
-            createdAt: new Date().toISOString(), // Timestamp for account creation
-            updatedAt: new Date().toISOString(), // Timestamp for the last update
+            isHost,
+            hostType,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
+
 
 
         try {
@@ -297,6 +276,7 @@ const ContactInfoPage = () => {
 
             <button
                 type="submit"
+                onClick={handleSave}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
                 Save Changes
