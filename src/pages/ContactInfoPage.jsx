@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-//import { db } from './firebase'; // Import the Firestore instance
+//import { db } from './firebase'; // Imports the Firestore instance
 import SelectUSState from 'react-select-us-states';
 
 const ContactInfoPage = () => {
@@ -16,9 +16,9 @@ const ContactInfoPage = () => {
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
 
-    const userId = 'user123'; // Replace this with actual logged-in user ID
+    const userId = 'user123'; // this  will be replaced with actual logged-in user ID
 
-    // Fetch user data from Firestore
+    // Fetches user data from Firestore
     useEffect(() => {
         const fetchData = async () => {
             const docRef = doc(db, 'users', userId); // Reference to Firestore document
@@ -26,7 +26,7 @@ const ContactInfoPage = () => {
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // Set the form fields with data from Firestore
+                // this sets the form fields with data from Firestore
                 setPrefix(data.prefix || '');
                 setFirstName(data.firstName || '');
                 setLastName(data.lastName || '');
@@ -46,7 +46,7 @@ const ContactInfoPage = () => {
         fetchData();
     }, [userId]);
 
-    // Save user data to Firestore
+    // this saves user data to Firestore
     const handleSave = async (e) => {
         e.preventDefault();
 
