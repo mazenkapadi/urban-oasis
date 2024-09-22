@@ -52,7 +52,7 @@ const SearchBar = ({ setCity, fetchWeather }) => {
         placeholder="Enter city name"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-3 border border-gray-300 focus:border-gray-900 rounded-full mb-4 text-gray-700 focus:outline-none"
+       className="w-full p-3 border border-gray-300 focus:border-gray-900 rounded-full mb-4 text-gray-700 focus:outline-none"
       />
       <span
         onClick={() => fetchWeather(searchTerm)}
