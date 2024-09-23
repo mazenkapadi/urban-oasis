@@ -26,13 +26,11 @@ class SignUp {
                     cellPhone: '',
                 },
                 address: {
-                    primary: {
-                        line1: '',
-                        line2: '',
-                        city: '',
-                        state: '',
-                        zip: '',
-                    },
+                    line1: '',
+                    line2: '',
+                    city: '',
+                    state: '',
+                    zip: '',
                 },
                 hashedPassword,
                 birthday: '',

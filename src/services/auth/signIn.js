@@ -8,21 +8,19 @@ class SignIn {
         try {
             const userCredential = await signInWithPopup(auth, googleProvider);
             const user = userCredential.user;
+            console.log(userCredential)
 
-            // Extract information from the Google user object
             const nameParts = user.displayName ? user.displayName.split(" ") : [];
             const firstName = nameParts[0] || "";
             const lastName = nameParts[1] || "";
-            const email = user.email || ""; // Email should always be available from Google sign-in
-            const phoneNumber = user.phoneNumber || ""; // May be null if not provided by Google
-            const photoURL = user.photoURL || ""; // Profile picture URL
-            const creationTime = user.metadata.creationTime || ""; // Account creation time
+            const email = user.email || "";
+            const phoneNumber = user.phoneNumber || "";
+            const photoURL = user.photoURL || "";
+            const creationTime = user.metadata.creationTime || "";
 
-            // Check if user already exists in Firestore
             const userDoc = await getDoc(doc(db, "Users", user.uid));
 
             if (!userDoc.exists()) {
-                // Set the user document with the same fields as the email sign-up, including additional info
                 const userData = {
                     uid: user.uid,
                     name: {
@@ -31,27 +29,24 @@ class SignIn {
                     },
                     contact: {
                         email, // Google email
-                        cellPhone: phoneNumber || '', // Use phone number if available, otherwise initialize as empty
+                        cellPhone: phoneNumber || '',
                     },
                     address: {
-                        primary: {
-                            line1: '',
-                            line2: '',
-                            city: '',
-                            state: '',
-                            zip: '',
-                        },
+                        line1: '',
+                        line2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
                     },
-                    profilePicture: photoURL, // Store Google profile picture
-                    createdAt: creationTime, // The time when the user account was created
-                    hashedPassword: '', // No password for Google sign-in
-                    birthday: '', // Optional field to be updated later
+                    profilePicture: photoURL,
+                    createdAt: creationTime,
+                    hashedPassword: '',
+                    birthday: '',
                     isHost: false,
                     hostType: 'individual',
                     updatedAt: new Date().toISOString(),
                 };
 
-                // Save the new user data to Firestore
                 await setDoc(doc(db, 'Users', user.uid), userData);
                 console.log('Google sign-up successful and data saved to Firestore:', userData);
             } else {
