@@ -13,15 +13,35 @@ class SignUp {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             // Setting documents in Users collection
-            await setDoc(doc(db, "Users", user.uid), {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                password: hashedPassword,
+            const userData = {
+                uid: user.uid,
+                name: {
+                    firstName,
+                    lastName,
+                    // Add other name fields if needed
+                },
+                contact: {
+                    email: user.email,
+                    // Initialize phone and other fields as empty or default
+                    cellPhone: '',
+                },
+                address: {
+                    primary: {
+                        line1: '',
+                        line2: '',
+                        city: '',
+                        state: '',
+                        zip: '',
+                    },
+                },
+                hashedPassword,
+                birthday: '',
                 isHost: false,
-                uid: user.uid
-            });
+                hostType: 'individual',
+                updatedAt: new Date().toISOString(),
+            };
 
+            await setDoc(doc(db, 'Users', user.uid), userData);
             console.log('Email sign-up successful:', user);
             return user;
         } catch (error) {
