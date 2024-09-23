@@ -1,7 +1,6 @@
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../../firebaseConfig.js";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useNavigate} from "react-router-dom";
 
 class SignIn {
     async signInWithGoogle() {
@@ -10,16 +9,26 @@ class SignIn {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
 
-            const userDoc = await getDoc(doc(db,"Users", user.uid));
-            if(!userDoc.exists()) {
+            // Check if user already exists in Firestore
+            const userDoc = await getDoc(doc(db, "Users", user.uid));
+            if (!userDoc.exists()) {
+                // User does not exist, create a new user document
+                const nameParts = user.displayName ? user.displayName.split(" ") : [];
                 await setDoc(doc(db, "Users", user.uid), {
-                    prefix: "",
-                    firstName: user.displayName.split(" ") [0],
-                    lastName: user.displayName.split(" ") [1] || "",
+                    firstName: nameParts[0],
+                    lastName: nameParts[1] || "",
                     email: user.email,
                     createdAt: new Date(),
                     isHost: false,
                 });
+                console.log('User data saved to Firestore:', {
+                    uid: user.uid,
+                    email: user.email,
+                    firstName: nameParts[0],
+                    lastName: nameParts[1],
+                });
+            } else {
+                console.log('User already exists:', userDoc.data());
             }
             return user;
         } catch (error) {
