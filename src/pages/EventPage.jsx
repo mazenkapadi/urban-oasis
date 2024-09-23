@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import EventCarousel from "../components/EventCarousel.jsx";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 
 function EventPage() {
