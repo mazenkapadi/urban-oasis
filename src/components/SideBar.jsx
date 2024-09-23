@@ -61,10 +61,20 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BiTask, BiBookAlt } from 'react-icons/bi';
+import { BiTask } from 'react-icons/bi';
 import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIcon } from "@heroicons/react/20/solid";
+import { signOutUser } from "../services/auth/signOut.js";
+import { useNavigate } from "react-router-dom";
+
 
 const Sidebar = () => {
+
+    const navigate = useNavigate();
+    const handleSignOut = () => {
+        signOutUser();
+        navigate("/signIn");
+    };
+
     return (
         <div className="flex flex-col bg-white shadow-lg rounded-lg p-7 w-64 h-screen">
             {/* Logo Section */}
@@ -109,6 +119,7 @@ const Sidebar = () => {
                     </Link>
                     <button
                         type="submit"
+                        onClick={handleSignOut}
                         className="w-full bg-red-600 hover:bg-red-800 text-white font-bold py-3 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                     >
                         Sign Out
