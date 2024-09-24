@@ -32,6 +32,7 @@ function SignInPage() {
     const handleSignInWithGoogle = async () => {
         try {
             await signIn.signInWithGoogle();
+            navigate('/');
             setError(null);
         } catch (error) {
             setError(error.message);
