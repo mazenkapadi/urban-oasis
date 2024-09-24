@@ -24,6 +24,7 @@ import HeaderComponent from "./components/HeaderComponent.jsx";
 import FooterComponent from "./components/FooterComponent.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
+import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
     {
         path: "/eventPage",
         element: <EventPage />
-       },
+    },
     {
         path: "/eventCreation",
         element: <EventCreationPage />
@@ -54,11 +55,12 @@ const router = createBrowserRouter([
         path: "/userProfilePage",
         element: <UserProfilePage />,
         children: [
-            { index: true, element: <UserProfileContent /> },
-            { path: "contact-info", element: <ContactInfoPage /> },
-            { path: "settings", element: <SettingsPage /> },
-            { path: "payments", element: <PaymentsPage /> },
-            { path: "support", element: <SupportPage /> },
+            {index: true, element: <UserProfileContent />},
+            {path: "contact-info", element: <ContactInfoPage />},
+            {path: "settings", element: <SettingsPage />},
+            {path: "payments", element: <PaymentsPage />},
+            {path: "support", element: <SupportPage />},
+            {path: "host-dashboard", element: <HostSignUpPage />}
         ]
     },
     {
@@ -72,7 +74,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
+    <StrictMode >
         <RouterProvider router={router} />
-    </StrictMode>
+    </StrictMode >
 );

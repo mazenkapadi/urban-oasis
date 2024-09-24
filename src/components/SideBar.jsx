@@ -5,7 +5,7 @@ import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIc
 import { signOutUser } from "../services/auth/signOut.js";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const SideBar = () => {
 
     const navigate = useNavigate();
     const handleSignOut = () => {
@@ -45,8 +45,10 @@ const Sidebar = () => {
                 <QuestionMarkCircleIcon className="h-6 w-6 mr-2 text-white" />
                 <span>Support</span>
             </Link>
+
+
             <div className="mt-auto"> {/* Keeps Host Dashboard at the bottom */}
-                <Link to="/host-dashboard"
+                <Link to="/userProfilePage/host-dashboard"
                       className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
                     <UserIcon className="h-6 w-6 mr-2 text-white" />
                     <span>Host Dashboard</span>
@@ -63,4 +65,4 @@ const Sidebar = () => {
     );
 };
 
-export default Sidebar;
+export default SideBar;
