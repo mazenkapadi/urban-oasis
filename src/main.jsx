@@ -24,6 +24,7 @@ import HeaderComponent from "./components/HeaderComponent.jsx";
 import FooterComponent from "./components/FooterComponent.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
+import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
     {
         path: "/photoCarousel",
         element: <PhotoCarousel />
+    },
+    {
+        path: "/viewAllEvents",
+        element: <ViewAllEventsPage />
     },
     {
         path: "*",
