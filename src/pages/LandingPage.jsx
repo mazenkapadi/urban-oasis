@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import EventCarousel from "../components/EventCarousel.jsx";
