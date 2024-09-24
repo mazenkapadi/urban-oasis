@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import eventCreation from "../services/eventCreation.js";
-
+import { v4 as uuidv4 } from 'uuid';
 
 function EventCreationPage() {
     const [eventTitle, setEventTitle] = useState('');
@@ -30,32 +30,73 @@ function EventCreationPage() {
         }
 
         const eventData = {
-            title: eventTitle,
-            description: eventDescription,
-            location: eventLocation,
-            date: eventDate,
-            time: eventTime,
-            capacity: eventCapacity,
-            image: eventImages,
-            paidEvent: isPaidEvent,
-            eventPrice: isPaidEvent ? eventPrice : null,
-            petAllowance: petAllowance,
-            refundAllowance: refundAllowance,
-            refundPolicy: refundAllowance ? refundPolicy : null,
-            ageRestriction: ageRestriction,
-            fbAvail: fbAvail,
-            merchAvailability: merchAvailability,
-            alcAvail: alcAvail,
-            alcInfo: alcAvail ? alcInfo : null,
+            id: uuidv4(),
+            basicInfo: {
+                title: eventTitle,
+                description: eventDescription,
+                location: eventLocation,
+            },
+
+            eventDetails: {
+                date: eventDate,
+                time: eventTime,
+                capacity: eventCapacity,
+                images: eventImages,
+                // images: Array.from(eventImages).map(file => URL.createObjectURL(file)),
+                paidEvent: isPaidEvent,
+                eventPrice: isPaidEvent ? parseFloat(eventPrice) : null,
+                // eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) : null,
+            },
+
+            policies: {
+                petAllowance: petAllowance,
+                refundAllowance: refundAllowance,
+                refundPolicy: refundAllowance ? refundPolicy : null,
+                ageRestriction: ageRestriction,
+            },
+
+            availability: {
+                fbAvail: fbAvail,
+                merchAvailability: merchAvailability,
+                alcAvail: alcAvail,
+                alcInfo: alcAvail ? alcInfo : null,
+            },
+
+            timestamps: {
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            },
         };
+
 
         try {
             await eventCreation.writeEventData(eventData);
             setError(null);
+            resetForm();
         } catch (error) {
             setError(error.message);
         }
 
+    };
+
+    const resetForm = () => {
+        setEventTitle('');
+        setEventDescription('');
+        setEventLocation('');
+        setEventDate('');
+        setEventTime('');
+        setEventCapacity(0);
+        setEventImages([]);
+        setEventPrice('');
+        setIsPaidEvent(false);
+        setPetAllowance(false);
+        setRefundAllowance(false);
+        setRefundPolicy('');
+        setAgeRestriction('');
+        setFbAvail(false);
+        setMerchAvailability(false);
+        setAlcAvail(false);
+        setAlcInfo('');
     };
 
     return (
