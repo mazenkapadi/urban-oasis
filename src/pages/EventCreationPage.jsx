@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import eventCreation from "../services/eventCreation.js";
 import { v4 } from 'uuid';
 import { auth } from "../firebaseConfig.js";
-
-const user = auth.currentUser?.uid;
+import { useNavigate } from "react-router-dom";
 
 function EventCreationPage() {
     const [ eventTitle, setEventTitle ] = useState('');
@@ -25,7 +24,19 @@ function EventCreationPage() {
     const [ alcAvail, setAlcAvail ] = useState(false);
     const [ alcInfo, setAlcInfo ] = useState('');
 
-    const handleSubmit = async (event) => {
+    const navigate = useNavigate();
+    const user = auth.currentUser?.uid;
+
+    useEffect(() => {
+        if (!user) {
+            // Redirect to login page if user is not logged in
+            navigate('/login');
+        }
+    }, [user, navigate]);
+
+    const handleSubmit = async () => {
+
+        // event.preventDefault();
 
         console.log('Event button clicked');
 
@@ -34,38 +45,75 @@ function EventCreationPage() {
         //     return;
         // }
 
+        // const eventData = {
+        //     id: user,
+        //     basicInfo: {
+        //         title: eventTitle,
+        //         description: eventDescription,
+        //         location: eventLocation,
+        //     },
+        //     eventDetails: {
+        //         date: eventDate,
+        //         time: eventTime,
+        //         capacity: eventCapacity,
+        //         images: Array.from(eventImages).map(file => URL.createObjectURL(file)), // Create URLs for the images
+        //         paidEvent: isPaidEvent,
+        //         eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) : null,
+        //     },
+        //     policies: {
+        //         petAllowance,
+        //         refundAllowance,
+        //         refundPolicy: refundAllowance ? refundPolicy : null,
+        //         ageRestriction,
+        //     },
+        //     availability: {
+        //         fbAvail,
+        //         merchAvailability,
+        //         alcAvail,
+        //         alcInfo: alcAvail ? alcInfo : null,
+        //     },
+        //     timestamps: {
+        //         createdAt: new Date().toISOString(),
+        //         updatedAt: new Date().toISOString(),
+        //     },
+        // };
+
         const eventData = {
-            id: user,
+            id: user || 'defaultUserID', // Replace with a meaningful default if needed
             basicInfo: {
-                title: eventTitle,
-                description: eventDescription,
-                location: eventLocation,
+                title: eventTitle || 'Untitled Event',
+                description: eventDescription || 'No description provided',
+                location: eventLocation || 'Location not specified',
             },
             eventDetails: {
-                date: eventDate,
-                time: eventTime,
-                capacity: eventCapacity,
-                images: Array.from(eventImages).map(file => URL.createObjectURL(file)), // Create URLs for the images
-                paidEvent: isPaidEvent,
-                eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) : null,
+                date: eventDate || '2024-01-01', // Default to a specific date
+                time: eventTime || '00:00', // Default to midnight
+                capacity: eventCapacity || 0, // Default capacity to 0
+                images: Array.from(eventImages).length > 0 ?
+                    Array.from(eventImages).map(file => URL.createObjectURL(file)) :
+                    ['defaultImageURL'], // Replace with a meaningful default image URL
+                paidEvent: isPaidEvent || false, // Default to not a paid event
+                eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0, // Default to 0 if not a paid event
+
             },
             policies: {
-                petAllowance,
-                refundAllowance,
-                refundPolicy: refundAllowance ? refundPolicy : null,
-                ageRestriction,
+                petAllowance: petAllowance || false, // Default to no pets allowed
+                refundAllowance: refundAllowance || false, // Default to no refunds allowed
+                refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
+                ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
             },
             availability: {
-                fbAvail,
-                merchAvailability,
-                alcAvail,
-                alcInfo: alcAvail ? alcInfo : null,
+                fbAvail: fbAvail || false, // Default to false
+                merchAvailability: merchAvailability || false, // Default to false
+                alcAvail: alcAvail || false, // Default to false
+                alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
             },
             timestamps: {
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             },
         };
+
 
         try {
             console.log('Event Data:', eventData);
