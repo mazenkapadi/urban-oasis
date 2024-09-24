@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  } from "react";
+import React, { useState, useEffect, } from "react";
 import Slider from "react-slick";
 import { db } from "../firebaseConfig.js";
 import EventCard from "./EventCard.jsx";
@@ -40,9 +40,9 @@ const EventCarousel = () => {
     }, []);
 
     const settings = {
-        // infinite: true,
+        infinite: true,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: 4,
         slidesToScroll: 1,
         swipeToSlide: true,
         touchThreshold: 10,
@@ -51,9 +51,9 @@ const EventCarousel = () => {
 
     return (
         <>
-            <div className="carousel-container py-4 px-2" >
-                <div className="flex justify-between items-center p-2" >
-                    <h2 className="text-3xl font-bold" >Events This Week</h2 >
+            <div className="carousel-container py-6 px-4" >
+                <div className="flex justify-between items-center p-2 mb-4" >
+                    <h2 className="text-4xl font-extrabold text-gray-900" >Events This Week</h2 >
                     <Link to="/" className="flex items-center text-blue-500 hover:underline" >
                         View All Events
                         <ChevronRightIcon className="ml-1 h-5 w-5" />
@@ -68,7 +68,12 @@ const EventCarousel = () => {
                     <EventCard />
                     <EventCard />
                     <EventCard />
-
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
                 </Slider >
             </div >
         </>

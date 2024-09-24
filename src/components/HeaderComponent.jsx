@@ -177,7 +177,6 @@ const HeaderComponent = () => {
                 </div>
             </div>
 
-            {/* Dropdown Menu */}
             <DropdownMenu isOpen={menuOpen} />
         </div>
     );
