@@ -114,13 +114,13 @@ const ContactInfoPage = () => {
 
             {/* Profile Photo Upload Section */}
             <div className="mb-10">
-                <label className="block text-lg font-semibold mb-4">Profile Photo</label>
+                <label className="block text-lg font-semibold mb-4 text-white">Profile Photo</label>
                 <div className="flex items-center space-x-4">
                     <div
-                        className="w-32 h-32 bg-gray-100 border border-dashed border-gray-300 rounded-md flex items-center justify-center">
-                        <span className="text-blue-950 text-sm text-center">ADD A PROFILE IMAGE</span>
+                        className="w-32 h-32 bg-gray-800 border border-dashed border-gray-300 rounded-md flex items-center justify-center">
+                        <span className="text-white text-sm text-center">ADD A PROFILE IMAGE</span>
                     </div>
-                    <div className="text-white-600 text-sm">
+                    <div className="text-gray-400 text-sm">
                         Drag and drop or choose a file to upload
                     </div>
                 </div>
@@ -128,12 +128,12 @@ const ContactInfoPage = () => {
 
             {/* Contact Information Section */}
             <div className="mb-10">
-                <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
+                <h2 className="text-xl font-semibold mb-4 text-white">Contact Information</h2>
                 <form className="grid grid-cols-2 gap-6" onSubmit={handleSave}>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Prefix</label>
+                        <label className="block text-white font-semibold mb-2">Prefix</label>
                         <select
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={prefix}
                             onChange={(e) => setPrefix(e.target.value)}
                         >
@@ -144,51 +144,51 @@ const ContactInfoPage = () => {
                         </select>
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">First Name</label>
+                        <label className="block text-white font-semibold mb-2">First Name</label>
                         <input
                             id="firstName"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Last Name</label>
+                        <label className="block text-white font-semibold mb-2">Last Name</label>
                         <input
                             id="lastName"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Suffix</label>
+                        <label className="block text-white font-semibold mb-2">Suffix</label>
                         <input
                             id="suffix"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={suffix}
                             onChange={(e) => setSuffix(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Cell Phone</label>
+                        <label className="block text-white font-semibold mb-2">Cell Phone</label>
                         <input
                             id="cellPhone"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={cellPhone}
                             onChange={(e) => setCellPhone(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Birthday</label>
+                        <label className="block text-white font-semibold mb-2">Birthday</label>
                         <input
                             id="birthday"
                             type="date"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-white-800 text-black"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={birthday}
                             onChange={(e) => setBirthday(e.target.value)}
                         />
@@ -198,62 +198,62 @@ const ContactInfoPage = () => {
 
             {/* Home Address Section */}
             <div className="mb-10">
-                <h2 className="text-xl font-semibold mb-4">Home Address</h2>
+                <h2 className="text-xl font-semibold mb-4 text-white">Home Address</h2>
                 <form className="grid grid-cols-2 gap-6">
                     <div className="col-span-2">
-                        <label className="block text-white-700 font-semibold mb-2">Address</label>
+                        <label className="block text-white font-semibold mb-2">Address</label>
                         <input
                             id="address"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                         />
                     </div>
                     <div className="col-span-2">
-                        <label className="block text-white-700 font-semibold mb-2">Address 2</label>
+                        <label className="block text-white font-semibold mb-2">Address 2</label>
                         <input
                             id="address2"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={address2}
                             onChange={(e) => setAddress2(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">City</label>
+                        <label className="block text-white font-semibold mb-2">City</label>
                         <input
                             id="city"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">State</label>
+                        <label className="block text-white font-semibold mb-2">State</label>
                         <SelectUSState
                             id="state"
-                            className="block w-full border border-blue-800 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-white-800 text-black"
+                            className="block w-full border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             onChange={(val) => setState(val)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Country</label>
+                        <label className="block text-white font-semibold mb-2">Country</label>
                         <input
                             id="country"
                             type="text"
                             value="United States"
                             readOnly
-                            className="block w-full p-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-white-700 font-semibold mb-2">Zip/Postal Code</label>
+                        <label className="block text-white font-semibold mb-2">Zip/Postal Code</label>
                         <input
                             id="zip"
                             type="text"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
                         />

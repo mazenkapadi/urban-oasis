@@ -58,7 +58,7 @@ const SettingsPage = () => {
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className="p-8 bg-gray-900-00 min-h-screen text-white">
+        <div className="p-8 bg-gray-900 min-h-screen text-white">
             {/* Change Email Section */}
             <div className="space-y-8">
                 <div>
@@ -87,7 +87,7 @@ const SettingsPage = () => {
                             placeholder="Enter new password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="border border-gray-300 rounded-md p-2 bg-white-700 text-white"
+                            className="border border-gray-600 rounded-md p-2 bg-gray-800 text-white"
                         />
                         <button
                             onClick={handlePasswordChange}
@@ -111,7 +111,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.attendingEvents.updates}
                                         onChange={() => togglePreference('attendingEvents', 'updates')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Stay updated on the latest UrbanOasis features, announcements, and special offers curated just for you.
                                 </label>
@@ -120,7 +120,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.attendingEvents.requests}
                                         onChange={() => togglePreference('attendingEvents', 'requests')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Requests for additional information on an event after you have attended
                                 </label>
@@ -129,7 +129,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.attendingEvents.unsubscribe}
                                         onChange={() => togglePreference('attendingEvents', 'unsubscribe')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Unsubscribe from all UrbanOasis' newsletters and updates for attendees
                                 </label>
@@ -145,7 +145,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.notifications.tickets}
                                         onChange={() => togglePreference('notifications', 'tickets')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     When friends buy tickets or register for events near me
                                 </label>
@@ -154,16 +154,16 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.notifications.organizer}
                                         onChange={() => togglePreference('notifications', 'organizer')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
-                                    Receive updates when your favorite hosts announces a new event
+                                    Receive updates when your favorite hosts announce a new event
                                 </label>
                                 <label className="block">
                                     <input
                                         type="checkbox"
                                         checked={preferences.notifications.collections}
                                         onChange={() => togglePreference('notifications', 'collections')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Reminders about the events you have RSVP'd
                                 </label>
@@ -172,7 +172,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.notifications.onsales}
                                         onChange={() => togglePreference('notifications', 'onsales')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Reminders about event onsales
                                 </label>
@@ -181,7 +181,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.notifications.likedEvents}
                                         onChange={() => togglePreference('notifications', 'likedEvents')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Reminders about events I've liked
                                 </label>
@@ -197,7 +197,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.updates}
                                         onChange={() => togglePreference('organizingEvents', 'updates')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Updates about new UrbanOasis features and announcements for hosts
                                 </label>
@@ -206,7 +206,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.tips}
                                         onChange={() => togglePreference('organizingEvents', 'tips')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Monthly tips and tools for hosting events
                                 </label>
@@ -215,7 +215,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.recap}
                                         onChange={() => togglePreference('organizingEvents', 'recap')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Event Sales Recap
                                 </label>
@@ -224,7 +224,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.unsubscribe}
                                         onChange={() => togglePreference('organizingEvents', 'unsubscribe')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Unsubscribe from all UrbanOasis newsletters and updates for hosts
                                 </label>
@@ -233,7 +233,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.reminders}
                                         onChange={() => togglePreference('organizingEvents', 'reminders')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Important reminders for my upcoming events
                                 </label>
@@ -242,7 +242,7 @@ const SettingsPage = () => {
                                         type="checkbox"
                                         checked={preferences.organizingEvents.confirmations}
                                         onChange={() => togglePreference('organizingEvents', 'confirmations')}
-                                        className="mr-2"
+                                        className="mr-2 bg-gray-800"
                                     />
                                     Order confirmations from my attendees
                                 </label>
@@ -274,28 +274,28 @@ const SettingsPage = () => {
             {/* Modal for Changing Email */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full relative">
                         <button
                             onClick={() => setIsModalOpen(false)}
                             className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
                         >
                             &times;
                         </button>
-                        <h3 className="text-xl font-bold mb-4">Change your email address</h3>
+                        <h3 className="text-xl font-bold mb-4 text-white">Change your email address</h3>
                         <div className="space-y-4">
                             <input
                                 type="email"
                                 placeholder="Email address"
                                 value={newEmail}
                                 onChange={(e) => setNewEmail(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2"
+                                className="w-full border border-gray-600 rounded-md p-2 bg-gray-800 text-white"
                             />
                             <input
                                 type="password"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2"
+                                className="w-full border border-gray-600 rounded-md p-2 bg-gray-800 text-white"
                             />
                             <button
                                 onClick={handleEmailChange}
