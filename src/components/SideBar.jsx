@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BiTask } from 'react-icons/bi';
-import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIcon } from "@heroicons/react/20/solid";
+import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import { signOutUser } from "../services/auth/signOut.js";
 import { useNavigate } from "react-router-dom";
 
@@ -15,9 +15,14 @@ const Sidebar = () => {
 
     return (
         <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 w-64 h-screen">
-            <Link to="/userProfilePage"
+            <Link to="/#"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
                 <HomeIcon className="h-6 w-6 mr-2 text-white" />
+                <span>HomePage</span>
+            </Link>
+            <Link to="/userProfilePage"
+                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
+                <UserCircleIcon className="h-6 w-6 mr-2 text-white" />
                 <span>Profile</span>
             </Link>
             <Link to="/userProfilePage/contact-info"
