@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import {onAuthStateChanged} from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
 
 function EventCreationPage() {
     const [ userId, setUserId ] = useState(null); // Store the authenticated user's UID
@@ -25,6 +26,17 @@ function EventCreationPage() {
     const [ merchAvailability, setMerchAvailability ] = useState(false);
     const [ alcAvail, setAlcAvail ] = useState(false);
     const [ alcInfo, setAlcInfo ] = useState('');
+    const [eventDateTime, setEventDateTime] = useState(null);
+
+    const validateEventData = () => {
+        // Check required fields (and any other validation rules)
+        if (!eventTitle || !eventDescription || !eventLocation || !eventDate || !eventTime) {
+            setError('Please fill in all required fields.');
+            return false;
+        }
+
+        return true;
+    };
 
 
     useEffect(() => {
@@ -40,7 +52,7 @@ function EventCreationPage() {
     }, []);
 
     const handleSubmit = async () => {
-
+        if (!validateEventData()) return;
         console.log('Event button clicked');
 
         const eventData = {
@@ -51,8 +63,7 @@ function EventCreationPage() {
                 location: eventLocation || 'Location not specified',
             },
             eventDetails: {
-                date: eventDate || '2024-01-01', // Default to a specific date
-                time: eventTime || '00:00', // Default to midnight
+                date: eventDateTime ? eventDateTime.toDate().toISOString() : '2024-01-01',
                 capacity: eventCapacity || 0, // Default capacity to 0
                 images: Array.from(eventImages).length > 0 ?
                     Array.from(eventImages).map(file => URL.createObjectURL(file)) :
@@ -79,12 +90,17 @@ function EventCreationPage() {
             },
         };
 
+        if (eventDate && eventTime) { // Check if both date and time are set
+            const combinedDateTime = new Date(eventDate + 'T' + eventTime); // Combine date and time
+            eventData.eventDetails.date = Timestamp.fromDate(combinedDateTime); // Convert to Timestamp
+            setEventDateTime(combinedDateTime); // Update state for reference
+        }
 
         try {
             console.log('Event Data:', eventData);
             await eventCreation.writeEventData(eventData);
             setError(null);
-            // resetForm();
+            resetForm();
         } catch (error) {
             setError(error.message);
         }
@@ -116,7 +132,7 @@ function EventCreationPage() {
                 <div className="box-border rounded-lg bg-slate-300 p-6" >
                     <h1 className="text-4xl text-slate-900 font-bold pb-3" >Create Your Event</h1 >
                     {error && <div className="text-red-500" >{error}</div >} {/* Display error messages */}
-                    <form onSubmit={handleSubmit} className="flex flex-col space-y-4 pt-4" >
+                    <div className="flex flex-col space-y-4 pt-4" >
                         {/* Title Input */}
                         <div className="flex flex-col" >
                             <label htmlFor="eventTitle" className="text-italic font-bold text-slate-900" >Title</label >
@@ -370,7 +386,7 @@ function EventCreationPage() {
                         >
                             Create Event
                         </button >
-                    </form >
+                    </div >
                 </div >
             </div >
         </>
