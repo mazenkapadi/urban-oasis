@@ -109,8 +109,6 @@ const ContactInfoPage = () => {
     };
 
     return (
-        // Commenting out the outermost container:
-        // <div className="p-8 bg-white shadow-md rounded-lg max-w-4xl mx-auto">
         <>
             <h1 className="text-3xl font-bold mb-8">Account Information</h1>
 
