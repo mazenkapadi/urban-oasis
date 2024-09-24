@@ -162,23 +162,21 @@ const HeaderComponent = () => {
     };
 
     return (
-        <div
-            className="fixed top-0 left-0 w-full z-50 transition-all duration-300
-             bg-gray-800 p-2"
-        >
-            <div className="p-2">
-                <div className="flex flex-col md:flex-row justify-between items-center">
-                    <LogoComponent />
-                    <SearchBarComponent />
-                    <div className="flex items-center space-x-4">
-                        <ProfileOrSignIn isLoggedIn={isLoggedIn} />
-                        <MenuButton toggleMenu={toggleMenu} />
-                    </div>
-                </div>
-            </div>
-
-            <DropdownMenu isOpen={menuOpen} />
-        </div>
+        <>
+            <div className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-primary-dark p-2" >
+                <div className="p-2" >
+                    <div className="flex flex-col md:flex-row justify-between items-center" >
+                        <LogoComponent />
+                        <SearchBarComponent />
+                        <div className="flex items-center space-x-4" >
+                            <ProfileOrSignIn isLoggedIn={isLoggedIn} />
+                            <MenuButton toggleMenu={toggleMenu} />
+                        </div >
+                    </div >
+                </div >
+                <DropdownMenu isOpen={menuOpen} />
+            </div >
+        </>
     );
 };
 
