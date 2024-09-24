@@ -41,47 +41,7 @@ function EventCreationPage() {
 
     const handleSubmit = async () => {
 
-        // event.preventDefault();
-
         console.log('Event button clicked');
-
-        // if (!eventTitle || !eventDescription || !eventLocation || !eventDate || !eventTime || !eventCapacity) {
-        //     setError('Event Title, Description, Location, Date, Time, and Capacity are required');
-        //     return;
-        // }
-
-        // const eventData = {
-        //     id: user,
-        //     basicInfo: {
-        //         title: eventTitle,
-        //         description: eventDescription,
-        //         location: eventLocation,
-        //     },
-        //     eventDetails: {
-        //         date: eventDate,
-        //         time: eventTime,
-        //         capacity: eventCapacity,
-        //         images: Array.from(eventImages).map(file => URL.createObjectURL(file)), // Create URLs for the images
-        //         paidEvent: isPaidEvent,
-        //         eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) : null,
-        //     },
-        //     policies: {
-        //         petAllowance,
-        //         refundAllowance,
-        //         refundPolicy: refundAllowance ? refundPolicy : null,
-        //         ageRestriction,
-        //     },
-        //     availability: {
-        //         fbAvail,
-        //         merchAvailability,
-        //         alcAvail,
-        //         alcInfo: alcAvail ? alcInfo : null,
-        //     },
-        //     timestamps: {
-        //         createdAt: new Date().toISOString(),
-        //         updatedAt: new Date().toISOString(),
-        //     },
-        // };
 
         const eventData = {
             id: userId || 'defaultUserID', // Replace with a meaningful default if needed
