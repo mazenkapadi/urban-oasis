@@ -41,7 +41,7 @@ const ViewAllEventsPage = () => {
   return (
     <>
       <HeaderComponent />
-      <div className="pt-24 bg-primary-light text-primary-dark">
+      <div className="pt-52 md:pt-24 lg:pt-24 xl:pt-24 bg-primary-light text-primary-dark">
         <div className="max-w-7xl mx-auto px-4 py-8 flex">
           {/* Filters Section */}
           <div className="w-1/4 pr-6">
