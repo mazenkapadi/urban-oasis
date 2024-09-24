@@ -7,7 +7,6 @@ function EventCardPage() {
         <>
             <div className="flex items-center w-screen">
                 <EventCard />
-
             </div>
         </>
     );
