@@ -20,6 +20,9 @@ import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
+import HeaderComponent from "./components/HeaderComponent.jsx";
+import FooterComponent from "./components/FooterComponent.jsx";
+import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
 
 const router = createBrowserRouter([
@@ -27,6 +30,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <LandingPage />
     },
+    {
+        path: "/eventPage",
+        element: <EventPage />
+       },
     {
         path: "/eventCreation",
         element: <EventCreationPage />
