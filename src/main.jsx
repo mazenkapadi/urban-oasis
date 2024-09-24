@@ -22,11 +22,16 @@ import WeatherPage from "./pages/WeatherPage.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
+import EventCreationPage from "./pages/EventCreationPage.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LandingPage />
+    },
+    {
+        path: "/eventCreation",
+        element: <EventCreationPage />
     },
     {
         path: "/signIn",
