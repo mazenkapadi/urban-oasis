@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const SettingsPage = () => {
-    const [email, setEmail] = useState('kittymeow@gmail.com');
+    const [email, setEmail] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -58,15 +58,15 @@ const SettingsPage = () => {
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 space-y-8">
-                {/* Change Email Section */}
+        <div className="p-8 bg-gray-900-00 min-h-screen text-white">
+            {/* Change Email Section */}
+            <div className="space-y-8">
                 <div>
                     <h2 className="text-xl font-bold mb-4">Change Email</h2>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <label className="block text-gray-700">Account Email Address</label>
-                            <p className="text-gray-800">{email}</p>
+                            <label className="block text-white">Account Email Address</label>
+                            <p>{email}</p>
                         </div>
                         <button
                             onClick={() => setIsModalOpen(true)}
@@ -81,13 +81,13 @@ const SettingsPage = () => {
                 <div>
                     <h2 className="text-xl font-bold mb-4">Set Password</h2>
                     <div className="flex flex-col space-y-4">
-                        <p className="text-gray-600">A password has not been set for your account.</p>
+                        <p>A password has not been set for your account.</p>
                         <input
                             type="password"
                             placeholder="Enter new password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="border border-gray-300 rounded-md p-2"
+                            className="border border-gray-300 rounded-md p-2 bg-white-700 text-white"
                         />
                         <button
                             onClick={handlePasswordChange}
@@ -261,7 +261,7 @@ const SettingsPage = () => {
                 {/* Close Account Section */}
                 <div>
                     <h2 className="text-xl font-bold mb-4">Close Account</h2>
-                    <p className="text-gray-600 mb-4">You must have a password associated with your account prior to being able to close it.</p>
+                    <p className="mb-4">You must have a password associated with your account prior to being able to close it.</p>
                     <button
                         onClick={handleAccountClosure}
                         className={buttonClass}
