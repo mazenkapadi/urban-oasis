@@ -120,9 +120,9 @@ const ContactInfoPage = () => {
                 <div className="flex items-center space-x-4">
                     <div
                         className="w-32 h-32 bg-gray-100 border border-dashed border-gray-300 rounded-md flex items-center justify-center">
-                        <span className="text-gray-500 text-sm text-center">ADD A PROFILE IMAGE</span>
+                        <span className="text-blue-950 text-sm text-center">ADD A PROFILE IMAGE</span>
                     </div>
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-white-600 text-sm">
                         Drag and drop or choose a file to upload
                     </div>
                 </div>
@@ -133,7 +133,7 @@ const ContactInfoPage = () => {
                 <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
                 <form className="grid grid-cols-2 gap-6" onSubmit={handleSave}>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Prefix</label>
+                        <label className="block text-white-700 font-semibold mb-2">Prefix</label>
                         <select
                             className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
                             value={prefix}
@@ -146,7 +146,7 @@ const ContactInfoPage = () => {
                         </select>
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">First Name</label>
+                        <label className="block text-white-700 font-semibold mb-2">First Name</label>
                         <input
                             id="firstName"
                             type="text"
@@ -156,7 +156,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Last Name</label>
+                        <label className="block text-white-700 font-semibold mb-2">Last Name</label>
                         <input
                             id="lastName"
                             type="text"
@@ -166,7 +166,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Suffix</label>
+                        <label className="block text-white-700 font-semibold mb-2">Suffix</label>
                         <input
                             id="suffix"
                             type="text"
@@ -176,7 +176,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Cell Phone</label>
+                        <label className="block text-white-700 font-semibold mb-2">Cell Phone</label>
                         <input
                             id="cellPhone"
                             type="text"
@@ -186,11 +186,11 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Birthday</label>
+                        <label className="block text-white-700 font-semibold mb-2">Birthday</label>
                         <input
                             id="birthday"
                             type="date"
-                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full p-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-white-800 text-black"
                             value={birthday}
                             onChange={(e) => setBirthday(e.target.value)}
                         />
@@ -203,7 +203,7 @@ const ContactInfoPage = () => {
                 <h2 className="text-xl font-semibold mb-4">Home Address</h2>
                 <form className="grid grid-cols-2 gap-6">
                     <div className="col-span-2">
-                        <label className="block text-gray-700 font-semibold mb-2">Address</label>
+                        <label className="block text-white-700 font-semibold mb-2">Address</label>
                         <input
                             id="address"
                             type="text"
@@ -213,7 +213,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-2">
-                        <label className="block text-gray-700 font-semibold mb-2">Address 2</label>
+                        <label className="block text-white-700 font-semibold mb-2">Address 2</label>
                         <input
                             id="address2"
                             type="text"
@@ -223,7 +223,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">City</label>
+                        <label className="block text-white-700 font-semibold mb-2">City</label>
                         <input
                             id="city"
                             type="text"
@@ -233,15 +233,15 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">State</label>
+                        <label className="block text-white-700 font-semibold mb-2">State</label>
                         <SelectUSState
                             id="state"
-                            className="block w-full border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full border border-blue-800 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-white-800 text-black"
                             onChange={(val) => setState(val)}
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Country</label>
+                        <label className="block text-white-700 font-semibold mb-2">Country</label>
                         <input
                             id="country"
                             type="text"
@@ -251,7 +251,7 @@ const ContactInfoPage = () => {
                         />
                     </div>
                     <div className="col-span-1">
-                        <label className="block text-gray-700 font-semibold mb-2">Zip/Postal Code</label>
+                        <label className="block text-white-700 font-semibold mb-2">Zip/Postal Code</label>
                         <input
                             id="zip"
                             type="text"
@@ -266,7 +266,7 @@ const ContactInfoPage = () => {
             <button
                 type="submit"
                 onClick={handleSave}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                className="w-full bg-blue-800 hover:bg-blue-600 text-white font-bold py-3 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
                 Save Changes
             </button>

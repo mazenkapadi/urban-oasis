@@ -4,7 +4,7 @@ const PaymentsPage = () => {
     return (
         <div className="min-h-screen flex flex-col justify-start  p-8">
             {/* Ensure the heading stays above the flex container */}
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Credit/Debit Cards</h1>
+            <h1 className="text-2xl font-bold text-white-800 mb-4">Credit/Debit Cards</h1>
 
             {/* Flex container with aligned icon and text */}
             <div className="bg-gray-100 p-4 rounded-md border border-gray-200 flex items-start space-x-6 w-full max-w-lg">

@@ -4,7 +4,6 @@ const FAQPage = () => {
     const [activeTab, setActiveTab] = useState('attending');
     const [openQuestion, setOpenQuestion] = useState(null);
 
-
     const faqs = {
         attending: [
             {
@@ -67,44 +66,44 @@ const FAQPage = () => {
     };
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold mb-6">Common Issues and Questions</h2>
+        <div className="p-8 bg-gray-900 min-h-screen">
+            <div className="max-w-5xl mx-auto space-y-8">
+                <h2 className="text-2xl font-bold mb-6 text-white">Common Issues and Questions</h2>
 
                 {/* Tab Navigation */}
-                <div className="mb-6 flex space-x-4 border-b-2">
+                <div className="mb-6 flex space-x-4 border-b-2 border-gray-600">
                     <button
-                        className={`pb-2 ${activeTab === 'attending' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+                        className={`pb-2 text-white ${activeTab === 'attending' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'}`}
                         onClick={() => setActiveTab('attending')}
                     >
                         Attending an Event
                     </button>
                     <button
-                        className={`pb-2 ${activeTab === 'organizing' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+                        className={`pb-2 text-white ${activeTab === 'organizing' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'}`}
                         onClick={() => setActiveTab('organizing')}
                     >
                         Hosting an Event
                     </button>
                     <button
-                        className={`pb-2 ${activeTab === 'account' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+                        className={`pb-2 text-white ${activeTab === 'account' ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'}`}
                         onClick={() => setActiveTab('account')}
                     >
                         Account & Settings
                     </button>
                 </div>
 
-
+                {/* FAQ Content */}
                 <div className="space-y-4">
                     {faqs[activeTab].map((faq, index) => (
-                        <div key={index} className="border-b">
+                        <div key={index} className="border-b border-gray-600">
                             <button
                                 onClick={() => toggleQuestion(index)}
-                                className="w-full text-left text-lg font-semibold py-2 text-gray-800 hover:text-blue-600"
+                                className="w-full text-left text-lg font-semibold py-2 text-white hover:text-blue-500"
                             >
                                 {faq.question}
                             </button>
                             {openQuestion === index && (
-                                <p className="mt-2 text-gray-700">{faq.answer}</p>
+                                <p className="mt-2 text-gray-400">{faq.answer}</p>
                             )}
                         </div>
                     ))}
