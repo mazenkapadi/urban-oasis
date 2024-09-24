@@ -3,8 +3,10 @@ import eventCreation from "../services/eventCreation.js";
 import { v4 } from 'uuid';
 import { auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
+import {onAuthStateChanged} from "firebase/auth";
 
 function EventCreationPage() {
+    const [ userId, setUserId ] = useState(null); // Store the authenticated user's UID
     const [ eventTitle, setEventTitle ] = useState('');
     const [ eventDescription, setEventDescription ] = useState('');
     const [ eventLocation, setEventLocation ] = useState('');
@@ -24,15 +26,18 @@ function EventCreationPage() {
     const [ alcAvail, setAlcAvail ] = useState(false);
     const [ alcInfo, setAlcInfo ] = useState('');
 
-    const navigate = useNavigate();
-    const user = auth.currentUser?.uid;
 
     useEffect(() => {
-        if (!user) {
-            // Redirect to login page if user is not logged in
-            navigate('/login');
-        }
-    }, [user, navigate]);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("user is signed in.")
+                setUserId(user.uid); // Store the user's UID
+            } else {
+                console.log("User is not signed in.");
+            }
+        });
+        return () => unsubscribe(); // Clean up the listener on unmount
+    }, []);
 
     const handleSubmit = async () => {
 
@@ -79,7 +84,7 @@ function EventCreationPage() {
         // };
 
         const eventData = {
-            id: user || 'defaultUserID', // Replace with a meaningful default if needed
+            id: userId || 'defaultUserID', // Replace with a meaningful default if needed
             basicInfo: {
                 title: eventTitle || 'Untitled Event',
                 description: eventDescription || 'No description provided',
