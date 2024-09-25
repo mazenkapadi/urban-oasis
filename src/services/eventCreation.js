@@ -10,7 +10,6 @@ class EventCreation {
                 console.error("User not authenticated.");
                 return;
             }
-
             const eventRef = doc(collection(db, "Events"));
             await setDoc(eventRef, eventData);
             console.log('Event created successfully! ID: ', eventRef.id);
