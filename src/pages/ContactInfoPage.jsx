@@ -65,25 +65,22 @@ const ContactInfoPage = () => {
         return () => unsubscribe();
     }, []);
 
-    // Handle file upload
+
     const handleProfilePicChange = async (e) => {
         if (e.target.files[0]) {
             const selectedFile = e.target.files[0];
             setProfilePicFile(selectedFile);
 
-            // Immediately upload the file when it's selected
             if (selectedFile && userId) {
                 setUploading(true);
                 const fileRef = ref(storage, `userprofileimage/${userId}/${selectedFile.name}`);
                 try {
-                    // Upload the image to Firebase Storage
+
                     await uploadBytes(fileRef, selectedFile);
                     const downloadURL = await getDownloadURL(fileRef);
 
-                    // Update the profile picture in the state to reflect immediately
                     setProfilePic(downloadURL);
 
-                    // Save the new profile picture URL in Firestore
                     await setDoc(doc(db, 'Users', userId), { profilePic: downloadURL }, { merge: true });
                     alert('Profile picture updated!');
 
@@ -142,7 +139,6 @@ const ContactInfoPage = () => {
             <div className="mb-10">
                 <label className="block text-lg font-semibold mb-4 text-white">Profile Photo</label>
                 <div className="flex items-center space-x-4">
-                    {/* Make this section clickable */}
                     <div
                         className="w-32 h-32 bg-gray-800 border border-gray-300 rounded-md flex items-center justify-center cursor-pointer"
                         onClick={() => document.getElementById('fileInput').click()} // Open file dialog when clicked
@@ -158,7 +154,6 @@ const ContactInfoPage = () => {
                         )}
                     </div>
 
-                    {/* Hidden file input */}
                     <input
                         id="fileInput"
                         type="file"
