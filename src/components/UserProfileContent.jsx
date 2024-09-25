@@ -9,6 +9,7 @@ const UserProfileContent = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [userId, setUserId] = useState(null); // Local state to track userId
+    const [profilePic, setProfilePic] = useState(''); // State to track profile picture URL
     const [events, setEvents] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const navigate = useNavigate();
@@ -45,6 +46,9 @@ const UserProfileContent = () => {
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(data.contact?.cellPhone || 'Phone number not found');
                         setEmail(data.contact?.email || email || 'Email not found');
+
+                        // Set the profile picture URL from Firestore data
+                        setProfilePic(data.profilePic || 'https://via.placeholder.com/150'); // Fallback to placeholder if no profile picture is found
                     } else {
                         console.log('No such document!');
                     }
@@ -68,9 +72,9 @@ const UserProfileContent = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center">
                     <img
-                        src="https://via.placeholder.com/150"
+                        src={profilePic} // Dynamically use the profile picture from state
                         alt="User Profile"
-                        className="rounded-full w-24 h-24 object-cover mb-4"
+                        className="rounded-full w-24 h-24 object-cover mb-4" // Circular image
                     />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
                     <p className="text-gray-400">{phone || 'Phone number not available'}</p>
