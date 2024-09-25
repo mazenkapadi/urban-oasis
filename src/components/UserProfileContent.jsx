@@ -18,17 +18,17 @@ const UserProfileContent = () => {
         navigate('/userProfilePage/contact-info');
     };
 
-    // Listen for authentication state changes
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
-                setEmail(user.email); // Set the email from the authenticated user
+                setEmail(user.email);
             } else {
                 console.log('No user logged in');
             }
         });
-        return () => unsubscribe(); // Clean up listener on unmount
+        return () => unsubscribe();
     }, []);
 
     useEffect(() => {
@@ -40,14 +40,14 @@ const UserProfileContent = () => {
 
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        console.log('User data:', data);  // Log user data to check its structure
+                        console.log('User data:', data);
 
-                        // Use similar structure to ContactInfoPage
+
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(data.contact?.cellPhone || 'Phone number not found');
                         setEmail(data.contact?.email || email || 'Email not found');
 
-                        // Set the profile picture URL from Firestore data
+
                         setProfilePic(data.profilePic || 'https://via.placeholder.com/150'); // Fallback to placeholder if no profile picture is found
                     } else {
                         console.log('No such document!');
@@ -72,9 +72,9 @@ const UserProfileContent = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center">
                     <img
-                        src={profilePic} // Dynamically use the profile picture from state
+                        src={profilePic}
                         alt="User Profile"
-                        className="rounded-full w-24 h-24 object-cover mb-4" // Circular image
+                        className="rounded-full w-24 h-24 object-cover mb-4"
                     />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
                     <p className="text-gray-400">{phone || 'Phone number not available'}</p>
