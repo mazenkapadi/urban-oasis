@@ -18,7 +18,6 @@ import SettingsPage from './pages/SettingsPage.jsx';
 import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
-import WeatherPage from "./pages/WeatherPage.jsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
     {
         path: "*",
         element: <NotFound />
-    },
-    {
-      path: "/weather",
-      element: <WeatherPage />,
     },
 ]);
 
