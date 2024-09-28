@@ -1,8 +1,29 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Slider from 'react-slick';
-
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 const PhotoCarousel = () => {
+    const [activeSlide, setActiveSlide] = useState(0);
+
+    const NextArrow = ({ onClick }) => (
+        <div
+            className="absolute top-0 right-0 h-full w-10 z-10 cursor-pointer flex items-center justify-center bg-gradient-to-l from-gray-800 to-transparent hover:bg-gradient-to-l hover:from-gray-600 opacity-75"
+            onClick={onClick}
+        >
+            <ChevronRightIcon className="w-8 h-8 text-white" />
+        </div>
+    );
+
+    const PrevArrow = ({ onClick }) => (
+        <div
+            className="absolute top-0 left-0 h-full w-10 z-10 cursor-pointer flex items-center justify-center bg-gradient-to-r from-gray-800 to-transparent hover:bg-gradient-to-r hover:from-gray-600 opacity-75"
+            onClick={onClick}
+        >
+            <ChevronLeftIcon className="w-8 h-8 text-white" />
+        </div>
+    );
+
+
     const carouselSettings = {
         dots: true,
         infinite: true,
@@ -12,57 +33,35 @@ const PhotoCarousel = () => {
         autoplaySpeed: 5000,
         pauseOnHover: true,
         centerMode: true,
-        centerPadding: '60px px-20',
+        centerPadding: '20px',
         variableWidth: true,
+        nextArrow: <NextArrow />,
+        prevArrow: <PrevArrow />,
         responsive: [
             {
                 breakpoint: 768,
                 settings: {
                     arrows: false,
                     centerMode: true,
-                    centerPadding: '40px px-10',
-                    slidesToShow: 3
-                }
+                    centerPadding: '40px',
+                    slidesToShow: 3,
+                },
             },
             {
                 breakpoint: 480,
                 settings: {
                     arrows: false,
                     centerMode: true,
-                    centerPadding: '40px px-10',
-                    slidesToShow: 1
-                }
-            }
+                    centerPadding: '30px',
+                    slidesToShow: 1,
+                },
+            },
         ],
-        nextArrow: (
-            <div>
-                <div className="next-slick-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" stroke="black" height="24" viewBox="0 -960 960 960"
-                         width="24">
-                        <path
-                            d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z"/>
-                    </svg>
-                </div>
-            </div>
-        ),
-
-        prevArrow: (
-            <div>
-                <div className="next-slick-arrow rotate-180">
-                    <svg xmlns="http://www.w3.org/2000/svg" stroke="black" height="24" viewBox="0 -960 960 960"
-                         width="24">
-                        <path
-                            d="m242-200 200-280-200-280h98l200 280-200 280h-98Zm238 0 200-280-200-280h98l200 280-200 280h-98Z"/>
-                    </svg>
-                </div>
-            </div>
-        ),
         afterChange: (currentSlide) => {
             setActiveSlide(currentSlide);
         },
     };
 
-    const [activeSlide, setActiveSlide] = useState(0);
     const images = [
         'src/TestImages/TestImage1.jpg',
         'src/TestImages/TestImage2.jpg',
@@ -70,13 +69,18 @@ const PhotoCarousel = () => {
     ];
 
     return (
-        <div className="items-center justify-center p-8 ">
+        <div className="relative items-center justify-center p-8">
             <Slider {...carouselSettings}>
                 {images.map((image, index) => (
-                    <div key={index}
-                         className={`relative ${index === activeSlide ? 'opacity-100' : 'opacity-50 hover:opacity-75 transition duration-300 ease-in-out'} flex px-4`}>
-                        <img src={image} alt={`Image ${index + 1}`}
-                             className="w-[400px] h-[300px] object-cover rounded-lg"/>
+                    <div
+                        key={index}
+                        className={`relative ${index === activeSlide ? 'opacity-100' : 'opacity-50 hover:opacity-75 transition-opacity duration-300 ease-in-out'} flex px-4`}
+                    >
+                        <img
+                            src={image}
+                            alt={`Image ${index + 1}`}
+                            className="w-[400px] h-[300px] object-cover rounded-lg"
+                        />
                     </div>
                 ))}
             </Slider>
@@ -85,4 +89,3 @@ const PhotoCarousel = () => {
 };
 
 export default PhotoCarousel;
-
