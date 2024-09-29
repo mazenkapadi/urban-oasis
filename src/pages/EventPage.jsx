@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import { CalendarDaysIcon, UserIcon, MapPinIcon,TicketIcon } from "@heroicons/react/20/solid";
-import ForecastComponent from "../components/ForecastComponent.jsx";
-import LocationComponent from "../components/LocationComponent.jsx";
+
 
 function EventPage() {
     const [ quantity, setQuantity ] = useState(1);
@@ -109,8 +108,6 @@ function EventPage() {
                                 <label className="font-bold text-white text-2xl" >About This Event</label >
                                 <label className="font-bold text-white pl-3" >Refund Policy</label >
                             </div >
-                            <ForecastComponent city={"New York"} eventDate={"2024-09-29"} />
-                            <LocationComponent />
                         </div >
                     </div >
                 </div >
