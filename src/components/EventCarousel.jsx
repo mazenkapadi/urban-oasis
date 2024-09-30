@@ -1,19 +1,12 @@
-import React, {useState, useEffect,} from "react";
+import React, { useState, useEffect, } from "react";
 import Slider from "react-slick";
-import {db} from "../firebaseConfig.js";
+import { db } from "../firebaseConfig.js";
 import EventCard from "./EventCard.jsx";
-import {Link} from "react-router-dom";
-import {ChevronRightIcon} from "@heroicons/react/20/solid/index.js";
-import {collection, getDocs} from "firebase/firestore";
-import {useNavigate} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@heroicons/react/20/solid/index.js";
 
 const EventCarousel = () => {
-    const [events, setEvents] = useState([]);
-    const navigate = useNavigate();
-
-    const handleCardClick = (eventId, event) => {
-        navigate(`/eventPage/${eventId}`, {state: { event }});
-    };
+    const [ events, setEvents ] = useState([]);
 
     useEffect(() => {
 
@@ -29,13 +22,11 @@ const EventCarousel = () => {
 
         const fetchEvents = async () => {
             try {
-                const eventsCollection = collection(db, 'Events');
-                const snapshot = await getDocs(eventsCollection);
+                const snapshot = await db.collection('Events').get();
                 const eventsList = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                console.log("Fetched events:", eventsList);
 
                 const eventsThisWeek = eventsList.filter(event => {
-                    const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
+                    const eventDate = new Date(event.date);
                     return eventDate >= startOfWeek && eventDate <= endOfWeek;
                 });
 
@@ -60,43 +51,31 @@ const EventCarousel = () => {
 
     return (
         <>
-            <div className="carousel-container py-6 px-4">
-                <div className="flex justify-between items-center p-2 mb-4">
-                    <h2 className="text-4xl font-extrabold text-gray-900">Events This Week</h2>
-                    <Link to="/" className="flex items-center text-blue-500 hover:underline">
+            <div className="carousel-container py-6 px-4" >
+                <div className="flex justify-between items-center p-2 mb-4" >
+                    <h2 className="text-4xl font-extrabold text-gray-900" >Events This Week</h2 >
+                    <Link to="/" className="flex items-center text-blue-500 hover:underline" >
                         View All Events
-                        <ChevronRightIcon className="ml-1 h-5 w-5"/>
-                    </Link>
-                </div>
+                        <ChevronRightIcon className="ml-1 h-5 w-5" />
+                    </Link >
+                </div >
                 <Slider {...settings}>
 
-                    {events.map(event => (
-                        <Link key={event.id} to={`/eventPage/${event.id}`}>
-                            <EventCard
-                                key={event.id}
-                                onClick={() => handleCardClick(event.id)}
-                                title={event.basicInfo.title}
-                                location={event.basicInfo.location}
-                                date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
-                                price={event.eventDetails.eventPrice}
-                                image={event.eventDetails.images[0] || 'defaultImageURL'}
-                                eventId={event.id}
-                                event={event}
-                            />
-                        </Link>
-                    ))}
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                </Slider>
-            </div>
+                    {/*{events.map(event => (*/}
+                    {/*    <EventCard key={event.id} event={event} />*/}
+                    {/*))}*/}
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                    <EventCard />
+                </Slider >
+            </div >
         </>
     )
 }
