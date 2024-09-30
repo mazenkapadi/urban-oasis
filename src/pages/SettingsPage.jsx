@@ -85,6 +85,13 @@ const SettingsPage = () => {
                     </div>
                 </div>
 
+                {/* Success message */}
+                {successMessage && (
+                    <div className="mt-4 text-green-500" id="success_message">
+                        {successMessage}
+                    </div>
+                )}
+
                 {/* Change Password Section */}
                 <div>
                     <h2 className="text-xl font-bold mb-4">Change Password</h2>
@@ -100,12 +107,7 @@ const SettingsPage = () => {
                     </div>
                 </div>
 
-                {/* Success message */}
-                {successMessage && (
-                    <div className="mt-4 text-green-500" id="success_message">
-                        {successMessage}
-                    </div>
-                )}
+
 
                 {/* User Preferences Component */}
                 <UserPreferences preferences={preferences} togglePreference={(category, key) => setPreferences(prev => ({

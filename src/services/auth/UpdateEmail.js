@@ -6,15 +6,14 @@ export const handleEmailChange = async (currentEmail, newEmail, password, setMod
     if (user) {
         const credential = EmailAuthProvider.credential(currentEmail, password);
         try {
-            // Re-authenticate the user
             await reauthenticateWithCredential(user, credential);
 
-            // Ensure new email is different
+
             if (newEmail !== currentEmail) {
                 await updateEmail(user, newEmail);
                 setSuccessMessage('Email successfully updated!');
-                setModalError(''); // Clear any error
-                closeModal(); // Close modal after successful email update
+                setModalError('');
+                closeModal();
             } else {
                 setModalError('New email cannot be the same as the current email.');
             }
