@@ -1,5 +1,6 @@
 import React from 'react';
 
+// eslint-disable-next-line react/prop-types
 const UserPreferences = ({ preferences, togglePreference }) => {
     return (
         <div>
@@ -12,6 +13,8 @@ const UserPreferences = ({ preferences, togglePreference }) => {
                         <label className="block">
                             <input
                                 type="checkbox"
+
+                                {/* eslint-disable-next-line react/prop-types */}
                                 checked={preferences.attendingEvents.updates}
                                 onChange={() => togglePreference('attendingEvents', 'updates')}
                                 className="mr-2 bg-gray-800"
