@@ -1,6 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-// eslint-disable-next-line react/prop-types
 const UserPreferences = ({ preferences, togglePreference }) => {
     return (
         <div>
@@ -13,8 +13,6 @@ const UserPreferences = ({ preferences, togglePreference }) => {
                         <label className="block">
                             <input
                                 type="checkbox"
-
-                                {/* eslint-disable-next-line react/prop-types */}
                                 checked={preferences.attendingEvents.updates}
                                 onChange={() => togglePreference('attendingEvents', 'updates')}
                                 className="mr-2 bg-gray-800"
@@ -166,6 +164,33 @@ const UserPreferences = ({ preferences, togglePreference }) => {
             </form>
         </div>
     );
+};
+
+// Add PropTypes validation
+UserPreferences.propTypes = {
+    preferences: PropTypes.shape({
+        attendingEvents: PropTypes.shape({
+            updates: PropTypes.bool.isRequired,
+            requests: PropTypes.bool.isRequired,
+            unsubscribe: PropTypes.bool.isRequired,
+        }).isRequired,
+        notifications: PropTypes.shape({
+            tickets: PropTypes.bool.isRequired,
+            organizer: PropTypes.bool.isRequired,
+            collections: PropTypes.bool.isRequired,
+            onsales: PropTypes.bool.isRequired,
+            likedEvents: PropTypes.bool.isRequired,
+        }).isRequired,
+        organizingEvents: PropTypes.shape({
+            updates: PropTypes.bool.isRequired,
+            tips: PropTypes.bool.isRequired,
+            recap: PropTypes.bool.isRequired,
+            unsubscribe: PropTypes.bool.isRequired,
+            reminders: PropTypes.bool.isRequired,
+            confirmations: PropTypes.bool.isRequired,
+        }).isRequired,
+    }).isRequired,
+    togglePreference: PropTypes.func.isRequired,
 };
 
 export default UserPreferences;
