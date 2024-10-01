@@ -3,18 +3,19 @@ import {useLocation, useParams} from "react-router-dom";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/react/20/solid";
-import {db} from "../firebaseConfig.js";
+import {auth, db} from "../firebaseConfig.js";
+import {onAuthStateChanged} from "firebase/auth";
 
 
 const EventPage = () => {
     const [quantity, setQuantity] = useState(1);
-    const {eventId: id} = useParams();
-    const [ eventTitle, setEventTitle ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventLocation, setEventLocation ] = useState('');
-    const [ eventDateTime, setEventDateTime ] = useState('');
-    const [ eventPrice, setEventPrice ] = useState('');
-
+    const {eventId: eventId} = useParams();
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventDateTime, setEventDateTime] = useState('');
+    const [eventPrice, setEventPrice] = useState('');
+    const [eventRefundPolicy, setEventRefundPolicy] = useState('');
 
     const handleIncrement = () => {
         setQuantity(quantity + 1);
@@ -31,18 +32,26 @@ const EventPage = () => {
 
     useEffect(() => {
         const fetchEventData = async () => {
-            if (id) {
-                console.log(id)
-                const docRef = doc(db, 'Events', `${id}`);
+            if (eventId) {
+                console.log("Event id", eventId)
+                const docRef = doc(db, 'Events', eventId);
+                console.log(docRef);
                 const docSnap = await getDoc(docRef);
 
+                console.log(docSnap.exists());
                 if (docSnap.exists()) {
+                    console.log(docSnap.data());
                     const data = docSnap.data();
-                    setEventTitle(data.title);
-                    setEventDateTime(data.eventDateTime);
-                    setEventPrice(data.price);
-                    setEventLocation(data.location);
-                    setEventDescription(data.description);
+                    setEventTitle(data.basicInfo.title);
+                    setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleDateString());
+                    if (data.eventDetails.eventPrice === 0) {
+                        setEventPrice("Free");
+                    } else {
+                        setEventPrice(data.eventDetails.eventPrice);
+                    }
+                    setEventLocation(data.basicInfo.location);
+                    setEventDescription(data.basicInfo.description);
+                    setEventRefundPolicy(data.policies.refundPolicy);
                 } else {
                     console.log('No such document!');
                 }
@@ -50,7 +59,7 @@ const EventPage = () => {
         };
 
         fetchEventData();
-    }, [id]);
+    }, []);
 
 
     return (
@@ -67,19 +76,21 @@ const EventPage = () => {
 
                             <div className="flex flex-row">
                                 <div className="flex content w-full flex-col gap-8 ">
-                                    <div className="flex flex-col pt-4 space-y-2">
-                                        <label
-                                            className="block text-gray-300 text-5xl">{eventTitle}</label>
+                                    <div className="flex flex-col pt-4 space-y-6">
                                         <div className="flex items-center space-x-3">
                                             <CalendarDaysIcon className="text-gray-300 w-6 h-6"/>
                                             <label
                                                 className="font-bold text-white opacity-50">{eventDateTime}</label>
                                         </div>
+                                        <label
+                                            className="block text-gray-300 text-5xl">{eventTitle}</label>
+
+                                        <div className="flex flex-row">
+                                            <UserIcon className="text-gray-300 w-6 h-6"/>
+                                            <label className="font-bold text-white opacity-50 pl-3">Host</label>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-row">
-                                        <UserIcon className="text-gray-300 w-6 h-6"/>
-                                        <label className="font-bold text-white opacity-50 pl-3">Host</label>
-                                    </div>
+
                                 </div>
 
                                 <div className="flex flex-col p-6 w-1/4 h-52 gap-2">
@@ -126,12 +137,20 @@ const EventPage = () => {
                                                 }}>RSVP
                                         </button>
                                     </div>
+                                    {eventRefundPolicy !== null && (
+                                        <div
+                                            className="flex-col">
+                                            <label className="font-bold text-white pl-3">Refund Policy</label>
+                                            <label className="text-white">{eventRefundPolicy}</label>
+                                        </div>
+                                    )}
                                     <div
                                         className="flex w-96 h-64">
                                         <MapPinIcon className="text-gray-300 w-6 h-6"/>
                                         <label
                                             className="font-bold text-white pl-3">{eventLocation}</label>
                                     </div>
+
                                     <div
                                         className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-72">
                                         <label className="font-bold text-white text-2xl">Host Contact
@@ -142,10 +161,10 @@ const EventPage = () => {
 
 
                             <div className="flex flex-row">
-                                <label className="font-bold text-white text-2xl">About This Event
-                                    {eventDescription}
-                                </label>
-                                <label className="font-bold text-white pl-3">Refund Policy</label>
+                                <div className="flex flex-col">
+                                    <label className="font-bold text-white text-2xl">About This Event</label>
+                                    <label className="text-white">{eventDescription}</label>
+                                </div>
                             </div>
 
                         </div>
