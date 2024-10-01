@@ -12,7 +12,7 @@ const EventCarousel = () => {
     const navigate = useNavigate();
 
     const handleCardClick = (event) => {
-        navigate(`/eventPage/${event.id}`, {state: { event }});
+        navigate(`/eventPage/${event.id}`);
     };
 
     useEffect(() => {
@@ -38,7 +38,6 @@ const EventCarousel = () => {
                     const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
                     return eventDate >= startOfWeek && eventDate <= endOfWeek;
                 });
-
                 setEvents(eventsThisWeek);
             } catch (error) {
                 console.error('Error fetching events:', error);
@@ -71,7 +70,7 @@ const EventCarousel = () => {
                 <Slider {...settings}>
 
                     {events.map(event => (
-                        <Link key={event.id} to={`/eventPage/${event.id}`} state={event} >
+                        <Link key={event.id} to={`/eventPage/${event.id}`} >
                             <EventCard
                                 key={event.id}
                                 onClick={() => handleCardClick(event.id)}
@@ -85,16 +84,19 @@ const EventCarousel = () => {
                             />
                         </Link>
                     ))}
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
+                    {events.length < settings.slidesToShow && [...Array(settings.slidesToShow - events.length)].map((_, i) => (
+                        <EventCard key={i} />
+                    ))}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
                 </Slider>
             </div>
         </>
