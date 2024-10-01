@@ -7,7 +7,7 @@ function EventCard({title, location, date, price, image, eventId, event}) {
 
         const handleNavigate = () => {
             console.log(event);
-            navigate(`/eventPage/${eventId}`, {state: {event}});
+            navigate(`/eventPage/${eventId}`);
         };
 
 
@@ -30,7 +30,7 @@ function EventCard({title, location, date, price, image, eventId, event}) {
                             <p className="text-lg">{date}</p>
                         </div>
                         <div className="text-white">
-                            <p className="text-lg font-bold">${price}</p>
+                            <p className="text-lg font-bold">{price === 0 ? "Free" : `$${price}`}</p>
                         </div>
                     </div>
                 </div>
