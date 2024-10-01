@@ -11,8 +11,8 @@ const EventCarousel = () => {
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
 
-    const handleCardClick = (eventId, event) => {
-        navigate(`/eventPage/${eventId}`, {state: { event }});
+    const handleCardClick = (event) => {
+        navigate(`/eventPage/${event.id}`, {state: { event }});
     };
 
     useEffect(() => {
@@ -71,7 +71,7 @@ const EventCarousel = () => {
                 <Slider {...settings}>
 
                     {events.map(event => (
-                        <Link key={event.id} to={`/eventPage/${event.id}`}>
+                        <Link key={event.id} to={`/eventPage/${event.id}`} state={event} >
                             <EventCard
                                 key={event.id}
                                 onClick={() => handleCardClick(event.id)}
