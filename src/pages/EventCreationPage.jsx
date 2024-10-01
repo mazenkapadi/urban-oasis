@@ -40,16 +40,13 @@ function EventCreationPage() {
     }, []);
 
     const handleFileChange = (e) => {
-        console.log("Files selected:", Array.from(e.target.files));
-        const filesArray = Array.from(e.target.files); // Convert FileList to array
-        console.log("Selected files:", filesArray); // Log the array
-        setEventImages(filesArray); // Update the state with the array of files
+        const imagesArray = Array.from(e.target.files);
+        setEventImages(imagesArray);
     };
 
     const handleImageUpload = async (eventTitle, imageFiles) => {
         if (!imageFiles || !imageFiles.length) {
-            console.log("No images selected."); // Debug log
-            setEventImages([]); // Clear event images if no files selected
+            setEventImages([]);
             return [];
         }
 
@@ -57,12 +54,10 @@ function EventCreationPage() {
             const imageUrls = await Promise.all(
                 Array.from(imageFiles).map(async (imageFile) => {
                     const storageRef = ref(storage, `eventImages/${eventTitle}/${imageFile.name}`);
-                    console.log(`Uploading ${imageFile.name}...`); // Debug log
 
-                    await uploadBytes(storageRef, imageFile); // Upload image
-                    const imageUrl = await getDownloadURL(storageRef); // Get download URL
+                    await uploadBytes(storageRef, imageFile);
+                    const imageUrl = await getDownloadURL(storageRef);
 
-                    console.log(`Uploaded ${imageFile.name} - URL: ${imageUrl}`); // Debug log
                     return {
                         name: imageFile.name,
                         url: imageUrl,
@@ -70,8 +65,7 @@ function EventCreationPage() {
                 })
             );
 
-            console.log("Image URLs:", imageUrls); // Debug log for image URLs
-            setEventImages(imageUrls); // Store uploaded image URLs in state
+            setEventImages(imageUrls);
             return imageUrls;
         } catch (error) {
             console.error("Error uploading images:", error);
@@ -83,9 +77,7 @@ function EventCreationPage() {
     const handleSubmit = async () => {
         console.log('Event button clicked');
 
-        // Combine eventDateTime into Firestore Timestamp
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
-
 
         try {
             const uploadedImages = await handleImageUpload(eventTitle, eventImages);

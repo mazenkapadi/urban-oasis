@@ -20,13 +20,10 @@ const EventCarousel = () => {
         const getStartAndEndOfWeek = () => {
             const today = new Date();
             const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1); // Adjust if Sunday should be the first day
-            console.log(firstDayOfWeek);
             const startOfWeek = new Date(today);
             startOfWeek.setDate(firstDayOfWeek);
-            console.log(startOfWeek);
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setDate(startOfWeek.getDate() + 6);
-            console.log(endOfWeek);
             return {startOfWeek, endOfWeek};
         };
 
@@ -37,7 +34,6 @@ const EventCarousel = () => {
                 const eventsCollection = collection(db, 'Events');
                 const snapshot = await getDocs(eventsCollection);
                 const eventsList = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                console.log("Fetched events:", eventsList);
 
                 const eventsThisWeek = eventsList.filter(event => {
                     const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
