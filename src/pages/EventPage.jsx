@@ -61,25 +61,30 @@ const EventPage = () => {
                     console.log('No such document!');
                 }
 
-                if (userId) {
-                    const docRef = doc(db, 'Users', userId);
-                    const docSnap = await getDoc(docRef);
 
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        // Set the state with user data
-                        setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
-                        setPhone(data.contact.cellPhone || '');
-                        setEmail(data.contact.email || '');
-
-                    } else {
-                        console.log('No such document!');
-                    }
-                }
             }
         };
 
+        const fetchUserData = async () => {
+            if (userId) {
+                const docRef = doc(db, 'Users', userId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Set the state with user data
+                    setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
+                    setPhone(data.contact.cellPhone || '');
+                    setEmail(data.contact.email || '');
+
+                } else {
+                    console.log('No such document!');
+                }
+            }
+        }
+
         fetchEventData();
+        fetchUserData();
     }, []);
 
 
@@ -93,7 +98,7 @@ const EventPage = () => {
                         <div
                             className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-full h-full gap-4">
 
-                            <div className="box-border rounded-lg bg-amber-500 w-full h-96">
+                            <div className="w-full h-96">
                                 <PhotoCarousel/>
                             </div>
 
