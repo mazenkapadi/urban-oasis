@@ -16,6 +16,10 @@ const EventPage = () => {
     const [eventDateTime, setEventDateTime] = useState('');
     const [eventPrice, setEventPrice] = useState('');
     const [eventRefundPolicy, setEventRefundPolicy] = useState('');
+    const [userId, setUserId] = useState('null');
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
 
     const handleIncrement = () => {
         setQuantity(quantity + 1);
@@ -52,14 +56,35 @@ const EventPage = () => {
                     setEventLocation(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
+                    setUserId(data.userId);
+                } else {
+                    console.log('No such document!');
+                }
+            }
+        };
+        const fetchUserData = async () => {
+            if (userId) {
+                const docRef = doc(db, 'Users', userId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Set the state with user data
+                    setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
+                    setPhone(data.contact.cellPhone || '');
+                    setEmail(data.contact.email || '');
+
                 } else {
                     console.log('No such document!');
                 }
             }
         };
 
+        fetchUserData();
         fetchEventData();
     }, []);
+
+
 
 
     return (
@@ -87,7 +112,7 @@ const EventPage = () => {
 
                                         <div className="flex flex-row">
                                             <UserIcon className="text-gray-300 w-6 h-6"/>
-                                            <label className="font-bold text-white opacity-50 pl-3">Host</label>
+                                            <label className="font-bold text-white opacity-50 pl-3">{name}</label>
                                         </div>
                                     </div>
 
@@ -152,9 +177,12 @@ const EventPage = () => {
                                     </div>
 
                                     <div
-                                        className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-fit">
+                                        className="flex-col box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-fit">
                                         <label className="font-bold text-white text-2xl">Host Contact
                                             Information</label>
+                                        <label className="text-white ">Email: {email}</label>
+                                        <label className="text-white ">Phone: {phone}</label>
+
                                     </div>
                                 </div>
                             </div>
