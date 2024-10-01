@@ -12,6 +12,7 @@ class EventCreation {
             }
             const eventRef = doc(collection(db, "Events"));
             await setDoc(eventRef, eventData);
+            eventData.id = eventRef.id;
             console.log('Event created successfully! ID: ', eventRef.id);
         } catch (error) {
             console.error('Error creating event:', error);
