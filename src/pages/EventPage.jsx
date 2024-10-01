@@ -93,7 +93,7 @@ const EventPage = () => {
 
                                 </div>
 
-                                <div className="flex flex-col p-6 w-1/4 h-52 gap-2">
+                                <div className="flex flex-col p-6 w-1/4 h-96 gap-2">
                                     <div
                                         className="flex flex-row gap-4">
 
