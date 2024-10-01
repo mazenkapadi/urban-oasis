@@ -46,7 +46,7 @@ function EventCreationPage() {
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
 
         const eventData = {
-            id: userId || 'defaultUserID', // Replace with a meaningful default if needed
+            userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
             basicInfo: {
                 title: eventTitle || 'Untitled Event',
                 description: eventDescription || 'No description provided',
