@@ -1,31 +1,31 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import eventCreation from "../services/eventCreation.js";
-import { auth } from "../firebaseConfig.js";
-import { onAuthStateChanged } from "firebase/auth";
-import { Timestamp } from "firebase/firestore";
-import "firebase/storage";
+import {auth, storage} from "../firebaseConfig.js";
+import {onAuthStateChanged} from "firebase/auth";
+import {Timestamp} from "firebase/firestore";
 import {PhotoIcon} from "@heroicons/react/24/outline/index.js";
+import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 
 function EventCreationPage() {
 
-    const [ userId, setUserId ] = useState(null); // Store the authenticated user's UID
-    const [ eventTitle, setEventTitle ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventLocation, setEventLocation ] = useState('');
-    const [ eventDateTime, setEventDateTime ] = useState(''); // Store combined date and time
-    const [ eventCapacity, setEventCapacity ] = useState(0);
-    const [ eventImages, setEventImages ] = useState([]);
-    const [ eventPrice, setEventPrice ] = useState('');
-    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
-    const [ error, setError ] = useState(null); // Fixed error handling
-    const [ petAllowance, setPetAllowance ] = useState(false);
-    const [ refundAllowance, setRefundAllowance ] = useState(false);
-    const [ refundPolicy, setRefundPolicy ] = useState('');
-    const [ ageRestriction, setAgeRestriction ] = useState('All');
-    const [ fbAvail, setFbAvail ] = useState(false);
-    const [ merchAvailability, setMerchAvailability ] = useState(false);
-    const [ alcAvail, setAlcAvail ] = useState(false);
-    const [ alcInfo, setAlcInfo ] = useState('');
+    const [userId, setUserId] = useState(null); // Store the authenticated user's UID
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventDateTime, setEventDateTime] = useState(''); // Store combined date and time
+    const [eventCapacity, setEventCapacity] = useState(0);
+    const [eventImages, setEventImages] = useState([]);
+    const [eventPrice, setEventPrice] = useState('');
+    const [isPaidEvent, setIsPaidEvent] = useState(false);
+    const [error, setError] = useState(null); // Fixed error handling
+    const [petAllowance, setPetAllowance] = useState(false);
+    const [refundAllowance, setRefundAllowance] = useState(false);
+    const [refundPolicy, setRefundPolicy] = useState('');
+    const [ageRestriction, setAgeRestriction] = useState('All');
+    const [fbAvail, setFbAvail] = useState(false);
+    const [merchAvailability, setMerchAvailability] = useState(false);
+    const [alcAvail, setAlcAvail] = useState(false);
+    const [alcInfo, setAlcInfo] = useState('');
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,48 +39,90 @@ function EventCreationPage() {
         return () => unsubscribe(); // Clean up the listener on unmount
     }, []);
 
+    const handleFileChange = (e) => {
+        console.log("Files selected:", Array.from(e.target.files));
+        const filesArray = Array.from(e.target.files); // Convert FileList to array
+        console.log("Selected files:", filesArray); // Log the array
+        setEventImages(filesArray); // Update the state with the array of files
+    };
+
+    const handleImageUpload = async (eventTitle, imageFiles) => {
+        if (!imageFiles || !imageFiles.length) {
+            console.log("No images selected."); // Debug log
+            setEventImages([]); // Clear event images if no files selected
+            return [];
+        }
+
+        try {
+            const imageUrls = await Promise.all(
+                Array.from(imageFiles).map(async (imageFile) => {
+                    const storageRef = ref(storage, `eventImages/${eventTitle}/${imageFile.name}`);
+                    console.log(`Uploading ${imageFile.name}...`); // Debug log
+
+                    await uploadBytes(storageRef, imageFile); // Upload image
+                    const imageUrl = await getDownloadURL(storageRef); // Get download URL
+
+                    console.log(`Uploaded ${imageFile.name} - URL: ${imageUrl}`); // Debug log
+                    return {
+                        name: imageFile.name,
+                        url: imageUrl,
+                    };
+                })
+            );
+
+            console.log("Image URLs:", imageUrls); // Debug log for image URLs
+            setEventImages(imageUrls); // Store uploaded image URLs in state
+            return imageUrls;
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            throw error;
+        }
+    };
+
+
     const handleSubmit = async () => {
         console.log('Event button clicked');
 
         // Combine eventDateTime into Firestore Timestamp
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
 
-        const eventData = {
-            userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
-            basicInfo: {
-                title: eventTitle || 'Untitled Event',
-                description: eventDescription || 'No description provided',
-                location: eventLocation || 'Location not specified',
-            },
-            eventDetails: {
-                eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
-                capacity: eventCapacity || 0, // Default capacity to 0
-                images: Array.from(eventImages).length > 0 ?
-                    Array.from(eventImages).map(file => URL.createObjectURL(file)) :
-                    [ 'defaultImageURL' ],
-                paidEvent: isPaidEvent || false, // Default to not a paid event
-                eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
-            },
-            policies: {
-                petAllowance: petAllowance || false, // Default to no pets allowed
-                refundAllowance: refundAllowance || false, // Default to no refunds allowed
-                refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
-                ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
-            },
-            availability: {
-                fbAvail: fbAvail || false, // Default to false
-                merchAvailability: merchAvailability || false, // Default to false
-                alcAvail: alcAvail || false, // Default to false
-                alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
-            },
-            timestamps: {
-                createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
-                updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
-            },
-        };
 
         try {
-            console.log('Event Data:', eventData);
+            const uploadedImages = await handleImageUpload(eventTitle, eventImages);
+
+            const eventData = {
+                userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
+                basicInfo: {
+                    title: eventTitle || 'Untitled Event',
+                    description: eventDescription || 'No description provided',
+                    location: eventLocation || 'Location not specified',
+                },
+                eventDetails: {
+                    eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
+                    capacity: eventCapacity || 0, // Default capacity to 0
+                    images: uploadedImages,
+                    paidEvent: isPaidEvent || false, // Default to not a paid event
+                    eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
+                },
+                policies: {
+                    petAllowance: petAllowance || false, // Default to no pets allowed
+                    refundAllowance: refundAllowance || false, // Default to no refunds allowed
+                    refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
+                    ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
+                },
+                availability: {
+                    fbAvail: fbAvail || false, // Default to false
+                    merchAvailability: merchAvailability || false, // Default to false
+                    alcAvail: alcAvail || false, // Default to false
+                    alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
+                },
+                timestamps: {
+                    createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
+                    updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
+                },
+            };
+
+            console.log("Final Event Data:", eventData);
             await eventCreation.writeEventData(eventData);
             setError(null);
             // resetForm();
@@ -108,22 +150,23 @@ function EventCreationPage() {
         setAlcInfo('');
     };
 
+
     return (
         <div
-            className="event-creation-page flex justify-center items-center py-10 px-4 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen" >
-            <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8" >
-                <h1 className="text-5xl text-white font-extrabold pb-6 text-center" >Create Your Event</h1 >
+            className="event-creation-page flex justify-center items-center py-10 px-4 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen">
+            <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8">
+                <h1 className="text-5xl text-white font-extrabold pb-6 text-center">Create Your Event</h1>
 
                 {/* Error message */}
-                {error && <div className="text-red-500 text-center mb-4" >{error}</div >}
+                {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-                <div className="flex flex-col space-y-4 pt-4" >
-                    <div className="flex flex-col space-y-6" >
+                <div className="flex flex-col space-y-4 pt-4">
+                    <div className="flex flex-col space-y-6">
 
                         {/* Event Title */}
-                        <div >
-                            <label htmlFor="eventTitle" className="text-lg font-semibold text-white" >Event
-                                Title</label >
+                        <div>
+                            <label htmlFor="eventTitle" className="text-lg font-semibold text-white">Event
+                                Title</label>
                             <input
                                 type="text"
                                 id="eventTitle"
@@ -133,12 +176,12 @@ function EventCreationPage() {
                                 className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                             />
-                        </div >
+                        </div>
 
                         {/* Description */}
-                        <div >
+                        <div>
                             <label htmlFor="eventDescription"
-                                   className="text-lg font-semibold text-white" >Description</label >
+                                   className="text-lg font-semibold text-white">Description</label>
                             <textarea
                                 id="eventDescription"
                                 value={eventDescription}
@@ -148,12 +191,12 @@ function EventCreationPage() {
                                 rows="4"
                                 required
                             />
-                        </div >
+                        </div>
 
                         {/* Location */}
-                        <div >
+                        <div>
                             <label htmlFor="eventLocation"
-                                   className="text-lg font-semibold text-white" >Location</label >
+                                   className="text-lg font-semibold text-white">Location</label>
                             <input
                                 type="text"
                                 id="eventLocation"
@@ -163,13 +206,13 @@ function EventCreationPage() {
                                 className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 required
                             />
-                        </div >
+                        </div>
 
                         {/* Date and Capacity */}
-                        <div className="flex space-x-4" >
-                            <div className="flex-1" >
-                                <label htmlFor="eventDateTime" className="text-lg font-semibold text-white" >Event Date
-                                    and Time</label >
+                        <div className="flex space-x-4">
+                            <div className="flex-1">
+                                <label htmlFor="eventDateTime" className="text-lg font-semibold text-white">Event Date
+                                    and Time</label>
                                 <input
                                     type="datetime-local"
                                     id="eventDateTime"
@@ -178,10 +221,10 @@ function EventCreationPage() {
                                     className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     required
                                 />
-                            </div >
-                            <div className="flex-1" >
+                            </div>
+                            <div className="flex-1">
                                 <label htmlFor="eventCapacity"
-                                       className="text-lg font-semibold text-white" >Capacity</label >
+                                       className="text-lg font-semibold text-white">Capacity</label>
                                 <input
                                     type="number"
                                     id="eventCapacity"
@@ -194,36 +237,36 @@ function EventCreationPage() {
                                     className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     required
                                 />
-                            </div >
-                        </div >
+                            </div>
+                        </div>
 
                         {/* Image Upload */}
-                        <div >
-                            <label htmlFor="eventImages" className="text-lg font-semibold text-white" >Upload Event
-                                Images</label >
-                            <div className="mt-2" >
+                        <div>
+                            <label htmlFor="eventImages" className="text-lg font-semibold text-white">Upload Event
+                                Images</label>
+                            <div className="mt-2">
                                 <label
                                     htmlFor="eventImages"
                                     className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
                                 >
-                                    <PhotoIcon className="h-6 w-6 text-white mr-2" />
-                                    <span className="text-white" >Choose Images</span >
+                                    <PhotoIcon className="h-6 w-6 text-white mr-2"/>
+                                    <span className="text-white">Choose Images</span>
                                     <input
                                         type="file"
                                         id="eventImages"
                                         accept="image/*"
                                         multiple
-                                        onChange={(e) => setEventImages(e.target.files)}
+                                        onChange={handleFileChange}
                                         className="sr-only"
                                     />
-                                </label >
-                            </div >
-                        </div >
+                                </label>
+                            </div>
+                        </div>
 
                         {/* Paid Event */}
-                        <div className="space-y-4" >
-                            <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white" >Is this a paid
-                                event?</label >
+                        <div className="space-y-4">
+                            <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white">Is this a paid
+                                event?</label>
                             <select
                                 id="isPaidEvent"
                                 value={isPaidEvent}
@@ -237,15 +280,15 @@ function EventCreationPage() {
                                 }}
                                 className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             >
-                                <option value={true} >Yes</option >
-                                <option value={false} >No</option >
-                            </select >
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
 
                             {isPaidEvent && (
                                 <>
-                                    <div >
-                                        <label htmlFor="eventPrice" className="text-lg font-semibold text-white" >Ticket
-                                            Price</label >
+                                    <div>
+                                        <label htmlFor="eventPrice" className="text-lg font-semibold text-white">Ticket
+                                            Price</label>
                                         <input
                                             type="text"
                                             id="eventPrice"
@@ -257,11 +300,11 @@ function EventCreationPage() {
                                             placeholder="Enter ticket price"
                                             className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         />
-                                    </div >
+                                    </div>
 
-                                    <div >
-                                        <label htmlFor="refundAllowance" className="text-lg font-semibold text-white" >Allow
-                                            Refunds?</label >
+                                    <div>
+                                        <label htmlFor="refundAllowance" className="text-lg font-semibold text-white">Allow
+                                            Refunds?</label>
                                         <select
                                             id="refundAllowance"
                                             value={refundAllowance}
@@ -271,15 +314,15 @@ function EventCreationPage() {
                                             }}
                                             className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         >
-                                            <option value={true} >Yes</option >
-                                            <option value={false} >No</option >
-                                        </select >
+                                            <option value={true}>Yes</option>
+                                            <option value={false}>No</option>
+                                        </select>
 
                                         {refundAllowance && (
-                                            <div >
+                                            <div>
                                                 <label htmlFor="refundPolicy"
-                                                       className="text-lg font-semibold text-white" >Refund
-                                                    Policy</label >
+                                                       className="text-lg font-semibold text-white">Refund
+                                                    Policy</label>
                                                 <input
                                                     type="text"
                                                     id="refundPolicy"
@@ -288,15 +331,15 @@ function EventCreationPage() {
                                                     placeholder="Enter refund policy"
                                                     className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 />
-                                            </div >
+                                            </div>
                                         )}
-                                    </div >
+                                    </div>
                                 </>
                             )}
-                        </div >
+                        </div>
 
                         {/* Other options */}
-                        <div className="grid grid-cols-2 gap-4" >
+                        <div className="grid grid-cols-2 gap-4">
                             {[
                                 {
                                     label: "Allow Pets?",
@@ -318,21 +361,21 @@ function EventCreationPage() {
                                 },
                                 {label: "Alcohol Allowed?", id: "alcAvail", value: alcAvail, setter: setAlcAvail},
                             ].map((item, index) => (
-                                <div key={index} >
+                                <div key={index}>
                                     <label htmlFor={item.id}
-                                           className="text-lg font-semibold text-white" >{item.label}</label >
+                                           className="text-lg font-semibold text-white">{item.label}</label>
                                     <select
                                         id={item.id}
                                         value={item.value}
                                         onChange={() => item.setter(!item.value)}
                                         className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
-                                        <option value={true} >Yes</option >
-                                        <option value={false} >No</option >
-                                    </select >
-                                </div >
+                                        <option value={true}>Yes</option>
+                                        <option value={false}>No</option>
+                                    </select>
+                                </div>
                             ))}
-                        </div >
+                        </div>
 
                         {/* Submit Button */}
                         <button
@@ -340,11 +383,11 @@ function EventCreationPage() {
                             className="mt-6 w-full bg-indigo-500 text-white font-bold py-3 rounded-md hover:bg-indigo-600 transition duration-300"
                         >
                             Create Event
-                        </button >
-                    </div >
-                </div >
-            </div >
-        </div >
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 
 }
