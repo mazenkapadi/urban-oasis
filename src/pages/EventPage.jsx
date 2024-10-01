@@ -60,27 +60,25 @@ const EventPage = () => {
                 } else {
                     console.log('No such document!');
                 }
-            }
-        };
-        const fetchUserData = async () => {
-            if (userId) {
-                const docRef = doc(db, 'Users', userId);
-                const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // Set the state with user data
-                    setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
-                    setPhone(data.contact.cellPhone || '');
-                    setEmail(data.contact.email || '');
+                if (userId) {
+                    const docRef = doc(db, 'Users', userId);
+                    const docSnap = await getDoc(docRef);
 
-                } else {
-                    console.log('No such document!');
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Set the state with user data
+                        setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
+                        setPhone(data.contact.cellPhone || '');
+                        setEmail(data.contact.email || '');
+
+                    } else {
+                        console.log('No such document!');
+                    }
                 }
             }
         };
 
-        fetchUserData();
         fetchEventData();
     }, []);
 

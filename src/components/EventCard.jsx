@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useNavigate} from 'react-router-dom';
 import {MapPinIcon} from '@heroicons/react/24/outline';
 
@@ -30,7 +30,7 @@ function EventCard({title, location, date, price, image, eventId, event}) {
                             <p className="text-lg">{date}</p>
                         </div>
                         <div className="text-white">
-                            <p className="text-lg font-bold">${price}</p>
+                            <p className="text-lg font-bold">{price === 0 ? "Free" : `$${price}`}</p>
                         </div>
                     </div>
                 </div>
