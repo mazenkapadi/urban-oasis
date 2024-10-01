@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { handleEmailChange } from '../services/auth/UpdateEmail';
+import PasswordReset from '../services/auth/ResetPassword';
+import { handleAccountClosure } from '../services/auth/CloseAccount';
+import UserPreferences from '../components/UserPreferences';
+import { auth } from '../firebaseConfig';
 
 const SettingsPage = () => {
-    const [email, setEmail] = useState('');
+    const [currentEmail, setCurrentEmail] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newEmail, setNewEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
+    const [modalError, setModalError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [preferences, setPreferences] = useState({
         attendingEvents: {
             updates: false,
@@ -28,47 +36,47 @@ const SettingsPage = () => {
         },
     });
 
-    const handleEmailChange = () => {
-        alert(`Email changed to ${newEmail}`);
-        setIsModalOpen(false);
+    // Fetch the current email of the authenticated user
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (user) {
+            setCurrentEmail(user.email);
+        }
+    }, []);
+
+    // Handle Password Reset using the PasswordReset class
+    const handlePasswordChange = async () => {
+        try {
+            const result = await PasswordReset.resetPassword(currentEmail); // Call the resetPassword method from PasswordReset class
+            console.log(result.message); // Log the success message
+            setIsPasswordResetSent(true); // Set the state to indicate email was sent
+        } catch (error) {
+            console.error(error.message); // Log any error that occurs during the process
+        }
     };
 
-    const handlePasswordChange = () => {
-        alert('Password has been set/changed');
-    };
-
-    const handlePreferencesSave = () => {
-        alert('Preferences saved!');
-    };
-
-    const handleAccountClosure = () => {
-        alert("Account has been closed. We're sorry to see you go.");
-    };
-
-    const togglePreference = (category, key) => {
-        setPreferences((prev) => ({
-            ...prev,
-            [category]: {
-                ...prev[category],
-                [key]: !prev[category][key],
-            },
-        }));
+    const closeModal = () => {
+        setNewEmail('');
+        setPassword('');
+        setModalError(''); // Clear modal error
+        setIsModalOpen(false); // Close modal
     };
 
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className="p-8 bg-gray-900-00 min-h-screen text-white">
+        <div className="p-8 bg-gray-900 min-h-screen text-white">
             {/* Change Email Section */}
             <div className="space-y-8">
                 <div>
                     <h2 className="text-xl font-bold mb-4">Change Email</h2>
                     <div className="flex items-center space-x-4">
                         <div>
-                            <label className="block text-white">Account Email Address</label>
-                            <p>{email}</p>
+                            <label className="block text-white" htmlFor="current_email">Account Email Address</label>
+                            <p id="current_email">{currentEmail}</p>
                         </div>
                         <button
+                            id="change_email_button"
                             onClick={() => setIsModalOpen(true)}
                             className={buttonClass}
                         >
@@ -77,193 +85,45 @@ const SettingsPage = () => {
                     </div>
                 </div>
 
-                {/* Set/Change Password Section */}
+                {/* Success message */}
+                {successMessage && (
+                    <div className="mt-4 text-green-500" id="success_message">
+                        {successMessage}
+                    </div>
+                )}
+
+                {/* Change Password Section */}
                 <div>
-                    <h2 className="text-xl font-bold mb-4">Set Password</h2>
+                    <h2 className="text-xl font-bold mb-4">Change Password</h2>
                     <div className="flex flex-col space-y-4">
-                        <p>A password has not been set for your account.</p>
-                        <input
-                            type="password"
-                            placeholder="Enter new password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="border border-gray-300 rounded-md p-2 bg-white-700 text-white"
-                        />
+                        <p>Click below to receive an email to reset your password.</p>
                         <button
-                            onClick={handlePasswordChange}
+                            id="password_reset_button"
+                            onClick={handlePasswordChange} // Using the PasswordReset class
                             className={buttonClass}
                         >
-                            Set Password
+                            {isPasswordResetSent ? 'Resend Email' : 'Change Password'}
                         </button>
                     </div>
                 </div>
 
-                {/* Email Preferences Section */}
-                <div>
-                    <h2 className="text-xl font-bold mb-4">Email Preferences</h2>
-                    <form className="space-y-6">
-                        {/* Attending Events */}
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Attending Events</h3>
-                            <div className="space-y-2">
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.attendingEvents.updates}
-                                        onChange={() => togglePreference('attendingEvents', 'updates')}
-                                        className="mr-2"
-                                    />
-                                    Stay updated on the latest UrbanOasis features, announcements, and special offers curated just for you.
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.attendingEvents.requests}
-                                        onChange={() => togglePreference('attendingEvents', 'requests')}
-                                        className="mr-2"
-                                    />
-                                    Requests for additional information on an event after you have attended
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.attendingEvents.unsubscribe}
-                                        onChange={() => togglePreference('attendingEvents', 'unsubscribe')}
-                                        className="mr-2"
-                                    />
-                                    Unsubscribe from all UrbanOasis' newsletters and updates for attendees
-                                </label>
-                            </div>
-                        </div>
 
-                        {/* Notifications */}
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Notifications</h3>
-                            <div className="space-y-2">
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.notifications.tickets}
-                                        onChange={() => togglePreference('notifications', 'tickets')}
-                                        className="mr-2"
-                                    />
-                                    When friends buy tickets or register for events near me
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.notifications.organizer}
-                                        onChange={() => togglePreference('notifications', 'organizer')}
-                                        className="mr-2"
-                                    />
-                                    Receive updates when your favorite hosts announces a new event
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.notifications.collections}
-                                        onChange={() => togglePreference('notifications', 'collections')}
-                                        className="mr-2"
-                                    />
-                                    Reminders about the events you have RSVP'd
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.notifications.onsales}
-                                        onChange={() => togglePreference('notifications', 'onsales')}
-                                        className="mr-2"
-                                    />
-                                    Reminders about event onsales
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.notifications.likedEvents}
-                                        onChange={() => togglePreference('notifications', 'likedEvents')}
-                                        className="mr-2"
-                                    />
-                                    Reminders about events I've liked
-                                </label>
-                            </div>
-                        </div>
 
-                        {/* Organizing Events */}
-                        <div>
-                            <h3 className="text-lg font-semibold mb-2">Hosting Events</h3>
-                            <div className="space-y-2">
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.updates}
-                                        onChange={() => togglePreference('organizingEvents', 'updates')}
-                                        className="mr-2"
-                                    />
-                                    Updates about new UrbanOasis features and announcements for hosts
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.tips}
-                                        onChange={() => togglePreference('organizingEvents', 'tips')}
-                                        className="mr-2"
-                                    />
-                                    Monthly tips and tools for hosting events
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.recap}
-                                        onChange={() => togglePreference('organizingEvents', 'recap')}
-                                        className="mr-2"
-                                    />
-                                    Event Sales Recap
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.unsubscribe}
-                                        onChange={() => togglePreference('organizingEvents', 'unsubscribe')}
-                                        className="mr-2"
-                                    />
-                                    Unsubscribe from all UrbanOasis newsletters and updates for hosts
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.reminders}
-                                        onChange={() => togglePreference('organizingEvents', 'reminders')}
-                                        className="mr-2"
-                                    />
-                                    Important reminders for my upcoming events
-                                </label>
-                                <label className="block">
-                                    <input
-                                        type="checkbox"
-                                        checked={preferences.organizingEvents.confirmations}
-                                        onChange={() => togglePreference('organizingEvents', 'confirmations')}
-                                        className="mr-2"
-                                    />
-                                    Order confirmations from my attendees
-                                </label>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handlePreferencesSave}
-                            className={buttonClass}
-                        >
-                            Save Preferences
-                        </button>
-                    </form>
-                </div>
+                {/* User Preferences Component */}
+                <UserPreferences preferences={preferences} togglePreference={(category, key) => setPreferences(prev => ({
+                    ...prev,
+                    [category]: {
+                        ...prev[category],
+                        [key]: !prev[category][key],
+                    },
+                }))} />
 
                 {/* Close Account Section */}
                 <div>
                     <h2 className="text-xl font-bold mb-4">Close Account</h2>
-                    <p className="mb-4">You must have a password associated with your account prior to being able to close it.</p>
                     <button
-                        onClick={handleAccountClosure}
+                        id="close_account_button"
+                        onClick={handleAccountClosure} // Call the function from CloseAccount.js
                         className={buttonClass}
                     >
                         Close Account
@@ -274,35 +134,46 @@ const SettingsPage = () => {
             {/* Modal for Changing Email */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full relative">
                         <button
-                            onClick={() => setIsModalOpen(false)}
+                            id="modal_close_button"
+                            onClick={closeModal}
                             className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
                         >
                             &times;
                         </button>
-                        <h3 className="text-xl font-bold mb-4">Change your email address</h3>
+                        <h3 className="text-xl font-bold mb-4 text-white">Change your email address</h3>
                         <div className="space-y-4">
                             <input
+                                id="new_email_input"
                                 type="email"
-                                placeholder="Email address"
+                                placeholder="New email address"
                                 value={newEmail}
                                 onChange={(e) => setNewEmail(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2"
+                                className="w-full border border-gray-600 rounded-md p-2 bg-gray-800 text-white"
                             />
                             <input
+                                id="password_input"
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full border border-gray-300 rounded-md p-2"
+                                className="w-full border border-gray-600 rounded-md p-2 bg-gray-800 text-white"
                             />
                             <button
-                                onClick={handleEmailChange}
+                                id="save_email_button"
+                                onClick={() => handleEmailChange(currentEmail, newEmail, password, setModalError, setSuccessMessage, closeModal)}
                                 className={buttonClass}
                             >
                                 Save
                             </button>
+
+                            {/* Error message inside modal */}
+                            {modalError && (
+                                <div className="text-red-500 mt-2" id="modal_error_message">
+                                    {modalError}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
