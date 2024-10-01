@@ -3,6 +3,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/SideBar";
+import { PlusIcon } from "@heroicons/react/20/solid";
 
 const HostProfilePage = () => {
     const [ name, setName ] = useState('');
@@ -56,10 +57,22 @@ const HostProfilePage = () => {
             <div className="flex-grow p-8" >
                 <div className="bg-gray-900 text-white shadow-md rounded-lg p-6 h-full min-h-screen" >
                     <div className="w-full" >
-                        <div className="mb-6" >
-                            <h1 className="text-3xl font-bold text-white" >Host Dashboard</h1 >
-                            <p className="text-gray-300" >Welcome back, {name.split(' ')[0]}</p >
+                        <div className="flex justify-between items-center mb-6" >
+                            <div >
+                                <h1 className="text-3xl font-bold text-white" >Host Dashboard</h1 >
+                                <p className="text-gray-300" >Welcome back, {name.split(' ')[0]}</p >
+                            </div >
+                            <div >
+                                <button
+                                    className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+                                    onClick={() => navigate('/EventCreation')}
+                                >
+                                    <p className="mr-2" >Create an Event</p >
+                                    <PlusIcon className="h-6 w-6" />
+                                </button >
+                            </div >
                         </div >
+
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
                             <div className="bg-white shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center" >
                                 <img
