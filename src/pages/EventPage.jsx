@@ -93,7 +93,7 @@ const EventPage = () => {
 
                                 </div>
 
-                                <div className="flex flex-col p-6 w-1/4 h-96 gap-2">
+                                <div className="flex flex-col p-6 w-1/4 h-fit gap-2">
                                     <div
                                         className="flex flex-row gap-4">
 
@@ -145,14 +145,14 @@ const EventPage = () => {
                                         </div>
                                     )}
                                     <div
-                                        className="flex w-96 h-64">
+                                        className="flex w-96 h-fit">
                                         <MapPinIcon className="text-gray-300 w-6 h-6"/>
                                         <label
                                             className="font-bold text-white pl-3">{eventLocation}</label>
                                     </div>
 
                                     <div
-                                        className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-72">
+                                        className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-fit">
                                         <label className="font-bold text-white text-2xl">Host Contact
                                             Information</label>
                                     </div>
