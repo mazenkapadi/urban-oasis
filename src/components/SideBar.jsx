@@ -14,7 +14,7 @@
 //     };
 //
 //     return (
-//         <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 w-64 h-screen">
+//         <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 w-64 h-screen overflow-y-auto">
 //             <Link to="/#"
 //                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
 //                 <HomeIcon className="h-6 w-6 mr-2 text-white" />
@@ -46,7 +46,6 @@
 //                 <span>Support</span>
 //             </Link>
 //
-//
 //             <div className="mt-auto"> {/* Keeps Host Dashboard at the bottom */}
 //                 <Link to="/hostProfilePage"
 //                       className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
@@ -67,22 +66,57 @@
 //
 // export default SideBar;
 
-
-
-
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { BiTask } from 'react-icons/bi';
 import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import { signOutUser } from "../services/auth/signOut.js";
-import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig.js';
+import { doc, getDoc } from 'firebase/firestore';
 
 const SideBar = () => {
-
     const navigate = useNavigate();
+    const [isHost, setIsHost] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    // Check the auth state and fetch user data
+    useEffect(() => {
+        const checkAuthState = () => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    setUserId(user.uid); // Get the user's UID
+                    console.log('User is signed in');
+
+                    const userDocRef = doc(db, 'Users', user.uid); // Adjust collection name if different
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        setIsHost(userData.isHost || false); // Set isHost state
+                    }
+                } else {
+                    console.log("User is not signed in.");
+                    setUserId(null);
+                    setIsHost(false);
+                }
+            });
+        };
+
+        checkAuthState();
+    }, []);
+
     const handleSignOut = () => {
         signOutUser();
         navigate("/signIn");
+    };
+
+    const handleHostDashboardClick = () => {
+        if (isHost) {
+            navigate("/hostProfilePage");
+        } else {
+            navigate("/userProfilePage/host-signup");
+        }
     };
 
     return (
@@ -119,11 +153,13 @@ const SideBar = () => {
             </Link>
 
             <div className="mt-auto"> {/* Keeps Host Dashboard at the bottom */}
-                <Link to="/hostProfilePage"
-                      className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
+                <button
+                    onClick={handleHostDashboardClick}
+                    className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white w-full text-left"
+                >
                     <UserIcon className="h-6 w-6 mr-2 text-white" />
                     <span>Host Dashboard</span>
-                </Link>
+                </button>
                 <button
                     type="submit"
                     onClick={handleSignOut}
