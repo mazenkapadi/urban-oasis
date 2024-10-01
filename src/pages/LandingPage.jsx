@@ -5,7 +5,7 @@ import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import React from "react";
 
 function LandingPage() {
-    const defaultEventId = "landingPageEvent";  // Replace with actual eventId if needed
+    const defaultEventId = "landingPageEvent";
     const defaultEventTitle = "LandingPage";
 
     return (
