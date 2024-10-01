@@ -10,7 +10,7 @@ class SignUp {
             const user = userCredential.user;
 
             // Password hashing (await for async operation)
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPasswoerd = await bcrypt.hash(password, 10);
 
             // Setting documents in Users collection
             const userData = {
@@ -18,11 +18,9 @@ class SignUp {
                 name: {
                     firstName,
                     lastName,
-                    // Add other name fields if needed
                 },
                 contact: {
                     email: user.email,
-                    // Initialize phone and other fields as empty or default
                     cellPhone: '',
                 },
                 address: {

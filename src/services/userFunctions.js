@@ -25,7 +25,7 @@ export async function updateUser(userId, userData) {
     }
 
     try {
-        await setDoc(doc(db, 'Users', userId), userData, { merge: true });
+        await setDoc(doc(db, 'Users', userId), userData, {merge: true});
         console.log('User updated successfully!');
     } catch (error) {
         console.error('Error updating user: ', error);

@@ -26,6 +26,7 @@ import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
 import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
+import HostProfilePage from "./pages/HostProfilePage.jsx";
 
 
 const router = createBrowserRouter([
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
             {path: "support", element: <SupportPage />},
             {path: "host-dashboard", element: <HostSignUpPage />}
         ]
+    },
+    {
+        path: "/hostProfilePage",
+        element: <HostProfilePage />,
     },
     {
         path: "/photoCarousel",
