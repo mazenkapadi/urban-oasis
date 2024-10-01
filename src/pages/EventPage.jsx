@@ -3,8 +3,9 @@ import {useLocation, useParams} from "react-router-dom";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/react/20/solid";
-import {auth, db} from "../firebaseConfig.js";
+import {auth, db, storage} from "../firebaseConfig.js";
 import {onAuthStateChanged} from "firebase/auth";
+import {getDownloadURL, ref} from "firebase/storage";
 
 
 const EventPage = () => {
@@ -20,6 +21,7 @@ const EventPage = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [eventImages, setEventImages] = useState([]);
 
     const handleIncrement = () => {
         setQuantity(quantity + 1);
@@ -56,6 +58,14 @@ const EventPage = () => {
                     setEventLocation(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
+                    if (data.eventDetails.images) {
+                        const imageUrls = await Promise.all(
+                            data.eventDetails.images.map(async (imageUrl) => {
+                                return imageUrl;
+                            })
+                        );
+                        setEventImages(imageUrls);
+                    }
                     setUserId(data.userId);
                 } else {
                     console.log('No such document!');
@@ -94,12 +104,12 @@ const EventPage = () => {
         <>
             <div className="event-page">
                 <div className="flex h-full w-full">
-                    <div className="bg-blue-800 p-6 flex flex-col w-full h-full gap-3">
+                    <div className="bg-blue-800 p-6 flex flex-col w-full h-full gap-3 items-center">
                         <div
-                            className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-full h-full gap-4">
+                            className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-10/12 h-screen gap-4">
 
                             <div className="w-full h-96">
-                                <PhotoCarousel/>
+                                <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
                             </div>
 
                             <div className="flex flex-row">
@@ -173,7 +183,7 @@ const EventPage = () => {
                                         </div>
                                     )}
                                     <div
-                                        className="flex w-96 h-fit">
+                                        className="flex w-fit h-fit">
                                         <MapPinIcon className="text-gray-300 w-6 h-6"/>
                                         <label
                                             className="font-bold text-white pl-3">{eventLocation}</label>

@@ -5,11 +5,8 @@ import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import React from "react";
 
 function LandingPage() {
-    const images = [
-        'https://via.placeholder.com/600x400?text=Slide+1',
-        'https://via.placeholder.com/600x400?text=Slide+2',
-        'https://via.placeholder.com/600x400?text=Slide+3',
-    ];
+    const defaultEventId = "landingPageEvent";  // Replace with actual eventId if needed
+    const defaultEventTitle = "LandingPage";
 
     return (
         <>
@@ -25,7 +22,7 @@ function LandingPage() {
                         </div >
                         <div className="space-y-16" >
                             <div className="photo-carousel" >
-                                <PhotoCarousel images={images} />
+                                <PhotoCarousel eventId={defaultEventId} eventTitle={defaultEventTitle} />
                             </div >
                             <div className="event-carousel" >
                                 <EventCarousel />
