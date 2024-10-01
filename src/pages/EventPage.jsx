@@ -60,8 +60,11 @@ const EventPage = () => {
                 } else {
                     console.log('No such document!');
                 }
+
+
             }
         };
+
         const fetchUserData = async () => {
             if (userId) {
                 const docRef = doc(db, 'Users', userId);
@@ -78,10 +81,10 @@ const EventPage = () => {
                     console.log('No such document!');
                 }
             }
-        };
+        }
 
-        fetchUserData();
         fetchEventData();
+        fetchUserData();
     }, []);
 
 
@@ -95,7 +98,7 @@ const EventPage = () => {
                         <div
                             className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-full h-full gap-4">
 
-                            <div className="box-border rounded-lg bg-amber-500 w-full h-96">
+                            <div className="w-full h-96">
                                 <PhotoCarousel/>
                             </div>
 
