@@ -11,6 +11,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
+
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import ContactInfoPage from './pages/ContactInfoPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
