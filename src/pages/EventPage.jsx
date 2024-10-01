@@ -161,7 +161,7 @@ const EventPage = () => {
 
 
                             <div className="flex flex-row">
-                                <div className="flex flex-col">
+                                <div className="flex flex-col w-1/3 h-fit">
                                     <label className="font-bold text-white text-2xl">About This Event</label>
                                     <label className="text-white">{eventDescription}</label>
                                 </div>
