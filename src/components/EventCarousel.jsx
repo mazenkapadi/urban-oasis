@@ -12,7 +12,7 @@ const EventCarousel = () => {
     const navigate = useNavigate();
 
     const handleCardClick = (event) => {
-        navigate(`/eventPage/${event.id}`, {state: { event }});
+        navigate(`/eventPage/${event.id}`);
     };
 
     useEffect(() => {
@@ -20,8 +20,10 @@ const EventCarousel = () => {
         const getStartAndEndOfWeek = () => {
             const today = new Date();
             const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1); // Adjust if Sunday should be the first day
-            const startOfWeek = new Date(today.setDate(firstDayOfWeek));
-            const endOfWeek = new Date(today.setDate(firstDayOfWeek + 6));
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(firstDayOfWeek);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
             return {startOfWeek, endOfWeek};
         };
 
@@ -32,13 +34,11 @@ const EventCarousel = () => {
                 const eventsCollection = collection(db, 'Events');
                 const snapshot = await getDocs(eventsCollection);
                 const eventsList = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                console.log("Fetched events:", eventsList);
 
                 const eventsThisWeek = eventsList.filter(event => {
                     const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
                     return eventDate >= startOfWeek && eventDate <= endOfWeek;
                 });
-
                 setEvents(eventsThisWeek);
             } catch (error) {
                 console.error('Error fetching events:', error);
@@ -71,7 +71,7 @@ const EventCarousel = () => {
                 <Slider {...settings}>
 
                     {events.map(event => (
-                        <Link key={event.id} to={`/eventPage/${event.id}`} state={event} >
+                        <Link key={event.id} to={`/eventPage/${event.id}`} >
                             <EventCard
                                 key={event.id}
                                 onClick={() => handleCardClick(event.id)}
@@ -85,16 +85,19 @@ const EventCarousel = () => {
                             />
                         </Link>
                     ))}
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
-                    <EventCard/>
+                    {events.length < settings.slidesToShow && [...Array(settings.slidesToShow - events.length)].map((_, i) => (
+                        <EventCard key={i} />
+                    ))}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
+                    {/*<EventCard/>*/}
                 </Slider>
             </div>
         </>
