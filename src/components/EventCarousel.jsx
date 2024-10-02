@@ -6,6 +6,7 @@ import {Link} from "react-router-dom";
 import {ChevronRightIcon} from "@heroicons/react/20/solid/index.js";
 import {collection, getDocs} from "firebase/firestore";
 import {useNavigate} from 'react-router-dom';
+import {slideHandler, swipeEnd} from "react-slick/lib/utils/innerSliderUtils.js";
 
 const EventCarousel = () => {
     const [events, setEvents] = useState([]);
@@ -55,7 +56,7 @@ const EventCarousel = () => {
         slidesToScroll: 1,
         swipeToSlide: true,
         touchThreshold: 10,
-        swipe: true
+        swipe: true,
     };
 
     return (
@@ -68,25 +69,25 @@ const EventCarousel = () => {
                         <ChevronRightIcon className="ml-1 h-5 w-5"/>
                     </Link>
                 </div>
-                <Slider {...settings}>
+                <Slider {...settings}  >
 
                     {events.map(event => (
-                        <Link key={event.id} to={`/eventPage/${event.id}`} >
-                            <EventCard
-                                key={event.id}
-                                onClick={() => handleCardClick(event.id)}
-                                title={event.basicInfo.title}
-                                location={event.basicInfo.location}
-                                date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
-                                price={event.eventDetails.eventPrice}
-                                image={event.eventDetails.images[0] || 'defaultImageURL'}
-                                eventId={event.id}
-                                event={event}
-                            />
-                        </Link>
+                        // <Link key={event.id} to={`/eventPage/${event.id}`} >
+                        <EventCard
+                            key={event.id}
+                            onClick={() => handleCardClick(event.id)}
+                            title={event.basicInfo.title}
+                            location={event.basicInfo.location}
+                            date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
+                            price={event.eventDetails.eventPrice}
+                            image={event.eventDetails.images[0] || 'defaultImageURL'}
+                            eventId={event.id}
+                            event={event}
+                        />
+                        // </Link>
                     ))}
                     {events.length < settings.slidesToShow && [...Array(settings.slidesToShow - events.length)].map((_, i) => (
-                        <EventCard key={i} />
+                        <EventCard key={i}/>
                     ))}
                     {/*<EventCard/>*/}
                     {/*<EventCard/>*/}

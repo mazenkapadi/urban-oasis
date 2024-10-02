@@ -106,7 +106,7 @@ const PhotoCarousel = ({eventId, eventTitle}) => {
 
 
     return (
-        <div className="relative items-center justify-center p-8">
+        <div className="relative items-center justify-center ">
             <Slider {...carouselSettings}>
                 {isLandingPage ? (
                     images.map((image, index) => (
