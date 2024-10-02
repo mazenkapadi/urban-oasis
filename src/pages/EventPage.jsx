@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useLocation, useParams} from "react-router-dom";
-import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
+import {useParams} from "react-router-dom";
+import {doc, getDoc} from "firebase/firestore";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/react/20/solid";
-import {auth, db, storage} from "../firebaseConfig.js";
-import {onAuthStateChanged} from "firebase/auth";
-import {getDownloadURL, ref} from "firebase/storage";
+import {db} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 

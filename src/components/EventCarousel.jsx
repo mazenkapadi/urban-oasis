@@ -6,7 +6,6 @@ import {Link} from "react-router-dom";
 import {ChevronRightIcon} from "@heroicons/react/20/solid/index.js";
 import {collection, getDocs} from "firebase/firestore";
 import {useNavigate} from 'react-router-dom';
-import {slideHandler, swipeEnd} from "react-slick/lib/utils/innerSliderUtils.js";
 
 const EventCarousel = () => {
     const [events, setEvents] = useState([]);
