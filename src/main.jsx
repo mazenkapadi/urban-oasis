@@ -21,8 +21,6 @@ import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
-import HeaderComponent from "./components/HeaderComponent.jsx";
-import FooterComponent from "./components/FooterComponent.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
 import HostSignUpPage from "./pages/HostSignUpPage.jsx";
@@ -64,7 +62,7 @@ const router = createBrowserRouter([
             {path: "settings", element: <SettingsPage />},
             {path: "payments", element: <PaymentsPage />},
             {path: "support", element: <SupportPage />},
-            {path: "host-dashboard", element: <HostSignUpPage />}
+            {path: "host-signup", element: <HostSignUpPage />}
         ]
     },
     {

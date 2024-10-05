@@ -1,31 +1,33 @@
-import { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import eventCreation from "../services/eventCreation.js";
-import { auth } from "../firebaseConfig.js";
-import { onAuthStateChanged } from "firebase/auth";
-import { Timestamp } from "firebase/firestore";
-import "firebase/storage";
+import {auth, storage} from "../firebaseConfig.js";
+import {onAuthStateChanged} from "firebase/auth";
+import {Timestamp} from "firebase/firestore";
 import {PhotoIcon} from "@heroicons/react/24/outline/index.js";
+import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
+import FooterComponent from "../components/FooterComponent.jsx";
+import HeaderComponent from "../components/HeaderComponent.jsx";
 
 function EventCreationPage() {
 
-    const [ userId, setUserId ] = useState(null); // Store the authenticated user's UID
-    const [ eventTitle, setEventTitle ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventLocation, setEventLocation ] = useState('');
-    const [ eventDateTime, setEventDateTime ] = useState(''); // Store combined date and time
-    const [ eventCapacity, setEventCapacity ] = useState(0);
-    const [ eventImages, setEventImages ] = useState([]);
-    const [ eventPrice, setEventPrice ] = useState('');
-    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
-    const [ error, setError ] = useState(null); // Fixed error handling
-    const [ petAllowance, setPetAllowance ] = useState(false);
-    const [ refundAllowance, setRefundAllowance ] = useState(false);
-    const [ refundPolicy, setRefundPolicy ] = useState('');
-    const [ ageRestriction, setAgeRestriction ] = useState('All');
-    const [ fbAvail, setFbAvail ] = useState(false);
-    const [ merchAvailability, setMerchAvailability ] = useState(false);
-    const [ alcAvail, setAlcAvail ] = useState(false);
-    const [ alcInfo, setAlcInfo ] = useState('');
+    const [userId, setUserId] = useState(null); // Store the authenticated user's UID
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventDateTime, setEventDateTime] = useState(''); // Store combined date and time
+    const [eventCapacity, setEventCapacity] = useState(0);
+    const [eventImages, setEventImages] = useState([]);
+    const [eventPrice, setEventPrice] = useState('');
+    const [isPaidEvent, setIsPaidEvent] = useState(false);
+    const [error, setError] = useState(null); // Fixed error handling
+    const [petAllowance, setPetAllowance] = useState(false);
+    const [refundAllowance, setRefundAllowance] = useState(false);
+    const [refundPolicy, setRefundPolicy] = useState('');
+    const [ageRestriction, setAgeRestriction] = useState('All');
+    const [fbAvail, setFbAvail] = useState(false);
+    const [merchAvailability, setMerchAvailability] = useState(false);
+    const [alcAvail, setAlcAvail] = useState(false);
+    const [alcInfo, setAlcInfo] = useState('');
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,48 +41,82 @@ function EventCreationPage() {
         return () => unsubscribe(); // Clean up the listener on unmount
     }, []);
 
+    const handleFileChange = (e) => {
+        const imagesArray = Array.from(e.target.files);
+        setEventImages(imagesArray);
+    };
+
+    const handleImageUpload = async (eventTitle, imageFiles) => {
+        if (!imageFiles || !imageFiles.length) {
+            setEventImages([]);
+            return [];
+        }
+
+        try {
+            const imageUrls = await Promise.all(
+                Array.from(imageFiles).map(async (imageFile) => {
+                    const storageRef = ref(storage, `eventImages/${eventTitle}/${imageFile.name}`);
+
+                    await uploadBytes(storageRef, imageFile);
+                    const imageUrl = await getDownloadURL(storageRef);
+
+                    return {
+                        name: imageFile.name,
+                        url: imageUrl,
+                    };
+                })
+            );
+
+            setEventImages(imageUrls);
+            return imageUrls;
+        } catch (error) {
+            console.error("Error uploading images:", error);
+            throw error;
+        }
+    };
+
+
     const handleSubmit = async () => {
         console.log('Event button clicked');
 
-        // Combine eventDateTime into Firestore Timestamp
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
 
-        const eventData = {
-            userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
-            basicInfo: {
-                title: eventTitle || 'Untitled Event',
-                description: eventDescription || 'No description provided',
-                location: eventLocation || 'Location not specified',
-            },
-            eventDetails: {
-                eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
-                capacity: eventCapacity || 0, // Default capacity to 0
-                images: Array.from(eventImages).length > 0 ?
-                    Array.from(eventImages).map(file => URL.createObjectURL(file)) :
-                    [ 'defaultImageURL' ],
-                paidEvent: isPaidEvent || false, // Default to not a paid event
-                eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
-            },
-            policies: {
-                petAllowance: petAllowance || false, // Default to no pets allowed
-                refundAllowance: refundAllowance || false, // Default to no refunds allowed
-                refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
-                ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
-            },
-            availability: {
-                fbAvail: fbAvail || false, // Default to false
-                merchAvailability: merchAvailability || false, // Default to false
-                alcAvail: alcAvail || false, // Default to false
-                alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
-            },
-            timestamps: {
-                createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
-                updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
-            },
-        };
-
         try {
-            console.log('Event Data:', eventData);
+            const uploadedImages = await handleImageUpload(eventTitle, eventImages);
+
+            const eventData = {
+                userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
+                basicInfo: {
+                    title: eventTitle || 'Untitled Event',
+                    description: eventDescription || 'No description provided',
+                    location: eventLocation || 'Location not specified',
+                },
+                eventDetails: {
+                    eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
+                    capacity: eventCapacity || 0, // Default capacity to 0
+                    images: uploadedImages,
+                    paidEvent: isPaidEvent || false, // Default to not a paid event
+                    eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
+                },
+                policies: {
+                    petAllowance: petAllowance || false, // Default to no pets allowed
+                    refundAllowance: refundAllowance || false, // Default to no refunds allowed
+                    refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
+                    ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
+                },
+                availability: {
+                    fbAvail: fbAvail || false, // Default to false
+                    merchAvailability: merchAvailability || false, // Default to false
+                    alcAvail: alcAvail || false, // Default to false
+                    alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
+                },
+                timestamps: {
+                    createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
+                    updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
+                },
+            };
+
+            console.log("Final Event Data:", eventData);
             await eventCreation.writeEventData(eventData);
             setError(null);
             // resetForm();
@@ -108,243 +144,266 @@ function EventCreationPage() {
         setAlcInfo('');
     };
 
+
     return (
-        <div
-            className="event-creation-page flex justify-center items-center py-10 px-4 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen" >
-            <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8" >
-                <h1 className="text-5xl text-white font-extrabold pb-6 text-center" >Create Your Event</h1 >
+        <>
+            <div className="event-creation-page">
+                <HeaderComponent/>
 
-                {/* Error message */}
-                {error && <div className="text-red-500 text-center mb-4" >{error}</div >}
+                <div
+                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen">
+                    <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8">
+                        <h1 className="text-5xl text-white font-extrabold pb-6 text-center">Create Your Event</h1>
 
-                <div className="flex flex-col space-y-4 pt-4" >
-                    <div className="flex flex-col space-y-6" >
+                        {/* Error message */}
+                        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-                        {/* Event Title */}
-                        <div >
-                            <label htmlFor="eventTitle" className="text-lg font-semibold text-white" >Event
-                                Title</label >
-                            <input
-                                type="text"
-                                id="eventTitle"
-                                value={eventTitle}
-                                onChange={(e) => setEventTitle(e.target.value)}
-                                placeholder="Enter event title"
-                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                            />
-                        </div >
+                        <div className="flex flex-col space-y-4 pt-4">
+                            <div className="flex flex-col space-y-6">
 
-                        {/* Description */}
-                        <div >
-                            <label htmlFor="eventDescription"
-                                   className="text-lg font-semibold text-white" >Description</label >
-                            <textarea
-                                id="eventDescription"
-                                value={eventDescription}
-                                onChange={(e) => setEventDescription(e.target.value)}
-                                placeholder="Enter event description"
-                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                rows="4"
-                                required
-                            />
-                        </div >
-
-                        {/* Location */}
-                        <div >
-                            <label htmlFor="eventLocation"
-                                   className="text-lg font-semibold text-white" >Location</label >
-                            <input
-                                type="text"
-                                id="eventLocation"
-                                value={eventLocation}
-                                onChange={(e) => setEventLocation(e.target.value)}
-                                placeholder="Enter event location"
-                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                required
-                            />
-                        </div >
-
-                        {/* Date and Capacity */}
-                        <div className="flex space-x-4" >
-                            <div className="flex-1" >
-                                <label htmlFor="eventDateTime" className="text-lg font-semibold text-white" >Event Date
-                                    and Time</label >
-                                <input
-                                    type="datetime-local"
-                                    id="eventDateTime"
-                                    value={eventDateTime}
-                                    onChange={(e) => setEventDateTime(e.target.value)}
-                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    required
-                                />
-                            </div >
-                            <div className="flex-1" >
-                                <label htmlFor="eventCapacity"
-                                       className="text-lg font-semibold text-white" >Capacity</label >
-                                <input
-                                    type="number"
-                                    id="eventCapacity"
-                                    value={eventCapacity}
-                                    onChange={(e) => {
-                                        const parsedValue = parseInt(e.target.value, 10) || 0;
-                                        setEventCapacity(Math.max(parsedValue, 0));
-                                    }}
-                                    placeholder="Enter event capacity"
-                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    required
-                                />
-                            </div >
-                        </div >
-
-                        {/* Image Upload */}
-                        <div >
-                            <label htmlFor="eventImages" className="text-lg font-semibold text-white" >Upload Event
-                                Images</label >
-                            <div className="mt-2" >
-                                <label
-                                    htmlFor="eventImages"
-                                    className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
-                                >
-                                    <PhotoIcon className="h-6 w-6 text-white mr-2" />
-                                    <span className="text-white" >Choose Images</span >
+                                {/* Event Title */}
+                                <div>
+                                    <label htmlFor="eventTitle" className="text-lg font-semibold text-white">Event
+                                        Title</label>
                                     <input
-                                        type="file"
-                                        id="eventImages"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={(e) => setEventImages(e.target.files)}
-                                        className="sr-only"
+                                        type="text"
+                                        id="eventTitle"
+                                        value={eventTitle}
+                                        onChange={(e) => setEventTitle(e.target.value)}
+                                        placeholder="Enter event title"
+                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        required
                                     />
-                                </label >
-                            </div >
-                        </div >
+                                </div>
 
-                        {/* Paid Event */}
-                        <div className="space-y-4" >
-                            <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white" >Is this a paid
-                                event?</label >
-                            <select
-                                id="isPaidEvent"
-                                value={isPaidEvent}
-                                onChange={() => {
-                                    setIsPaidEvent(!isPaidEvent);
-                                    if (!isPaidEvent) {
-                                        setEventPrice('');
-                                        setRefundAllowance(false);
-                                        setRefundPolicy('');
-                                    }
-                                }}
-                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                            >
-                                <option value={true} >Yes</option >
-                                <option value={false} >No</option >
-                            </select >
+                                {/* Description */}
+                                <div>
+                                    <label htmlFor="eventDescription"
+                                           className="text-lg font-semibold text-white">Description</label>
+                                    <textarea
+                                        id="eventDescription"
+                                        value={eventDescription}
+                                        onChange={(e) => setEventDescription(e.target.value)}
+                                        placeholder="Enter event description"
+                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        rows="4"
+                                        required
+                                    />
+                                </div>
 
-                            {isPaidEvent && (
-                                <>
-                                    <div >
-                                        <label htmlFor="eventPrice" className="text-lg font-semibold text-white" >Ticket
-                                            Price</label >
+                                {/* Location */}
+                                <div>
+                                    <label htmlFor="eventLocation"
+                                           className="text-lg font-semibold text-white">Location</label>
+                                    <input
+                                        type="text"
+                                        id="eventLocation"
+                                        value={eventLocation}
+                                        onChange={(e) => setEventLocation(e.target.value)}
+                                        placeholder="Enter event location"
+                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Date and Capacity */}
+                                <div className="flex space-x-4">
+                                    <div className="flex-1">
+                                        <label htmlFor="eventDateTime" className="text-lg font-semibold text-white">Event
+                                            Date
+                                            and Time</label>
                                         <input
-                                            type="text"
-                                            id="eventPrice"
-                                            value={eventPrice}
-                                            onChange={(e) => {
-                                                const price = e.target.value.replace(/[^0-9.]/g, '');
-                                                setEventPrice(`$${price}`);
-                                            }}
-                                            placeholder="Enter ticket price"
+                                            type="datetime-local"
+                                            id="eventDateTime"
+                                            value={eventDateTime}
+                                            onChange={(e) => setEventDateTime(e.target.value)}
                                             className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            required
                                         />
-                                    </div >
-
-                                    <div >
-                                        <label htmlFor="refundAllowance" className="text-lg font-semibold text-white" >Allow
-                                            Refunds?</label >
-                                        <select
-                                            id="refundAllowance"
-                                            value={refundAllowance}
-                                            onChange={() => {
-                                                setRefundAllowance(!refundAllowance);
-                                                if (!refundAllowance) setRefundPolicy('');
+                                    </div>
+                                    <div className="flex-1">
+                                        <label htmlFor="eventCapacity"
+                                               className="text-lg font-semibold text-white">Capacity</label>
+                                        <input
+                                            type="number"
+                                            id="eventCapacity"
+                                            value={eventCapacity}
+                                            onChange={(e) => {
+                                                const parsedValue = parseInt(e.target.value, 10) || 0;
+                                                setEventCapacity(Math.max(parsedValue, 0));
                                             }}
-                                            className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            placeholder="Enter event capacity"
+                                            className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Image Upload */}
+                                <div>
+                                    <label htmlFor="eventImages" className="text-lg font-semibold text-white">Upload
+                                        Event
+                                        Images</label>
+                                    <div className="mt-2">
+                                        <label
+                                            htmlFor="eventImages"
+                                            className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
                                         >
-                                            <option value={true} >Yes</option >
-                                            <option value={false} >No</option >
-                                        </select >
+                                            <PhotoIcon className="h-6 w-6 text-white mr-2"/>
+                                            <span className="text-white">Choose Images</span>
+                                            <input
+                                                type="file"
+                                                id="eventImages"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={handleFileChange}
+                                                className="sr-only"
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
 
-                                        {refundAllowance && (
-                                            <div >
-                                                <label htmlFor="refundPolicy"
-                                                       className="text-lg font-semibold text-white" >Refund
-                                                    Policy</label >
-                                                <input
-                                                    type="text"
-                                                    id="refundPolicy"
-                                                    value={refundPolicy}
-                                                    onChange={(e) => setRefundPolicy(e.target.value)}
-                                                    placeholder="Enter refund policy"
-                                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                                />
-                                            </div >
-                                        )}
-                                    </div >
-                                </>
-                            )}
-                        </div >
-
-                        {/* Other options */}
-                        <div className="grid grid-cols-2 gap-4" >
-                            {[
-                                {
-                                    label: "Allow Pets?",
-                                    id: "petAllowance",
-                                    value: petAllowance,
-                                    setter: setPetAllowance
-                                },
-                                {
-                                    label: "Food/Beverage Availability",
-                                    id: "fbAvail",
-                                    value: fbAvail,
-                                    setter: setFbAvail
-                                },
-                                {
-                                    label: "Merchandise Available?",
-                                    id: "merchAvailability",
-                                    value: merchAvailability,
-                                    setter: setMerchAvailability
-                                },
-                                {label: "Alcohol Allowed?", id: "alcAvail", value: alcAvail, setter: setAlcAvail},
-                            ].map((item, index) => (
-                                <div key={index} >
-                                    <label htmlFor={item.id}
-                                           className="text-lg font-semibold text-white" >{item.label}</label >
+                                {/* Paid Event */}
+                                <div className="space-y-4">
+                                    <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white">Is
+                                        this a
+                                        paid
+                                        event?</label>
                                     <select
-                                        id={item.id}
-                                        value={item.value}
-                                        onChange={() => item.setter(!item.value)}
+                                        id="isPaidEvent"
+                                        value={isPaidEvent}
+                                        onChange={() => {
+                                            setIsPaidEvent(!isPaidEvent);
+                                            if (!isPaidEvent) {
+                                                setEventPrice('');
+                                                setRefundAllowance(false);
+                                                setRefundPolicy('');
+                                            }
+                                        }}
                                         className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
-                                        <option value={true} >Yes</option >
-                                        <option value={false} >No</option >
-                                    </select >
-                                </div >
-                            ))}
-                        </div >
+                                        <option value={true}>Yes</option>
+                                        <option value={false}>No</option>
+                                    </select>
 
-                        {/* Submit Button */}
-                        <button
-                            onClick={handleSubmit}
-                            className="mt-6 w-full bg-indigo-500 text-white font-bold py-3 rounded-md hover:bg-indigo-600 transition duration-300"
-                        >
-                            Create Event
-                        </button >
-                    </div >
-                </div >
-            </div >
-        </div >
+                                    {isPaidEvent && (
+                                        <>
+                                            <div>
+                                                <label htmlFor="eventPrice"
+                                                       className="text-lg font-semibold text-white">Ticket
+                                                    Price</label>
+                                                <input
+                                                    type="text"
+                                                    id="eventPrice"
+                                                    value={eventPrice}
+                                                    onChange={(e) => {
+                                                        const price = e.target.value.replace(/[^0-9.]/g, '');
+                                                        setEventPrice(`$${price}`);
+                                                    }}
+                                                    placeholder="Enter ticket price"
+                                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label htmlFor="refundAllowance"
+                                                       className="text-lg font-semibold text-white">Allow
+                                                    Refunds?</label>
+                                                <select
+                                                    id="refundAllowance"
+                                                    value={refundAllowance}
+                                                    onChange={() => {
+                                                        setRefundAllowance(!refundAllowance);
+                                                        if (!refundAllowance) setRefundPolicy('');
+                                                    }}
+                                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                >
+                                                    <option value={true}>Yes</option>
+                                                    <option value={false}>No</option>
+                                                </select>
+
+                                                {refundAllowance && (
+                                                    <div>
+                                                        <label htmlFor="refundPolicy"
+                                                               className="text-lg font-semibold text-white">Refund
+                                                            Policy</label>
+                                                        <input
+                                                            type="text"
+                                                            id="refundPolicy"
+                                                            value={refundPolicy}
+                                                            onChange={(e) => setRefundPolicy(e.target.value)}
+                                                            placeholder="Enter refund policy"
+                                                            className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Other options */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    {[
+                                        {
+                                            label: "Allow Pets?",
+                                            id: "petAllowance",
+                                            value: petAllowance,
+                                            setter: setPetAllowance
+                                        },
+                                        {
+                                            label: "Food/Beverage Availability",
+                                            id: "fbAvail",
+                                            value: fbAvail,
+                                            setter: setFbAvail
+                                        },
+                                        {
+                                            label: "Merchandise Available?",
+                                            id: "merchAvailability",
+                                            value: merchAvailability,
+                                            setter: setMerchAvailability
+                                        },
+                                        {
+                                            label: "Alcohol Allowed?",
+                                            id: "alcAvail",
+                                            value: alcAvail,
+                                            setter: setAlcAvail
+                                        },
+                                    ].map((item, index) => (
+                                        <div key={index}>
+                                            <label htmlFor={item.id}
+                                                   className="text-lg font-semibold text-white">{item.label}</label>
+                                            <select
+                                                id={item.id}
+                                                value={item.value}
+                                                onChange={() => item.setter(!item.value)}
+                                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            >
+                                                <option value={true}>Yes</option>
+                                                <option value={false}>No</option>
+                                            </select>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Submit Button */}
+                                <button
+                                    onClick={handleSubmit}
+                                    className="mt-6 w-full bg-indigo-500 text-white font-bold py-3 rounded-md hover:bg-indigo-600 transition duration-300"
+                                >
+                                    Create Event
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+                <FooterComponent/>
+            </div>
+        </>
     );
 
 }

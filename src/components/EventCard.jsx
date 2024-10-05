@@ -7,15 +7,15 @@ function EventCard({title, location, date, price, image, eventId, event}) {
 
         const handleNavigate = () => {
             console.log(event);
-            navigate(`/eventPage/${eventId}`, {state: {event}});
+            navigate(`/eventPage/${eventId}`);
         };
 
 
         return (
-            <div className="event-card flex-shrink-0" onClick={handleNavigate}>
+            <div className="event-card flex-shrink-0 w-fit">
                 <div
                     className="rounded-lg bg-gray-800 p-4 flex flex-col justify-between h-56 w-72 bg-cover bg-center hover:scale-105 transition-transform duration-300 shadow-lg"
-                    style={{backgroundImage: `url(${image})`}}
+                    style={{backgroundImage: `url(${image})`}}  onClick={handleNavigate}
                 >
                     <div>
                         <h3 className="text-white text-2xl font-bold truncate">{title}</h3>
@@ -30,7 +30,7 @@ function EventCard({title, location, date, price, image, eventId, event}) {
                             <p className="text-lg">{date}</p>
                         </div>
                         <div className="text-white">
-                            <p className="text-lg font-bold">${price}</p>
+                            <p className="text-lg font-bold">{price === 0 ? "Free" : `$${price}`}</p>
                         </div>
                     </div>
                 </div>
