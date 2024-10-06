@@ -6,6 +6,7 @@ import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/rea
 import {db} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
+import ForecastComponent from "../components/ForecastComponent.jsx";
 
 
 const EventPage = () => {
@@ -106,7 +107,7 @@ const EventPage = () => {
 
                     <HeaderComponent/>
                     <div
-                        className="box-border rounded-lg bg-gray-900 p-8 pt-24 flex flex-col w-10/12 h-screen ">
+                        className="box-border rounded-lg bg-gray-900 p-8 pt-24 flex flex-col w-10/12 ">
 
                         <div className="w-full h-96">
                             <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
@@ -207,6 +208,8 @@ const EventPage = () => {
                                 <label className="text-white">{eventDescription}</label>
                             </div>
                         </div>
+
+                        <ForecastComponent  city={eventLocation} eventDate={eventDateTime}/>
 
                     </div>
                 </div>
