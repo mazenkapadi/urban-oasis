@@ -10,7 +10,7 @@ class SignUp {
             const user = userCredential.user;
 
             // Password hashing (await for async operation)
-            const hashedPasswoerd = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 10);
 
             // Setting documents in Users collection
             const userData = {
