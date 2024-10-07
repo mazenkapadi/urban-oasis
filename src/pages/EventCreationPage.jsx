@@ -86,34 +86,34 @@ function EventCreationPage() {
             const uploadedImages = await handleImageUpload(eventTitle, eventImages);
 
             const eventData = {
-                hostId: userId || 'defaultUserID', // Replace with a meaningful default if needed
+                hostId: userId || 'defaultUserID',
                 basicInfo: {
                     title: eventTitle || 'Untitled Event',
                     description: eventDescription || 'No description provided',
                     location: eventLocation || 'Location not specified',
                 },
                 eventDetails: {
-                    eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
-                    capacity: eventCapacity || 0, // Default capacity to 0
+                    eventDateTime: eventDateTimeTimestamp,
+                    capacity: eventCapacity || 0,
                     images: uploadedImages,
-                    paidEvent: isPaidEvent || false, // Default to not a paid event
+                    paidEvent: isPaidEvent || false,
                     eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
                 },
                 policies: {
-                    petAllowance: petAllowance || false, // Default to no pets allowed
-                    refundAllowance: refundAllowance || false, // Default to no refunds allowed
+                    petAllowance: petAllowance || false,
+                    refundAllowance: refundAllowance || false,
                     refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
-                    ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
+                    ageRestriction: ageRestriction || 'No age restriction',
                 },
                 availability: {
-                    fbAvail: fbAvail || false, // Default to false
-                    merchAvailability: merchAvailability || false, // Default to false
-                    alcAvail: alcAvail || false, // Default to false
+                    fbAvail: fbAvail || false,
+                    merchAvailability: merchAvailability || false,
+                    alcAvail: alcAvail || false,
                     alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
                 },
                 timestamps: {
-                    createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
-                    updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
                 },
             };
 
