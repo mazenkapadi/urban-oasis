@@ -10,6 +10,7 @@ import HeaderComponent from "../components/HeaderComponent.jsx";
 
 function EventCreationPage() {
 
+    const [hostId] = useState('defaultUserID'); // Store the authenticated user's UID
     const [userId, setUserId] = useState(null); // Store the authenticated user's UID
     const [eventTitle, setEventTitle] = useState('');
     const [eventDescription, setEventDescription] = useState('');
@@ -85,7 +86,7 @@ function EventCreationPage() {
             const uploadedImages = await handleImageUpload(eventTitle, eventImages);
 
             const eventData = {
-                userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
+                hostId: userId || 'defaultUserID', // Replace with a meaningful default if needed
                 basicInfo: {
                     title: eventTitle || 'Untitled Event',
                     description: eventDescription || 'No description provided',
