@@ -7,6 +7,8 @@ import {PhotoIcon} from "@heroicons/react/24/outline/index.js";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import {googleMapsConfig} from "../locationConfig.js";
 
 function EventCreationPage() {
 
@@ -29,6 +31,7 @@ function EventCreationPage() {
     const [merchAvailability, setMerchAvailability] = useState(false);
     const [alcAvail, setAlcAvail] = useState(false);
     const [alcInfo, setAlcInfo] = useState('');
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -146,6 +149,7 @@ function EventCreationPage() {
     };
 
 
+
     return (
         <>
             <div className="event-creation-page">
@@ -196,14 +200,45 @@ function EventCreationPage() {
                                 <div>
                                     <label htmlFor="eventLocation"
                                            className="text-lg font-semibold text-white">Location</label>
-                                    <input
-                                        type="text"
-                                        id="eventLocation"
-                                        value={eventLocation}
-                                        onChange={(e) => setEventLocation(e.target.value)}
-                                        placeholder="Enter event location"
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                        required
+                                    <GooglePlacesAutocomplete
+                                        apiKey={googleMapsConfig.apiKey}
+                                        selectProps={{
+                                            value: eventLocation, onChange: setEventLocation,
+                                            styles: {
+                                                control: (provided) => ({
+                                                    ...provided,
+                                                    backgroundColor: '#1F2937',
+                                                    borderColor: '#374151',
+                                                    width: '100%',
+                                                    marginTop: '2px',
+                                                    padding: '3px',
+                                                    borderRadius: '.375rem',
+                                                }),
+                                                menu: (provided) => ({
+                                                    ...provided,
+                                                    backgroundColor: '#1F2937',
+                                                    borderColor: '#374151',
+                                                }),
+                                                input: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    border: 'none',
+                                                }),
+                                                option: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    backgroundColor: '#1F2937',
+                                                }),
+                                                singleValue: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    backgroundColor: '#1F2937',
+                                                }),
+
+                                            },
+                                            placeholder: 'Enter location',
+                                        }}
+
                                     />
                                 </div>
 
@@ -398,7 +433,6 @@ function EventCreationPage() {
                         </div>
 
                     </div>
-
 
 
                 </div>

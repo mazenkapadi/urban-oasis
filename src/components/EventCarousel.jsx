@@ -76,7 +76,7 @@ const EventCarousel = () => {
                             key={event.id}
                             onClick={() => handleCardClick(event.id)}
                             title={event.basicInfo.title}
-                            location={event.basicInfo.location}
+                            location={event.basicInfo.location.label}
                             date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
                             price={event.eventDetails.eventPrice}
                             image={event.eventDetails.images[0] || 'defaultImageURL'}

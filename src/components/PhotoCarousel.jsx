@@ -6,10 +6,11 @@ import {doc, getDoc} from "firebase/firestore";
 import {db, storage} from "../firebaseConfig.js";
 import {getDownloadURL, ref} from "firebase/storage";
 
-const PhotoCarousel = ({eventId, eventTitle}) => {
+const PhotoCarousel = ({eventId}, {eventTitle}) => {
     const [activeSlide, setActiveSlide] = useState(0);
     const [eventImages, setEventImages] = useState([]);
     const [isLandingPage, setIsLandingPage] = useState(false);
+
     const images = [
         'src/TestImages/TestImage1.jpg',
         'src/TestImages/TestImage2.jpg',
@@ -26,10 +27,13 @@ const PhotoCarousel = ({eventId, eventTitle}) => {
                     console.log(docSnap.data());
                     const data = docSnap.data();
 
+
+                    eventTitle = data.basicInfo.title;
                     if (data.eventDetails?.images) {
                         const imageUrls = await Promise.all(
                             data.eventDetails.images.map(async (image) => {
                                 const storageRef = ref(storage, `eventImages/${eventTitle}/${image.name}`);
+                                console.log("S", storageRef);
                                 return await getDownloadURL(storageRef);
                             })
                         );
@@ -107,6 +111,7 @@ const PhotoCarousel = ({eventId, eventTitle}) => {
 
     return (
         <div className="relative items-center justify-center ">
+
             <Slider {...carouselSettings}>
                 {isLandingPage ? (
                     images.map((image, index) => (
