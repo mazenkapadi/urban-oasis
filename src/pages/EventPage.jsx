@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {doc, getDoc} from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/react/20/solid";
 import {db} from "../firebaseConfig.js";
@@ -32,9 +32,42 @@ const EventPage = () => {
         }
     }
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
+        const totalAttendees = isPaidEvent ? quantity : guests + 1; // Include user in total attendees
+        const rsvpData = {
+            userId: userId,
+            quantity: totalAttendees,
+            eventTitle: eventTitle,
+            eventDateTime: eventDateTime,
+            createdAt: new Date().toISOString(), // Add timestamp
+        };
 
-    }
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId); // Reference to the event's RSVP document
+
+        try {
+            // Fetch the existing RSVP document
+            const docSnap = await getDoc(eventRsvpsDocRef);
+
+            if (docSnap.exists()) {
+                // Document exists, update it
+                await updateDoc(eventRsvpsDocRef, {
+                    [`rsvps.${userId}`]: rsvpData, // Use userId as the key
+                });
+                console.log("RSVP updated for event!", rsvpData);
+            } else {
+                // Document does not exist, create a new one
+                await setDoc(eventRsvpsDocRef, {
+                    eventId: eventId,
+                    rsvps: {
+                        [userId]: rsvpData, // Use userId as the key
+                    },
+                });
+                console.log("RSVP created for event!", rsvpData);
+            }
+        } catch (error) {
+            console.error("Error adding/updating RSVP: ", error);
+        }
+    };
 
     useEffect(() => {
         const fetchEventData = async () => {
@@ -199,7 +232,6 @@ const EventPage = () => {
                                 </div>
                             </div>
                         </div>
-
 
                         <div className="flex flex-row">
                             <div className="flex flex-col w-1/3 h-fit">

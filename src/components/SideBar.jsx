@@ -52,7 +52,7 @@ const SideBar = () => {
     };
 
     return (
-        <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 w-64 h-screen overflow-y-auto">
+        <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 h-screen overflow-y-auto">
             <Link to="/#"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
                 <HomeIcon className="h-6 w-6 mr-2 text-white" />
