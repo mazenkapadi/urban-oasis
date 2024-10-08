@@ -15,7 +15,6 @@ import NotFound from "./pages/404NotFound.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import ContactInfoPage from './pages/ContactInfoPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
-import PaymentsPage from './pages/PaymentsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
@@ -25,7 +24,7 @@ import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
 import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
-import HostProfilePage from "./pages/HostProfilePage.jsx";
+import HostDashboard from "./pages/HostDashboard.jsx";
 
 
 const router = createBrowserRouter([
@@ -60,14 +59,13 @@ const router = createBrowserRouter([
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
             {path: "settings", element: <SettingsPage />},
-            {path: "payments", element: <PaymentsPage />},
             {path: "support", element: <SupportPage />},
             {path: "host-signup", element: <HostSignUpPage />}
         ]
     },
     {
         path: "/hostProfilePage",
-        element: <HostProfilePage />,
+        element: <HostDashboard />,
     },
     {
         path: "/photoCarousel",
