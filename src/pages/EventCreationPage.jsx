@@ -201,18 +201,20 @@ function EventCreationPage() {
                                     <label htmlFor="eventLocation"
                                            className="text-lg font-semibold text-white">Location</label>
                                     <GooglePlacesAutocomplete
+                                        required
                                         apiKey={googleMapsConfig.apiKey}
                                         selectProps={{
                                             value: eventLocation, onChange: setEventLocation,
                                             styles: {
-                                                control: (provided) => ({
+                                                control: (provided, state) => ({
                                                     ...provided,
                                                     backgroundColor: '#1F2937',
-                                                    borderColor: '#374151',
+                                                    borderColor: state.isFocused? '#6366F1': '#374151',
+                                                    borderWidth: state.isFocused? '2px': '1px',
                                                     width: '100%',
                                                     marginTop: '2px',
                                                     padding: '3px',
-                                                    borderRadius: '.375rem',
+                                                    borderRadius: '6px',
                                                 }),
                                                 menu: (provided) => ({
                                                     ...provided,
