@@ -4,10 +4,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig.js";
 
-// eslint-disable-next-line react/prop-types
 const ProfileOrSignIn = ({ isLoggedIn }) => {
     const navigate = useNavigate();
     const [profilePic, setProfilePic] = useState('');
+    const [name, setName] = useState('');
+
+    const getInitials = (name) => {
+        const nameParts = name.split(' ');
+        const initials = nameParts.map(part => part[0]).join('');
+        return initials.toUpperCase();
+    };
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -18,10 +24,8 @@ const ProfileOrSignIn = ({ isLoggedIn }) => {
 
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-
-                        // Set the profile picture from Firestore
-                        const profilePicURL = userData.profilePic || "";
-                        setProfilePic(profilePicURL);
+                        setProfilePic(userData.profilePic || '');
+                        setName(`${userData.name?.firstName || ''} ${userData.name?.lastName || ''}`);
                     } else {
                         console.log("No such document in Firestore!");
                     }
@@ -41,21 +45,22 @@ const ProfileOrSignIn = ({ isLoggedIn }) => {
     return (
         <div className="flex items-center space-x-4">
             {isLoggedIn ? (
-                profilePic ? (
-                    <button
-                        onClick={() => navigate("/userProfilePage")}
-                        className="w-10 h-10 rounded-lg overflow-hidden"
-                    >
+                <button
+                    onClick={() => navigate("/userProfilePage")}
+                    className="w-10 h-10 rounded-lg overflow-hidden bg-gray-500 flex items-center justify-center"
+                >
+                    {profilePic ? (
                         <img
                             src={profilePic}
                             alt="User Profile"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-lg"
                         />
-                    </button>
-                ) : (
-                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-500 flex items-center justify-center">
-                    </div>
-                )
+                    ) : (
+                        <span className="text-white font-bold">
+                            {getInitials(name || 'U N')}
+                        </span>
+                    )}
+                </button>
             ) : (
                 <button
                     className="rounded-lg bg-gray-900 text-gray-200 px-6 py-2"
