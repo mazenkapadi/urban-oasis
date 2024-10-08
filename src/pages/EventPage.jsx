@@ -1,268 +1,307 @@
-import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import {CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon} from "@heroicons/react/20/solid";
-import {db, storage} from "../firebaseConfig.js";
+import { CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
-import {getDownloadURL, ref} from "firebase/storage";
-
+import LoadingPage from "./LoadingPage.jsx"
 
 const EventPage = () => {
-    const [quantity, setQuantity] = useState(1);
-    const {eventId: eventId} = useParams();
-    const [eventTitle, setEventTitle] = useState('');
-    const [eventDescription, setEventDescription] = useState('');
-    const [eventLocation, setEventLocation] = useState('');
-    const [eventDateTime, setEventDateTime] = useState('');
-    const [eventPrice, setEventPrice] = useState('');
-    const [eventRefundPolicy, setEventRefundPolicy] = useState('');
-    const [userId, setUserId] = useState('null');
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [eventImages, setEventImages] = useState([]);
+    const [ quantity, setQuantity ] = useState(1);
+    const {eventId} = useParams();
+    const [ eventTitle, setEventTitle ] = useState('');
+    const [ eventDescription, setEventDescription ] = useState('');
+    const [ eventLocation, setEventLocation ] = useState('');
+    const [ eventDateTime, setEventDateTime ] = useState('');
+    const [ eventPrice, setEventPrice ] = useState('');
+    const [ eventRefundPolicy, setEventRefundPolicy ] = useState('');
+    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
+    const [ userId, setUserId ] = useState(null);
+    const [ name, setName ] = useState('');
+    const [ phone, setPhone ] = useState('');
+    const [ email, setEmail ] = useState('');
+    const [ eventImages, setEventImages ] = useState([]);
+    const [ loading, setLoading ] = useState(true);
+    const [ hostDetails, setHostDetails ] = useState({
+        bio: '',
+        profilePicture: '',
+        companyName: '',
+        companyBio: '',
+        website: '',
+        logo: '',
+        hostLocation: {
+            line1: '',
+            line2: '',
+            city: '',
+            state: '',
+            zip: ''
+        },
+        ratings: {
+            overall: 0,
+            reviews: []
+        }
+    });
 
     const handleIncrement = () => {
-        setQuantity(quantity + 1);
-    }
+        if (isPaidEvent || (quantity < 10)) {
+            setQuantity(quantity + 1);
+        }
+    };
+
     const handleDecrement = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
         }
-    }
+    };
 
-    const handleCheckout = async () => {
-        const totalAttendees = isPaidEvent ? quantity : guests + 1; // Include user in total attendees
+    const handleRSVP = async () => {
+        if (!userId) {
+            console.error("User ID is undefined. Cannot proceed with RSVP.");
+            return;
+        }
+
+        const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
         const rsvpData = {
             userId: userId,
+            name: name,
+            email: email,
+            phone: phone,
             quantity: totalAttendees,
             eventTitle: eventTitle,
             eventDateTime: eventDateTime,
-            createdAt: new Date().toISOString(), // Add timestamp
+            createdAt: new Date().toISOString(),
         };
 
-        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId); // Reference to the event's RSVP document
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
 
         try {
-            // Fetch the existing RSVP document
             const docSnap = await getDoc(eventRsvpsDocRef);
 
             if (docSnap.exists()) {
-                // Document exists, update it
                 await updateDoc(eventRsvpsDocRef, {
-                    [`rsvps.${userId}`]: rsvpData, // Use userId as the key
+                    [`rsvps.${userId}`]: rsvpData,
                 });
                 console.log("RSVP updated for event!", rsvpData);
             } else {
-                // Document does not exist, create a new one
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
                     rsvps: {
-                        [userId]: rsvpData, // Use userId as the key
+                        [userId]: rsvpData,
                     },
                 });
                 console.log("RSVP created for event!", rsvpData);
             }
+
+            if (isPaidEvent) {
+                console.log("Processing on Stripe");
+            }
+
         } catch (error) {
             console.error("Error adding/updating RSVP: ", error);
         }
     };
 
     useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserId(user.uid);
+                setEmail(user.email);
+            } else {
+                console.log('No user logged in');
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
         const fetchEventData = async () => {
             if (eventId) {
-                console.log("Event id", eventId)
                 const docRef = doc(db, 'Events', eventId);
-                console.log(docRef);
                 const docSnap = await getDoc(docRef);
 
-                console.log(docSnap.exists());
                 if (docSnap.exists()) {
-                    console.log(docSnap.data());
                     const data = docSnap.data();
                     setEventTitle(data.basicInfo.title);
                     setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleDateString());
-                    if (data.eventDetails.eventPrice === 0) {
-                        setEventPrice("Free");
-                    } else {
-                        setEventPrice(data.eventDetails.eventPrice);
-                    }
-                    setEventLocation(data.basicInfo.location.label);
+                    setIsPaidEvent(data.eventDetails.paidEvent);
+                    setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
+                    setEventLocation(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
-                    // if (data.eventDetails.images) {
-                    //     const imageUrls = await Promise.all(
-                    //         data.eventDetails.images.map(async (imageUrl) => {
-                    //             return imageUrl;
-                    //         })
-                    //     );
-                    //     setEventImages(imageUrls);
-                    // }
-                    // if (data.eventDetails?.images) {
-                    //     const imageUrls = await Promise.all(
-                    //         data.eventDetails.images.map(async (image) => {
-                    //             const storageRef = ref(storage, `eventImages/${eventTitle}/${image.name}`);
-                    //             return await getDownloadURL(storageRef);
-                    //         })
-                    //     );
-                    //     setEventImages(imageUrls);
-                    //
-                    // }
-                    setUserId(data.userId);
+
+                    if (data.hostId) {
+                        const hostDocRef = doc(db, 'Users', data.hostId);
+                        const hostDocSnap = await getDoc(hostDocRef);
+                        if (hostDocSnap.exists()) {
+                            const hostData = hostDocSnap.data();
+                            setHostDetails({
+                                bio: hostData.bio || '',
+                                profilePicture: hostData.profilePicture || '',
+                                companyName: hostData.companyName || '',
+                                companyBio: hostData.companyBio || '',
+                                website: hostData.website || '',
+                                logo: hostData.logo || '',
+                                hostLocation: hostData.hostLocation || {
+                                    line1: '',
+                                    line2: '',
+                                    city: '',
+                                    state: '',
+                                    zip: ''
+                                },
+                                ratings: hostData.ratings || {
+                                    overall: 0,
+                                    reviews: []
+                                },
+                                name: `${hostData.name?.firstName || ''} ${hostData.name?.lastName || ''}`,
+                                email: hostData.contact?.email || 'Email not found'
+                            });
+                        } else {
+                            console.log('Host data not found!');
+                        }
+                    }
+
+                    if (data.eventDetails.images) {
+                        const imageUrls = await Promise.all(data.eventDetails.images.map(imageUrl => imageUrl));
+                        setEventImages(imageUrls);
+                    }
                 } else {
                     console.log('No such document!');
                 }
 
-
+                setLoading(false);
             }
         };
 
+        fetchEventData();
+    }, [ eventId ]);
+
+    useEffect(() => {
         const fetchUserData = async () => {
             if (userId) {
-                const docRef = doc(db, 'Users', userId);
-                const docSnap = await getDoc(docRef);
+                try {
+                    const docRef = doc(db, 'Users', userId);
+                    const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // Set the state with user data
-                    setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
-                    setPhone(data.contact.cellPhone || '');
-                    setEmail(data.contact.email || '');
-
-                } else {
-                    console.log('No such document!');
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        console.log('User data:', data);
+                        setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
+                        setPhone(data.contact?.cellPhone || 'Phone number not found');
+                        setEmail(data.contact?.email || email || 'Email not found');
+                    } else {
+                        console.log('No such document!');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
                 }
             }
-        }
+        };
 
-        fetchEventData();
         fetchUserData();
-    }, []);
+    }, [ userId, email ]);
 
+    if (loading) {
+        return <LoadingPage />;
+    }
 
     return (
         <>
-            <div className="event-page">
+            <div className="event-page" >
                 <div
-                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen">
+                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen" >
+                    <HeaderComponent />
+                    <div className="box-border rounded-lg bg-gray-900 p-8 pt-24 flex flex-col w-10/12 h-fit shadow-lg" >
+                        <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
 
-                    <HeaderComponent/>
-                    {eventTitle && eventId ? (
-                        <div
-                            className="box-border rounded-lg bg-gray-900 p-8 pt-24 flex flex-col w-10/12 h-screen ">
-
-                            <div className="w-full h-96">
-                                <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
-                            </div>
-
-                            <div className="flex flex-row">
-                                <div className="flex content w-full flex-col gap-8 ">
-                                    <div className="flex flex-col pt-4 space-y-6">
-                                        <div className="flex items-center space-x-3">
-                                            <CalendarDaysIcon className="text-gray-300 w-6 h-6"/>
-                                            <label
-                                                className="font-bold text-white opacity-50">{eventDateTime}</label>
-                                        </div>
-                                        <label
-                                            className="block text-gray-300 text-5xl">{eventTitle}</label>
-
-                                        <div className="flex flex-row">
-                                            <UserIcon className="text-gray-300 w-6 h-6"/>
-                                            <label className="font-bold text-white opacity-50 pl-3">{name}</label>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div className="flex flex-col p-6 w-1/4 h-fit gap-2">
+                        <div className="flex flex-row mt-6" >
+                            <div className="flex content w-full flex-col gap-8" >
+                                <div className="flex flex-col pt-4 space-y-6" >
+                                    <div className="flex items-center space-x-3" >
+                                        <CalendarDaysIcon className="text-gray-300 w-6 h-6" />
+                                        <label className="font-bold text-white opacity-80" >{eventDateTime}</label >
+                                    </div >
+                                    <label className="block text-gray-300 text-5xl font-semibold" >{eventTitle}</label >\
+                                </div >
+                            </div >
+                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
+                                <div className="flex space-x-4" >
+                                    {/* Event Price Section */}
                                     <div
-                                        className="flex flex-row gap-4">
+                                        className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
+                                        <TicketIcon className="text-gray-300 w-6 h-6" />
+                                        <label className="font-bold text-white pl-3" >${eventPrice}</label >
+                                    </div >
 
-                                        <div
-                                            className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 justify-center items-center flex w-52 h-12">
-                                            <TicketIcon className="text-gray-300 w-6 h-6"/>
-                                            <label
-                                                className="font-bold text-white pl-3">{eventPrice}</label>
-                                        </div>
-
-                                        <div
-                                            className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 justify-center items-center flex w-36 h-12 gap-3">
-                                            <button onClick={handleDecrement} disabled={quantity === 1}
-                                                    style={{color: "white", fontSize: 20}}>-
-                                            </button>
-                                            <span style={{
-                                                color: "white",
-                                                fontWeight: "bold",
-                                                fontSize: 20
-                                            }}>{quantity}</span>
-                                            <button onClick={handleIncrement}
-                                                    style={{color: "white", fontSize: 20}}>+
-                                            </button>
-                                        </div>
-                                    </div>
-
+                                    {/* Quantity Selector Section */}
                                     <div
-                                        className="box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 justify-center items-center flex w-full h-12">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                             strokeWidth={1.5}
-                                             stroke="white" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round"
-                                                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/>
-                                        </svg>
+                                        className="flex justify-center items-center w-36 h-12 gap-3 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
+                                        <button onClick={handleDecrement} disabled={quantity === 1}
+                                                className="text-white" >
+                                            <MinusIcon className="w-6 h-6" />
+                                        </button >
+                                        <span className="text-white font-bold text-lg" >{quantity}</span >
+                                        <button onClick={handleIncrement} className="text-white" >
+                                            <PlusIcon className="w-6 h-6" />
+                                        </button >
+                                    </div >
+                                </div >
 
-                                        <button onClick={handleCheckout}
-                                                style={{
-                                                    color: "white",
-                                                    paddingLeft: "10px",
-                                                    fontWeight: "bold"
-                                                }}>RSVP
-                                        </button>
-                                    </div>
-                                    {eventRefundPolicy !== null && (
-                                        <div
-                                            className="flex-col">
-                                            <label className="font-bold text-white pl-3">Refund Policy</label>
-                                            <label className="text-white">{eventRefundPolicy}</label>
-                                        </div>
+                                {/* RSVP Button */}
+                                <div
+                                    className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg" >
+                                    <button
+                                        className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                        onClick={handleRSVP} >
+                                        <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2" />
+                                        <span >RSVP</span >
+                                    </button >
+                                </div >
+
+                                {/* Event Location Section */}
+                                <div className="flex flex-row gap-6 items-center" >
+                                    <MapPinIcon className="text-gray-300 w-6 h-6" />
+                                    <label className="font-bold text-white opacity-80" >{eventLocation}</label >
+                                </div >
+
+                                {/* Host Details Section */}
+                                <div
+                                    className="flex flex-col justify-center items-center w-full h-auto bg-gray-700 border-4 border-gray-500 rounded-lg p-4" >
+                                    <h3 className="text-white font-bold mb-2" >Host Details</h3 >
+
+                                    {hostDetails && (
+                                        <div className="flex flex-col items-center space-y-2" >
+
+                                            <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
+                                            <p className="text-gray-300" >{hostDetails.bio}</p >
+                                            <p className="text-gray-300" >{hostDetails.email}</p >
+                                            {hostDetails.website && (
+                                             <a href={hostDetails.website} className="text-blue-400 hover:underline">
+                                             {hostDetails.website}
+                                             </a>
+                                             )}
+                                            <button className="">
+                                                Host Chat
+                                            </button>
+                                        </div >
                                     )}
-                                    <div
-                                        className="flex w-fit h-fit">
-                                        <MapPinIcon className="text-gray-300 w-6 h-6"/>
-                                        <label
-                                            className="font-bold text-white pl-3">{eventLocation}</label>
-                                    </div>
+                                </div >
+                            </div >
 
-                                    <div
-                                        className="flex-col box-border rounded-lg bg-gray-500 bg-opacity-30 border-4 border-gray-500 p-2 flex w-full h-fit">
-                                        <label className="font-bold text-white text-2xl">Host Contact
-                                            Information</label>
-                                        <label className="text-white ">Email: {email}</label>
-                                        <label className="text-white ">Phone: {phone}</label>
 
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-row">
-                                <div className="flex flex-col w-1/3 h-fit">
-                                    <label className="font-bold text-white text-2xl">About This Event</label>
-                                    <label className="text-white">{eventDescription}</label>
-                                </div>
-                            </div>
-
-                        </div>
-                    ) : (
-                        <div className="text-center">Loading event details...</div>
-                    )}
-                </div>
-
-                <FooterComponent/>
-
-            </div>
+                        </div >
+                        <div className="flex flex-col mt-8" >
+                            <h2 className="text-2xl text-white font-semibold" >Description</h2 >
+                            <p className="text-gray-300" >{eventDescription}</p >
+                        </div >
+                    </div >
+                </div >
+                <FooterComponent />
+            </div >
         </>
-
     );
 };
 

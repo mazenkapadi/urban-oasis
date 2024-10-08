@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
 function HostSignUpPage() {
     const [isHost, setIsHost] = useState(false);
@@ -23,7 +25,18 @@ function HostSignUpPage() {
         }
     });
 
-    const handleAgreeClick = () => {
+    const user = auth.currentUser;
+
+    useEffect(() => {
+        if (user) {
+            setHostDetails(prevDetails => ({
+                ...prevDetails,
+                profilePicture: user.photoURL || 'https://via.placeholder.com/150',
+            }));
+        }
+    }, [user]);
+
+    const handleAgreeClick = async () => {
         if (!hostType) {
             alert("Please select a host type");
             return;
@@ -31,6 +44,16 @@ function HostSignUpPage() {
         setIsHost(true);
         console.log(`User isHost status updated to: true, Host Type: ${hostType}`);
         console.log("Host Details:", hostDetails);
+
+        // Update Firestore with host details
+        if (user) {
+            const userRef = doc(db, 'Users', user.uid);
+            await setDoc(userRef, {
+                isHost: true,
+                hostType: hostType,
+                ...hostDetails
+            }, { merge: true }); // Merge to avoid overwriting other data
+        }
     };
 
     const handleInputChange = (e) => {
