@@ -9,6 +9,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import {googleMapsConfig} from "../locationConfig.js";
+import {useNavigate} from "react-router-dom";
 
 function EventCreationPage() {
 
@@ -31,7 +32,9 @@ function EventCreationPage() {
     const [merchAvailability, setMerchAvailability] = useState(false);
     const [alcAvail, setAlcAvail] = useState(false);
     const [alcInfo, setAlcInfo] = useState('');
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -123,7 +126,11 @@ function EventCreationPage() {
             console.log("Final Event Data:", eventData);
             await eventCreation.writeEventData(eventData);
             setError(null);
-            // resetForm();
+            resetForm();
+            const delayInMilliseconds = 2000; // 2 seconds
+            setTimeout(() => {
+                navigate(`/eventPage/${eventData.id}`); // Replace eventId with actual event ID
+            }, delayInMilliseconds);
         } catch (error) {
             setError(error.message);
         }
@@ -148,6 +155,17 @@ function EventCreationPage() {
         setAlcInfo('');
     };
 
+    const handleLocationChange = (suggestion) => {
+        setEventLocation(suggestion.description); // Update form state
+        setSelectedLocation(suggestion); // Update location details
+    };
+
+    const handleLocationBlur = (event) => {
+        if (event.target.value !== selectedLocation?.description) {
+            // Update selected location with the modified value
+            setSelectedLocation({ ...selectedLocation, description: event.target.value });
+        }
+    };
 
 
     return (
