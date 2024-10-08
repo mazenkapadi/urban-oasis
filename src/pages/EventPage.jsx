@@ -129,7 +129,7 @@ const EventPage = () => {
                     setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleDateString());
                     setIsPaidEvent(data.eventDetails.paidEvent);
                     setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
-                    setEventLocation(data.basicInfo.location);
+                    setEventLocation(data.basicInfo.location.label);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
 
