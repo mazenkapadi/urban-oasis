@@ -25,7 +25,7 @@ import EventCreationPage from "./pages/EventCreationPage.jsx";
 import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
 import HostDashboard from "./pages/HostDashboard.jsx";
-
+import HostEventPage from "./pages/HostEventPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +35,10 @@ const router = createBrowserRouter([
     {
         path: "/eventPage/:eventId",
         element: <EventPage />
+    },
+    {
+        path: "/HostEventPage/:eventId",
+        element: <HostEventPage />
     },
     {
         path: "/eventCreation",
