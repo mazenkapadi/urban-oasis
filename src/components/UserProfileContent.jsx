@@ -4,12 +4,23 @@ import { db, auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 
+
+const formatPhoneNumber = (phoneNumber) => {
+    if (!phoneNumber) return 'Phone number not available';
+    const cleaned = ('' + phoneNumber).replace(/\D/g, ''); // Remove non-numeric characters
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        return `(${match[1]}) ${match[2]}-${match[3]}`;
+    }
+    return phoneNumber;
+};
+
 const UserProfileContent = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
-    const [userId, setUserId] = useState(null); // Local state to track userId
-    const [profilePic, setProfilePic] = useState(''); // State to track profile picture URL
+    const [userId, setUserId] = useState(null);
+    const [profilePic, setProfilePic] = useState('');
     const [events, setEvents] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const navigate = useNavigate();
@@ -17,7 +28,6 @@ const UserProfileContent = () => {
     const handleEditProfile = () => {
         navigate('/userProfilePage/contact-info');
     };
-
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,12 +52,13 @@ const UserProfileContent = () => {
                         const data = docSnap.data();
                         console.log('User data:', data);
 
-
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
-                        setPhone(data.contact?.cellPhone || 'Phone number not found');
+
+                        // Apply the phone number formatting
+                        const formattedPhone = formatPhoneNumber(data.contact?.cellPhone);
+                        setPhone(formattedPhone);
+
                         setEmail(data.contact?.email || email || 'Email not found');
-
-
                         setProfilePic(data.profilePic || 'https://via.placeholder.com/150'); // Fallback to placeholder if no profile picture is found
                     } else {
                         console.log('No such document!');
@@ -77,7 +88,7 @@ const UserProfileContent = () => {
                         className="rounded-full w-24 h-24 object-cover mb-4"
                     />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
-                    <p className="text-gray-400">{phone || 'Phone number not available'}</p>
+                    <p className="text-gray-400">{phone}</p> {/* Displays formatted phone number */}
                     <p className="text-gray-400">{email || 'Email not available'}</p>
                     <button
                         onClick={handleEditProfile}
