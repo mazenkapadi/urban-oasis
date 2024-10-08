@@ -1,3 +1,4 @@
+// eslint-disable-next-line react/prop-types
 const DropdownMenu = ({ isOpen }) => {
     if (!isOpen) return null;
 
