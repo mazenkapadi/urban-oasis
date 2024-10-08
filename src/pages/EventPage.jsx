@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import { CalendarDaysIcon, UserIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
+import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
@@ -207,7 +207,6 @@ const EventPage = () => {
     if (loading) {
         return <LoadingPage />;
     }
-
     return (
         <>
             <div className="event-page" >
@@ -225,6 +224,10 @@ const EventPage = () => {
                                         <label className="font-bold text-white opacity-80" >{eventDateTime}</label >
                                     </div >
                                     <label className="block text-gray-300 text-5xl font-semibold" >{eventTitle}</label >\
+                                </div >
+                                <div className="flex flex-col" >
+                                    <h2 className="text-2xl text-white font-semibold" >Description</h2 >
+                                    <p className="text-gray-300" >{eventDescription}</p >
                                 </div >
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
@@ -290,12 +293,6 @@ const EventPage = () => {
                                     )}
                                 </div >
                             </div >
-
-
-                        </div >
-                        <div className="flex flex-col mt-8" >
-                            <h2 className="text-2xl text-white font-semibold" >Description</h2 >
-                            <p className="text-gray-300" >{eventDescription}</p >
                         </div >
                     </div >
                 </div >
