@@ -34,6 +34,7 @@ const UserProfileContent = () => {
             if (user) {
                 setUserId(user.uid);
                 setEmail(user.email);
+                setProfilePic(user.photoURL || '');
             } else {
                 console.log('No user logged in');
             }
@@ -59,7 +60,6 @@ const UserProfileContent = () => {
                         setPhone(formattedPhone);
 
                         setEmail(data.contact?.email || email || 'Email not found');
-                        setProfilePic(data.profilePic || 'https://via.placeholder.com/150'); // Fallback to placeholder if no profile picture is found
                     } else {
                         console.log('No such document!');
                     }

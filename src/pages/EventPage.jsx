@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
+import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
@@ -77,16 +77,36 @@ const EventPage = () => {
         };
 
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);  // Reference to the Events collection
 
         try {
-            const docSnap = await getDoc(eventRsvpsDocRef);
+            // Fetch event details to get current attendees count and capacity
+            const eventDocSnap = await getDoc(eventDocRef);
+            if (!eventDocSnap.exists()) {
+                console.error("Event not found");
+                return;
+            }
 
-            if (docSnap.exists()) {
+            const eventData = eventDocSnap.data();
+            const { attendeesCount = 0, capacity = Infinity } = eventData; // Assume unlimited if capacity is not defined
+
+            // Check if adding this RSVP exceeds the event's capacity
+            if (attendeesCount + totalAttendees > capacity) {
+                console.error("RSVP quantity exceeds event capacity");
+                alert(`This event only has ${capacity - attendeesCount} spots left.`);
+                return;
+            }
+
+            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
+
+            if (rsvpsDocSnap.exists()) {
+                // Update RSVP data for the user
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userId}`]: rsvpData,
                 });
                 console.log("RSVP updated for event!", rsvpData);
             } else {
+                // Create a new RSVP document for the event
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
                     rsvps: {
@@ -96,14 +116,25 @@ const EventPage = () => {
                 console.log("RSVP created for event!", rsvpData);
             }
 
-            if (isPaidEvent) {
-                console.log("Processing on Stripe");
-            }
+            // Calculate total number of RSVPs
+            const updatedDocSnap = await getDoc(eventRsvpsDocRef);
+            const rsvps = updatedDocSnap.data().rsvps || {};
+            const totalRSVPs = Object.values(rsvps).reduce((acc, rsvp) => acc + rsvp.quantity, 0);
+
+            // Update the attendeesCount in the Events collection
+            await updateDoc(eventDocRef, {
+                attendeesCount: totalRSVPs,
+            });
+            console.log("Total attendees count updated:", totalRSVPs);
 
         } catch (error) {
             console.error("Error adding/updating RSVP: ", error);
         }
     };
+
+    const handleCheckout = async () => {
+        console.log("Processing on Stripe");
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -236,7 +267,7 @@ const EventPage = () => {
                                     <div
                                         className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
                                         <TicketIcon className="text-gray-300 w-6 h-6" />
-                                        <label className="font-bold text-white pl-3" >${eventPrice}</label >
+                                        <label className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
                                     </div >
 
                                     {/* Quantity Selector Section */}
@@ -258,9 +289,9 @@ const EventPage = () => {
                                     className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg" >
                                     <button
                                         className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
-                                        onClick={handleRSVP} >
+                                        onClick={isPaidEvent ? handleCheckout : handleRSVP} >
                                         <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2" />
-                                        <span >RSVP</span >
+                                        <span >{isPaidEvent ? 'Checkout' : 'RSVP'}</span >
                                     </button >
                                 </div >
 
@@ -273,19 +304,13 @@ const EventPage = () => {
                                 {/* Host Details Section */}
                                 <div
                                     className="flex flex-col justify-center items-center w-full h-auto bg-gray-700 border-4 border-gray-500 rounded-lg p-4" >
-                                    <h3 className="text-white font-bold mb-2" >Host Details</h3 >
+                                    <h3 className="text-white font-bold mb-2" >Hosted by,</h3 >
 
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
 
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <p className="text-gray-300" >{hostDetails.bio}</p >
-                                            <p className="text-gray-300" >{hostDetails.email}</p >
-                                            {hostDetails.website && (
-                                             <a href={hostDetails.website} className="text-blue-400 hover:underline">
-                                             {hostDetails.website}
-                                             </a>
-                                             )}
+                                            {/*<p className="text-gray-300" >{hostDetails.email}</p >*/}
                                             <button className="">
                                                 Host Chat
                                             </button>
