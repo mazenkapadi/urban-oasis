@@ -7,13 +7,13 @@ export default {
     theme: {
         extend: {
             colors: {
-                'primary-dark': '#1F2937',     // Dark Gray (Background/Main Theme)
-                'primary-light': '#F9FAFB',    // Off-white (Main Heading)
+                'primary-dark': '#210203',     // Licorice (Background/Main Theme)
+                'primary-light': '#DAD4EF',    // Lavender (Main Heading)
                 'text-gray': '#D1D5DB',        // Soft Gray (Text)
                 'detail-gray': '#9CA3AF',      // Light Gray (Details)
-                'accent-blue': '#3B82F6',      // Accent Blue
-                'accent-green': '#10B981',     // Accent Green
-                'accent-yellow': '#F59E0B',    // Accent Yellow
+                'accent-blue': '#C44900',      // Accent Mahogany
+                'accent-charcoal': '#464C5D',  // Accent Charcoal
+                'accent-sunset': '#EEC584',    // Accent Sunset
                 'neutral-white': '#FFFFFF',    // White (For Cards)
                 'neutral-black': '#111827',    // Black (For Text)
 
