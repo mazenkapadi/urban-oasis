@@ -39,6 +39,7 @@ const EventCarousel = () => {
                     const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
                     return eventDate >= startOfWeek && eventDate <= endOfWeek;
                 });
+
                 setEvents(eventsThisWeek);
             } catch (error) {
                 console.error('Error fetching events:', error);
@@ -76,7 +77,7 @@ const EventCarousel = () => {
                             key={event.id}
                             onClick={() => handleCardClick(event.id)}
                             title={event.basicInfo.title}
-                            location={event.basicInfo.location.label}
+                            location={event.basicInfo.location.value.structured_formatting.secondary_text}
                             date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
                             price={event.eventDetails.eventPrice}
                             image={event.eventDetails.images[0] || 'defaultImageURL'}
