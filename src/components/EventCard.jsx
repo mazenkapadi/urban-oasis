@@ -10,7 +10,6 @@ function EventCard({title, location, date, price, image, eventId, event}) {
             navigate(`/eventPage/${eventId}`);
         };
 
-
         return (
             <div className="event-card flex-shrink-0 w-fit">
                 <div

@@ -83,21 +83,10 @@ const EventCarousel = () => {
                             eventId={event.id}
                             event={event}
                         />
-                        // </Link>
                     ))}
                     {events.length < settings.slidesToShow && [...Array(settings.slidesToShow - events.length)].map((_, i) => (
                         <EventCard key={i}/>
                     ))}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
-                    {/*<EventCard/>*/}
                 </Slider>
             </div>
         </>

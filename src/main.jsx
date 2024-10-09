@@ -37,7 +37,7 @@ const router = createBrowserRouter([
         element: <EventPage />
     },
     {
-        path: "/HostEventPage/:eventId",
+        path: "/hostEventPage/:eventId",
         element: <HostEventPage />
     },
     {
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
         element: <PhotoCarousel />
     },
     {
-        path: "/viewAllEvents",
+        path: "/events",
         element: <ViewAllEventsPage />
     },
     {

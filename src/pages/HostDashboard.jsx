@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SideBar from "../components/SideBar";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import HostEventCard from '../components/HostEventCard';
-import HostEventPage from './HostEventPage';
+// import HostEventPage from './HostEventPage';
 import { onAuthStateChanged } from "firebase/auth";
 import LoadingPage from "./LoadingPage";
 import { Pie } from 'react-chartjs-2';
@@ -89,7 +89,7 @@ const HostDashboard = () => {
     };
 
     const handleEventClick = (eventId) => {
-        navigate(`/HostEventPage/${eventId}`); // Assuming you have a detailed Event page
+        navigate(`/hostEventPage/${eventId}`); // Assuming you have a detailed Event page
     };
 
     const currentDateTime = new Date();
@@ -210,7 +210,6 @@ const HostDashboard = () => {
                             </div>
 
                             <div className="lg:col-span-2 space-y-6">
-                                {/* Combined Events */}
                                 <div className="bg-white shadow-md rounded-lg p-6">
                                     <h2 className="text-lg font-semibold mb-4 text-gray-900">Your Events</h2>
                                     {displayedEvents.length > 0 ? (
