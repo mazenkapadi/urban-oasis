@@ -1,6 +1,6 @@
 import React from 'react';
-import SupportForm from '../components/SupportForm.jsx';
-import FAQ from '../components/FAQ';
+import SupportForm from '../../components/User/SupportForm.jsx';
+import FAQ from '../../components/User/FAQ.jsx';
 
 const SupportPage = () => {
     return (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db, auth } from "../firebaseConfig.js";
+import { db, auth } from "../../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -22,7 +22,7 @@ const UserProfileContent = () => {
     const [userId, setUserId] = useState(null);
     const [profilePic, setProfilePic] = useState('');
     const [events, setEvents] = useState([]);
-    const [favorites, setFavorites] = useState([]);
+    const [PastEvents, setPastEvents] = useState([]);
     const navigate = useNavigate();
 
     const handleEditProfile = () => {
@@ -110,10 +110,10 @@ const UserProfileContent = () => {
                         </ul>
                     </div>
                     <div className="bg-gray-800 shadow-md rounded-lg p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-white">My Favorites</h2>
+                        <h2 className="text-lg font-semibold mb-4 text-white">My Past Events</h2>
                         <ul className="list-disc pl-5">
-                            {favorites.length > 0 ? (
-                                favorites.map((fav, index) => (
+                            {PastEvents.length > 0 ? (
+                                PastEvents.map((fav, index) => (
                                     <li key={index} className="text-gray-300">{fav}</li>
                                 ))
                             ) : (
