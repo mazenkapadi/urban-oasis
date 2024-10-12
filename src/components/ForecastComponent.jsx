@@ -9,6 +9,7 @@ const ForecastComponent = ({ city, eventDate }) => {
 
     try {
       console.log("Fetching weather data...");
+      console.log("city", city);
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
       );
