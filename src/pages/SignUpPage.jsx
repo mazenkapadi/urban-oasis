@@ -186,7 +186,7 @@ function SignUpPage() {
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="../assets/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
+                                    <img src="/public/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
                                     <p className="ml-2">Sign Up with Google</p>
                                 </button>
                             </div>
