@@ -27,7 +27,6 @@ const PhotoCarousel = ({eventId}, {eventTitle}) => {
                     console.log(docSnap.data());
                     const data = docSnap.data();
 
-
                     eventTitle = data.basicInfo.title;
                     if (data.eventDetails?.images) {
                         const imageUrls = await Promise.all(
