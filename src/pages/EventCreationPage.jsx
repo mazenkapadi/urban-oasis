@@ -74,6 +74,11 @@ function EventCreationPage() {
             );
 
             setEventImages(imageUrls);
+
+            setTimeout(() => {
+                resetForm();
+            }, 5000);
+
             return imageUrls;
         } catch (error) {
             console.error("Error uploading images:", error);
@@ -153,7 +158,6 @@ function EventCreationPage() {
 
     const handleModalClose = () => {
         setModalOpen(false);
-        resetForm();
     };
 
     return (
