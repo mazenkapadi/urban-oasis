@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
+import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
@@ -88,7 +88,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const { attendeesCount = 0, capacity = Infinity } = eventData; // Assume unlimited if capacity is not defined
+            const {attendeesCount = 0, capacity = Infinity} = eventData; // Assume unlimited if capacity is not defined
 
             // Check if adding this RSVP exceeds the event's capacity
             if (attendeesCount + totalAttendees > capacity) {
@@ -267,7 +267,8 @@ const EventPage = () => {
                                     <div
                                         className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
                                         <TicketIcon className="text-gray-300 w-6 h-6" />
-                                        <label className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
+                                        <label
+                                            className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
                                     </div >
 
                                     {/* Quantity Selector Section */}
@@ -311,9 +312,9 @@ const EventPage = () => {
 
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
                                             {/*<p className="text-gray-300" >{hostDetails.email}</p >*/}
-                                            <button className="">
+                                            <button className="" >
                                                 Host Chat
-                                            </button>
+                                            </button >
                                         </div >
                                     )}
                                 </div >

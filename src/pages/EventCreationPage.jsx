@@ -9,8 +9,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { googleMapsConfig } from "../locationConfig.js";
-import { Modal, Button } from '@mui/material';
-
+import { Modal, Button, TextField } from '@mui/material';
 function EventCreationPage() {
 
     const [ hostId ] = useState('defaultUserID');
@@ -189,6 +188,7 @@ function EventCreationPage() {
                                         className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         required
                                     />
+                                    {/*< TextField className="" id="eventTitle" label="Outlined" variant="outlined"/>*/}
                                 </div >
 
                                 {/* Description */}
