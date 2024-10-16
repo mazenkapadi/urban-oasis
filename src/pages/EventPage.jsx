@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
+import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
@@ -77,8 +77,7 @@ const EventPage = () => {
         };
 
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
-        const eventDocRef = doc(db, 'Events', eventId);
-        const userRsvpsDocRef = doc(db, 'UserRSVPs', userId); // Reference to store RSVPs for the user
+        const eventDocRef = doc(db, 'Events', eventId);  // Reference to the Events collection
 
         try {
             // Fetch event details to get current attendees count and capacity
@@ -89,7 +88,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const { attendeesCount = 0, capacity = Infinity } = eventData;
+            const {attendeesCount = 0, capacity = Infinity} = eventData; // Assume unlimited if capacity is not defined
 
             // Check if adding this RSVP exceeds the event's capacity
             if (attendeesCount + totalAttendees > capacity) {
@@ -101,10 +100,11 @@ const EventPage = () => {
             const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
 
             if (rsvpsDocSnap.exists()) {
-                // Update RSVP data for the event
+                // Update RSVP data for the user
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userId}`]: rsvpData,
                 });
+                console.log("RSVP updated for event!", rsvpData);
             } else {
                 // Create a new RSVP document for the event
                 await setDoc(eventRsvpsDocRef, {
@@ -113,23 +113,7 @@ const EventPage = () => {
                         [userId]: rsvpData,
                     },
                 });
-            }
-
-            // This adds or updates RSVP for the UserRSVPs collection
-            const userRsvpSnap = await getDoc(userRsvpsDocRef);
-            if (userRsvpSnap.exists()) {
-                // Update the user's RSVP entry
-                await updateDoc(userRsvpsDocRef, {
-                    [`rsvps.${eventId}`]: rsvpData,
-                });
-            } else {
-                // Create a new RSVP entry for the user
-                await setDoc(userRsvpsDocRef, {
-                    userId: userId,
-                    rsvps: {
-                        [eventId]: rsvpData,
-                    },
-                });
+                console.log("RSVP created for event!", rsvpData);
             }
 
             // Calculate total number of RSVPs
@@ -147,7 +131,6 @@ const EventPage = () => {
             console.error("Error adding/updating RSVP: ", error);
         }
     };
-
 
     const handleCheckout = async () => {
         console.log("Processing on Stripe");
@@ -284,7 +267,8 @@ const EventPage = () => {
                                     <div
                                         className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
                                         <TicketIcon className="text-gray-300 w-6 h-6" />
-                                        <label className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
+                                        <label
+                                            className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
                                     </div >
 
                                     {/* Quantity Selector Section */}
@@ -328,9 +312,9 @@ const EventPage = () => {
 
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
                                             {/*<p className="text-gray-300" >{hostDetails.email}</p >*/}
-                                            <button className="">
+                                            <button className="" >
                                                 Host Chat
-                                            </button>
+                                            </button >
                                         </div >
                                     )}
                                 </div >
