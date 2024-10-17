@@ -9,6 +9,8 @@ import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
+import { Button, Modal } from "@mui/material";
+
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -26,6 +28,8 @@ const EventPage = () => {
     const [ email, setEmail ] = useState('');
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
+    const [ modalOpen, setModalOpen ] = useState(false);
+
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
         profilePicture: '',
@@ -126,7 +130,7 @@ const EventPage = () => {
                 attendeesCount: totalRSVPs,
             });
             console.log("Total attendees count updated:", totalRSVPs);
-
+            setModalOpen(true);
         } catch (error) {
             console.error("Error adding/updating RSVP: ", error);
         }
@@ -135,6 +139,10 @@ const EventPage = () => {
     const handleCheckout = async () => {
         console.log("Processing on Stripe");
     }
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+    };
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -322,6 +330,29 @@ const EventPage = () => {
                         </div >
                     </div >
                 </div >
+
+                <Modal
+                    open={modalOpen}
+                    onClose={handleModalClose}
+                >
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
+                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">
+                            Event Created!
+                        </h2>
+                        <p className="text-body text-detail-gray text-center mb-6 font-inter">
+                            Your event has been successfully created.
+                        </p>
+                        <Button
+                            onClick={handleModalClose}
+                            variant="contained"
+                            color="primary"
+                            className="mt-4 w-full bg-accent-blue hover:bg-primary-dark text-neutral-white py-2 rounded-lg font-medium"
+                        >
+                            Close
+                        </Button>
+                    </div>
+                </Modal>
+
                 <FooterComponent />
             </div >
         </>

@@ -1,14 +1,14 @@
-import React, {useState, useEffect,} from "react";
+import React, { useState, useEffect, } from "react";
 import Slider from "react-slick";
-import {db} from "../firebaseConfig.js";
+import { db } from "../firebaseConfig.js";
 import EventCard from "./EventCard.jsx";
-import {Link} from "react-router-dom";
-import {ChevronRightIcon} from "@heroicons/react/20/solid/index.js";
-import {collection, getDocs} from "firebase/firestore";
-import {useNavigate} from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@heroicons/react/20/solid/index.js";
+import { collection, getDocs } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
 
-const EventCarousel = () => {
-    const [events, setEvents] = useState([]);
+const EventMonthCarousel = () => {
+    const [ events, setEvents ] = useState([]);
     const navigate = useNavigate();
 
     const handleCardClick = (event) => {
@@ -16,36 +16,28 @@ const EventCarousel = () => {
     };
 
     useEffect(() => {
-
-        const getStartAndEndOfWeek = () => {
+        const getEventsUntilEndOfMonth = () => {
             const today = new Date();
-            const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1); // Adjust if Sunday should be the first day
-            const startOfWeek = new Date(today);
-            startOfWeek.setDate(firstDayOfWeek);
-            const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6);
-            return {startOfWeek, endOfWeek};
+            const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 7); // End of this week
+            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Last day of the month
+            return {endOfWeek, endOfMonth};
         };
-
-        const {startOfWeek, endOfWeek} = getStartAndEndOfWeek();
-
+        const {endOfWeek, endOfMonth} = getEventsUntilEndOfMonth();
         const fetchEvents = async () => {
             try {
                 const eventsCollection = collection(db, 'Events');
                 const snapshot = await getDocs(eventsCollection);
                 const eventsList = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
-                const eventsThisWeek = eventsList.filter(event => {
+                const eventsAfterThisWeekend = eventsList.filter(event => {
                     const eventDate = new Date(event.eventDetails.eventDateTime.toDate());
-                    return eventDate >= startOfWeek && eventDate <= endOfWeek;
+                    return eventDate > endOfWeek && eventDate <= endOfMonth;
                 });
-
-                setEvents(eventsThisWeek);
+                setEvents(eventsAfterThisWeekend);
             } catch (error) {
                 console.error('Error fetching events:', error);
             }
         };
-
         fetchEvents();
     }, []);
 
@@ -61,16 +53,11 @@ const EventCarousel = () => {
 
     return (
         <>
-            <div className="carousel-container">
-                <div className="flex justify-between items-center">
-                    <h2 className="text-4xl font-extrabold text-gray-900 pb-3">Events This Week</h2>
-                    <Link to="/" className="flex items-center text-blue-500 hover:underline">
-                        View All Events
-                        <ChevronRightIcon className="ml-1 h-5 w-5"/>
-                    </Link>
-                </div>
+            <div className="carousel-container" >
+                <div className="flex justify-between items-center" >
+                    <h2 className="text-4xl font-extrabold text-gray-900 pb-3" >Events Later This Month</h2 >
+                </div >
                 <Slider {...settings}  >
-
                     {events.map(event => (
                         // <Link key={event.id} to={`/eventPage/${event.id}`} >
                         <EventCard
@@ -85,13 +72,13 @@ const EventCarousel = () => {
                             event={event}
                         />
                     ))}
-                    {events.length < settings.slidesToShow && [...Array(settings.slidesToShow - events.length)].map((_, i) => (
-                        <EventCard key={i}/>
+                    {events.length < settings.slidesToShow && [ ...Array(settings.slidesToShow - events.length) ].map((_, i) => (
+                        <EventCard key={i} />
                     ))}
-                </Slider>
-            </div>
+                </Slider >
+            </div >
         </>
     )
 }
 
-export default EventCarousel;
+export default EventMonthCarousel;
