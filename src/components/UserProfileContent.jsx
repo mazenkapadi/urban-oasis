@@ -80,6 +80,7 @@ const UserProfileContent = () => {
                 <h1 className="text-3xl font-bold text-white">My Dashboard</h1>
                 <p className="text-gray-300">Welcome back, {name.split(' ')[0] || 'User'}</p>
             </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center">
                     <img
