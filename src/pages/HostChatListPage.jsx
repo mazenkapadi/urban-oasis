@@ -1,69 +1,125 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   collection,
   query,
   where,
-  getDocs,
-  updateDoc,
+  onSnapshot,
   doc,
+  updateDoc,
   arrayUnion,
   Timestamp,
+  getDoc,
 } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig"; // Assuming firebase is already integrated
+import { db, auth } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 const HostChatList = () => {
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState(""); // State for the input field
+  const [newMessage, setNewMessage] = useState("");
+  const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState({});
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const fetchChats = async () => {
-      const user = auth.currentUser; // Get the logged-in user
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const q = query(
-          collection(db, "chats"),
-          where("participants", "array-contains", user.uid)
-        ); // Fetch chats where the user is the logged-in user
-        const querySnapshot = await getDocs(q);
+        setUserId(user.uid);
+      } else {
+        console.log("No user logged in");
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [userId]);
+
+  useEffect(() => {
+    // const user = auth.currentUser;
+    if (user) {
+      const q = query(
+        collection(db, "chats"),
+        where("participants", "array-contains", userId)
+      ); // Fetch chats where the user is the logged-in user
+
+      // Listen for changes in real-time
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const chatData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         })); // Add document ID to chat data
         setChats(chatData);
-        console.log(chatData);
+      });
+
+      // Cleanup the listener on unmount
+      return () => unsubscribe();
+    }
+  }, [userId]);
+
+  const fetchUserData = async () => {
+    if (userId) {
+      try {
+        const docRef = doc(db, "Users", userId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log("User data:", data);
+          setUser(user);
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-    };
-    fetchChats();
-  }, []);
+    }
+  };
 
   const selectChat = (chat) => {
     setSelectedChat(chat);
-    setMessages(chat.messages);
   };
+  useEffect(() => {
+    if (selectedChat) {
+      const chatRef = doc(db, "chats", selectedChat.id);
+      // Listen for real-time updates to the selected chat's messages
+      const unsubscribe = onSnapshot(chatRef, (doc) => {
+        if (doc.exists()) {
+          setMessages(doc.data().messages || []);
+        }
+      });
+      // Cleanup the listener on unmount or when the selected chat changes
+      return () => unsubscribe();
+    }
+  }, [selectedChat]);
 
   const sendMessage = async () => {
-    if (newMessage.trim() === "" || !selectedChat) return; 
-    const messageData = {
-      msg: newMessage,
-      sender: auth.currentUser.uid,
-      timestamp: Timestamp.now(),
-    };
+    if (newMessage.trim() === "" || !selectedChat) return;
 
-    // Update Firestore
     try {
       const chatRef = doc(db, "chats", selectedChat.id);
-      await updateDoc(chatRef, {
-        messages: arrayUnion(messageData), 
-      });
 
-      // Update UI
-      setMessages((prevMessages) => [...prevMessages, messageData]);
-      setNewMessage(""); 
+      await updateDoc(chatRef, {
+        messages: arrayUnion({
+          senderId: userId,
+          msg: newMessage,
+          ts: Timestamp.now(),
+        }),
+      });
+      setNewMessage("");
     } catch (error) {
       console.error("Error sending message: ", error);
     }
   };
+
+  useEffect(() => {
+    // Scroll to the bottom whenever messages change
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   return (
     <div className="h-screen flex">
@@ -79,13 +135,26 @@ const HostChatList = () => {
             }`}
           >
             <img
-              src={chat.event.image}
-              alt={chat.event.name}
+              src={
+                chat.sender.id === userId
+                  ? chat.receiver.profilePicture
+                  : chat.sender.profilePicture
+              }
+              alt={
+                chat.sender.id === userId
+                  ? chat.receiver.name
+                  : chat.sender.name
+              }
               className="w-12 h-12 rounded-full mr-3"
             />
+
             <div className="flex-grow">
               <div className="font-medium">{chat.event.name}</div>
-              <div className="font-medium">{chat.user.name}</div>
+              <div className="font-medium">
+                {chat.sender.id === userId
+                  ? chat.receiver.name
+                  : chat.sender.name}
+              </div>
               <div className="text-sm text-gray-600 truncate">
                 {chat.messages.length > 0
                   ? chat.messages[chat.messages.length - 1].msg
@@ -109,7 +178,11 @@ const HostChatList = () => {
               />
               <div>
                 <div className="font-medium">{selectedChat.event.name}</div>
-                <div className="font-medium">{selectedChat.user.name}</div>
+                <div className="font-medium">
+                  {selectedChat.sender.id === userId
+                    ? selectedChat.receiver.name
+                    : selectedChat.sender.name}
+                </div>
               </div>
             </div>
 
@@ -119,7 +192,7 @@ const HostChatList = () => {
                 <div
                   key={index}
                   className={`mb-2 p-2 max-w-xs rounded-lg ${
-                    msg.sender === auth.currentUser.uid
+                    msg.senderId === auth.currentUser.uid
                       ? "bg-blue-500 text-white self-end"
                       : "bg-gray-200 text-black self-start"
                   }`}
@@ -127,6 +200,7 @@ const HostChatList = () => {
                   {msg.msg}
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input Box */}
