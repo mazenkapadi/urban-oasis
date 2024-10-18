@@ -37,7 +37,7 @@ const EventPage = () => {
     const [chatId, setChatId] = useState(null);
     // const currentUserId = auth.currentUser?.uid;
 
-    // const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
@@ -301,12 +301,12 @@ const EventPage = () => {
         const chatRef = doc(db, 'chats', chatId);
         const chatDoc = await getDoc(chatRef);
         if (chatDoc.exists()) {
-            // Chat exists, return the chat ID
+            
             setChatId(chatId);
             console.log('existing chat ',chatId);
             return chatId;
           } else {
-            // Create a new chat
+            
             const newChatData = {
               event: {
                 id: eventId,
@@ -362,14 +362,14 @@ const EventPage = () => {
             ts: Timestamp.now(),
           }),
         });
-        setNewMessage(''); // Clear input after sending
+        setNewMessage(''); 
     };
 
     const handleHostChatClick = async () => {
         try {
           const chatId = await createOrFetchChat(hostDetails.id);
-          fetchMessages(chatId); // Start listening for messages
-          toggleChatWindow(); // Open the chat window
+          fetchMessages(chatId); 
+          toggleChatWindow(); 
         } catch (error) {
           console.error('Error creating or fetching chat: ', error);
         }
@@ -454,7 +454,6 @@ const EventPage = () => {
                                 <button onClick={toggleChatWindow} className="text-white">X</button>
                             </div>
                             <div className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg">
-                                {/* Messages will be displayed here */}
                                 {messages.map((msg, index) => (
                                     <div
                                         key={index}

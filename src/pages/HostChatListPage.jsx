@@ -43,18 +43,16 @@ const HostChatList = () => {
       const q = query(
         collection(db, "chats"),
         where("participants", "array-contains", userId)
-      ); // Fetch chats where the user is the logged-in user
+      ); 
 
-      // Listen for changes in real-time
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const chatData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
-        })); // Add document ID to chat data
+        })); 
         setChats(chatData);
       });
 
-      // Cleanup the listener on unmount
       return () => unsubscribe();
     }
   }, [userId]);
@@ -84,13 +82,11 @@ const HostChatList = () => {
   useEffect(() => {
     if (selectedChat) {
       const chatRef = doc(db, "chats", selectedChat.id);
-      // Listen for real-time updates to the selected chat's messages
       const unsubscribe = onSnapshot(chatRef, (doc) => {
         if (doc.exists()) {
           setMessages(doc.data().messages || []);
         }
       });
-      // Cleanup the listener on unmount or when the selected chat changes
       return () => unsubscribe();
     }
   }, [selectedChat]);
@@ -115,7 +111,6 @@ const HostChatList = () => {
   };
 
   useEffect(() => {
-    // Scroll to the bottom whenever messages change
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -208,12 +203,12 @@ const HostChatList = () => {
               <input
                 type="text"
                 placeholder="Type a message"
-                value={newMessage} // Bind the input value to state
-                onChange={(e) => setNewMessage(e.target.value)} // Update state on change
+                value={newMessage} 
+                onChange={(e) => setNewMessage(e.target.value)} 
                 className="flex-grow p-2 border border-gray-300 rounded-lg outline-none bg-black"
               />
               <button
-                onClick={sendMessage} // Call the sendMessage function
+                onClick={sendMessage} 
                 className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
               >
                 Send
