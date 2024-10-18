@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 const SearchBarComponent = () => {
-    const [searchInput, setSearchInput] = useState("");
-    const [searchDate, setSearchDate] = useState("");
-    const [zipcode, setZipcode] = useState("");
+    const [ searchInput, setSearchInput ] = useState("");
+    const [ searchDate, setSearchDate ] = useState("");
+    const [ zipcode, setZipcode ] = useState("");
 
     const handleSearch = () => {
         console.log("Searching for:", searchInput, "on date:", searchDate, "in zipcode:", zipcode);
@@ -18,9 +18,9 @@ const SearchBarComponent = () => {
     };
 
     return (
-        <div className="flex items-center space-x-4 rounded-lg p-4">
+        <div className="flex items-center space-x-4 rounded-lg p-4" >
             {/* Zipcode Input */}
-            <div className="flex items-center bg-white rounded-lg px-4 py-2">
+            <div className="flex items-center bg-white rounded-lg px-4 py-2" >
                 <input
                     id="zipcode"
                     type="text"
@@ -29,10 +29,10 @@ const SearchBarComponent = () => {
                     onChange={handleZipcodeChange}
                     className="bg-transparent border-none outline-none text-gray-700 w-24 text-center"
                 />
-            </div>
+            </div >
 
             {/* Date Picker */}
-            <div className="flex items-center bg-white rounded-lg px-4 py-2">
+            <div className="flex items-center bg-white rounded-lg px-4 py-2" >
                 <input
                     id="date"
                     type="date"
@@ -40,10 +40,10 @@ const SearchBarComponent = () => {
                     onChange={(e) => setSearchDate(e.target.value)}
                     className="bg-transparent border-none outline-none text-gray-700 text-center"
                 />
-            </div>
+            </div >
 
             {/* Search Input */}
-            <div className="flex-grow">
+            <div className="flex-grow" >
                 <input
                     id="searchInput"
                     type="text"
@@ -52,7 +52,7 @@ const SearchBarComponent = () => {
                     onChange={(e) => setSearchInput(e.target.value)}
                     className="w-full p-2 rounded-lg outline-none bg-white text-gray-700"
                 />
-            </div>
+            </div >
 
             {/* Search Button */}
             <button
@@ -61,8 +61,8 @@ const SearchBarComponent = () => {
                 onClick={handleSearch}
             >
                 Search
-            </button>
-        </div>
+            </button >
+        </div >
     );
 };
 

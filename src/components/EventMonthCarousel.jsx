@@ -49,6 +49,7 @@ const EventMonthCarousel = () => {
         swipeToSlide: true,
         touchThreshold: 10,
         swipe: true,
+        arrows: false,
     };
 
     return (
