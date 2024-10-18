@@ -23,7 +23,7 @@ const HostChatList = () => {
       if (user) {
         const q = query(
           collection(db, "chats"),
-          where("hostId", "==", user.uid)
+          where("participants", "array-contains", user.uid)
         ); // Fetch chats where the user is the logged-in user
         const querySnapshot = await getDocs(q);
         const chatData = querySnapshot.docs.map((doc) => ({
@@ -31,6 +31,7 @@ const HostChatList = () => {
           id: doc.id,
         })); // Add document ID to chat data
         setChats(chatData);
+        console.log(chatData);
       }
     };
     fetchChats();
@@ -42,8 +43,7 @@ const HostChatList = () => {
   };
 
   const sendMessage = async () => {
-    if (newMessage.trim() === "" || !selectedChat) return; // Prevent empty messages or sending without a chat selected
-
+    if (newMessage.trim() === "" || !selectedChat) return; 
     const messageData = {
       msg: newMessage,
       sender: auth.currentUser.uid,
@@ -54,12 +54,12 @@ const HostChatList = () => {
     try {
       const chatRef = doc(db, "chats", selectedChat.id);
       await updateDoc(chatRef, {
-        messages: arrayUnion(messageData), // Add the new message to the messages array
+        messages: arrayUnion(messageData), 
       });
 
       // Update UI
       setMessages((prevMessages) => [...prevMessages, messageData]);
-      setNewMessage(""); // Clear the input field after sending
+      setNewMessage(""); 
     } catch (error) {
       console.error("Error sending message: ", error);
     }
