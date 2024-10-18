@@ -81,6 +81,7 @@ const EventPage = () => {
         };
 
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);
         const userRsvpsDocRef = doc(db, 'UserRSVPs', userId); // Reference to UserRSVPs collection
         const eventDocRef = doc(db, 'Events', eventId);  // Reference to the Events collection
 
@@ -93,6 +94,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
             const { attendeesCount = 0, capacity = Infinity } = eventData; // Assume unlimited if capacity is not defined
 
             // Check if adding this RSVP exceeds the event's capacity
