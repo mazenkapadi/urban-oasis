@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from "../../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-
 
 const formatPhoneNumber = (phoneNumber) => {
     if (!phoneNumber) return 'Phone number not available';
@@ -21,8 +20,8 @@ const UserProfileContent = () => {
     const [email, setEmail] = useState('');
     const [userId, setUserId] = useState(null);
     const [profilePic, setProfilePic] = useState('');
-    const [events, setEvents] = useState([]);
-    const [PastEvents, setPastEvents] = useState([]);
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [pastEvents, setPastEvents] = useState([]);
     const navigate = useNavigate();
 
     const handleEditProfile = () => {
@@ -54,11 +53,8 @@ const UserProfileContent = () => {
                         console.log('User data:', data);
 
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
-
-                        // Apply the phone number formatting
                         const formattedPhone = formatPhoneNumber(data.contact?.cellPhone);
                         setPhone(formattedPhone);
-
                         setEmail(data.contact?.email || email || 'Email not found');
                     } else {
                         console.log('No such document!');
@@ -69,10 +65,48 @@ const UserProfileContent = () => {
             }
         };
 
-        if (userId) {
-            fetchUserData();
-        }
+        fetchUserData();
     }, [userId, email]);
+
+    useEffect(() => {
+        const fetchUserRSVPs = async () => {
+            if (userId) {
+                try {
+                    const userRsvpsRef = doc(db, 'UserRSVPs', userId);
+                    const rsvpDocSnap = await getDoc(userRsvpsRef);
+
+                    if (rsvpDocSnap.exists()) {
+                        const rsvpData = rsvpDocSnap.data();
+                        const rsvps = rsvpData.rsvps || {};
+
+                        const currentDate = new Date();
+                        const upcoming = [];
+                        const past = [];
+
+                        for (const eventId in rsvps) {
+                            const rsvp = rsvps[eventId];
+                            const eventDate = new Date(rsvp.eventDateTime);
+
+                            if (eventDate > currentDate) {
+                                upcoming.push(rsvp);
+                            } else {
+                                past.push(rsvp);
+                            }
+                        }
+
+                        setUpcomingEvents(upcoming);
+                        setPastEvents(past);
+                    } else {
+                        console.log('No RSVPs found for user');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user RSVPs:', error);
+                }
+            }
+        };
+
+        fetchUserRSVPs();
+    }, [userId]);
 
     return (
         <div className="w-full">
@@ -88,7 +122,7 @@ const UserProfileContent = () => {
                         className="rounded-full w-24 h-24 object-cover mb-4"
                     />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
-                    <p className="text-gray-400">{phone}</p> {/* Displays formatted phone number */}
+                    <p className="text-gray-400">{phone}</p>
                     <p className="text-gray-400">{email || 'Email not available'}</p>
                     <button
                         onClick={handleEditProfile}
@@ -98,26 +132,30 @@ const UserProfileContent = () => {
                 </div>
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-gray-800 shadow-md rounded-lg p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-white">My Events</h2>
+                        <h2 className="text-lg font-semibold mb-4 text-white">Upcoming Events</h2>
                         <ul className="list-disc pl-5">
-                            {events.length > 0 ? (
-                                events.map((event, index) => (
-                                    <li key={index} className="text-gray-300">{event}</li>
+                            {upcomingEvents.length > 0 ? (
+                                upcomingEvents.map((event, index) => (
+                                    <li key={index} className="text-gray-300">
+                                        {event.eventTitle} - {event.eventDateTime} (Quantity: {event.quantity})
+                                    </li>
                                 ))
                             ) : (
-                                <li className="text-gray-500">No events to display.</li>
+                                <li className="text-gray-500">No upcoming events to display.</li>
                             )}
                         </ul>
                     </div>
                     <div className="bg-gray-800 shadow-md rounded-lg p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-white">My Past Events</h2>
+                        <h2 className="text-lg font-semibold mb-4 text-white">Past Events</h2>
                         <ul className="list-disc pl-5">
-                            {PastEvents.length > 0 ? (
-                                PastEvents.map((fav, index) => (
-                                    <li key={index} className="text-gray-300">{fav}</li>
+                            {pastEvents.length > 0 ? (
+                                pastEvents.map((event, index) => (
+                                    <li key={index} className="text-gray-300">
+                                        {event.eventTitle} - {event.eventDateTime} (Quantity: {event.quantity})
+                                    </li>
                                 ))
                             ) : (
-                                <li className="text-gray-500">No favorites to display.</li>
+                                <li className="text-gray-500">No past events to display.</li>
                             )}
                         </ul>
                     </div>
