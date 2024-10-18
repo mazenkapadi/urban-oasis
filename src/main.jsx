@@ -26,6 +26,8 @@ import HostSignUpPage from "./pages/HostSignUpPage.jsx";
 import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
 import HostDashboard from "./pages/HostDashboard.jsx";
 import HostEventPage from "./pages/HostEventPage.jsx";
+import HostChatList from "./pages/HostChatListPage.jsx";
+import ChatPage from './pages/ChatPage.jsx';
 
 const router = createBrowserRouter([
     {
@@ -64,7 +66,8 @@ const router = createBrowserRouter([
             {path: "contact-info", element: <ContactInfoPage />},
             {path: "settings", element: <SettingsPage />},
             {path: "support", element: <SupportPage />},
-            {path: "host-signup", element: <HostSignUpPage />}
+            {path: "host-signup", element: <HostSignUpPage />},
+            {path: "host-chatlist", element: <HostChatList />}
         ]
     },
     {
@@ -78,6 +81,10 @@ const router = createBrowserRouter([
     {
         path: "/events",
         element: <ViewAllEventsPage />
+    },
+    {
+        path: "/chat/:chatId",
+        element: <ChatPage />
     },
     {
         path: "*",
