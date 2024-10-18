@@ -10,6 +10,7 @@ import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
+import { loadStripe } from "@stripe/stripe-js";
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -28,6 +29,8 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
+
+    const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
@@ -68,37 +71,39 @@ const EventPage = () => {
         }
 
         const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);
+
+        const totalPrice = isPaidEvent ? parseFloat(eventPrice) * totalAttendees : 0;
+
         const rsvpData = {
             userId: userId,
             name: name,
             email: email,
             phone: phone,
             quantity: totalAttendees,
+            totalPrice: totalPrice,
             eventTitle: eventTitle,
             eventDateTime: eventDateTime,
             createdAt: new Date().toISOString(),
         };
 
-        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
-        const eventDocRef = doc(db, 'Events', eventId);
-
         try {
             const eventDocSnap = await getDoc(eventDocRef);
+            const eventData = eventDocSnap.data();
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
+            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
+
             if (!eventDocSnap.exists()) {
                 console.error("Event not found");
                 return;
             }
-
-            const eventData = eventDocSnap.data();
-            const {attendeesCount = 0, capacity = Infinity} = eventData;
 
             if (attendeesCount + totalAttendees > capacity) {
                 console.error("RSVP quantity exceeds event capacity");
                 alert(`This event only has ${capacity - attendeesCount} spots left.`);
                 return;
             }
-
-            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
 
             if (rsvpsDocSnap.exists()) {
                 await updateDoc(eventRsvpsDocRef, {
@@ -131,7 +136,38 @@ const EventPage = () => {
 
     const handleCheckout = async () => {
         console.log("Processing on Stripe");
-    }
+
+        const stripe = await stripePromise;
+
+        const checkoutData = {
+            eventId: eventId,
+            quantity: quantity,
+            price: parseFloat(eventPrice) * quantity,
+            eventTitle: eventTitle,
+            userId: userId,
+        };
+        try {
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(checkoutData),
+            });
+
+            const session = await response.json();
+
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id,
+            })
+
+            if(result.error) {
+                console.error("Error redirecting to checkout: ", result.error);
+            }
+        } catch (error) {
+            console.error("Error creating checkout session: ", error);
+        }
+    };
 
     const handleModalClose = () => {
         setModalOpen(false);

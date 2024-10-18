@@ -9,7 +9,9 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { googleMapsConfig } from "../locationConfig.js";
-import {Modal, Button, TextField, ImageList, ImageListItem} from '@mui/material';
+import {Modal, Button, ImageList, ImageListItem} from '@mui/material';
+
+
 function EventCreationPage() {
 
     const [ hostId ] = useState('defaultUserID');
