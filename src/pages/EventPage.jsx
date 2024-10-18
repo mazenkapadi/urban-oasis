@@ -11,6 +11,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 
+
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
     const {eventId} = useParams();
