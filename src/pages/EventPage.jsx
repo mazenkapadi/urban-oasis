@@ -81,6 +81,7 @@ const EventPage = () => {
         };
 
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const userRsvpsDocRef = doc(db, 'UserRSVPs', userId); // Reference to UserRSVPs collection
         const eventDocRef = doc(db, 'Events', eventId);  // Reference to the Events collection
 
         try {
@@ -92,7 +93,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const {attendeesCount = 0, capacity = Infinity} = eventData; // Assume unlimited if capacity is not defined
+            const { attendeesCount = 0, capacity = Infinity } = eventData; // Assume unlimited if capacity is not defined
 
             // Check if adding this RSVP exceeds the event's capacity
             if (attendeesCount + totalAttendees > capacity) {
@@ -104,13 +105,13 @@ const EventPage = () => {
             const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
 
             if (rsvpsDocSnap.exists()) {
-                // Update RSVP data for the user
+                // Update RSVP data for the user in EventRSVPs
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userId}`]: rsvpData,
                 });
                 console.log("RSVP updated for event!", rsvpData);
             } else {
-                // Create a new RSVP document for the event
+                // Create a new RSVP document for the event in EventRSVPs
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
                     rsvps: {
@@ -118,6 +119,25 @@ const EventPage = () => {
                     },
                 });
                 console.log("RSVP created for event!", rsvpData);
+            }
+
+            // Now update the UserRSVPs collection
+            const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
+            if (userRsvpsDocSnap.exists()) {
+                // Update the user's RSVP document
+                await updateDoc(userRsvpsDocRef, {
+                    [`events.${eventId}`]: rsvpData,
+                });
+                console.log("RSVP added to user's profile!", rsvpData);
+            } else {
+                // Create a new UserRSVP document for the user
+                await setDoc(userRsvpsDocRef, {
+                    userId: userId,
+                    events: {
+                        [eventId]: rsvpData,
+                    },
+                });
+                console.log("RSVP created in user's profile!", rsvpData);
             }
 
             // Calculate total number of RSVPs
@@ -130,6 +150,7 @@ const EventPage = () => {
                 attendeesCount: totalRSVPs,
             });
             console.log("Total attendees count updated:", totalRSVPs);
+
             setModalOpen(true);
         } catch (error) {
             console.error("Error adding/updating RSVP: ", error);

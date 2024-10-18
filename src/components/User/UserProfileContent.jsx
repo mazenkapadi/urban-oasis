@@ -20,14 +20,15 @@ const UserProfileContent = () => {
     const [email, setEmail] = useState('');
     const [userId, setUserId] = useState(null);
     const [profilePic, setProfilePic] = useState('');
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
-    const [pastEvents, setPastEvents] = useState([]);
+    const [nextEvent, setNextEvent] = useState(null); // Store the next event
+    const [timeRemaining, setTimeRemaining] = useState({ days: 0, hours: 0, minutes: 0 });
     const navigate = useNavigate();
 
     const handleEditProfile = () => {
         navigate('/userProfilePage/contact-info');
     };
 
+    // Fetch authenticated user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -41,6 +42,7 @@ const UserProfileContent = () => {
         return () => unsubscribe();
     }, []);
 
+    // Fetch user data and RSVP-ed events
     useEffect(() => {
         const fetchUserData = async () => {
             if (userId) {
@@ -50,12 +52,13 @@ const UserProfileContent = () => {
 
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        console.log('User data:', data);
-
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         const formattedPhone = formatPhoneNumber(data.contact?.cellPhone);
                         setPhone(formattedPhone);
                         setEmail(data.contact?.email || email || 'Email not found');
+
+                        // Fetch the user's RSVPs
+                        await fetchUserRSVPs();
                     } else {
                         console.log('No such document!');
                     }
@@ -65,48 +68,49 @@ const UserProfileContent = () => {
             }
         };
 
-        fetchUserData();
-    }, [userId, email]);
-
-    useEffect(() => {
         const fetchUserRSVPs = async () => {
-            if (userId) {
-                try {
-                    const userRsvpsRef = doc(db, 'UserRSVPs', userId);
-                    const rsvpDocSnap = await getDoc(userRsvpsRef);
+            const userRSVPRef = collection(db, 'UserRSVPs');
+            const q = query(userRSVPRef, where('userId', '==', userId));
+            const querySnapshot = await getDocs(q);
 
-                    if (rsvpDocSnap.exists()) {
-                        const rsvpData = rsvpDocSnap.data();
-                        const rsvps = rsvpData.rsvps || {};
+            if (!querySnapshot.empty) {
+                const events = querySnapshot.docs.map(doc => doc.data());
+                // Sort by event date and get the next upcoming event
+                const sortedEvents = events.sort((a, b) => new Date(a.eventDateTime) - new Date(b.eventDateTime));
+                const upcomingEvent = sortedEvents.find(event => new Date(event.eventDateTime) > new Date());
 
-                        const currentDate = new Date();
-                        const upcoming = [];
-                        const past = [];
-
-                        for (const eventId in rsvps) {
-                            const rsvp = rsvps[eventId];
-                            const eventDate = new Date(rsvp.eventDateTime);
-
-                            if (eventDate > currentDate) {
-                                upcoming.push(rsvp);
-                            } else {
-                                past.push(rsvp);
-                            }
-                        }
-
-                        setUpcomingEvents(upcoming);
-                        setPastEvents(past);
-                    } else {
-                        console.log('No RSVPs found for user');
-                    }
-                } catch (error) {
-                    console.error('Error fetching user RSVPs:', error);
+                if (upcomingEvent) {
+                    setNextEvent(upcomingEvent);
+                    initializeCountdown(new Date(upcomingEvent.eventDateTime));
                 }
             }
         };
 
-        fetchUserRSVPs();
-    }, [userId]);
+        if (userId) {
+            fetchUserData();
+        }
+    }, [userId, email]);
+
+    // Initialize countdown for the next event
+    const initializeCountdown = (eventDate) => {
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const distance = eventDate.getTime() - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            setTimeRemaining({ days, hours, minutes });
+
+            if (distance < 0) {
+                clearInterval(interval);
+            }
+        };
+
+        const interval = setInterval(updateCountdown, 60000); // Update every minute
+        updateCountdown(); // Call immediately to set the initial value
+    };
 
     return (
         <div className="w-full">
@@ -116,6 +120,7 @@ const UserProfileContent = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Profile Section */}
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center">
                     <img
                         src={profilePic}
@@ -131,34 +136,48 @@ const UserProfileContent = () => {
                         Edit Profile
                     </button>
                 </div>
+
+                {/* Next Event Section */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-gray-800 shadow-md rounded-lg p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-white">Upcoming Events</h2>
-                        <ul className="list-disc pl-5">
-                            {upcomingEvents.length > 0 ? (
-                                upcomingEvents.map((event, index) => (
-                                    <li key={index} className="text-gray-300">
-                                        {event.eventTitle} - {event.eventDateTime} (Quantity: {event.quantity})
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="text-gray-500">No upcoming events to display.</li>
-                            )}
-                        </ul>
-                    </div>
-                    <div className="bg-gray-800 shadow-md rounded-lg p-6">
-                        <h2 className="text-lg font-semibold mb-4 text-white">Past Events</h2>
-                        <ul className="list-disc pl-5">
-                            {pastEvents.length > 0 ? (
-                                pastEvents.map((event, index) => (
-                                    <li key={index} className="text-gray-300">
-                                        {event.eventTitle} - {event.eventDateTime} (Quantity: {event.quantity})
-                                    </li>
-                                ))
-                            ) : (
-                                <li className="text-gray-500">No past events to display.</li>
-                            )}
-                        </ul>
+                        {nextEvent ? (
+                            <>
+                                <h2 className="text-lg font-semibold mb-4 text-white">Your Next Event</h2>
+                                <div className="flex justify-between items-center">
+                                    {/* Event banner */}
+                                    <img
+                                        src={nextEvent.eventBanner || 'https://via.placeholder.com/400'}
+                                        alt="Event Banner"
+                                        className="w-1/3 rounded-lg shadow-md"
+                                    />
+                                    <div className="w-2/3 flex flex-col items-center">
+                                        {/* Countdown Timer */}
+                                        <div className="countdownTable flex flex-col items-center bg-gray-700 p-4 rounded-lg shadow-lg">
+                                            <div className="countdownClock flex justify-center space-x-10">
+                                                <div className="time-box flex flex-col items-center">
+                                                    <div className="days text-5xl text-yellow-500">{timeRemaining.days}</div>
+                                                    <span className="text-lg text-teal-600">Days</span>
+                                                </div>
+                                                <div className="time-box flex flex-col items-center">
+                                                    <div className="hours text-5xl text-yellow-500">{timeRemaining.hours}</div>
+                                                    <span className="text-lg text-teal-600">Hours</span>
+                                                </div>
+                                                <div className="time-box flex flex-col items-center">
+                                                    <div className="minutes text-5xl text-yellow-500">{timeRemaining.minutes}</div>
+                                                    <span className="text-lg text-teal-600">Minutes</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-4 text-white text-center">
+                                            <p className="text-xl font-semibold">{nextEvent.eventTitle}</p>
+                                            <p className="text-sm">{new Date(nextEvent.eventDateTime).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <p className="text-gray-500 text-center">No upcoming events</p>
+                        )}
                     </div>
                 </div>
             </div>
