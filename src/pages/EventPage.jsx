@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp} from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
@@ -29,6 +29,13 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
+    const [ profilePicture, setProfilePicture ] = useState('');
+
+    const [chatWindowOpen, setChatWindowOpen] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [chatId, setChatId] = useState(null);
+    // const currentUserId = auth.currentUser?.uid;
 
     const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -207,6 +214,7 @@ const EventPage = () => {
                         if (hostDocSnap.exists()) {
                             const hostData = hostDocSnap.data();
                             setHostDetails({
+                                id:data.hostId,
                                 bio: hostData.bio || '',
                                 profilePicture: hostData.profilePicture || '',
                                 companyName: hostData.companyName || '',
@@ -260,6 +268,7 @@ const EventPage = () => {
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(data.contact?.cellPhone || 'Phone number not found');
                         setEmail(data.contact?.email || email || 'Email not found');
+                        setProfilePicture(data.profilePicture || eventImages[0]||'');
                     } else {
                         console.log('No such document!');
                     }
@@ -276,6 +285,96 @@ const EventPage = () => {
         return <LoadingPage />;
     }
 
+    const toggleChatWindow = () => {
+        setChatWindowOpen(!chatWindowOpen);
+    };
+
+    const createChatId = (userId, hostId) => {
+        console.log('creating id',userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`);
+        return userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`;
+    };
+
+    const createOrFetchChat = async (hostId) => {
+
+        const chatId = createChatId(userId, hostId);
+        
+        const chatRef = doc(db, 'chats', chatId);
+        const chatDoc = await getDoc(chatRef);
+        if (chatDoc.exists()) {
+            
+            setChatId(chatId);
+            console.log('existing chat ',chatId);
+            return chatId;
+          } else {
+            
+            const newChatData = {
+              event: {
+                id: eventId,
+                name: eventTitle,
+                image: eventImages.length>0? eventImages[0]:"",
+              },
+              participants: [userId, hostId],
+              messages: [],
+              sender: {
+                id: userId,
+                name:name,
+                profilePicture: profilePicture,
+                email:email,
+                // phone:phone,
+                
+              },
+              receiver: {
+                id: hostId,
+                name:hostDetails.name,
+                profilePicture: hostDetails.profilePicture,
+                email:hostDetails.email,
+                // phone:hostDetails.phone,
+                
+              }
+            };
+            await setDoc(chatRef, newChatData);
+            setChatId(chatId);
+            console.log('new chat ',chatId);
+            return chatId;
+          }
+    };
+
+    const fetchMessages = (chatId) => {
+        const chatRef = doc(db, 'chats', chatId);
+        return onSnapshot(chatRef, (doc) => {
+          if (doc.exists()) {
+            setMessages(doc.data().messages || []);
+            console.log('docs ',doc.data().messages);
+
+            console.log('messages ',messages);
+
+          }
+        });
+    };
+      
+    const sendMessage = async () => {
+        if (newMessage.trim() === '') return;
+        const chatRef = doc(db, 'chats', chatId);
+        await updateDoc(chatRef, {
+          messages: arrayUnion({
+            senderId: userId,
+            msg: newMessage,
+            ts: Timestamp.now(),
+          }),
+        });
+        setNewMessage(''); 
+    };
+
+    const handleHostChatClick = async () => {
+        try {
+          const chatId = await createOrFetchChat(hostDetails.id);
+          fetchMessages(chatId); 
+          toggleChatWindow(); 
+        } catch (error) {
+          console.error('Error creating or fetching chat: ', error);
+        }
+    };
+      
     return (
         <>
             <div className="event-page min-h-screen flex flex-col" >
@@ -341,13 +440,39 @@ const EventPage = () => {
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <button className="" >Host Chat</button >
+                                            <button className="" onClick={handleHostChatClick}>Host Chat</button >
                                         </div >
                                     )}
                                 </div >
                             </div >
                         </div >
                     </div >
+                    {chatWindowOpen && (
+                        <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg">
+                            <div className="flex justify-between items-center mb-4">
+                                <h4 className="text-white font-semibold">Chat with {hostDetails.name}</h4>
+                                <button onClick={toggleChatWindow} className="text-white">X</button>
+                            </div>
+                            <div className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg">
+                                {messages.map((msg, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-2 rounded-lg ${msg.senderId === userId ? 'bg-blue-500 text-white self-end' : 'bg-gray-300 text-black self-start'}`}
+                                    >
+                                        {msg.msg}
+                                    </div>
+                                ))}
+                            </div>
+                            <input
+                                type="text"
+                                className="w-full mt-2 p-2 rounded-lg bg-gray-600 text-white"
+                                placeholder="Type your message..."
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                            />
+                        </div>
+                        )}
                 </div >
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div
