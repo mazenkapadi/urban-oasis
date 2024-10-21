@@ -22,13 +22,9 @@ import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import GradeTwoToneIcon from '@mui/icons-material/GradeTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../components/FooterComponent.jsx";
-import StarIcon from '@mui/icons-material/Star';
-import {useParams} from "react-router-dom";
-
 
 const HostProfilePage = () => {
     const [userId, setUserId] = useState(null);
-    const {hostId} = useParams();
     const [loading, setLoading] = useState(true);
     const [hostDetails, setHostDetails] = useState({
         bio: '',
@@ -41,7 +37,7 @@ const HostProfilePage = () => {
     const [value, setValue] = useState(2);
     const [review, setReview] = useState('');
     const [error, setError] = useState(null);
-    const [reviewDetails, setReviewDetails] = useState([])
+    const [ reviewDetails, setReviewDetails] = useState([])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -56,8 +52,6 @@ const HostProfilePage = () => {
         const fetchEventData = async () => {
 
             // Fetch host data if available
-            if (hostId) {
-                const hostDocRef = doc(db, 'Users', hostId);
                 const hostDocSnap = await getDoc(hostDocRef);
                 if (hostDocSnap.exists()) {
                     const hostData = hostDocSnap.data();
@@ -77,7 +71,6 @@ const HostProfilePage = () => {
                 //     const reviewData = reviewDocSnap.data();
                 //     setReviewDetails(reviewData);
                 // }
-                const querySnapshot = await getDocs(collection(db, "Users", hostId, 'Ratings'));
                 const reviewData = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
@@ -93,30 +86,18 @@ const HostProfilePage = () => {
 
     const handleSubmit = async () => {
         try {
-            if (!hostId) {
                 console.error("User not authenticated.");
                 return;
             }
-            const newReviewRef = collection(db, 'Users', hostId, 'Ratings');
             const newReviewData = {
                 rating: value,
                 review: review,
             };
             await addDoc(newReviewRef, newReviewData);
 
-            const hostDocRef = doc(db, "Users", hostId);
-            const hostDocSnapshot = await getDoc(hostDocRef);
-            const hostData = hostDocSnapshot.data();
-
-            const updatedRatingsTotaled = hostData.ratings.ratingsTotaled + newReviewData.rating;
-            const updatedNumRatings = hostData.ratings.numRatings + 1;
-            const updatedOverall = updatedRatingsTotaled / updatedNumRatings;
 
             await updateDoc(hostDocRef, {
                 ratings: {
-                    ratingsTotaled: updatedRatingsTotaled || 0,
-                    numRatings: updatedNumRatings|| 0,
-                    overall: updatedOverall || 0
                 }
             });
         } catch (error) {
@@ -172,16 +153,6 @@ const HostProfilePage = () => {
                                     <ListItemIcon>
                                         <GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/>
                                     </ListItemIcon>
-                                    <Rating
-                                        name="read-only"
-                                        value={hostDetails.ratings}
-                                        readOnly
-                                        size="large"
-                                        precision={0.2}
-                                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                                        // sx={{
-                                        //     bgcolor: 'rgb(107 114 128)',
-                                        // }}
                                     />
                                 </ListItem>,
                             </List>
@@ -244,7 +215,7 @@ const HostProfilePage = () => {
 
                     </div>
                 </div>
-                <FooterComponent/>
+                <FooterComponent />
             </div>
         </>
 
