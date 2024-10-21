@@ -22,8 +22,6 @@ import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import GradeTwoToneIcon from '@mui/icons-material/GradeTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../components/FooterComponent.jsx";
-import StarIcon from '@mui/icons-material/Star';
-
 
 const HostProfilePage = () => {
     const [userId, setUserId] = useState(null);
@@ -39,7 +37,7 @@ const HostProfilePage = () => {
     const [value, setValue] = useState(2);
     const [review, setReview] = useState('');
     const [error, setError] = useState(null);
-    const [reviewDetails, setReviewDetails] = useState([])
+    const [ reviewDetails, setReviewDetails] = useState([])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -104,18 +102,8 @@ const HostProfilePage = () => {
 
 
             const hostDocRef = doc(db, "Users", userId);
-            const hostDocSnapshot = await getDoc(hostDocRef);
-            const hostData = hostDocSnapshot.data();
-
-            const updatedRatingsTotaled = hostData.ratings.ratingsTotaled + newReviewData.rating;
-            const updatedNumRatings = hostData.ratings.numRatings + 1;
-            const updatedOverall = updatedRatingsTotaled / updatedNumRatings;
-
             await updateDoc(hostDocRef, {
                 ratings: {
-                    ratingsTotaled: updatedRatingsTotaled,
-                    numRatings: updatedNumRatings,
-                    overall: updatedOverall
                 }
             });
         } catch (error) {
@@ -171,16 +159,6 @@ const HostProfilePage = () => {
                                     <ListItemIcon>
                                         <GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/>
                                     </ListItemIcon>
-                                    <Rating
-                                        name="read-only"
-                                        value={hostDetails.ratings}
-                                        readOnly
-                                        size="large"
-                                        precision={0.2}
-                                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                                        // sx={{
-                                        //     bgcolor: 'rgb(107 114 128)',
-                                        // }}
                                     />
                                 </ListItem>,
                             </List>
@@ -243,7 +221,7 @@ const HostProfilePage = () => {
 
                     </div>
                 </div>
-                <FooterComponent/>
+                <FooterComponent />
             </div>
         </>
 
