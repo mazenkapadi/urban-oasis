@@ -12,12 +12,11 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
 
-import UserProfilePage from "./pages/User/UserProfilePage.jsx";
-import ContactInfoPage from './pages/User/ContactInfoPage.jsx';
-import SettingsPage from './pages/User/SettingsPage.jsx';
-import SupportPage from './pages/User/SupportPage.jsx';
-import UserProfileContent from './components/User/UserProfileContent.jsx';
-import MyEventHistoryPage from './pages/User/MyEventHistoryPage.jsx';
+import UserProfilePage from "./pages/UserProfilePage.jsx";
+import ContactInfoPage from './pages/ContactInfoPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
+import SupportPage from './pages/SupportPage.jsx';
+import UserProfileContent from './components/UserProfileContent.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
@@ -29,9 +28,7 @@ import HostDashboard from "./pages/HostDashboard.jsx";
 import HostEventPage from "./pages/HostEventPage.jsx";
 import HostChatList from "./pages/HostChatListPage.jsx";
 import ChatPage from './pages/ChatPage.jsx';
-import PaymentsPage from "./pages/User/PaymentsPage.jsx";
-import PaymentSuccess from "./pages/payments/PaymentSuccess.jsx";
-import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
+import HostProfilePage from "./pages/HostProfilePage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -68,14 +65,10 @@ const router = createBrowserRouter([
         children: [
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
-            { path: "my-event-history", element: <MyEventHistoryPage /> },
-            {path: "payments", element: <PaymentsPage />},
             {path: "settings", element: <SettingsPage />},
             {path: "support", element: <SupportPage />},
             {path: "host-signup", element: <HostSignUpPage />},
-            {path: "host-chatlist", element: <HostChatList />},
-            {path: "host-signup", element: <HostSignUpPage />}
-
+            {path: "host-chatlist", element: <HostChatList />}
         ]
     },
     {
@@ -95,12 +88,8 @@ const router = createBrowserRouter([
         element: <ChatPage />
     },
     {
-        path: "/paymentsuccess",
-        element: <PaymentSuccess />
-    },
-    {
-        path: "/paymentcancel",
-        element: <PaymentCancel />
+        path: "/hostReviewPage",
+        element: <HostProfilePage />
     },
     {
         path: "*",
