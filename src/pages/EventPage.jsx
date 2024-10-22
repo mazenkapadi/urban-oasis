@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
@@ -11,6 +11,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
+import { uuid } from "uuidv4";
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -37,7 +38,7 @@ const EventPage = () => {
     const navigate = useNavigate();
 
 
-    const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    // const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
         profilePicture: '',
@@ -77,21 +78,18 @@ const EventPage = () => {
             return;
         }
 
+        const rsvpId = uuid(); // Generate a unique rsvpId
         const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const eventDocRef = doc(db, 'Events', eventId);
 
-        const totalPrice = isPaidEvent ? eventPrice * totalAttendees : 0;
+        // const totalPrice = isPaidEvent ? eventPrice * totalAttendees : 0;
 
         const rsvpData = {
+            rsvpId: rsvpId,
             userId: userId,
             eventId: eventId,
-            name: name,
-            email: email,
-            phone: phone,
             quantity: totalAttendees,
-            eventTitle: eventTitle,
-            eventDateTime: eventDateTime,
             createdAt: new Date().toISOString(),
         };
 
@@ -114,13 +112,13 @@ const EventPage = () => {
             const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
             if (rsvpsDocSnap.exists()) {
                 await updateDoc(eventRsvpsDocRef, {
-                    [`rsvps.${userId}`]: rsvpData,
+                    [`rsvps.${rsvpId}`]: rsvpData,
                 });
             } else {
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
                     rsvps: {
-                        [userId]: rsvpData,
+                        [rsvpId]: rsvpData,
                     },
                 });
             }
@@ -129,13 +127,13 @@ const EventPage = () => {
             const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
             if (userRsvpsDocSnap.exists()) {
                 await updateDoc(userRsvpsDocRef, {
-                    [`events.${eventId}`]: rsvpData,
+                    [`events.${rsvpId}`]: rsvpData,
                 });
             } else {
                 await setDoc(userRsvpsDocRef, {
                     userId: userId,
                     events: {
-                        [eventId]: rsvpData,
+                        [rsvpId]: rsvpData,
                     },
                 });
             }
@@ -157,6 +155,7 @@ const EventPage = () => {
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
+        const rsvpId = uuid();
         const checkoutData = {
             eventId: eventId,
             quantity: quantity,
@@ -182,9 +181,9 @@ const EventPage = () => {
             const eventDocRef = doc(db, 'Events', eventId);
 
             const rsvpData = {
+                rsvpId: rsvpId,
                 userId: userId,
                 eventId: eventId,
-                name: name,
                 email: email,
                 phone: phone,
                 quantity: totalAttendees,
@@ -211,13 +210,13 @@ const EventPage = () => {
             const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
             if (rsvpsDocSnap.exists()) {
                 await updateDoc(eventRsvpsDocRef, {
-                    [`rsvps.${userId}`]: rsvpData,
+                    [`rsvps.${rsvpId}`]: rsvpData,
                 });
             } else {
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
                     rsvps: {
-                        [userId]: rsvpData,
+                        [rsvpId]: rsvpData,
                     },
                 });
             }
@@ -226,13 +225,13 @@ const EventPage = () => {
             const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
             if (userRsvpsDocSnap.exists()) {
                 await updateDoc(userRsvpsDocRef, {
-                    [`events.${eventId}`]: rsvpData,
+                    [`events.${rsvpId}`]: rsvpData,
                 });
             } else {
                 await setDoc(userRsvpsDocRef, {
                     userId: userId,
                     events: {
-                        [eventId]: rsvpData,
+                        [rsvpId]: rsvpData,
                     },
                 });
             }
@@ -326,7 +325,6 @@ const EventPage = () => {
                 } else {
                     console.log('No such document!');
                 }
-
                 setLoading(false);
             }
         };
@@ -356,7 +354,6 @@ const EventPage = () => {
                 }
             }
         };
-
         fetchUserData();
     }, [ userId, email ]);
 
@@ -399,16 +396,12 @@ const EventPage = () => {
                     name: name,
                     profilePicture: profilePicture,
                     email: email,
-                    // phone:phone,
-
                 },
                 receiver: {
                     id: hostId,
                     name: hostDetails.name,
                     profilePicture: hostDetails.profilePicture,
                     email: hostDetails.email,
-                    // phone:hostDetails.phone,
-
                 }
             };
             await setDoc(chatRef, newChatData);
@@ -522,7 +515,8 @@ const EventPage = () => {
                                     <h3 className="text-white font-bold mb-2" >Hosted by,</h3 >
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
-                                            <h3 className="text-lg text-white font-semibold" onClick={handleNavigate}>{hostDetails.companyName || hostDetails.name}</h3 >
+                                            <h3 className="text-lg text-white font-semibold"
+                                                onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</h3 >
                                             <button className="" onClick={handleHostChatClick} >Host Chat</button >
                                         </div >
                                     )}
