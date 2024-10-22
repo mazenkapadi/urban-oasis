@@ -17,6 +17,7 @@ import ContactInfoPage from './pages/User/ContactInfoPage.jsx';
 import SettingsPage from './pages/User/SettingsPage.jsx';
 import SupportPage from './pages/User/SupportPage.jsx';
 import UserProfileContent from './components/User/UserProfileContent.jsx';
+import MyEventHistoryPage from './pages/user/MyEventHistoryPage.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/PhotoCarousel.jsx";
@@ -65,6 +66,7 @@ const router = createBrowserRouter([
         children: [
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
+            { path: "my-event-history", element: <MyEventHistoryPage /> },
             {path: "payments", element: <PaymentsPage />},
             {path: "settings", element: <SettingsPage />},
             {path: "support", element: <SupportPage />},
