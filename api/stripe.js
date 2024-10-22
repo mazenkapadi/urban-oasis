@@ -1,39 +1,35 @@
 import Stripe from 'stripe';
-import { db } from '../src/firebaseConfig.js';
 
-const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+// const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+const stripe = new Stripe('sk_test_51Q0aMK1ML9Ca0ARWsUClNw2zkqtFnlofxbqI1Am5HSNsLX9Mkz2fCNF8ZrM7YSkvdX46qYtVe8K07ae5X6onBdhG00Yd7taybj');
+
 
 export async function POST(req) {
-    const {eventId, quantity, totalPrice, eventTitle, userId} = await req.json();
+    const reqBody = await req.json();
 
     const session = await stripe.checkout.sessions.create({
-        payment_method_types: [ 'card' ],
         line_items: [
             {
                 price_data: {
                     currency: 'usd',
                     product_data: {
-                        name: eventTitle,
+                        name: reqBody.eventTitle,
                     },
-                    unit_amount: totalPrice * 100, // Stripe expects amount in cents
+                    unit_amount: reqBody.price * 100,
                 },
-                quantity: quantity,
+                quantity: reqBody.quantity,
             }
         ],
         mode: 'payment',
         success_url: `https://example.com?success=true`,
-        cancel_url: `https://example.com?canceled=true`,
+        cancel_url: `http://localhost:3000/*`,
         metadata: {
-            eventId: eventId,
-            userId: userId,
+            eventId: reqBody.eventId,
+            userId: reqBody.userId,
         }
     });
+    console.log(session.url);
+
     return new Response(session.url);
-    // return new Response(null, {
-    //     status: 303,
-    //     headers: {
-    //         Location: session.url,
-    //     },
-    // });
 
 }

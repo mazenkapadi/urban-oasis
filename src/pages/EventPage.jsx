@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp} from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
 import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
@@ -19,7 +19,7 @@ const EventPage = () => {
     const [ eventDescription, setEventDescription ] = useState('');
     const [ eventLocation, setEventLocation ] = useState('');
     const [ eventDateTime, setEventDateTime ] = useState('');
-    const [ eventPrice, setEventPrice ] = useState('');
+    const [ eventPrice, setEventPrice ] = useState(0);
     const [ eventRefundPolicy, setEventRefundPolicy ] = useState('');
     const [ isPaidEvent, setIsPaidEvent ] = useState(false);
     const [ userId, setUserId ] = useState(null);
@@ -30,17 +30,12 @@ const EventPage = () => {
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ profilePicture, setProfilePicture ] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Example for managing loading state
-
-
-    const [chatWindowOpen, setChatWindowOpen] = useState(false);
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState("");
-    const [chatId, setChatId] = useState(null);
-    // const currentUserId = auth.currentUser?.uid;
+    const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
+    const [ messages, setMessages ] = useState([]);
+    const [ newMessage, setNewMessage ] = useState("");
+    const [ chatId, setChatId ] = useState(null);
 
     const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
         profilePicture: '',
@@ -73,76 +68,6 @@ const EventPage = () => {
         }
     };
 
-    // const handleRSVP = async () => {
-    //     if (!userId) {
-    //         console.error("User ID is undefined. Cannot proceed with RSVP.");
-    //         return;
-    //     }
-    //
-    //     const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
-    //     const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
-    //     const eventDocRef = doc(db, 'Events', eventId);
-    //
-    //     const totalPrice = isPaidEvent ? parseFloat(eventPrice) * totalAttendees : 0;
-    //
-    //     const rsvpData = {
-    //         userId: userId,
-    //         name: name,
-    //         email: email,
-    //         phone: phone,
-    //         quantity: totalAttendees,
-    //         totalPrice: totalPrice,
-    //         eventTitle: eventTitle,
-    //         eventDateTime: eventDateTime,
-    //         createdAt: new Date().toISOString(),
-    //     };
-    //
-    //     try {
-    //         const eventDocSnap = await getDoc(eventDocRef);
-    //         const eventData = eventDocSnap.data();
-    //         const {attendeesCount = 0, capacity = Infinity} = eventData;
-    //         const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
-    //
-    //         if (!eventDocSnap.exists()) {
-    //             console.error("Event not found");
-    //             return;
-    //         }
-    //
-    //         if (attendeesCount + totalAttendees > capacity) {
-    //             console.error("RSVP quantity exceeds event capacity");
-    //             alert(`This event only has ${capacity - attendeesCount} spots left.`);
-    //             return;
-    //         }
-    //
-    //         if (rsvpsDocSnap.exists()) {
-    //             await updateDoc(eventRsvpsDocRef, {
-    //                 [`rsvps.${userId}`]: rsvpData,
-    //             });
-    //             console.log("RSVP updated for event!", rsvpData);
-    //         } else {
-    //             await setDoc(eventRsvpsDocRef, {
-    //                 eventId: eventId,
-    //                 rsvps: {
-    //                     [userId]: rsvpData,
-    //                 },
-    //             });
-    //             console.log("RSVP created for event!", rsvpData);
-    //         }
-    //
-    //         const updatedDocSnap = await getDoc(eventRsvpsDocRef);
-    //         const rsvps = updatedDocSnap.data().rsvps || {};
-    //         const totalRSVPs = Object.values(rsvps).reduce((acc, rsvp) => acc + rsvp.quantity, 0);
-    //
-    //         await updateDoc(eventDocRef, {
-    //             attendeesCount: totalRSVPs,
-    //         });
-    //         console.log("Total attendees count updated:", totalRSVPs);
-    //         setModalOpen(true);
-    //     } catch (error) {
-    //         console.error("Error adding/updating RSVP: ", error);
-    //     }
-    // };
-
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -153,11 +78,11 @@ const EventPage = () => {
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const eventDocRef = doc(db, 'Events', eventId);
 
-        const totalPrice = isPaidEvent ? parseFloat(eventPrice) * totalAttendees : 0;
+        const totalPrice = isPaidEvent ? eventPrice * totalAttendees : 0;
 
         const rsvpData = {
             userId: userId,
-            eventId: eventId,  // Ensure eventId is included here
+            eventId: eventId,
             name: name,
             email: email,
             phone: phone,
@@ -175,7 +100,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const { attendeesCount = 0, capacity = Infinity } = eventData;
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
 
             if (attendeesCount + totalAttendees > capacity) {
                 console.error("RSVP quantity exceeds event capacity");
@@ -226,98 +151,25 @@ const EventPage = () => {
         }
     };
 
-
-
-
-    // const handleCheckout = async () => {
-    //     console.log("Processing on Stripe");
-    //
-    //     const stripe = await stripePromise;
-    //
-    //     const checkoutData = {
-    //         eventId: eventId,
-    //         quantity: quantity,
-    //         price: parseFloat(eventPrice) * quantity,
-    //         eventTitle: eventTitle,
-    //         userId: userId,
-    //     };
-    //     try {
-    //         const response = await fetch('/api/create-checkout-session', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(checkoutData),
-    //         });
-    //
-    //         const session = await response.json();
-    //
-    //         const result = await stripe.redirectToCheckout({
-    //             sessionId: session.id,
-    //         })
-    //
-    //         if(result.error) {
-    //             console.error("Error redirecting to checkout: ", result.error);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error creating checkout session: ", error);
-    //     }
-    // };
-
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
-        // Use a loading state if necessary to disable the button and show loading spinner
-        setIsLoading(true); // Optional if you're using a loading state
+        const checkoutData = {
+            eventId: eventId,
+            quantity: quantity,
+            price: eventPrice,
+            eventTitle: eventTitle,
+            userId: userId,
+        };
 
-        try {
-            // Get the Stripe instance
-            const stripe = await stripePromise;
-
-            const checkoutData = {
-                eventId: eventId,
-                quantity: quantity,
-                price: parseFloat(eventPrice) * quantity,
-                eventTitle: eventTitle,
-                userId: userId,
-            };
-
-            // Make API request to create checkout session
-            const response = await fetch('', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(checkoutData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to create checkout session: ${response.statusText}`);
-            }
-
-            const session = await response.json();
-
-            if (!session.id) {
-                throw new Error('No session ID returned from Stripe.');
-            }
-
-            // Use stripe.redirectToCheckout to redirect the user to Stripe Checkout
-            const result = await stripe.redirectToCheckout({
-                sessionId: session.id,
-            });
-
-            // Handle any errors that occur during redirection
-            if (result.error) {
-                console.error("Error redirecting to checkout:", result.error.message);
-                alert(`Checkout error: ${result.error.message}`);
-            }
-        } catch (error) {
-            console.error("Error during checkout process:", error);
-            alert(`Error processing checkout: ${error.message}`);
-        } finally {
-            // Reset loading state
-            setIsLoading(false); // Optional if using loading state
-        }
+        const response = await fetch('/api/stripe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData),
+        });
+        window.location.href = await response.text();
     };
 
 
@@ -359,7 +211,7 @@ const EventPage = () => {
                         if (hostDocSnap.exists()) {
                             const hostData = hostDocSnap.data();
                             setHostDetails({
-                                id:data.hostId,
+                                id: data.hostId,
                                 bio: hostData.bio || '',
                                 profilePicture: hostData.profilePicture || '',
                                 companyName: hostData.companyName || '',
@@ -413,7 +265,7 @@ const EventPage = () => {
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(data.contact?.cellPhone || 'Phone number not found');
                         setEmail(data.contact?.email || email || 'Email not found');
-                        setProfilePicture(data.profilePicture || eventImages[0]||'');
+                        setProfilePicture(data.profilePicture || eventImages[0] || '');
                     } else {
                         console.log('No such document!');
                     }
@@ -435,7 +287,7 @@ const EventPage = () => {
     };
 
     const createChatId = (userId, hostId) => {
-        console.log('creating id',userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`);
+        console.log('creating id', userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`);
         return userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`;
     };
 
@@ -448,52 +300,52 @@ const EventPage = () => {
         if (chatDoc.exists()) {
 
             setChatId(chatId);
-            console.log('existing chat ',chatId);
+            console.log('existing chat ', chatId);
             return chatId;
-          } else {
+        } else {
 
             const newChatData = {
-              event: {
-                id: eventId,
-                name: eventTitle,
-                image: eventImages.length>0? eventImages[0]:"",
-              },
-              participants: [userId, hostId],
-              messages: [],
-              sender: {
-                id: userId,
-                name:name,
-                profilePicture: profilePicture,
-                email:email,
-                // phone:phone,
+                event: {
+                    id: eventId,
+                    name: eventTitle,
+                    image: eventImages.length > 0 ? eventImages[0] : "",
+                },
+                participants: [ userId, hostId ],
+                messages: [],
+                sender: {
+                    id: userId,
+                    name: name,
+                    profilePicture: profilePicture,
+                    email: email,
+                    // phone:phone,
 
-              },
-              receiver: {
-                id: hostId,
-                name:hostDetails.name,
-                profilePicture: hostDetails.profilePicture,
-                email:hostDetails.email,
-                // phone:hostDetails.phone,
+                },
+                receiver: {
+                    id: hostId,
+                    name: hostDetails.name,
+                    profilePicture: hostDetails.profilePicture,
+                    email: hostDetails.email,
+                    // phone:hostDetails.phone,
 
-              }
+                }
             };
             await setDoc(chatRef, newChatData);
             setChatId(chatId);
-            console.log('new chat ',chatId);
+            console.log('new chat ', chatId);
             return chatId;
-          }
+        }
     };
 
     const fetchMessages = (chatId) => {
         const chatRef = doc(db, 'chats', chatId);
         return onSnapshot(chatRef, (doc) => {
-          if (doc.exists()) {
-            setMessages(doc.data().messages || []);
-            console.log('docs ',doc.data().messages);
+            if (doc.exists()) {
+                setMessages(doc.data().messages || []);
+                console.log('docs ', doc.data().messages);
 
-            console.log('messages ',messages);
+                console.log('messages ', messages);
 
-          }
+            }
         });
     };
 
@@ -501,22 +353,22 @@ const EventPage = () => {
         if (newMessage.trim() === '') return;
         const chatRef = doc(db, 'chats', chatId);
         await updateDoc(chatRef, {
-          messages: arrayUnion({
-            senderId: userId,
-            msg: newMessage,
-            ts: Timestamp.now(),
-          }),
+            messages: arrayUnion({
+                senderId: userId,
+                msg: newMessage,
+                ts: Timestamp.now(),
+            }),
         });
         setNewMessage('');
     };
 
     const handleHostChatClick = async () => {
         try {
-          const chatId = await createOrFetchChat(hostDetails.id);
-          fetchMessages(chatId);
-          toggleChatWindow();
+            const chatId = await createOrFetchChat(hostDetails.id);
+            fetchMessages(chatId);
+            toggleChatWindow();
         } catch (error) {
-          console.error('Error creating or fetching chat: ', error);
+            console.error('Error creating or fetching chat: ', error);
         }
     };
 
@@ -585,7 +437,7 @@ const EventPage = () => {
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <button className="" onClick={handleHostChatClick}>Host Chat</button >
+                                            <button className="" onClick={handleHostChatClick} >Host Chat</button >
                                         </div >
                                     )}
                                 </div >
@@ -593,21 +445,22 @@ const EventPage = () => {
                         </div >
                     </div >
                     {chatWindowOpen && (
-                        <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg">
-                            <div className="flex justify-between items-center mb-4">
-                                <h4 className="text-white font-semibold">Chat with {hostDetails.name}</h4>
-                                <button onClick={toggleChatWindow} className="text-white">X</button>
-                            </div>
-                            <div className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg">
+                        <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg" >
+                            <div className="flex justify-between items-center mb-4" >
+                                <h4 className="text-white font-semibold" >Chat with {hostDetails.name}</h4 >
+                                <button onClick={toggleChatWindow} className="text-white" >X</button >
+                            </div >
+                            <div
+                                className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg" >
                                 {messages.map((msg, index) => (
                                     <div
                                         key={index}
                                         className={`p-2 rounded-lg ${msg.senderId === userId ? 'bg-blue-500 text-white self-end' : 'bg-gray-300 text-black self-start'}`}
                                     >
                                         {msg.msg}
-                                    </div>
+                                    </div >
                                 ))}
-                            </div>
+                            </div >
                             <input
                                 type="text"
                                 className="w-full mt-2 p-2 rounded-lg bg-gray-600 text-white"
@@ -616,8 +469,8 @@ const EventPage = () => {
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                             />
-                        </div>
-                        )}
+                        </div >
+                    )}
                 </div >
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div

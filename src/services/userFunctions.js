@@ -1,5 +1,3 @@
-// userFunctions.js
-import { userData } from "./dataObjects/userData.js";
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig.js';
 
