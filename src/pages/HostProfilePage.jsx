@@ -23,6 +23,7 @@ import GradeTwoToneIcon from '@mui/icons-material/GradeTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../components/FooterComponent.jsx";
 import StarIcon from '@mui/icons-material/Star';
+import {useParams} from "react-router-dom";
 
 
 const HostProfilePage = () => {
@@ -39,7 +40,8 @@ const HostProfilePage = () => {
     const [value, setValue] = useState(2);
     const [review, setReview] = useState('');
     const [error, setError] = useState(null);
-    const [reviewDetails, setReviewDetails] = useState([])
+    const [reviewDetails, setReviewDetails] = useState([]);
+    const {hostId} = useParams();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -54,8 +56,8 @@ const HostProfilePage = () => {
         const fetchEventData = async () => {
 
             // Fetch host data if available
-            if (userId) {
-                const hostDocRef = doc(db, 'Users', userId);
+            if (hostId) {
+                const hostDocRef = doc(db, 'Users', hostId);
                 const hostDocSnap = await getDoc(hostDocRef);
                 if (hostDocSnap.exists()) {
                     const hostData = hostDocSnap.data();
@@ -75,7 +77,7 @@ const HostProfilePage = () => {
                 //     const reviewData = reviewDocSnap.data();
                 //     setReviewDetails(reviewData);
                 // }
-                const querySnapshot = await getDocs(collection(db, "Users", userId, 'Ratings'));
+                const querySnapshot = await getDocs(collection(db, "Users", hostId, 'Ratings'));
                 const reviewData = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
@@ -86,16 +88,21 @@ const HostProfilePage = () => {
         };
 
         fetchEventData();
-    }, [userId]);
+    }, [hostId]);
 
+    // const calculateAverageRating = (ratingsTotaled) => {
+    //     if (!ratingsTotaled) return 0;
+    //     const totalRating = ;
+    //     return totalRating / ratingsTotaled.length;
+    // };
 
     const handleSubmit = async () => {
         try {
-            if (!userId) {
+            if (!hostId) {
                 console.error("User not authenticated.");
                 return;
             }
-            const newReviewRef = collection(db, 'Users', userId, 'Ratings');
+            const newReviewRef = collection(db, 'Users', hostId, 'Ratings');
             const newReviewData = {
                 rating: value,
                 review: review,
@@ -103,7 +110,7 @@ const HostProfilePage = () => {
             await addDoc(newReviewRef, newReviewData);
 
 
-            const hostDocRef = doc(db, "Users", userId);
+            const hostDocRef = doc(db, "Users", hostId);
             const hostDocSnapshot = await getDoc(hostDocRef);
             const hostData = hostDocSnapshot.data();
 
