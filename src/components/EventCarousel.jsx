@@ -49,9 +49,9 @@ const EventCarousel = () => {
     }, []);
 
     const settings = {
-        infinite: true,
+        infinite: events.length > 1,
         speed: 500,
-        slidesToShow: 4,
+        slidesToShow: Math.min(events.length, 4),
         slidesToScroll: 1,
         swipeToSlide: true,
         touchThreshold: 10,

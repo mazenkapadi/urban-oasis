@@ -30,6 +30,8 @@ const EventPage = () => {
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ profilePicture, setProfilePicture ] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Example for managing loading state
+
 
     const [chatWindowOpen, setChatWindowOpen] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -141,20 +143,61 @@ const EventPage = () => {
         }
     };
 
+    // const handleCheckout = async () => {
+    //     console.log("Processing on Stripe");
+    //
+    //     const stripe = await stripePromise;
+    //
+    //     const checkoutData = {
+    //         eventId: eventId,
+    //         quantity: quantity,
+    //         price: parseFloat(eventPrice) * quantity,
+    //         eventTitle: eventTitle,
+    //         userId: userId,
+    //     };
+    //     try {
+    //         const response = await fetch('/api/create-checkout-session', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(checkoutData),
+    //         });
+    //
+    //         const session = await response.json();
+    //
+    //         const result = await stripe.redirectToCheckout({
+    //             sessionId: session.id,
+    //         })
+    //
+    //         if(result.error) {
+    //             console.error("Error redirecting to checkout: ", result.error);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error creating checkout session: ", error);
+    //     }
+    // };
+
     const handleCheckout = async () => {
-        console.log("Processing on Stripe");
+        console.log("Processing on Stripe...");
 
-        const stripe = await stripePromise;
+        // Use a loading state if necessary to disable the button and show loading spinner
+        setIsLoading(true); // Optional if you're using a loading state
 
-        const checkoutData = {
-            eventId: eventId,
-            quantity: quantity,
-            price: parseFloat(eventPrice) * quantity,
-            eventTitle: eventTitle,
-            userId: userId,
-        };
         try {
-            const response = await fetch('/api/create-checkout-session', {
+            // Get the Stripe instance
+            const stripe = await stripePromise;
+
+            const checkoutData = {
+                eventId: eventId,
+                quantity: quantity,
+                price: parseFloat(eventPrice) * quantity,
+                eventTitle: eventTitle,
+                userId: userId,
+            };
+
+            // Make API request to create checkout session
+            const response = await fetch('', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,19 +205,35 @@ const EventPage = () => {
                 body: JSON.stringify(checkoutData),
             });
 
+            if (!response.ok) {
+                throw new Error(`Failed to create checkout session: ${response.statusText}`);
+            }
+
             const session = await response.json();
 
+            if (!session.id) {
+                throw new Error('No session ID returned from Stripe.');
+            }
+
+            // Use stripe.redirectToCheckout to redirect the user to Stripe Checkout
             const result = await stripe.redirectToCheckout({
                 sessionId: session.id,
-            })
+            });
 
-            if(result.error) {
-                console.error("Error redirecting to checkout: ", result.error);
+            // Handle any errors that occur during redirection
+            if (result.error) {
+                console.error("Error redirecting to checkout:", result.error.message);
+                alert(`Checkout error: ${result.error.message}`);
             }
         } catch (error) {
-            console.error("Error creating checkout session: ", error);
+            console.error("Error during checkout process:", error);
+            alert(`Error processing checkout: ${error.message}`);
+        } finally {
+            // Reset loading state
+            setIsLoading(false); // Optional if using loading state
         }
     };
+
 
     const handleModalClose = () => {
         setModalOpen(false);
@@ -297,16 +356,16 @@ const EventPage = () => {
     const createOrFetchChat = async (hostId) => {
 
         const chatId = createChatId(userId, hostId);
-        
+
         const chatRef = doc(db, 'chats', chatId);
         const chatDoc = await getDoc(chatRef);
         if (chatDoc.exists()) {
-            
+
             setChatId(chatId);
             console.log('existing chat ',chatId);
             return chatId;
           } else {
-            
+
             const newChatData = {
               event: {
                 id: eventId,
@@ -321,7 +380,7 @@ const EventPage = () => {
                 profilePicture: profilePicture,
                 email:email,
                 // phone:phone,
-                
+
               },
               receiver: {
                 id: hostId,
@@ -329,7 +388,7 @@ const EventPage = () => {
                 profilePicture: hostDetails.profilePicture,
                 email:hostDetails.email,
                 // phone:hostDetails.phone,
-                
+
               }
             };
             await setDoc(chatRef, newChatData);
@@ -351,7 +410,7 @@ const EventPage = () => {
           }
         });
     };
-      
+
     const sendMessage = async () => {
         if (newMessage.trim() === '') return;
         const chatRef = doc(db, 'chats', chatId);
@@ -362,19 +421,19 @@ const EventPage = () => {
             ts: Timestamp.now(),
           }),
         });
-        setNewMessage(''); 
+        setNewMessage('');
     };
 
     const handleHostChatClick = async () => {
         try {
           const chatId = await createOrFetchChat(hostDetails.id);
-          fetchMessages(chatId); 
-          toggleChatWindow(); 
+          fetchMessages(chatId);
+          toggleChatWindow();
         } catch (error) {
           console.error('Error creating or fetching chat: ', error);
         }
     };
-      
+
     return (
         <>
             <div className="event-page min-h-screen flex flex-col" >
