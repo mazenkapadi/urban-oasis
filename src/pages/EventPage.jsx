@@ -73,6 +73,76 @@ const EventPage = () => {
         }
     };
 
+    // const handleRSVP = async () => {
+    //     if (!userId) {
+    //         console.error("User ID is undefined. Cannot proceed with RSVP.");
+    //         return;
+    //     }
+    //
+    //     const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
+    //     const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+    //     const eventDocRef = doc(db, 'Events', eventId);
+    //
+    //     const totalPrice = isPaidEvent ? parseFloat(eventPrice) * totalAttendees : 0;
+    //
+    //     const rsvpData = {
+    //         userId: userId,
+    //         name: name,
+    //         email: email,
+    //         phone: phone,
+    //         quantity: totalAttendees,
+    //         totalPrice: totalPrice,
+    //         eventTitle: eventTitle,
+    //         eventDateTime: eventDateTime,
+    //         createdAt: new Date().toISOString(),
+    //     };
+    //
+    //     try {
+    //         const eventDocSnap = await getDoc(eventDocRef);
+    //         const eventData = eventDocSnap.data();
+    //         const {attendeesCount = 0, capacity = Infinity} = eventData;
+    //         const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
+    //
+    //         if (!eventDocSnap.exists()) {
+    //             console.error("Event not found");
+    //             return;
+    //         }
+    //
+    //         if (attendeesCount + totalAttendees > capacity) {
+    //             console.error("RSVP quantity exceeds event capacity");
+    //             alert(`This event only has ${capacity - attendeesCount} spots left.`);
+    //             return;
+    //         }
+    //
+    //         if (rsvpsDocSnap.exists()) {
+    //             await updateDoc(eventRsvpsDocRef, {
+    //                 [`rsvps.${userId}`]: rsvpData,
+    //             });
+    //             console.log("RSVP updated for event!", rsvpData);
+    //         } else {
+    //             await setDoc(eventRsvpsDocRef, {
+    //                 eventId: eventId,
+    //                 rsvps: {
+    //                     [userId]: rsvpData,
+    //                 },
+    //             });
+    //             console.log("RSVP created for event!", rsvpData);
+    //         }
+    //
+    //         const updatedDocSnap = await getDoc(eventRsvpsDocRef);
+    //         const rsvps = updatedDocSnap.data().rsvps || {};
+    //         const totalRSVPs = Object.values(rsvps).reduce((acc, rsvp) => acc + rsvp.quantity, 0);
+    //
+    //         await updateDoc(eventDocRef, {
+    //             attendeesCount: totalRSVPs,
+    //         });
+    //         console.log("Total attendees count updated:", totalRSVPs);
+    //         setModalOpen(true);
+    //     } catch (error) {
+    //         console.error("Error adding/updating RSVP: ", error);
+    //     }
+    // };
+
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -87,11 +157,11 @@ const EventPage = () => {
 
         const rsvpData = {
             userId: userId,
+            eventId: eventId,  // Ensure eventId is included here
             name: name,
             email: email,
             phone: phone,
             quantity: totalAttendees,
-            totalPrice: totalPrice,
             eventTitle: eventTitle,
             eventDateTime: eventDateTime,
             createdAt: new Date().toISOString(),
@@ -99,14 +169,13 @@ const EventPage = () => {
 
         try {
             const eventDocSnap = await getDoc(eventDocRef);
-            const eventData = eventDocSnap.data();
-            const {attendeesCount = 0, capacity = Infinity} = eventData;
-            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
-
             if (!eventDocSnap.exists()) {
                 console.error("Event not found");
                 return;
             }
+
+            const eventData = eventDocSnap.data();
+            const { attendeesCount = 0, capacity = Infinity } = eventData;
 
             if (attendeesCount + totalAttendees > capacity) {
                 console.error("RSVP quantity exceeds event capacity");
@@ -114,11 +183,11 @@ const EventPage = () => {
                 return;
             }
 
+            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
             if (rsvpsDocSnap.exists()) {
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userId}`]: rsvpData,
                 });
-                console.log("RSVP updated for event!", rsvpData);
             } else {
                 await setDoc(eventRsvpsDocRef, {
                     eventId: eventId,
@@ -126,7 +195,21 @@ const EventPage = () => {
                         [userId]: rsvpData,
                     },
                 });
-                console.log("RSVP created for event!", rsvpData);
+            }
+
+            const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
+            const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
+            if (userRsvpsDocSnap.exists()) {
+                await updateDoc(userRsvpsDocRef, {
+                    [`events.${eventId}`]: rsvpData,
+                });
+            } else {
+                await setDoc(userRsvpsDocRef, {
+                    userId: userId,
+                    events: {
+                        [eventId]: rsvpData,
+                    },
+                });
             }
 
             const updatedDocSnap = await getDoc(eventRsvpsDocRef);
@@ -136,12 +219,15 @@ const EventPage = () => {
             await updateDoc(eventDocRef, {
                 attendeesCount: totalRSVPs,
             });
-            console.log("Total attendees count updated:", totalRSVPs);
+
             setModalOpen(true);
         } catch (error) {
             console.error("Error adding/updating RSVP: ", error);
         }
     };
+
+
+
 
     // const handleCheckout = async () => {
     //     console.log("Processing on Stripe");

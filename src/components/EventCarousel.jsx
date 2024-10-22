@@ -82,7 +82,6 @@ const EventCarousel = () => {
                         event={event}
                     />
                 ))}
-                {/* Only render if there are no events */}
                 {events.length === 0 && (
                     <div className="text-center text-gray-500">No events available this week.</div>
                 )}
