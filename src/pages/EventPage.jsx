@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
@@ -34,6 +34,8 @@ const EventPage = () => {
     const [ messages, setMessages ] = useState([]);
     const [ newMessage, setNewMessage ] = useState("");
     const [ chatId, setChatId ] = useState(null);
+    const navigate = useNavigate();
+
 
     const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
     const [ hostDetails, setHostDetails ] = useState({
@@ -53,7 +55,8 @@ const EventPage = () => {
         ratings: {
             overall: 0,
             reviews: []
-        }
+        },
+        hostId: ''
     });
 
     const handleIncrement = () => {
@@ -230,7 +233,8 @@ const EventPage = () => {
                                     reviews: []
                                 },
                                 name: `${hostData.name?.firstName || ''} ${hostData.name?.lastName || ''}`,
-                                email: hostData.contact?.email || 'Email not found'
+                                email: hostData.contact?.email || 'Email not found',
+                                hostId: hostData.uid
                             });
                         } else {
                             console.log('Host data not found!');
@@ -372,6 +376,10 @@ const EventPage = () => {
         }
     };
 
+    const handleNavigate = () => {
+        navigate(`/host/${hostDetails.hostId}`);
+    };
+
     return (
         <>
             <div className="event-page min-h-screen flex flex-col" >
@@ -436,7 +444,7 @@ const EventPage = () => {
                                     <h3 className="text-white font-bold mb-2" >Hosted by,</h3 >
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
-                                            <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
+                                            <h3 className="text-lg text-white font-semibold" onClick={handleNavigate}>{hostDetails.companyName || hostDetails.name}</h3 >
                                             <button className="" onClick={handleHostChatClick} >Host Chat</button >
                                         </div >
                                     )}

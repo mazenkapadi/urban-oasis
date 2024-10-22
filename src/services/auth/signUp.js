@@ -35,6 +35,11 @@ class SignUp {
                 isHost: false,
                 hostType: 'individual',
                 updatedAt: new Date().toISOString(),
+                ratings: {
+                    ratingsTotaled: 0,
+                    numRatings: 0,
+                    overall: 0
+                }
             };
 
             await setDoc(doc(db, 'Users', user.uid), userData);

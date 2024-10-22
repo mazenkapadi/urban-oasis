@@ -104,7 +104,7 @@ const router = createBrowserRouter([
         element: <PaymentCancel />
     },
     {
-        path: "/hostReviewPage",
+        path: "/host/:hostId",
         element: <HostProfilePage />
     },
     {
