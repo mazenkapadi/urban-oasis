@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline/index.js";
 
 const HostChatList = () => {
     const [ chats, setChats ] = useState([]);
@@ -208,7 +209,7 @@ const HostChatList = () => {
                                 onClick={sendMessage}
                                 className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
                             >
-                                Send
+                                < PaperAirplaneIcon className="h-6 w-6" />
                             </button >
                         </div >
                     </>

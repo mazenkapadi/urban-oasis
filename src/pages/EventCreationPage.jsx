@@ -9,7 +9,8 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { googleMapsConfig } from "../locationConfig.js";
-import {Modal, Button, TextField, ImageList, ImageListItem} from '@mui/material';
+import { Modal, Button, TextField, ImageList, ImageListItem } from '@mui/material';
+
 function EventCreationPage() {
 
     const [ hostId ] = useState('defaultUserID');
@@ -134,7 +135,7 @@ function EventCreationPage() {
             await eventCreation.writeEventData(eventData);
             setError(null);
             setModalOpen(true);
-            // resetForm();
+            resetForm();
         } catch (error) {
             setError(error.message);
         }
@@ -161,7 +162,11 @@ function EventCreationPage() {
 
     const handleModalClose = () => {
         setModalOpen(false);
+        setTimeout(() => {
+            resetForm();
+        }, 3000);
     };
+
 
     return (
         <>
@@ -319,25 +324,27 @@ function EventCreationPage() {
                                 {previewImages && (
                                     <>
                                         <div >
-                                            <label htmlFor="previewImages" className="text-lg font-semibold text-white" >Event
+                                            <label htmlFor="previewImages"
+                                                   className="text-lg font-semibold text-white" >Event
                                                 Images</label >
                                             <div className="mt-2" >
                                                 <label
                                                     htmlFor="previewImages"
                                                     className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
                                                 >
-                                                    <ImageList sx={{ width: 600, height: 200 }} cols={3} rowHeight={200} gap={10}>
+                                                    <ImageList sx={{width: 600, height: 200}} cols={3} rowHeight={200}
+                                                               gap={10} >
                                                         {eventImagesUrls.map((item) => (
-                                                            <ImageListItem key={item}>
+                                                            <ImageListItem key={item} >
                                                                 <img
                                                                     srcSet={`${item}`}
                                                                     src={`${item}`}
                                                                     alt={item.name}
                                                                     loading="lazy"
                                                                 />
-                                                            </ImageListItem>
+                                                            </ImageListItem >
                                                         ))}
-                                                    </ImageList>
+                                                    </ImageList >
                                                 </label >
                                             </div >
                                         </div >
@@ -483,13 +490,14 @@ function EventCreationPage() {
                     open={modalOpen}
                     onClose={handleModalClose}
                 >
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
-                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">
+                    <div
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8" >
+                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo" >
                             Event Created!
-                        </h2>
-                        <p className="text-body text-detail-gray text-center mb-6 font-inter">
+                        </h2 >
+                        <p className="text-body text-detail-gray text-center mb-6 font-inter" >
                             Your event has been successfully created.
-                        </p>
+                        </p >
                         <Button
                             onClick={handleModalClose}
                             variant="contained"
@@ -497,9 +505,9 @@ function EventCreationPage() {
                             className="mt-4 w-full bg-accent-blue hover:bg-accent-green text-neutral-white py-2 rounded-lg font-medium"
                         >
                             Close
-                        </Button>
-                    </div>
-                </Modal>
+                        </Button >
+                    </div >
+                </Modal >
 
 
                 <FooterComponent />
