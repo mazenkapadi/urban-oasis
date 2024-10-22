@@ -9,6 +9,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import LoadingPage from "./LoadingPage";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import StarIcon from "@mui/icons-material/Star";
+import {Rating} from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -23,6 +25,7 @@ const HostDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [ rating, setRating] = useState(0);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -50,6 +53,7 @@ const HostDashboard = () => {
                 setCompanyName(data.companyName || '');
                 setBio(data.bio || '');
                 setProfilePicture(data.profilePicture || 'https://via.placeholder.com/150');
+                setRating(data.ratings.overall)
 
                 if (!data.isHost) {
                     navigate('/hostSignUp');
@@ -199,7 +203,12 @@ const HostDashboard = () => {
                                 <p className="text-gray-700">{email}</p>
                                 <p className="text-gray-700">{hostType === 'company' ? companyName : 'Individual Host'}</p>
                                 <p className="text-gray-700 text-center">{bio}</p>
-                                <p className="text-gray-700">Rating</p>
+                                <Rating
+                                    name="read-only"
+                                    value={rating}
+                                    readOnly
+                                    precision={0.2}
+                                />
                                 <button
                                     onClick={() => navigate('/userProfilePage')}
                                     className="mt-4 w-full bg-blue-800 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition"
