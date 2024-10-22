@@ -68,6 +68,11 @@ const SideBar = () => {
                 <BiTask className="h-6 w-6 mr-2 text-white" />
                 <span>Contact Info</span>
             </Link>
+            <Link to="/userProfilePage/host-chatlist"
+                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
+                <QuestionMarkCircleIcon className="h-6 w-6 mr-2 text-white" />
+                <span>Chats</span>
+            </Link>
             <Link to="/userProfilePage/payments"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white">
                 <CreditCardIcon className="h-6 w-6 mr-2 text-white" />

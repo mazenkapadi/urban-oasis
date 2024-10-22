@@ -10,6 +10,8 @@ import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
+import { loadStripe } from "@stripe/stripe-js";
+
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -28,6 +30,15 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
+    const [ profilePicture, setProfilePicture ] = useState('');
+
+    const [chatWindowOpen, setChatWindowOpen] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [chatId, setChatId] = useState(null);
+    // const currentUserId = auth.currentUser?.uid;
+
+    const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
@@ -48,6 +59,19 @@ const EventPage = () => {
             reviews: []
         }
     });
+
+    const handleIncrement = () => {
+        if (isPaidEvent || (quantity < 10)) {
+            setQuantity(quantity + 1);
+        }
+    };
+
+    const handleDecrement = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -55,6 +79,11 @@ const EventPage = () => {
         }
 
         const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);
+
+        const totalPrice = isPaidEvent ? parseFloat(eventPrice) * totalAttendees : 0;
+
         const rsvpData = {
             userId: userId,
             name: name,
@@ -73,6 +102,10 @@ const EventPage = () => {
         try {
             // Fetch event details to get current attendees count and capacity
             const eventDocSnap = await getDoc(eventDocRef);
+            const eventData = eventDocSnap.data();
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
+            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
+
             if (!eventDocSnap.exists()) {
                 console.error("Event not found");
                 return;
@@ -158,7 +191,38 @@ const EventPage = () => {
 
     const handleCheckout = async () => {
         console.log("Processing on Stripe");
-    }
+
+        const stripe = await stripePromise;
+
+        const checkoutData = {
+            eventId: eventId,
+            quantity: quantity,
+            price: parseFloat(eventPrice) * quantity,
+            eventTitle: eventTitle,
+            userId: userId,
+        };
+        try {
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(checkoutData),
+            });
+
+            const session = await response.json();
+
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id,
+            })
+
+            if(result.error) {
+                console.error("Error redirecting to checkout: ", result.error);
+            }
+        } catch (error) {
+            console.error("Error creating checkout session: ", error);
+        }
+    };
 
     const handleModalClose = () => {
         setModalOpen(false);
@@ -198,6 +262,7 @@ const EventPage = () => {
                         if (hostDocSnap.exists()) {
                             const hostData = hostDocSnap.data();
                             setHostDetails({
+                                id:data.hostId,
                                 bio: hostData.bio || '',
                                 profilePicture: hostData.profilePicture || '',
                                 companyName: hostData.companyName || '',
@@ -251,6 +316,7 @@ const EventPage = () => {
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(data.contact?.cellPhone || 'Phone number not found');
                         setEmail(data.contact?.email || email || 'Email not found');
+                        setProfilePicture(data.profilePicture || eventImages[0]||'');
                     } else {
                         console.log('No such document!');
                     }
@@ -266,6 +332,97 @@ const EventPage = () => {
     if (loading) {
         return <LoadingPage />;
     }
+
+
+    const toggleChatWindow = () => {
+        setChatWindowOpen(!chatWindowOpen);
+    };
+
+    const createChatId = (userId, hostId) => {
+        console.log('creating id',userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`);
+        return userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`;
+    };
+
+    const createOrFetchChat = async (hostId) => {
+
+        const chatId = createChatId(userId, hostId);
+
+        const chatRef = doc(db, 'chats', chatId);
+        const chatDoc = await getDoc(chatRef);
+        if (chatDoc.exists()) {
+
+            setChatId(chatId);
+            console.log('existing chat ',chatId);
+            return chatId;
+          } else {
+
+            const newChatData = {
+              event: {
+                id: eventId,
+                name: eventTitle,
+                image: eventImages.length>0? eventImages[0]:"",
+              },
+              participants: [userId, hostId],
+              messages: [],
+              sender: {
+                id: userId,
+                name:name,
+                profilePicture: profilePicture,
+                email:email,
+                // phone:phone,
+
+              },
+              receiver: {
+                id: hostId,
+                name:hostDetails.name,
+                profilePicture: hostDetails.profilePicture,
+                email:hostDetails.email,
+                // phone:hostDetails.phone,
+
+              }
+            };
+            await setDoc(chatRef, newChatData);
+            setChatId(chatId);
+            console.log('new chat ',chatId);
+            return chatId;
+          }
+    };
+
+    const fetchMessages = (chatId) => {
+        const chatRef = doc(db, 'chats', chatId);
+        return onSnapshot(chatRef, (doc) => {
+          if (doc.exists()) {
+            setMessages(doc.data().messages || []);
+            console.log('docs ',doc.data().messages);
+
+            console.log('messages ',messages);
+
+          }
+        });
+    };
+
+    const sendMessage = async () => {
+        if (newMessage.trim() === '') return;
+        const chatRef = doc(db, 'chats', chatId);
+        await updateDoc(chatRef, {
+          messages: arrayUnion({
+            senderId: userId,
+            msg: newMessage,
+            ts: Timestamp.now(),
+          }),
+        });
+        setNewMessage('');
+    };
+
+    const handleHostChatClick = async () => {
+        try {
+          const chatId = await createOrFetchChat(hostDetails.id);
+          fetchMessages(chatId);
+          toggleChatWindow();
+        } catch (error) {
+          console.error('Error creating or fetching chat: ', error);
+        }
+    };
 
     return (
         <>
@@ -332,13 +489,39 @@ const EventPage = () => {
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
                                             <h3 className="text-lg text-white font-semibold" >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <button className="" >Host Chat</button >
+                                            <button className="" onClick={handleHostChatClick}>Host Chat</button >
                                         </div >
                                     )}
                                 </div >
                             </div >
                         </div >
                     </div >
+                    {chatWindowOpen && (
+                        <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg">
+                            <div className="flex justify-between items-center mb-4">
+                                <h4 className="text-white font-semibold">Chat with {hostDetails.name}</h4>
+                                <button onClick={toggleChatWindow} className="text-white">X</button>
+                            </div>
+                            <div className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg">
+                                {messages.map((msg, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-2 rounded-lg ${msg.senderId === userId ? 'bg-blue-500 text-white self-end' : 'bg-gray-300 text-black self-start'}`}
+                                    >
+                                        {msg.msg}
+                                    </div>
+                                ))}
+                            </div>
+                            <input
+                                type="text"
+                                className="w-full mt-2 p-2 rounded-lg bg-gray-600 text-white"
+                                placeholder="Type your message..."
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                            />
+                        </div>
+                        )}
                 </div >
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div

@@ -9,7 +9,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { googleMapsConfig } from "../locationConfig.js";
-import {Modal, Button, TextField, ImageList, ImageListItem} from '@mui/material';
+import { Modal, Button, TextField } from '@mui/material';
 function EventCreationPage() {
 
     const [ hostId ] = useState('defaultUserID');
@@ -32,8 +32,7 @@ function EventCreationPage() {
     const [ alcAvail, setAlcAvail ] = useState(false);
     const [ alcInfo, setAlcInfo ] = useState('');
     const [ modalOpen, setModalOpen ] = useState(false);
-    const [ previewImages, setPreviewImages ] = useState(false);
-    const [ eventImagesUrls, setEventImagesUrls ] = useState([])
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -48,11 +47,8 @@ function EventCreationPage() {
     }, []);
 
     const handleFileChange = (e) => {
-        setPreviewImages(true);
         const imagesArray = Array.from(e.target.files);
-        const imageUrls = imagesArray.map(image => URL.createObjectURL(image));
         setEventImages(imagesArray);
-        setEventImagesUrls(imageUrls);
     };
 
     const handleImageUpload = async (eventTitle, imageFiles) => {
@@ -314,35 +310,6 @@ function EventCreationPage() {
                                         </label >
                                     </div >
                                 </div >
-
-                                {/* Image Preview */}
-                                {previewImages && (
-                                    <>
-                                        <div >
-                                            <label htmlFor="previewImages" className="text-lg font-semibold text-white" >Event
-                                                Images</label >
-                                            <div className="mt-2" >
-                                                <label
-                                                    htmlFor="previewImages"
-                                                    className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
-                                                >
-                                                    <ImageList sx={{ width: 600, height: 200 }} cols={3} rowHeight={200} gap={10}>
-                                                        {eventImagesUrls.map((item) => (
-                                                            <ImageListItem key={item}>
-                                                                <img
-                                                                    srcSet={`${item}`}
-                                                                    src={`${item}`}
-                                                                    alt={item.name}
-                                                                    loading="lazy"
-                                                                />
-                                                            </ImageListItem>
-                                                        ))}
-                                                    </ImageList>
-                                                </label >
-                                            </div >
-                                        </div >
-                                    </>
-                                )}
 
                                 {/* Paid Event */}
                                 <div className="space-y-4" >
