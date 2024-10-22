@@ -88,11 +88,6 @@ const HostProfilePage = () => {
         fetchEventData();
     }, [userId]);
 
-    // const calculateAverageRating = (ratingsTotaled) => {
-    //     if (!ratingsTotaled) return 0;
-    //     const totalRating = ;
-    //     return totalRating / ratingsTotaled.length;
-    // };
 
     const handleSubmit = async () => {
         try {
