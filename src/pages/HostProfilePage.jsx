@@ -52,6 +52,8 @@ const HostProfilePage = () => {
         const fetchEventData = async () => {
 
             // Fetch host data if available
+            if (userId) {
+                const hostDocRef = doc(db, 'Users', userId);
                 const hostDocSnap = await getDoc(hostDocRef);
                 if (hostDocSnap.exists()) {
                     const hostData = hostDocSnap.data();
@@ -71,6 +73,7 @@ const HostProfilePage = () => {
                 //     const reviewData = reviewDocSnap.data();
                 //     setReviewDetails(reviewData);
                 // }
+                const querySnapshot = await getDocs(collection(db, "Users", userId, 'Ratings'));
                 const reviewData = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
@@ -83,21 +86,35 @@ const HostProfilePage = () => {
         fetchEventData();
     }, [userId]);
 
+    const calculateAverageRating = (ratings) => {
+        if (!ratings || !ratings.length) return 0;
+        const totalRating = ratings.reduce((acc, review) => acc + review.rating, 0);
+        return totalRating / ratings.length;
+    };
 
     const handleSubmit = async () => {
         try {
+            if (!userId) {
                 console.error("User not authenticated.");
                 return;
             }
+            const newReviewRef = collection(db, 'Users', userId, 'Ratings');
             const newReviewData = {
                 rating: value,
                 review: review,
             };
             await addDoc(newReviewRef, newReviewData);
 
+            const updatedRatings = {
+                ...hostDetails.ratings,
+                reviews: [...hostDetails.ratings.reviews, newReviewData],
+            };
+            updatedRatings.overall = calculateAverageRating(updatedRatings.reviews);
 
+            const hostDocRef = doc(db, "Users", userId);
             await updateDoc(hostDocRef, {
                 ratings: {
+                    overall: updatedRatings.overall
                 }
             });
         } catch (error) {
@@ -153,6 +170,13 @@ const HostProfilePage = () => {
                                     <ListItemIcon>
                                         <GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/>
                                     </ListItemIcon>
+                                    <ListItemText
+                                        primary={hostDetails.ratings}
+                                        primaryTypographyProps={{
+                                            fontWeight: 'medium',
+                                            fontSize: '30px',
+                                            color: 'white',
+                                        }}
                                     />
                                 </ListItem>,
                             </List>
