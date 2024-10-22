@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BiTask } from 'react-icons/bi';
 import { CreditCardIcon, HomeIcon, QuestionMarkCircleIcon, Cog6ToothIcon, UserIcon, UserCircleIcon } from "@heroicons/react/20/solid";
-import { signOutUser } from "../services/auth/signOut.js";
+import { signOutUser } from "../../services/auth/signOut.js";
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '../firebaseConfig.js';
+import { auth, db } from '../../firebaseConfig.js';
 import { doc, getDoc } from 'firebase/firestore';
 
 const SideBar = () => {

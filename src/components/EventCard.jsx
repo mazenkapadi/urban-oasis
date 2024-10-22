@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 
+// eslint-disable-next-line react/prop-types
 function EventCard({title, location, date, price, image, eventId, event}) {
     const navigate = useNavigate();
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, auth, storage } from "../firebaseConfig.js";
+import { db, auth, storage } from "../../firebaseConfig.js";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from "firebase/auth";
 import SelectUSState from 'react-select-us-states';
@@ -186,6 +186,7 @@ const ContactInfoPage = () => {
                             <option value="Mr">Mr</option>
                             <option value="Ms">Ms</option>
                             <option value="Mrs">Mrs</option>
+                            <option value="Dr.">Dr.</option>
                         </select>
                     </div>
 

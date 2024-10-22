@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
-import SideBar from "../components/SideBar";
+import SideBar from "../components/User/SideBar.jsx";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import HostEventCard from '../components/HostEventCard';
 import { onAuthStateChanged } from "firebase/auth";

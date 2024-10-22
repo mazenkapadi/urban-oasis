@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { handleEmailChange } from '../services/auth/UpdateEmail';
-import PasswordReset from '../services/auth/ResetPassword';
-import { handleAccountClosure } from '../services/auth/CloseAccount';
-import UserPreferences from '../components/UserPreferences';
-import { auth } from '../firebaseConfig';
+import { handleEmailChange } from '../../services/auth/UpdateEmail.js';
+import PasswordReset from '../../services/auth/ResetPassword.js';
+import { handleAccountClosure } from '../../services/auth/CloseAccount.js';
+import UserPreferences from '../../components/User/UserPreferences.jsx';
+import { auth } from '../../firebaseConfig.js';
 
 const SettingsPage = () => {
     const [currentEmail, setCurrentEmail] = useState('');
