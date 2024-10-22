@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 
-// const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
 const stripe = new Stripe('sk_test_51Q0aMK1ML9Ca0ARWsUClNw2zkqtFnlofxbqI1Am5HSNsLX9Mkz2fCNF8ZrM7YSkvdX46qYtVe8K07ae5X6onBdhG00Yd7taybj');
+// const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
 
 
 export async function POST(req) {
@@ -21,8 +21,8 @@ export async function POST(req) {
             }
         ],
         mode: 'payment',
-        success_url: `https://example.com?success=true`,
-        cancel_url: `http://localhost:3000/*`,
+        success_url: `http://localhost:3000/paymentSuccess`,
+        cancel_url: `http://localhost:3000/paymentCancel`,
         metadata: {
             eventId: reqBody.eventId,
             userId: reqBody.userId,
