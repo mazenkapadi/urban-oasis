@@ -86,6 +86,11 @@ const HostProfilePage = () => {
         fetchEventData();
     }, [userId]);
 
+    const calculateAverageRating = (ratings) => {
+        if (!ratings || !ratings.length) return 0;
+        const totalRating = ratings.reduce((acc, review) => acc + review.rating, 0);
+        return totalRating / ratings.length;
+    };
 
     const handleSubmit = async () => {
         try {
@@ -100,10 +105,16 @@ const HostProfilePage = () => {
             };
             await addDoc(newReviewRef, newReviewData);
 
+            const updatedRatings = {
+                ...hostDetails.ratings,
+                reviews: [...hostDetails.ratings.reviews, newReviewData],
+            };
+            updatedRatings.overall = calculateAverageRating(updatedRatings.reviews);
 
             const hostDocRef = doc(db, "Users", userId);
             await updateDoc(hostDocRef, {
                 ratings: {
+                    overall: updatedRatings.overall
                 }
             });
         } catch (error) {
@@ -159,6 +170,13 @@ const HostProfilePage = () => {
                                     <ListItemIcon>
                                         <GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/>
                                     </ListItemIcon>
+                                    <ListItemText
+                                        primary={hostDetails.ratings}
+                                        primaryTypographyProps={{
+                                            fontWeight: 'medium',
+                                            fontSize: '30px',
+                                            color: 'white',
+                                        }}
                                     />
                                 </ListItem>,
                             </List>
