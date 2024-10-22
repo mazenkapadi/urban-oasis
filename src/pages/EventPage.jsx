@@ -154,27 +154,6 @@ const EventPage = () => {
         }
     };
 
-    // const handleCheckout = async () => {
-    //     console.log("Processing on Stripe...");
-    //
-    //     const checkoutData = {
-    //         eventId: eventId,
-    //         quantity: quantity,
-    //         price: eventPrice,
-    //         eventTitle: eventTitle,
-    //         userId: userId,
-    //     };
-    //
-    //     const response = await fetch('/api/stripe', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(checkoutData),
-    //     });
-    //     window.location.href = await response.text();
-    // };
-
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 

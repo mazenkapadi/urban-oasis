@@ -14,7 +14,7 @@ function PaymentCancel() {
             <h1 className="text-6xl font-bold text-red-600 mb-4" id="cancel-text">Payment Cancelled</h1>
             <p className="text-2xl text-gray-600 mb-8">It looks like your payment was not completed. Please try again.</p>
             <Link to="/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Go Back to Home
+                Go Back Home
             </Link>
         </div>
     );
