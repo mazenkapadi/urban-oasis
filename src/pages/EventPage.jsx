@@ -154,6 +154,27 @@ const EventPage = () => {
         }
     };
 
+    // const handleCheckout = async () => {
+    //     console.log("Processing on Stripe...");
+    //
+    //     const checkoutData = {
+    //         eventId: eventId,
+    //         quantity: quantity,
+    //         price: eventPrice,
+    //         eventTitle: eventTitle,
+    //         userId: userId,
+    //     };
+    //
+    //     const response = await fetch('/api/stripe', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(checkoutData),
+    //     });
+    //     window.location.href = await response.text();
+    // };
+
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
@@ -172,7 +193,85 @@ const EventPage = () => {
             },
             body: JSON.stringify(checkoutData),
         });
-        window.location.href = await response.text();
+
+        const sessionUrl = await response.text();
+
+        // Save RSVP data to Firestore before redirecting to Stripe
+        try {
+            const totalAttendees = quantity;
+            const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+            const eventDocRef = doc(db, 'Events', eventId);
+
+            const rsvpData = {
+                userId: userId,
+                eventId: eventId,
+                name: name,
+                email: email,
+                phone: phone,
+                quantity: totalAttendees,
+                eventTitle: eventTitle,
+                eventDateTime: eventDateTime,
+                createdAt: new Date().toISOString(),
+            };
+
+            const eventDocSnap = await getDoc(eventDocRef);
+            if (!eventDocSnap.exists()) {
+                console.error("Event not found");
+                return;
+            }
+
+            const eventData = eventDocSnap.data();
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
+
+            if (attendeesCount + totalAttendees > capacity) {
+                console.error("RSVP quantity exceeds event capacity");
+                alert(`This event only has ${capacity - attendeesCount} spots left.`);
+                return;
+            }
+
+            const rsvpsDocSnap = await getDoc(eventRsvpsDocRef);
+            if (rsvpsDocSnap.exists()) {
+                await updateDoc(eventRsvpsDocRef, {
+                    [`rsvps.${userId}`]: rsvpData,
+                });
+            } else {
+                await setDoc(eventRsvpsDocRef, {
+                    eventId: eventId,
+                    rsvps: {
+                        [userId]: rsvpData,
+                    },
+                });
+            }
+
+            const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
+            const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
+            if (userRsvpsDocSnap.exists()) {
+                await updateDoc(userRsvpsDocRef, {
+                    [`events.${eventId}`]: rsvpData,
+                });
+            } else {
+                await setDoc(userRsvpsDocRef, {
+                    userId: userId,
+                    events: {
+                        [eventId]: rsvpData,
+                    },
+                });
+            }
+
+            const updatedDocSnap = await getDoc(eventRsvpsDocRef);
+            const rsvps = updatedDocSnap.data().rsvps || {};
+            const totalRSVPs = Object.values(rsvps).reduce((acc, rsvp) => acc + rsvp.quantity, 0);
+
+            await updateDoc(eventDocRef, {
+                attendeesCount: totalRSVPs,
+            });
+
+            // Redirect to Stripe checkout after successfully saving the RSVP
+            window.location.href = sessionUrl;
+
+        } catch (error) {
+            console.error("Error adding/updating RSVP after checkout: ", error);
+        }
     };
 
 

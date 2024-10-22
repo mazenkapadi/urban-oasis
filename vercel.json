@@ -1,3 +1,15 @@
 {
-
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-deployment",
+          "value": "production"
+        }
+      ],
+      "destination": "/"
+    }
+  ]
 }

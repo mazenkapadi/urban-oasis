@@ -4,6 +4,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import EventCarousel from "../components/EventCarousel.jsx";
 import HeroCarousel from "../components/HeroCarousel.jsx";
 import EventMonthCarousel from "../components/EventMonthCarousel.jsx";
+import Testimonials from "../components/Testimonials.jsx";
 
 function LandingPage() {
     return (
@@ -34,6 +35,10 @@ function LandingPage() {
                             </div >
                             <div >
                                 <EventMonthCarousel />
+                            </div >
+                            <div >
+                                <span className="text-3xl font-bold" >User Testimonials</span >
+                                <Testimonials />
                             </div >
                         </div >
                     </div >
