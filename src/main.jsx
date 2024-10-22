@@ -30,6 +30,8 @@ import HostEventPage from "./pages/HostEventPage.jsx";
 import HostChatList from "./pages/HostChatListPage.jsx";
 import ChatPage from './pages/ChatPage.jsx';
 import PaymentsPage from "./pages/User/PaymentsPage.jsx";
+import PaymentSuccess from "./pages/payments/PaymentSuccess.jsx";
+import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
 
 const router = createBrowserRouter([
     {
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
     {
         path: "/chat/:chatId",
         element: <ChatPage />
+    },
+    {
+        path: "/paymentsuccess",
+        element: <PaymentSuccess />
+    },
+    {
+        path: "/paymentcancel",
+        element: <PaymentCancel />
     },
     {
         path: "*",
