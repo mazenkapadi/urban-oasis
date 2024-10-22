@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
+import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { db, auth } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
@@ -448,7 +448,9 @@ const EventPage = () => {
                         <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg" >
                             <div className="flex justify-between items-center mb-4" >
                                 <h4 className="text-white font-semibold" >Chat with {hostDetails.name}</h4 >
-                                <button onClick={toggleChatWindow} className="text-white" >X</button >
+                                <button onClick={toggleChatWindow} className="text-white" >
+                                    <XMarkIcon className="w-6 h-6" />
+                                </button >
                             </div >
                             <div
                                 className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg" >
