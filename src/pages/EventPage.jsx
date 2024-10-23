@@ -523,7 +523,7 @@ const EventPage = () => {
                                 </div >
                                 <div
                                     className="flex flex-col justify-center items-center w-full h-auto bg-gray-700 border-4 border-gray-500 rounded-lg p-4" >
-                                    <h3 className="text-white font-bold mb-2" >Hosted by,</h3 >
+                                    <h3 className="text-white font-bold mb-2" >Hosted by</h3 >
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
                                             <h3 className="text-lg text-white font-semibold"
