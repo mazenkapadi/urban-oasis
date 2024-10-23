@@ -11,7 +11,7 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -36,9 +36,9 @@ const EventPage = () => {
     const [ newMessage, setNewMessage ] = useState("");
     const [ chatId, setChatId ] = useState(null);
     const navigate = useNavigate();
+    const rsvpId = uuidv4();
 
-
-    // const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
         profilePicture: '',
@@ -78,18 +78,23 @@ const EventPage = () => {
             return;
         }
 
-        const rsvpId = uuid(); // Generate a unique rsvpId
+        const rsvpId = uuidv4();
         const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const eventDocRef = doc(db, 'Events', eventId);
 
-        // const totalPrice = isPaidEvent ? eventPrice * totalAttendees : 0;
+        const totalPrice = isPaidEvent ? eventPrice * totalAttendees : 0;
 
         const rsvpData = {
             rsvpId: rsvpId,
             userId: userId,
             eventId: eventId,
+            name: name,
+            email: email,
+            phone: phone,
             quantity: totalAttendees,
+            eventTitle: eventTitle,
+            eventDateTime: eventDateTime,
             createdAt: new Date().toISOString(),
         };
 
@@ -155,7 +160,8 @@ const EventPage = () => {
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
-        const rsvpId = uuid();
+        const rsvpId = uuidv4();
+
         const checkoutData = {
             eventId: eventId,
             quantity: quantity,
@@ -184,7 +190,6 @@ const EventPage = () => {
                 rsvpId: rsvpId,
                 userId: userId,
                 eventId: eventId,
-                email: email,
                 phone: phone,
                 quantity: totalAttendees,
                 eventTitle: eventTitle,
@@ -325,6 +330,7 @@ const EventPage = () => {
                 } else {
                     console.log('No such document!');
                 }
+
                 setLoading(false);
             }
         };
@@ -354,6 +360,7 @@ const EventPage = () => {
                 }
             }
         };
+
         fetchUserData();
     }, [ userId, email ]);
 
@@ -396,12 +403,16 @@ const EventPage = () => {
                     name: name,
                     profilePicture: profilePicture,
                     email: email,
+                    // phone:phone,
+
                 },
                 receiver: {
                     id: hostId,
                     name: hostDetails.name,
                     profilePicture: hostDetails.profilePicture,
                     email: hostDetails.email,
+                    // phone:hostDetails.phone,
+
                 }
             };
             await setDoc(chatRef, newChatData);
