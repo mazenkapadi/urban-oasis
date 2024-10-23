@@ -157,37 +157,38 @@ const HostProfilePage = () => {
 
     return (
         <>
-            <HeaderComponent/>
-            <div
-                className="host-profile-page min-h-screen bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 flex justify-center items-center py-10 px-4">
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-8">
+            <div
+                className="host-profile-page flex-col min-h-screen bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 flex pt-2 px-4">
+                <HeaderComponent/>
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
+
+                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-12 ">
 
                         <div
-                            className="bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-center">
-                            <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
-                                    sx={{width: 100, height: 100}}/>
-                            <Typography variant="p" component="div" className="text-4xl text-white font-bold">
-                                {`${hostDetails.firstName} ${hostDetails.lastName}`}
-                            </Typography>
+                            className="bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between ">
+                            <div className="flex flex-row justify-center items-center">
+                                <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
+                                        sx={{width: 100, height: 100}}/>
+                                <Typography variant="p" component="div" className="text-4xl text-white font-bold">
+                                    {`${hostDetails.firstName} ${hostDetails.lastName}`}
+                                </Typography>
+                            </div>
+
+                            <Rating className="" name="read-only" value={hostDetails.ratings} readOnly size="large"
+                                    precision={0.1}/>
                         </div>
 
-                        <div className="flex space-x-8 justify-center items-center">
-                            <List className="text-white space-y-4">
-                                <ListItem>
+                        <div className="flex space-x-8 space-y-24 pt-6 pb-6">
+                            <List className="text-white space-y-12">
+                                <ListItem >
                                     <ListItemIcon><EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
                                     <ListItemText
                                         primary={hostDetails.email}
                                         primaryTypographyProps={{fontWeight: 'medium', fontSize: '30px'}}
                                     />
                                 </ListItem>
-                                <ListItem>
-                                    <ListItemIcon><GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
-                                    <Rating name="read-only" value={hostDetails.ratings} readOnly size="large"
-                                            precision={0.1}/>
-                                </ListItem>
-                                <ListItem>
+                                <ListItem className="justify-center items-center">
                                     <ListItemIcon><InfoTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
                                     <ListItemText
                                         primary={hostDetails.bio}
@@ -197,10 +198,13 @@ const HostProfilePage = () => {
                             </List>
                         </div>
 
-                        <div className="bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg p-6 space-y-4">
-                            <Typography variant="h5" component="div" className="text-white">Add Review</Typography>
-                            <Rating name="simple-controlled" value={value}
-                                    onChange={(event, newValue) => setValue(newValue)} size="large"/>
+                        <div className="bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg p-6 space-y-6">
+                            <div className="flex flex-row justify-between">
+                                <Typography variant="h5" component="div" className="text-white">Add Review</Typography>
+                                <Rating name="simple-controlled" value={value}
+                                        onChange={(event, newValue) => setValue(newValue)} size="large"/>
+                            </div>
+
                             <TextField
                                 label="Enter Review"
                                 onChange={(e) => setReview(e.target.value)}
@@ -245,13 +249,23 @@ const HostProfilePage = () => {
                                               boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
                                           }}>
                                         <CardContent>
-                                            <Typography variant="p" component="div" color="white"
-                                                        className="text-2xl font-bold pb-4">
-                                                {reviewerDetails.firstName} {reviewerDetails.lastName}
-                                            </Typography>
-                                            <Rating value={review.rating} readOnly size="large"/>
+                                            <div className="flex items-center justify-between">
+                                                <Typography variant="p" component="div" color="white"
+                                                            className="text-2xl font-bold">
+                                                    {reviewerDetails.firstName} {reviewerDetails.lastName}
+                                                </Typography>
+                                                <Rating value={review.rating} readOnly size="large"/>
+                                            </div>
+                                            <h5 className="mb-4 border-b-2 border-gray-900 pb-2"></h5>
+
                                             <Typography variant="body2" color="textSecondary"
-                                                        sx={{marginTop: '8px', fontSize: '24px', whiteSpace: 'pre-line'}}>
+                                                        sx={{
+                                                            marginTop: '8px',
+                                                            fontSize: '24px',
+                                                            whiteSpace: 'pre-line',
+                                                            wordWrap: 'break-word',
+                                                            overflowWrap: 'break-word'
+                                                        }}>
                                                 {review.review}
                                             </Typography>
                                         </CardContent>
