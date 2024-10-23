@@ -17,9 +17,7 @@ import {
 } from "@mui/material";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Person2TwoToneIcon from '@mui/icons-material/Person2TwoTone';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
-import GradeTwoToneIcon from '@mui/icons-material/GradeTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../components/FooterComponent.jsx";
 import {useParams} from "react-router-dom";
@@ -170,7 +168,7 @@ const HostProfilePage = () => {
                             <div className="flex flex-row justify-center items-center">
                                 <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
                                         sx={{width: 100, height: 100}}/>
-                                <Typography variant="p" component="div" className="text-4xl text-white font-bold">
+                                <Typography variant="p" component="div" className="text-4xl text-white font-bold pl-3">
                                     {`${hostDetails.firstName} ${hostDetails.lastName}`}
                                 </Typography>
                             </div>
