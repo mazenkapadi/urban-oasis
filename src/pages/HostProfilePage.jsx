@@ -22,8 +22,8 @@ import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import GradeTwoToneIcon from '@mui/icons-material/GradeTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../components/FooterComponent.jsx";
-import StarIcon from '@mui/icons-material/Star';
 import {useParams} from "react-router-dom";
+import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 
 
 const HostProfilePage = () => {
@@ -37,11 +37,12 @@ const HostProfilePage = () => {
         lastName: '',
         ratings: 0,
     });
-    const [value, setValue] = useState(2);
+    const [value, setValue] = useState(0);
     const [review, setReview] = useState('');
     const [error, setError] = useState(null);
     const [reviewDetails, setReviewDetails] = useState([]);
     const {hostId} = useParams();
+    const [reviewerDetails, setReviewerDetails] = useState([])
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -78,13 +79,32 @@ const HostProfilePage = () => {
                 //     setReviewDetails(reviewData);
                 // }
                 const querySnapshot = await getDocs(collection(db, "Users", hostId, 'Ratings'));
-                const reviewData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
+                const reviewsWithUserInfo = await Promise.all(querySnapshot.docs.map(async (docs) => {
+                    const reviewData = docs.data();
+                    const reviewerId = reviewData.user;
+
+                    const userDocRef = doc(db, 'Users', reviewerId);
+                    const userDocSnap = await getDoc(userDocRef);
+
+                    if (userDocSnap.exists()) {
+                        const userData = userDocSnap.data();
+                        setReviewerDetails({
+                            firstName: userData.name.firstName,
+                            lastName: userData.name.lastName,
+                        });
+                    }
+
+                    return {
+                        id: docs.id,
+                        ...reviewData,
+                        reviewerDetails,
+                    };
                 }));
-                setReviewDetails(reviewData);
+
+                setReviewDetails(reviewsWithUserInfo);
             }
             setLoading(false);
+
         };
 
         fetchEventData();
@@ -106,6 +126,7 @@ const HostProfilePage = () => {
             const newReviewData = {
                 rating: value,
                 review: review,
+                user: userId,
             };
             await addDoc(newReviewRef, newReviewData);
 
@@ -136,122 +157,131 @@ const HostProfilePage = () => {
 
     return (
         <>
-            <HeaderComponent/>
-            <div className="host-profile-page">
-                <div
-                    className="flex justify-center items-center py-10 px-4 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen">
-                    <div className="box-border w-full max-w-5xl rounded-lg bg-gray-900 shadow-lg h-full p-6">
-                        <div className="flex">
-                            <Avatar
-                                alt={hostDetails.firstName}
-                                src={hostDetails.profilePic}
-                                sx={{width: 280, height: 280}}
-                            />
-                            <List>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <Person2TwoToneIcon color="primary" sx={{fontSize: 40}}/>
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={hostDetails.firstName + ' ' + hostDetails.lastName}
-                                        primaryTypographyProps={{
-                                            fontWeight: 'medium',
-                                            fontSize: '30px',
-                                            color: 'white',
-                                        }}
-                                    />
-                                </ListItem>,
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/>
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={hostDetails.email}
-                                        primaryTypographyProps={{
-                                            fontWeight: 'medium',
-                                            fontSize: '30px',
-                                            color: 'white',
-                                        }}
-                                    />
-                                </ListItem>,
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <GradeTwoToneIcon color="primary" sx={{fontSize: 40}}/>
-                                    </ListItemIcon>
-                                    <Rating
-                                        name="read-only"
-                                        value={hostDetails.ratings}
-                                        readOnly
-                                        size="large"
-                                        precision={0.2}
-                                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                                        // sx={{
-                                        //     bgcolor: 'rgb(107 114 128)',
-                                        // }}
-                                    />
-                                </ListItem>,
-                            </List>
 
+            <div
+                className="host-profile-page flex-col min-h-screen bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 flex pt-2 px-4">
+                <HeaderComponent/>
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
 
-                        </div>
+                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-12 ">
 
                         <div
-                            className="flex flex-col p-2 w-full h-fit bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg gap-2">
-                            <p className="text-white text-2xl font-bold">Add Review</p>
-                            <Rating
-                                name="simple-controlled"
-                                value={value}
-                                onChange={(event, newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
+                            className="bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between ">
+                            <div className="flex flex-row justify-center items-center">
+                                <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
+                                        sx={{width: 100, height: 100}}/>
+                                <Typography variant="p" component="div" className="text-4xl text-white font-bold">
+                                    {`${hostDetails.firstName} ${hostDetails.lastName}`}
+                                </Typography>
+                            </div>
+
+                            <Rating className="" name="read-only" value={hostDetails.ratings} readOnly size="large"
+                                    precision={0.1}/>
+                        </div>
+
+                        <div className="flex space-x-8 space-y-24 pt-6 pb-6">
+                            <List className="text-white space-y-12">
+                                <ListItem >
+                                    <ListItemIcon><EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
+                                    <ListItemText
+                                        primary={hostDetails.email}
+                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '30px'}}
+                                    />
+                                </ListItem>
+                                <ListItem className="justify-center items-center">
+                                    <ListItemIcon><InfoTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
+                                    <ListItemText
+                                        primary={hostDetails.bio}
+                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '30px'}}
+                                    />
+                                </ListItem>
+                            </List>
+                        </div>
+
+                        <div className="bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg p-6 space-y-6">
+                            <div className="flex flex-row justify-between">
+                                <Typography variant="h5" component="div" className="text-white">Add Review</Typography>
+                                <Rating name="simple-controlled" value={value}
+                                        onChange={(event, newValue) => setValue(newValue)} size="large"/>
+                            </div>
+
                             <TextField
-                                id="outline-multiline-flexible"
                                 label="Enter Review"
                                 onChange={(e) => setReview(e.target.value)}
+                                fullWidth
+                                multiline
+                                slotProps={{input: {style: {color: 'white'}}}}
                                 sx={{
                                     label: {color: 'white'},
                                     bgcolor: 'rgb(17 24 39)',
-                                    input: {color: 'white'},
+                                    borderRadius: '.5rem',
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            borderRadius: '.5rem',
+                                            input: {color: 'white'},
+                                        },
+                                    },
                                 }}
                             />
-                            <Button variant="contained" endIcon={<SendIcon/>} onClick={handleSubmit}>
+                            <Button variant="contained" endIcon={<SendIcon/>} onClick={handleSubmit} fullWidth
+                                    className="rounded-lg">
                                 Send
                             </Button>
                         </div>
+                    </div>
 
-                        <div className="w-full pt-8">
-                            <h1 className='text-3xl text-white font-bold pb-2'>Reviews</h1>
+                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-8 ">
+                        <div>
+                            <Typography variant="h5" component="div" className="text-white mb-4"
+                                        sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '36px'}}>Reviews</Typography>
+                            <h5 className="mb-4 border-b-2 border-gray-600 pb-2"></h5>
+                        </div>
+
+                        <div style={{maxHeight: '625px', overflowY: 'auto' }}>
                             {reviewDetails.length > 0 ? (
                                 reviewDetails.map((review, index) => (
-                                    <Card variant="outlined"
-                                          key={index}
+                                    <Card key={index}
                                           sx={{
                                               bgcolor: 'rgb(107 114 128)',
-                                              marginBottom: '15px'
-                                          }}
-                                    >
+                                              borderRadius: '16px',
+                                              padding: '16px',
+                                              marginBottom: '20px',
+                                              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                                          }}>
                                         <CardContent>
-                                            <Rating
-                                                name="read-only"
-                                                value={review.rating}
-                                                readOnly
-                                            />
-                                            <Typography variant="h5" component="div">
+                                            <div className="flex items-center justify-between">
+                                                <Typography variant="p" component="div" color="white"
+                                                            className="text-2xl font-bold">
+                                                    {reviewerDetails.firstName} {reviewerDetails.lastName}
+                                                </Typography>
+                                                <Rating value={review.rating} readOnly size="large"/>
+                                            </div>
+                                            <h5 className="mb-4 border-b-2 border-gray-900 pb-2"></h5>
+
+                                            <Typography variant="body2" color="textSecondary"
+                                                        sx={{
+                                                            marginTop: '8px',
+                                                            fontSize: '24px',
+                                                            whiteSpace: 'pre-line',
+                                                            wordWrap: 'break-word',
+                                                            overflowWrap: 'break-word'
+                                                        }}>
                                                 {review.review}
                                             </Typography>
                                         </CardContent>
                                     </Card>
                                 ))
                             ) : (
-                                <p className="text-white">No reviews yet.</p>
+                                <Typography variant="body1" component="div" className="text-white">No reviews
+                                    yet.</Typography>
                             )}
                         </div>
 
+
                     </div>
                 </div>
-                <FooterComponent/>
             </div>
+            <FooterComponent/>
         </>
 
     );
