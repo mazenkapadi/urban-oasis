@@ -12,6 +12,7 @@ import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
+import ChatWindowComponent from "../components/chatWindowComponent.jsx";
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -31,10 +32,8 @@ const EventPage = () => {
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ profilePicture, setProfilePicture ] = useState('');
-    const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
-    const [ messages, setMessages ] = useState([]);
-    const [ newMessage, setNewMessage ] = useState("");
-    const [ chatId, setChatId ] = useState(null);
+    const [chatWindowOpen, setChatWindowOpen] = useState(false);
+
     const navigate = useNavigate();
     const rsvpId = uuidv4();
 
@@ -368,98 +367,12 @@ const EventPage = () => {
         return <LoadingPage />;
     }
 
-    const toggleChatWindow = () => {
-        setChatWindowOpen(!chatWindowOpen);
-    };
-
-    const createChatId = (userId, hostId) => {
-        console.log('creating id', userId < hostId ? `${userId}_${hostId}_${eventId}` : `${hostId}_${userId}_${eventId}`);
-        return userId < hostId ? `${userId}_${hostId}_${eventId}` : `${hostId}_${userId}_${eventId}`;
-    };
-
-    const createOrFetchChat = async (hostId) => {
-
-        const chatId = createChatId(userId, hostId);
-
-        const chatRef = doc(db, 'chats', chatId);
-        const chatDoc = await getDoc(chatRef);
-        if (chatDoc.exists()) {
-
-            setChatId(chatId);
-            console.log('existing chat ', chatId);
-            return chatId;
-        } else {
-
-            const newChatData = {
-                event: {
-                    id: eventId,
-                    name: eventTitle,
-                    image: eventImages.length > 0 ? eventImages[0] : "",
-                },
-                participants: [ userId, hostId ],
-                messages: [],
-                sender: {
-                    id: userId,
-                    name: name,
-                    profilePicture: profilePicture,
-                    email: email,
-                    // phone:phone,
-
-                },
-                receiver: {
-                    id: hostId,
-                    name: hostDetails.name,
-                    profilePicture: hostDetails.profilePicture,
-                    email: hostDetails.email,
-                    // phone:hostDetails.phone,
-
-                }
-            };
-            await setDoc(chatRef, newChatData);
-            setChatId(chatId);
-            console.log('new chat ', chatId);
-            return chatId;
-        }
-    };
-
-    const fetchMessages = (chatId) => {
-        const chatRef = doc(db, 'chats', chatId);
-        return onSnapshot(chatRef, (doc) => {
-            if (doc.exists()) {
-                setMessages(doc.data().messages || []);
-                console.log('docs ', doc.data().messages);
-
-                console.log('messages ', messages);
-
-            }
-        });
-    };
-
-    const sendMessage = async () => {
-        if (newMessage.trim() === '') return;
-        const chatRef = doc(db, 'chats', chatId);
-        await updateDoc(chatRef, {
-            messages: arrayUnion({
-                senderId: userId,
-                msg: newMessage,
-                ts: Timestamp.now(),
-            }),
-        });
-        setNewMessage('');
-    };
-
-    const handleHostChatClick = async () => {
-        try {
-            const chatId = await createOrFetchChat(hostDetails.id);
-            fetchMessages(chatId);
-            toggleChatWindow();
-        } catch (error) {
-            console.error('Error creating or fetching chat: ', error);
-        }
-    };
-
     const handleNavigate = () => {
         navigate(`/host/${hostDetails.hostId}`);
+    };
+
+    const toggleChatWindow = () => {
+        setChatWindowOpen(!chatWindowOpen);
     };
 
     return (
@@ -526,44 +439,24 @@ const EventPage = () => {
                                     <h3 className="text-white font-bold mb-2" >Hosted by</h3 >
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
-                                            <h3 className="text-lg text-white font-semibold"
+                                            <h3 className="text-lg text-white font-semibold" 
                                                 onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <button className="" onClick={handleHostChatClick} >Host Chat</button >
+                                            <button className="" onClick={toggleChatWindow} >Host Chat</button >
                                         </div >
                                     )}
                                 </div >
                             </div >
                         </div >
                     </div >
-                    {chatWindowOpen && (
-                        <div className="fixed bottom-0 right-0 w-96 h-96 bg-gray-800 shadow-lg p-4 rounded-t-lg" >
-                            <div className="flex justify-between items-center mb-4" >
-                                <h4 className="text-white font-semibold" >Chat with {hostDetails.name}</h4 >
-                                <button onClick={toggleChatWindow} className="text-white" >
-                                    <XMarkIcon className="w-6 h-6" />
-                                </button >
-                            </div >
-                            <div
-                                className="chat-messages flex flex-col space-y-2 overflow-y-auto h-64 bg-gray-700 p-2 rounded-lg" >
-                                {messages.map((msg, index) => (
-                                    <div
-                                        key={index}
-                                        className={`p-2 rounded-lg ${msg.senderId === userId ? 'bg-blue-500 text-white self-end' : 'bg-gray-300 text-black self-start'}`}
-                                    >
-                                        {msg.msg}
-                                    </div >
-                                ))}
-                            </div >
-                            <input
-                                type="text"
-                                className="w-full mt-2 p-2 rounded-lg bg-gray-600 text-white"
-                                placeholder="Type your message..."
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                            />
-                        </div >
-                    )}
+                    <ChatWindowComponent
+                        userId={userId}
+                        hostDetails={hostDetails}
+                        eventId={eventId}
+                        eventTitle={eventTitle}
+                        eventImages={eventImages}
+                        chatWindowOpen={chatWindowOpen}
+                        toggleChatWindow={toggleChatWindow}
+                    />
                 </div >
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div
