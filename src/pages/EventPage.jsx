@@ -12,7 +12,7 @@ import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
-import ChatWindowComponent from "../components/chatWindowComponent.jsx";
+import ChatWindowComponent from "../components/ChatWindowComponent.jsx";
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
