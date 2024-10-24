@@ -12,6 +12,7 @@ import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
+import ForecaseComponent from "../components/ForecastComponent.jsx";
 import ChatWindowComponent from "../components/ChatWindowComponent.jsx";
 
 const EventPage = () => {
@@ -20,6 +21,7 @@ const EventPage = () => {
     const [ eventTitle, setEventTitle ] = useState('');
     const [ eventDescription, setEventDescription ] = useState('');
     const [ eventLocation, setEventLocation ] = useState('');
+    const [ eventCity, setEventCity ] = useState('');
     const [ eventDateTime, setEventDateTime ] = useState('');
     const [ eventPrice, setEventPrice ] = useState(0);
     const [ eventRefundPolicy, setEventRefundPolicy ] = useState('');
@@ -286,6 +288,7 @@ const EventPage = () => {
                     setIsPaidEvent(data.eventDetails.paidEvent);
                     setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
                     setEventLocation(data.basicInfo.location.label);
+                    setEventCity(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
 
@@ -399,6 +402,7 @@ const EventPage = () => {
                                     <h2 className="text-2xl text-white font-semibold" >Description</h2 >
                                     <p className="text-gray-300" >{eventDescription}</p >
                                 </div >
+                                <ForecaseComponent city={  eventCity.value.terms[eventCity.value.terms.length-3].value} eventDate={eventDateTime} />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
                                 <div className="flex space-x-4" >
