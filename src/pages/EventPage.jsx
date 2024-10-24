@@ -373,8 +373,8 @@ const EventPage = () => {
     };
 
     const createChatId = (userId, hostId) => {
-        console.log('creating id', userId < hostId ? `${userId}_${hostId}_${eventId}` : `${hostId}_${userId}_${eventId}`);
-        return userId < hostId ? `${userId}_${hostId}_${eventId}` : `${hostId}_${userId}_${eventId}`;
+        console.log('creating id', userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`);
+        return userId < hostId ? `${userId}_${hostId}` : `${hostId}_${userId}`;
     };
 
     const createOrFetchChat = async (hostId) => {
