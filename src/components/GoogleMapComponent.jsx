@@ -1,52 +1,73 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 
-// Define the container styles for the map
 const containerStyle = {
-    width: "50%",
-    height: "500px",
+  width: "50%",
+  height: "500px",
 };
 
-const GoogleMaps = ({latitude, longitude}) => {
-    const [ mapLoaded, setMapLoaded ] = useState(false); // State to track if the map has fully loaded
+const GoogleMapComponent = ({ placeId }) => {
+    const [mapLoaded, setMapLoaded] = useState(false);
+    const [location, setLocation] = useState({ lat: 0, lng: 0 });
 
-    // Load the Google Maps script with the API key
-    const {isLoaded, loadError} = useLoadScript({
+    const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: import.meta.env.VITE_GM_KEY,
     });
 
-    // Check if there's an error or the script is not loaded
-    if (loadError) return <div >Error loading maps</div >;
-    if (!isLoaded) return <div >Loading Maps...</div >;
+    useEffect(() => {
+        const fetchLocation = async () => {
+            console.log("placeId",placeId);
+            if (!placeId) return;
 
-    // Set the center of the map using the provided latitude and longitude
-    const center = {
-        lat: latitude || 0,
-        lng: longitude || 0,
-    };
+            try {
+                const response = await fetch(
+                    `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${import.meta.env.VITE_GM_KEY}`
+                );
+                const data = await response.json();
 
-    // Map load event handler
+                if (data.status === "OK") {
+                    const locationData = data.result.geometry.location;
+                    setLocation({
+                        lat: locationData.lat,
+                        lng: locationData.lng,
+                    });
+                } else {
+                    console.error('Failed to get place details:', data.status);
+                }
+            } catch (error) {
+                console.error('Error fetching place details:', error);
+            }
+        };
+
+        fetchLocation();
+    }, [placeId]);
+
+    if (loadError) return <div>Error loading maps</div>;
+    if (!isLoaded) return <div>Loading Maps...</div>;
+
     const handleMapLoad = () => {
         setMapLoaded(true);
     };
+
     const handleMapClick = () => {
-        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&markers=${latitude},${longitude}`;
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&markers=${location.lat},${location.lng}`;
         window.open(googleMapsUrl, "_blank");
     };
 
     return (
-        <div className="w-full h-[500px]" >
+        <div className="w-full h-[500px]">
             <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={center}
+                center={location}
                 zoom={12}
                 onLoad={handleMapLoad}
-                onClick={handleMapClick} // Trigger when map loads
+                onClick={handleMapClick}
             >
-                {mapLoaded && <MarkerF position={center} />}
-            </GoogleMap >
-        </div >
+                {mapLoaded && <MarkerF position={location} />}
+            </GoogleMap>
+        </div>
     );
+
 };
 
-export default GoogleMaps;
+export default GoogleMapComponent;
