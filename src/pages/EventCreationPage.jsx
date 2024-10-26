@@ -197,7 +197,6 @@ function EventCreationPage() {
                                         className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         required
                                     />
-                                    {/*< TextField className="" id="eventTitle" label="Outlined" variant="outlined"/>*/}
                                 </div >
 
                                 {/* Description */}
@@ -430,7 +429,6 @@ function EventCreationPage() {
                                     )}
                                 </div >
 
-                                {/* Other options */}
                                 <div className="grid grid-cols-2 gap-4" >
                                     {[
                                         {
