@@ -36,6 +36,7 @@ function EventCreationPage() {
     const [ previewImages, setPreviewImages ] = useState(false);
     const [ eventImagesUrls, setEventImagesUrls ] = useState([])
 
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -215,9 +216,9 @@ function EventCreationPage() {
                                 </div >
 
                                 {/* Location */}
-                                <div >
+                                <div>
                                     <label htmlFor="eventLocation"
-                                           className="text-lg font-semibold text-white" >Location</label >
+                                           className="text-lg font-semibold text-white">Location</label>
                                     <GooglePlacesAutocomplete
                                         required
                                         apiKey={googleMapsConfig.apiKey}
@@ -260,11 +261,11 @@ function EventCreationPage() {
                                         }}
 
                                     />
-                                </div >
+                                </div>
 
                                 {/* Date and Capacity */}
-                                <div className="flex space-x-4" >
-                                    <div className="flex-1" >
+                                <div className="flex space-x-4">
+                                <div className="flex-1" >
                                         <label htmlFor="eventDateTime" className="text-lg font-semibold text-white" >Event
                                             Date
                                             and Time</label >
