@@ -12,8 +12,11 @@ import LoadingPage from "./LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
-import ForecaseComponent from "../components/ForecastComponent.jsx";
+import ForecastComponent from "../components/ForecastComponent.jsx";
 import ChatWindowComponent from "../components/ChatWindowComponent.jsx";
+import { googleMapsConfig } from "../locationConfig.js";
+import {Client} from "@googlemaps/google-maps-services-js";
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -35,6 +38,10 @@ const EventPage = () => {
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ profilePicture, setProfilePicture ] = useState('');
     const [chatWindowOpen, setChatWindowOpen] = useState(false);
+    const [ eventPlaceId, setEventPlaceId ] = useState('');
+    const [eventLong, setEventLong] = useState(0);
+    const [eventLat, setEventLat] = useState(0);
+
 
     const navigate = useNavigate();
     const rsvpId = uuidv4();
@@ -472,6 +479,40 @@ const EventPage = () => {
         return () => unsubscribe();
     }, []);
 
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: googleMapsConfig.apiKey,
+        libraries: ['places'],
+    });
+
+    useEffect(() => {
+        if (isLoaded && eventPlaceId) {
+            geocodePlaceId(eventPlaceId);
+        }
+    }, [isLoaded, eventPlaceId]);
+
+    const geocodePlaceId = async (placeId) => {
+        try {
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            const request = {
+                placeId: placeId,
+                fields: ['geometry'],
+            };
+
+            service.getDetails(request, (place, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    const location = place.geometry.location;
+                    setEventLat(location.lat());
+                    setEventLong(location.lng());
+                } else {
+                    console.error('Error geocoding place ID:', status);
+                }
+            });
+        } catch (error) {
+            console.error('Error geocoding place ID:', error);
+        }
+    };
+
     useEffect(() => {
         const fetchEventData = async () => {
             if (eventId) {
@@ -485,6 +526,7 @@ const EventPage = () => {
                     setIsPaidEvent(data.eventDetails.paidEvent);
                     setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
                     setEventLocation(data.basicInfo.location.label);
+                    setEventPlaceId(data.basicInfo.location.value.place_id);
                     setEventCity(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
@@ -575,6 +617,9 @@ const EventPage = () => {
         setChatWindowOpen(!chatWindowOpen);
     };
 
+
+
+
     return (
         <>
             <div className="event-page min-h-screen flex flex-col" >
@@ -599,7 +644,7 @@ const EventPage = () => {
                                     <h2 className="text-2xl text-white font-semibold" >Description</h2 >
                                     <p className="text-gray-300" >{eventDescription}</p >
                                 </div >
-                                <ForecaseComponent city={  eventCity.value.terms[eventCity.value.terms.length-3].value} eventDate={eventDateTime} />
+                                <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
                                 <div className="flex space-x-4" >
@@ -640,7 +685,7 @@ const EventPage = () => {
                                     <h3 className="text-white font-bold mb-2" >Hosted by</h3 >
                                     {hostDetails && (
                                         <div className="flex flex-col items-center space-y-2" >
-                                            <h3 className="text-lg text-white font-semibold" 
+                                            <h3 className="text-lg text-white font-semibold"
                                                 onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</h3 >
                                             <button className="" onClick={toggleChatWindow} >Host Chat</button >
                                         </div >
