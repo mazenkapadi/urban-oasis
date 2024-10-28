@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { CalendarIcon, MapPinIcon, TagIcon } from '@heroicons/react/24/outline';
+import { useEffect } from "react";
 
 const WideEventCard = ({ event }) => {
     const navigate = useNavigate();
@@ -8,31 +9,33 @@ const WideEventCard = ({ event }) => {
         console.log(event);
         navigate(`/eventPage/${event.id}`);
     };
+    useEffect(() => {
+        console.log('images',event.eventDetails.images.length);
+    },[event]);
 
     return (
         <div
             key={event.id}
             className="flex p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer bg-neutral-white"
-            onClick={handleNavigate}
-        >
+            onClick={handleNavigate}>
             <img
-                src={event.eventDetails.images[0]}
+                src={event.eventDetails.images[0].url}
                 alt={event.basicInfo.title}
                 className="w-32 h-32 object-cover rounded-md"
             />
             <div className="ml-4 flex flex-col justify-between flex-grow">
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-black">{event.basicInfo.title}</h2>
-                    <p className="ml-4 text-lg font-bold text-black">
+                    <div className="ml-4 text-lg font-bold text-black">
                         {event.eventDetails.paidEvent ? (
                             <div className="flex items-center">
                                 <TagIcon className="inline-block w-5 h-5 mr-1" />
                                 ${event.eventDetails.eventPrice.toFixed(2)}
                             </div>
                         ) : (
-                            <span>Free RSVP</span>
+                            <p>Free RSVP</p>
                         )}
-                    </p>
+                    </div>
                 </div>
                 <div className="flex items-center text-detail-gray">
                     <MapPinIcon className="w-5 h-5" />
