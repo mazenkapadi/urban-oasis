@@ -15,7 +15,7 @@ import NotFound from "./pages/404NotFound.jsx";
 import UserProfilePage from "./pages/User/UserProfilePage.jsx";
 import ContactInfoPage from './pages/User/ContactInfoPage.jsx';
 import SettingsPage from './pages/User/SettingsPage.jsx';
-import SupportPage from './pages/User/SupportPage.jsx';
+import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/User/UserProfileContent.jsx';
 import MyEventHistoryPage from './pages/User/MyEventHistoryPage.jsx';
 import "slick-carousel/slick/slick.css";
@@ -32,6 +32,7 @@ import PaymentsPage from "./pages/User/PaymentsPage.jsx";
 import PaymentSuccess from "./pages/payments/PaymentSuccess.jsx";
 import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
 import HostProfilePage from "./pages/HostProfilePage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -68,10 +69,9 @@ const router = createBrowserRouter([
         children: [
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
-            { path: "my-event-history", element: <MyEventHistoryPage /> },
+            {path: "my-event-history", element: <MyEventHistoryPage />},
             {path: "payments", element: <PaymentsPage />},
             {path: "settings", element: <SettingsPage />},
-            {path: "support", element: <SupportPage />},
             {path: "host-signup", element: <HostSignUpPage />},
             {path: "host-chatlist", element: <HostChatList />},
             {path: "host-signup", element: <HostSignUpPage />}
@@ -101,6 +101,14 @@ const router = createBrowserRouter([
     {
         path: "/host/:hostId",
         element: <HostProfilePage />
+    },
+    {
+        path: "/about",
+        element: <AboutPage />
+    },
+    {
+        path: "/support",
+        element: <SupportPage />
     },
     {
         path: "*",

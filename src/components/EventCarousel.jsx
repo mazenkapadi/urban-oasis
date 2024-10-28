@@ -18,7 +18,7 @@ const EventCarousel = () => {
     useEffect(() => {
         const getStartAndEndOfWeek = () => {
             const today = new Date();
-            const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1); // Adjust if Sunday should be the first day
+            const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1);
             const startOfWeek = new Date(today);
             startOfWeek.setDate(firstDayOfWeek);
             const endOfWeek = new Date(startOfWeek);

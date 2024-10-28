@@ -662,10 +662,9 @@ const EventPage = () => {
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div
                         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8" >
-                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo" >Event
-                            Created!</h2 >
+                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo" >RSVP Successful</h2 >
                         <p className="text-body text-detail-gray text-center mb-6 font-inter" >
-                            Your event has been successfully created.
+                            Your RSVP has been successfully registered.
                         </p >
                         <Button
                             onClick={handleModalClose}
