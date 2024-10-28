@@ -41,7 +41,7 @@ const Testimonials = () => {
                     {testimonials.map((testimonial) => (
                         <div key={testimonial.id} className="p-4 bg-white shadow-md rounded-lg text-center mx-4" >
                             <p className="text-lg italic mb-2" >{testimonial.content}</p >
-                            <p className="font-semibold" >{testimonial.name}</p >
+                            <p className="font-semibold" >- {testimonial.name}</p >
                         </div >
                     ))}
                 </Slider >
