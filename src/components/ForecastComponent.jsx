@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 
-const ForecastComponent = ({ city, eventDate }) => {
+const ForecastComponent = ({ lat, lon, eventDate }) => {
   const [filteredForecast, setFilteredForecast] = useState(null);
   const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
 
-  const fetchWeather = async (city) => {
-    if (!city || !eventDate) return;
+  const fetchWeather = async (lat, lon) => {
+    if (!lat || !lon || !eventDate) return;
 
     try {
       console.log("Fetching weather data...");
-      console.log("city", city);
+      console.log("lat", lat);
+      console.log("lon", lon);
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
       );
       const forecastResponse = await response.json();
       console.log(forecastResponse);
@@ -64,10 +65,10 @@ const ForecastComponent = ({ city, eventDate }) => {
   };
 
   useEffect(() => {
-    if (city && eventDate) {
-      fetchWeather(city);
+    if (lat && lon && eventDate) {
+      fetchWeather(lat, lon);
     }
-  }, [city, eventDate]);
+  }, [lat, lon, eventDate]);
 
   if (!filteredForecast) {
     return null; // Return null or a loading indicator
