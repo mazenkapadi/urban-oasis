@@ -1,48 +1,93 @@
-import { useState, useEffect } from "react";
-import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
+import {useState, useEffect} from "react";
+import {GoogleMap, MarkerF, useJsApiLoader, useLoadScript} from "@react-google-maps/api";
+import {googleMapsConfig} from "../locationConfig.js";
 
 const containerStyle = {
-  width: "50%",
-  height: "500px",
+    width: "50%",
+    height: "500px",
 };
 
-const GoogleMapComponent = ({ placeId }) => {
+const GoogleMapComponent = ({lat, lon}) => {
     const [mapLoaded, setMapLoaded] = useState(false);
     const [location, setLocation] = useState({ lat: 0, lng: 0 });
-
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_GM_KEY,
-    });
+    // const [eventLong, setEventLong] = useState(0);
+    // const [eventLat, setEventLat] = useState(0);
 
     useEffect(() => {
-        const fetchLocation = async () => {
-            console.log("placeId",placeId);
-            if (!placeId) return;
+        setLocation({
+            lat: lat,
+            lng: lon,
+        });
+    }, [lat, lon]);
 
-            try {
-                const response = await fetch(
-                    `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${import.meta.env.VITE_GM_KEY}`
-                );
-                const data = await response.json();
 
-                if (data.status === "OK") {
-                    const locationData = data.result.geometry.location;
-                    setLocation({
-                        lat: locationData.lat,
-                        lng: locationData.lng,
-                    });
-                } else {
-                    console.error('Failed to get place details:', data.status);
-                }
-            } catch (error) {
-                console.error('Error fetching place details:', error);
-            }
-        };
+    const {isLoaded} = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: googleMapsConfig.apiKey,
+        libraries: ['places'],
+    });
 
-        fetchLocation();
-    }, [placeId]);
+    // useEffect(() => {
+    //     if (isLoaded && eventPlaceId) {
+    //         geocodePlaceId(eventPlaceId);
+    //     }
+    // }, [isLoaded, eventPlaceId]);
+    //
+    // const geocodePlaceId = async (placeId) => {
+    //     try {
+    //         const service = new google.maps.places.PlacesService(document.createElement('div'));
+    //         const request = {
+    //             placeId: placeId,
+    //             fields: ['geometry'],
+    //         };
+    //
+    //         service.getDetails(request, (place, status) => {
+    //             if (status === google.maps.places.PlacesServiceStatus.OK) {
+    //                 const location = place.geometry.location;
+    //                 setEventLat(location.lat());
+    //                 setEventLong(location.lng());
+    //             } else {
+    //                 console.error('Error geocoding place ID:', status);
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.error('Error geocoding place ID:', error);
+    //     }
+    // };
 
-    if (loadError) return <div>Error loading maps</div>;
+    // const { isLoaded, loadError } = useLoadScript({
+    //     googleMapsApiKey: import.meta.env.VITE_GM_KEY,
+    // });
+    //
+    // useEffect(() => {
+    //     const fetchLocation = async () => {
+    //         console.log("placeId",placeId);
+    //         if (!placeId) return;
+    //
+    //         try {
+    //             const response = await fetch(
+    //                 `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${import.meta.env.VITE_GM_KEY}`
+    //             );
+    //             const data = await response.json();
+    //
+    //             if (data.status === "OK") {
+    //                 const locationData = data.result.geometry.location;
+    //                 setLocation({
+    //                     lat: locationData.lat,
+    //                     lng: locationData.lng,
+    //                 });
+    //             } else {
+    //                 console.error('Failed to get place details:', data.status);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching place details:', error);
+    //         }
+    //     };
+    //
+    //     fetchLocation();
+    // }, [placeId]);
+    //
+    // if (loadError) return <div>Error loading maps</div>;
     if (!isLoaded) return <div>Loading Maps...</div>;
 
     const handleMapLoad = () => {
@@ -50,7 +95,7 @@ const GoogleMapComponent = ({ placeId }) => {
     };
 
     const handleMapClick = () => {
-        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&markers=${location.lat},${location.lng}`;
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&markers=${lat},${lon}`;
         window.open(googleMapsUrl, "_blank");
     };
 
@@ -63,7 +108,7 @@ const GoogleMapComponent = ({ placeId }) => {
                 onLoad={handleMapLoad}
                 onClick={handleMapClick}
             >
-                {mapLoaded && <MarkerF position={location} />}
+                {mapLoaded && <MarkerF position={location}/>}
             </GoogleMap>
         </div>
     );
