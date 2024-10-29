@@ -5,7 +5,7 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
         if (dateFilter === filter) {
             removeFilter("dateFilter");
         } else {
-            onApplyFilters({ dateFilter: filter, paid });
+            onApplyFilters({ dateFilter: filter, paid, customDate: null,availability,nearMe });
         }
     };
 
@@ -13,7 +13,7 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
         if (paid === paidStatus) {
             removeFilter("paid");
         } else {
-            onApplyFilters({ dateFilter, paid: paidStatus });
+            onApplyFilters({ dateFilter, paid: paidStatus, customDate, availability, nearMe  });
         }
     };
 
@@ -21,20 +21,20 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
         if (availability === availabilityStatus) {
             removeFilter("availability");
         } else {
-            onApplyFilters({ dateFilter, paid, availability: availabilityStatus });
+            onApplyFilters({ dateFilter, paid, availability: availabilityStatus, customDate, nearMe });
         }
     };
 
     const handleCustomDateChange = (event) => {
         const selectedDate = event.target.value;
-        onApplyFilters({ dateFilter: null, paid, customDate: selectedDate });
+        onApplyFilters({ dateFilter: null, paid, customDate: selectedDate, availability, nearMe });
     };
 
     const handleNearMeFilterChange = () => {
         if (nearMe) {
             removeFilter("nearMe");
         } else {
-            onApplyFilters({ dateFilter, paid, nearMe: true });
+            onApplyFilters({ dateFilter, paid, nearMe: true, customDate, availability});
         }
     };
     return (
