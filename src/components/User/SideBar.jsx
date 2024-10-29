@@ -9,7 +9,7 @@ import {
     UserIcon,
     UserCircleIcon
 } from "@heroicons/react/20/solid";
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleLeftRightIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { signOutUser } from "../../services/auth/signOut.js";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../../firebaseConfig.js';
@@ -83,8 +83,8 @@ const SideBar = () => {
             </Link >
             <Link to="/userProfilePage/preferences"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <CreditCardIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Preferences</span >
+                <AdjustmentsHorizontalIcon className="h-6 w-6 mr-2 text-white" />
+                <span >Event Preferences</span >
             </Link >
             <Link to="/userProfilePage/settings"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
