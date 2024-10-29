@@ -107,7 +107,7 @@ const ViewAllEventsPage = () => {
                 console.log(eventDate);
 
                 
-                return eventDate.getTime() === customDate.getTime();
+                return eventDate.getDate() === customDate.getDate()+1;
             });
         }
 
