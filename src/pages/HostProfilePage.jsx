@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 import {auth, db} from "../firebaseConfig.js";
 import LoadingPage from "./LoadingPage.jsx";
-import {addDoc, collection, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
+import {addDoc, collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc} from "firebase/firestore";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import {
     Avatar,
@@ -10,7 +10,7 @@ import {
     Card,
     CardContent,
     ListItemIcon,
-    ListItemText,
+    ListItemText, Modal,
     Rating,
     TextField,
     Typography
@@ -40,7 +40,9 @@ const HostProfilePage = () => {
     const [error, setError] = useState(null);
     const [reviewDetails, setReviewDetails] = useState([]);
     const {hostId} = useParams();
-    const [reviewerDetails, setReviewerDetails] = useState([])
+    const [reviewerDetails, setReviewerDetails] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -86,17 +88,16 @@ const HostProfilePage = () => {
 
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setReviewerDetails({
-                            firstName: userData.name.firstName,
-                            lastName: userData.name.lastName,
-                        });
+                        return {
+                            id: doc.id,
+                            ...reviewData,
+                            reviewerDetails: {
+                                firstName: userData.name.firstName,
+                                lastName: userData.name.lastName,
+                            }
+                        };
                     }
 
-                    return {
-                        id: docs.id,
-                        ...reviewData,
-                        reviewerDetails,
-                    };
                 }));
 
                 setReviewDetails(reviewsWithUserInfo);
@@ -125,6 +126,7 @@ const HostProfilePage = () => {
                 rating: value,
                 review: review,
                 user: userId,
+                createdAt: Timestamp.now(),
             };
             await addDoc(newReviewRef, newReviewData);
 
@@ -144,10 +146,17 @@ const HostProfilePage = () => {
                     overall: updatedOverall
                 }
             });
+
+            setModalOpen(true);
         } catch (error) {
             setError(error.message);
         }
     }
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+        window.location.reload();
+    };
 
     if (loading) {
         return <LoadingPage/>;
@@ -161,7 +170,7 @@ const HostProfilePage = () => {
                 <HeaderComponent/>
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
 
-                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-12 ">
+                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-2 ">
 
                         <div
                             className="bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between ">
@@ -177,9 +186,9 @@ const HostProfilePage = () => {
                                     precision={0.1}/>
                         </div>
 
-                        <div className="flex space-x-8 space-y-24 pt-6 pb-6">
+                        <div className="flex space-x-8 pb-36">
                             <List className="text-white space-y-12">
-                                <ListItem >
+                                <ListItem>
                                     <ListItemIcon><EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
                                     <ListItemText
                                         primary={hostDetails.email}
@@ -231,11 +240,15 @@ const HostProfilePage = () => {
                     <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-8 ">
                         <div>
                             <Typography variant="h5" component="div" className="text-white mb-4"
-                                        sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '36px'}}>Reviews</Typography>
+                                        sx={{
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                            fontSize: '36px'
+                                        }}>Reviews</Typography>
                             <h5 className="mb-4 border-b-2 border-gray-600 pb-2"></h5>
                         </div>
 
-                        <div style={{maxHeight: '625px', overflowY: 'auto' }}>
+                        <div style={{maxHeight: '625px', overflowY: 'auto'}}>
                             {reviewDetails.length > 0 ? (
                                 reviewDetails.map((review, index) => (
                                     <Card key={index}
@@ -250,16 +263,22 @@ const HostProfilePage = () => {
                                             <div className="flex items-center justify-between">
                                                 <Typography variant="p" component="div" color="white"
                                                             className="text-2xl font-bold">
-                                                    {reviewerDetails.firstName} {reviewerDetails.lastName}
+                                                    {review.reviewerDetails ? `${review.reviewerDetails.firstName} ${review.reviewerDetails.lastName}` : 'Reviewer Not Found'}
                                                 </Typography>
                                                 <Rating value={review.rating} readOnly size="large"/>
+                                            </div>
+                                            <div>
+                                                <Typography variant="p" component="div"
+                                                            color="textSecondary">
+                                                    {review.createdAt.toDate().toLocaleDateString()}
+                                                </Typography>
                                             </div>
                                             <h5 className="mb-4 border-b-2 border-gray-900 pb-2"></h5>
 
                                             <Typography variant="body2" color="textSecondary"
                                                         sx={{
                                                             marginTop: '8px',
-                                                            fontSize: '24px',
+                                                            fontSize: '20px',
                                                             whiteSpace: 'pre-line',
                                                             wordWrap: 'break-word',
                                                             overflowWrap: 'break-word'
@@ -279,6 +298,24 @@ const HostProfilePage = () => {
                     </div>
                 </div>
             </div>
+            <Modal open={modalOpen} onClose={handleModalClose}>
+                <div
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
+                    <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">Review
+                        Sent</h2>
+                    <p className="text-body text-detail-gray text-center mb-6 font-inter">
+                        Your review has been submitted.
+                    </p>
+                    <Button
+                        onClick={handleModalClose}
+                        variant="contained"
+                        color="primary"
+                        className="mt-4 w-full bg-accent-blue hover:bg-primary-dark text-neutral-white py-2 rounded-lg font-medium"
+                    >
+                        Close
+                    </Button>
+                </div>
+            </Modal>
             <FooterComponent/>
         </>
 

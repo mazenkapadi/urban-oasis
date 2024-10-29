@@ -1,53 +1,65 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from "firebase/auth";
+import React, {useEffect, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {onAuthStateChanged} from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { db, auth } from "../firebaseConfig.js";
+import {CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
+import {ShoppingCartIcon} from "@heroicons/react/24/outline";
+import {db, auth, storage} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
-import { Button, Modal } from "@mui/material";
-import { loadStripe } from "@stripe/stripe-js";
-import { v4 as uuidv4 } from "uuid";
+import {Button, Modal} from "@mui/material";
+import {loadStripe} from "@stripe/stripe-js";
+import {v4 as uuidv4} from "uuid";
 import ForecastComponent from "../components/ForecastComponent.jsx";
 import ChatWindowComponent from "../components/ChatWindowComponent.jsx";
-import { googleMapsConfig } from "../locationConfig.js";
-import {Client} from "@googlemaps/google-maps-services-js";
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import {googleMapsConfig} from "../locationConfig.js";
+import {GoogleMap, useJsApiLoader} from '@react-google-maps/api';
+import Tooltip from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
+import {
+    EmailIcon,
+    EmailShareButton, FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton,
+    FacebookShareButton, LinkedinIcon,
+    LinkedinShareButton, RedditIcon, RedditShareButton,
+    TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
+} from "react-share";
 
 const EventPage = () => {
-    const [ quantity, setQuantity ] = useState(1);
+    const [quantity, setQuantity] = useState(1);
     const {eventId} = useParams();
-    const [ eventTitle, setEventTitle ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventLocation, setEventLocation ] = useState('');
-    const [ eventCity, setEventCity ] = useState('');
-    const [ eventDateTime, setEventDateTime ] = useState('');
-    const [ eventPrice, setEventPrice ] = useState(0);
-    const [ eventRefundPolicy, setEventRefundPolicy ] = useState('');
-    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
-    const [ userId, setUserId ] = useState(null);
-    const [ name, setName ] = useState('');
-    const [ phone, setPhone ] = useState('');
-    const [ email, setEmail ] = useState('');
-    const [ eventImages, setEventImages ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
-    const [ modalOpen, setModalOpen ] = useState(false);
-    const [ profilePicture, setProfilePicture ] = useState('');
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventCity, setEventCity] = useState('');
+    const [eventDateTime, setEventDateTime] = useState('');
+    const [eventPrice, setEventPrice] = useState(0);
+    const [eventRefundPolicy, setEventRefundPolicy] = useState('');
+    const [isPaidEvent, setIsPaidEvent] = useState(false);
+    const [userId, setUserId] = useState(null);
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [eventImages, setEventImages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [profilePicture, setProfilePicture] = useState('');
     const [chatWindowOpen, setChatWindowOpen] = useState(false);
-    const [ eventPlaceId, setEventPlaceId ] = useState('');
+    const [eventPlaceId, setEventPlaceId] = useState('');
     const [eventLong, setEventLong] = useState(0);
     const [eventLat, setEventLat] = useState(0);
+    const [hostName, setHostName] = useState('');
+    const location = useLocation();
+    const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
 
     const navigate = useNavigate();
     const rsvpId = uuidv4();
 
+
     const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-    const [ hostDetails, setHostDetails ] = useState({
+    const [hostDetails, setHostDetails] = useState({
         bio: '',
         profilePicture: '',
         companyName: '',
@@ -197,7 +209,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const { attendeesCount = 0, capacity = Infinity } = eventData;
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
 
             if (attendeesCount + totalAttendees > capacity) {
                 console.error("RSVP quantity exceeds event capacity");
@@ -236,7 +248,7 @@ const EventPage = () => {
                         ...rsvpsDocSnap.exists() ? rsvpsDocSnap.data().rsvps : {},
                         [rsvpId]: rsvpData,
                     },
-                }, { merge: true });
+                }, {merge: true});
             }
 
             // Recalculate the total RSVP count
@@ -402,7 +414,7 @@ const EventPage = () => {
             }
 
             const eventData = eventDocSnap.data();
-            const { attendeesCount = 0, capacity = Infinity } = eventData;
+            const {attendeesCount = 0, capacity = Infinity} = eventData;
 
             if (attendeesCount + totalAttendees > capacity) {
                 console.error("RSVP quantity exceeds event capacity");
@@ -441,7 +453,7 @@ const EventPage = () => {
                         ...rsvpsDocSnap.exists() ? rsvpsDocSnap.data().rsvps : {},
                         [rsvpId]: rsvpData,
                     },
-                }, { merge: true });
+                }, {merge: true});
             }
 
             // Recalculate the total RSVP count
@@ -462,7 +474,6 @@ const EventPage = () => {
     };
 
 
-
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -479,7 +490,7 @@ const EventPage = () => {
         return () => unsubscribe();
     }, []);
 
-    const { isLoaded } = useJsApiLoader({
+    const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: googleMapsConfig.apiKey,
         libraries: ['places'],
@@ -559,6 +570,7 @@ const EventPage = () => {
                                 email: hostData.contact?.email || 'Email not found',
                                 hostId: hostData.uid
                             });
+                            setHostName(hostData.companyName || `${hostData.name?.firstName || ''} ${hostData.name?.lastName || ''}`);
                         } else {
                             console.log('Host data not found!');
                         }
@@ -568,6 +580,7 @@ const EventPage = () => {
                         const imageUrls = await Promise.all(data.eventDetails.images.map(imageUrl => imageUrl));
                         setEventImages(imageUrls);
                     }
+
                 } else {
                     console.log('No such document!');
                 }
@@ -577,7 +590,7 @@ const EventPage = () => {
         };
 
         fetchEventData();
-    }, [ eventId ]);
+    }, [eventId]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -603,10 +616,10 @@ const EventPage = () => {
         };
 
         fetchUserData();
-    }, [ userId, email ]);
+    }, [userId, email]);
 
     if (loading) {
-        return <LoadingPage />;
+        return <LoadingPage/>;
     }
 
     const handleNavigate = () => {
@@ -617,83 +630,157 @@ const EventPage = () => {
         setChatWindowOpen(!chatWindowOpen);
     };
 
+    const ttip = "View " + `${hostName}` + "'s Page";
 
+    const shareData = `Check out this event on Urban Oasis!\n\n${eventTitle}\n\n` + `${eventDescription}\n\n` + `${eventDateTime}\n` + `${eventLocation}\n\n`// + `${eventImages[0]}\n`
 
 
     return (
         <>
-            <div className="event-page min-h-screen flex flex-col" >
-                <div className="w-full bg-primary-dark" >
-                    <HeaderComponent />
-                </div >
+            <div className="event-page min-h-screen flex flex-col">
+                <div className="w-full bg-primary-dark">
+                    <HeaderComponent/>
+                </div>
                 <div
-                    className="flex flex-col justify-center items-center py-12 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600" >
+                    className="flex flex-col justify-center items-center py-12 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600">
 
-                    <div className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-10/12 h-fit shadow-lg" >
-                        <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
-                        <div className="flex flex-row mt-6" >
-                            <div className="flex content w-full flex-col gap-8" >
-                                <div className="flex flex-col pt-4 space-y-6" >
-                                    <div className="flex items-center space-x-3" >
-                                        <CalendarDaysIcon className="text-gray-300 w-6 h-6" />
-                                        <label className="font-bold text-white opacity-80" >{eventDateTime}</label >
-                                    </div >
-                                    <label className="block text-gray-300 text-5xl font-semibold" >{eventTitle}</label >
-                                </div >
-                                <div className="flex flex-col" >
-                                    <h2 className="text-2xl text-white font-semibold" >Description</h2 >
-                                    <p className="text-gray-300" >{eventDescription}</p >
-                                </div >
-                                <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
-                            </div >
-                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
-                                <div className="flex space-x-4" >
+                    <div className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-10/12 h-fit shadow-lg">
+                        <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
+                        <div className="flex flex-row mt-6">
+                            <div className="flex content w-full flex-col gap-8">
+                                <div className="flex flex-col pt-4 space-y-6">
+                                    <div className="flex items-center space-x-3">
+                                        <CalendarDaysIcon className="text-gray-300 w-6 h-6"/>
+                                        <label className="font-bold text-white opacity-80">{eventDateTime}</label>
+                                    </div>
+                                    <label className="block text-gray-300 text-5xl font-semibold">{eventTitle}</label>
+                                </div>
+                                <div className="flex flex-col">
+                                    <h2 className="text-2xl text-white font-semibold">Description</h2>
+                                    <p className="text-gray-300">{eventDescription}</p>
+                                </div>
+                                <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime}/>
+                            </div>
+                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg">
+                                <div className="flex space-x-4">
                                     <div
-                                        className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
-                                        <TicketIcon className="text-gray-300 w-6 h-6" />
+                                        className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg">
+                                        <TicketIcon className="text-gray-300 w-6 h-6"/>
                                         <label
-                                            className="font-bold text-white pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
-                                    </div >
+                                            className="font-bold text-white pl-3">{isPaidEvent && '$'}{eventPrice}</label>
+                                    </div>
                                     <div
-                                        className="flex justify-center items-center w-36 h-12 gap-3 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
+                                        className="flex justify-center items-center w-36 h-12 gap-3 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg">
                                         <button onClick={handleDecrement} disabled={quantity === 1}
-                                                className="text-white" >
-                                            <MinusIcon className="w-6 h-6" />
-                                        </button >
-                                        <span className="text-white font-bold text-lg" >{quantity}</span >
-                                        <button onClick={handleIncrement} className="text-white" >
-                                            <PlusIcon className="w-6 h-6" />
-                                        </button >
-                                    </div >
-                                </div >
+                                                className="text-white">
+                                            <MinusIcon className="w-6 h-6"/>
+                                        </button>
+                                        <span className="text-white font-bold text-lg">{quantity}</span>
+                                        <button onClick={handleIncrement} className="text-white">
+                                            <PlusIcon className="w-6 h-6"/>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div
-                                    className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg" >
+                                    className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg">
                                     <button
                                         className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
                                         onClick={isPaidEvent ? handleCheckout : handleRSVP}
                                     >
-                                        <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2" />
-                                        <span >{isPaidEvent ? 'Checkout' : 'RSVP'}</span >
-                                    </button >
-                                </div >
-                                <div className="flex flex-row gap-6 items-center" >
-                                    <MapPinIcon className="text-gray-300 w-6 h-6" />
-                                    <label className="font-bold text-white opacity-80" >{eventLocation}</label >
-                                </div >
+                                        <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2"/>
+                                        <span>{isPaidEvent ? 'Checkout' : 'RSVP'}</span>
+                                    </button>
+                                </div>
+                                <div className="flex flex-row gap-6 items-center">
+                                    <MapPinIcon className="text-gray-300 w-6 h-6"/>
+                                    <label className="font-bold text-white opacity-80">{eventLocation}</label>
+                                </div>
                                 <div
-                                    className="flex flex-col justify-center items-center w-full h-auto bg-gray-700 border-4 border-gray-500 rounded-lg p-4" >
-                                    <h3 className="text-white font-bold mb-2" >Hosted by</h3 >
+                                    className="flex flex-col justify-center items-center w-full h-auto bg-gray-700 border-4 border-gray-500 rounded-lg p-4">
+                                    <h3 className="text-white font-bold mb-2">Hosted by</h3>
                                     {hostDetails && (
-                                        <div className="flex flex-col items-center space-y-2" >
-                                            <h3 className="text-lg text-white font-semibold"
-                                                onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</h3 >
-                                            <button className="" onClick={toggleChatWindow} >Host Chat</button >
-                                        </div >
+                                        <div className="flex flex-col items-center space-y-2">
+                                            <Tooltip TransitionComponent={Zoom} title={ttip} arrow>
+                                                <h3 className="text-lg text-white font-semibold cursor-pointer"
+                                                    onClick={handleNavigate}>{hostDetails.companyName || hostDetails.name}</h3>
+                                            </Tooltip>
+                                            <button className="" onClick={toggleChatWindow}>Host Chat</button>
+                                        </div>
                                     )}
-                                </div >
-                            </div >
-                        </div >
-                    </div >
+                                </div>
+                                <div className="flex flex-row justify-between">
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Facebook" arrow>
+                                        <FacebookShareButton title={shareData} url={eventPageUrl}
+                                                             className="Demo__some-network__share-button">
+                                            <FacebookIcon size={28} round/>
+                                        </FacebookShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Facebook Messenger" arrow>
+                                        <FacebookMessengerShareButton url={eventPageUrl}
+                                                                      className="Demo__some-network__share-button"
+                                                                      appId={521270401588372}>
+                                            <FacebookMessengerIcon size={28} round/>
+                                        </FacebookMessengerShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Twitter" arrow>
+                                        <TwitterShareButton
+                                            url={eventPageUrl}
+                                            title={shareData}
+                                            className="Demo__some-network__share-button"
+                                        >
+                                            <XIcon size={28} round/>
+                                        </TwitterShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Whatsapp" arrow>
+                                        <WhatsappShareButton
+                                            url={eventPageUrl}
+                                            title={shareData}
+                                            separator=":: "
+                                            className="Demo__some-network__share-button"
+                                        >
+                                            <WhatsappIcon size={28} round/>
+                                        </WhatsappShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Linkedin" arrow>
+                                        <LinkedinShareButton url={eventPageUrl} title={shareData}
+                                                             className="Demo__some-network__share-button">
+                                            <LinkedinIcon size={28} round/>
+                                        </LinkedinShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Reddit" arrow>
+                                        <RedditShareButton
+                                            url={eventPageUrl}
+                                            title={shareData}
+                                            windowWidth={660}
+                                            windowHeight={460}
+                                            className="Demo__some-network__share-button"
+                                        >
+                                            <RedditIcon size={28} round/>
+                                        </RedditShareButton>
+                                    </Tooltip>
+
+                                    <Tooltip TransitionComponent={Zoom} title="Share to Email" arrow>
+                                        <EmailShareButton
+                                            url={eventPageUrl}
+                                            subject={"Check out this event on Urban Oasis!"}
+                                            body={shareData}
+                                            className="Demo__some-network__share-button"
+                                        >
+                                            <EmailIcon size={28} round/>
+                                        </EmailShareButton>
+                                    </Tooltip>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                     <ChatWindowComponent
                         userId={userId}
                         hostDetails={hostDetails}
@@ -703,14 +790,15 @@ const EventPage = () => {
                         chatWindowOpen={chatWindowOpen}
                         toggleChatWindow={toggleChatWindow}
                     />
-                </div >
-                <Modal open={modalOpen} onClose={handleModalClose} >
+                </div>
+                <Modal open={modalOpen} onClose={handleModalClose}>
                     <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8" >
-                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo" >RSVP Successful</h2 >
-                        <p className="text-body text-detail-gray text-center mb-6 font-inter" >
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
+                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">RSVP
+                            Successful</h2>
+                        <p className="text-body text-detail-gray text-center mb-6 font-inter">
                             Your RSVP has been successfully registered.
-                        </p >
+                        </p>
                         <Button
                             onClick={handleModalClose}
                             variant="contained"
@@ -718,11 +806,11 @@ const EventPage = () => {
                             className="mt-4 w-full bg-accent-blue hover:bg-primary-dark text-neutral-white py-2 rounded-lg font-medium"
                         >
                             Close
-                        </Button >
-                    </div >
-                </Modal >
-                <FooterComponent />
-            </div >
+                        </Button>
+                    </div>
+                </Modal>
+                <FooterComponent/>
+            </div>
         </>
     );
 };
