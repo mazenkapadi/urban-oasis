@@ -50,9 +50,9 @@ const PreferencePage = () => {
                 const docRef = doc(db, 'Users', user.uid);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
+                    const data = docSnap.data().preferences || {};
                     console.log("Fetched user preferences from Firestore:", data);
-                    setCategories(data.selectedCategories || []);
+                    setCategories(data.categories || []);
                     setPreferredTime(data.preferredTime || '');
                     setPreferredDay(data.preferredDay || '');
                     setPreferredLocation(data.preferredLocation || '');
@@ -64,8 +64,6 @@ const PreferencePage = () => {
             }
         });
     }, []);
-
-
 
     const handleCategoryChange = (category) => {
         setCategories((prev) =>
@@ -107,7 +105,6 @@ const PreferencePage = () => {
         <div className="min-h-screen flex flex-col justify-start p-8 bg-gray-100">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Set Your Event Preferences</h1>
 
-            {/* Event Categories */}
             <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Favorite Event Categories</h2>
                 <div className="flex flex-col gap-4">
@@ -133,7 +130,6 @@ const PreferencePage = () => {
                 </div>
             </div>
 
-            {/* Preferred Time */}
             <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Event Time</h2>
                 <div className="flex space-x-4">
@@ -153,7 +149,6 @@ const PreferencePage = () => {
                 </div>
             </div>
 
-            {/* Preferred Day */}
             <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Day of the Week</h2>
                 <div className="flex space-x-4">
@@ -173,7 +168,6 @@ const PreferencePage = () => {
                 </div>
             </div>
 
-            {/* Preferred Location */}
             <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Location</h2>
                 <input
@@ -185,7 +179,6 @@ const PreferencePage = () => {
                 />
             </div>
 
-            {/* Display Selected Preferences */}
             <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-6">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Selected Preferences</h2>
                 <p className="text-gray-700 mb-2">
@@ -196,7 +189,6 @@ const PreferencePage = () => {
                 <p className="text-gray-700"><strong>Location:</strong> {preferredLocation || 'Not specified'}</p>
             </div>
 
-            {/* Save and Clear Buttons with Modal */}
             <div className="flex space-x-4">
                 <button
                     onClick={savePreferences}
