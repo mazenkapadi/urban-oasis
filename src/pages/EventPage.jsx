@@ -710,16 +710,14 @@ const EventPage = () => {
                                 </div>
                                 <div className="flex flex-row justify-between">
                                     <Tooltip TransitionComponent={Zoom} title="Share to Facebook" arrow>
-                                        <FacebookShareButton title={shareData} url={eventPageUrl}
-                                                             className="Demo__some-network__share-button">
+                                        <FacebookShareButton title={shareData} url={eventPageUrl}>
                                             <FacebookIcon size={28} round/>
                                         </FacebookShareButton>
                                     </Tooltip>
 
                                     <Tooltip TransitionComponent={Zoom} title="Share to Facebook Messenger" arrow>
                                         <FacebookMessengerShareButton url={eventPageUrl}
-                                                                      className="Demo__some-network__share-button"
-                                                                      appId={521270401588372}>
+                                                                      appId="root">
                                             <FacebookMessengerIcon size={28} round/>
                                         </FacebookMessengerShareButton>
                                     </Tooltip>
@@ -728,7 +726,6 @@ const EventPage = () => {
                                         <TwitterShareButton
                                             url={eventPageUrl}
                                             title={shareData}
-                                            className="Demo__some-network__share-button"
                                         >
                                             <XIcon size={28} round/>
                                         </TwitterShareButton>
@@ -739,15 +736,13 @@ const EventPage = () => {
                                             url={eventPageUrl}
                                             title={shareData}
                                             separator=":: "
-                                            className="Demo__some-network__share-button"
                                         >
                                             <WhatsappIcon size={28} round/>
                                         </WhatsappShareButton>
                                     </Tooltip>
 
                                     <Tooltip TransitionComponent={Zoom} title="Share to Linkedin" arrow>
-                                        <LinkedinShareButton url={eventPageUrl} title={shareData}
-                                                             className="Demo__some-network__share-button">
+                                        <LinkedinShareButton url={eventPageUrl} title={shareData}>
                                             <LinkedinIcon size={28} round/>
                                         </LinkedinShareButton>
                                     </Tooltip>
@@ -758,7 +753,6 @@ const EventPage = () => {
                                             title={shareData}
                                             windowWidth={660}
                                             windowHeight={460}
-                                            className="Demo__some-network__share-button"
                                         >
                                             <RedditIcon size={28} round/>
                                         </RedditShareButton>
@@ -769,7 +763,6 @@ const EventPage = () => {
                                             url={eventPageUrl}
                                             subject={"Check out this event on Urban Oasis!"}
                                             body={shareData}
-                                            className="Demo__some-network__share-button"
                                         >
                                             <EmailIcon size={28} round/>
                                         </EmailShareButton>
