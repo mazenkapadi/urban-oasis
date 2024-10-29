@@ -60,3 +60,8 @@ export const toggleBookmark = async (userId, event) => {
         return null; // Return null to indicate an error
     }
 };
+
+
+// ToDo - work on this doesnt update the bookmarked events list on firestore
+
+

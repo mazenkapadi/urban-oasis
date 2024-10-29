@@ -81,10 +81,10 @@ const SideBar = () => {
                 <ChatBubbleLeftRightIcon className="h-6 w-6 mr-2 text-white" />
                 <span >Chats</span >
             </Link >
-            <Link to="/userProfilePage/payments"
+            <Link to="/userProfilePage/preferences"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
                 <CreditCardIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Payments</span >
+                <span >Preferences</span >
             </Link >
             <Link to="/userProfilePage/settings"
                   className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >

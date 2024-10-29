@@ -96,3 +96,6 @@ const WideEventCard = ({ event }) => {
 };
 
 export default WideEventCard;
+
+
+// ToDo - work on this doesnt update the bookmarked events list on firestore

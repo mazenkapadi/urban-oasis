@@ -28,11 +28,11 @@ import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
 import HostDashboard from "./pages/HostDashboard.jsx";
 import HostEventPage from "./pages/HostEventPage.jsx";
 import HostChatList from "./pages/HostChatListPage.jsx";
-import PaymentsPage from "./pages/User/PaymentsPage.jsx";
 import PaymentSuccess from "./pages/payments/PaymentSuccess.jsx";
 import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
 import HostProfilePage from "./pages/HostProfilePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
+import PreferencePage from "./pages/User/PreferencePage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
             {path: "my-event-history", element: <MyEventHistoryPage />},
-            {path: "payments", element: <PaymentsPage />},
+            {path: "preferences", element: <PreferencePage />},
             {path: "settings", element: <SettingsPage />},
             {path: "host-signup", element: <HostSignUpPage />},
             {path: "host-chatlist", element: <HostChatList />},
