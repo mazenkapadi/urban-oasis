@@ -1,9 +1,9 @@
 import React from "react";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
-import EventCarousel from "../components/EventCarousel.jsx";
-import HeroCarousel from "../components/HeroCarousel.jsx";
-import EventMonthCarousel from "../components/EventMonthCarousel.jsx";
+import EventCarousel from "../components/Carousels/EventCarousel.jsx";
+import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
+import EventMonthCarousel from "../components/Carousels/EventMonthCarousel.jsx";
 import Testimonials from "../components/Testimonials.jsx";
 
 function LandingPage() {

@@ -20,7 +20,7 @@ import UserProfileContent from './components/User/UserProfileContent.jsx';
 import MyEventHistoryPage from './pages/User/MyEventHistoryPage.jsx';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import PhotoCarousel from "./components/PhotoCarousel.jsx";
+import PhotoCarousel from "./components/Carousels/PhotoCarousel.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
 import HostSignUpPage from "./pages/HostSignUpPage.jsx";

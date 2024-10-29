@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebaseConfig.js";
+import { storage } from "../../firebaseConfig.js";
 import useEmblaCarousel from "embla-carousel-react";
-import '../index.css';
+import '../../index.css';
 
 const HeroCarousel = () => {
     const [images, setImages] = useState([]);

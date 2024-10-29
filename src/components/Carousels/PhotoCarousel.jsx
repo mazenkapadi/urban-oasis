@@ -151,7 +151,7 @@ import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/20/solid';
 import { doc, getDoc } from "firebase/firestore";
-import { db, storage } from "../firebaseConfig.js";
+import { db, storage } from "../../firebaseConfig.js";
 import { getDownloadURL, ref } from "firebase/storage";
 
 const PhotoCarousel = ({ eventId }, { eventTitle }) => {

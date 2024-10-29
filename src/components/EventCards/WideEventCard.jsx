@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from "react";
-import { toggleBookmark } from "../services/toggleBookmark.js";
-import { auth } from "../firebaseConfig";
+import { toggleBookmark } from "../../services/toggleBookmark.js";
+import { auth } from "../../firebaseConfig.js";
 
 const WideEventCard = ({ event }) => {
     const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
-import { db } from "../firebaseConfig.js";
-import EventCard from "./EventCard.jsx";
+import { db } from "../../firebaseConfig.js";
+import EventCard from "../EventCards/EventCard.jsx";
 import { Link } from "react-router-dom";
 import { ChevronRightIcon } from "@heroicons/react/20/solid/index.js";
 import { collection, getDocs } from "firebase/firestore";

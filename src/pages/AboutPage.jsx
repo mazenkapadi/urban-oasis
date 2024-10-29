@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HeroCarousel from "../components/HeroCarousel.jsx";
+import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";

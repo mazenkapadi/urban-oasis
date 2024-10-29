@@ -76,11 +76,10 @@ const SupportPage = () => {
     };
 
     return (
-        <div className="bg-gray-900 min-h-screen p-4 md:p-8 text-white flex flex-col gap-8" >
+        <div className="bg-gray-900 min-h-screen px-4 md:p-8 text-white flex flex-col gap-8" >
             <HeaderComponent />
 
             <div className="flex flex-col md:flex-row gap-8 w-full max-w-full" >
-                {/* FAQs Section - 2/3 width on md and lg screens */}
                 <div className="md:w-2/3 bg-gray-800 rounded-lg shadow-lg p-4 md:p-6" >
 
                     <h2 className="text-2xl font-bold mb-6" >Frequently Asked Questions</h2 >

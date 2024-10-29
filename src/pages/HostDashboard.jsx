@@ -4,7 +4,7 @@ import { db, auth } from "../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/User/SideBar.jsx";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import HostEventCard from '../components/HostEventCard';
+import HostEventCard from '../components/EventCards/HostEventCard.jsx';
 import { onAuthStateChanged } from "firebase/auth";
 import LoadingPage from "./LoadingPage";
 import { Pie } from 'react-chartjs-2';

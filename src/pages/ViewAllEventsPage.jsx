@@ -4,7 +4,7 @@ import { db } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import NotFound from "./404NotFound.jsx";
-import WideEventCard from "../components/WideEventCard.jsx";
+import WideEventCard from "../components/EventCards/WideEventCard.jsx";
 import FiltersComponent from "../components/FiltersComponent.jsx";
 
 const ViewAllEventsPage = () => {
@@ -44,7 +44,7 @@ const ViewAllEventsPage = () => {
 
         if (filters.dateFilter) {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); 
+            today.setHours(0, 0, 0, 0);
             const eventDateTimeParser = (date) => {
                 if (date.toDate) {
                     return date.toDate();
@@ -89,8 +89,8 @@ const ViewAllEventsPage = () => {
 
     const removeFilter = (filterType) => {
         const updatedFilters = { ...activeFilters, [filterType]: null };
-        setActiveFilters(updatedFilters); 
-        applyFilters(updatedFilters); 
+        setActiveFilters(updatedFilters);
+        applyFilters(updatedFilters);
     };
     if (error) return <NotFound />;
 
@@ -100,13 +100,13 @@ const ViewAllEventsPage = () => {
             <div className="pt-52 md:pt-24 lg:pt-24 xl:pt-24 bg-primary-light text-primary-dark">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <div className="flex">
-                      
+
                         <div className="w-1/4 pr-6">
-                            
+
                             <FiltersComponent
                                 onApplyFilters={applyFilters}
                                 activeFilters={activeFilters}
-                                removeFilter={removeFilter} 
+                                removeFilter={removeFilter}
                             />
                         </div>
 
@@ -116,7 +116,7 @@ const ViewAllEventsPage = () => {
                                     {activeFilters.dateFilter && (
                                         <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
                                             <span className="text-gray-500 text-sm">{activeFilters.dateFilter}</span>
-                                            <button 
+                                            <button
                                                 className="ml-2 text-red-500"
                                                 onClick={() => removeFilter('dateFilter')}
                                             >
@@ -127,7 +127,7 @@ const ViewAllEventsPage = () => {
                                     {activeFilters.paid !== null && (
                                         <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
                                             <span className="text-gray-500 text-sm">{activeFilters.paid ? 'Paid' : 'Free'}</span>
-                                            <button 
+                                            <button
                                                 className="ml-2 text-red-500"
                                                 onClick={() => removeFilter('paid')}
                                             >
