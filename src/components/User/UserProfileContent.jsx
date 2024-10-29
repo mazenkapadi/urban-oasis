@@ -145,9 +145,7 @@ const UserProfileContent = () => {
                 <p className="text-gray-300">Welcome back, {name.split(' ')[0] || 'User'}</p>
             </div>
 
-            {/* Profile Details */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left side: Account info */}
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full">
                     <img
                         src={profilePic}
@@ -219,8 +217,7 @@ const UserProfileContent = () => {
                 )}
             </div>
 
-            {/* Explore & Manage Section */}
-            <ExploreManage /> {/* Use the new component */}
+            <ExploreManage />
         </div>
     );
 };

@@ -5,15 +5,15 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
         if (dateFilter === filter) {
             removeFilter("dateFilter");
         } else {
-            onApplyFilters({ dateFilter: filter, paid }); 
+            onApplyFilters({ dateFilter: filter, paid });
         }
     };
 
     const handlePaidFilterChange = (paidStatus) => {
         if (paid === paidStatus) {
-            removeFilter("paid"); 
+            removeFilter("paid");
         } else {
-            onApplyFilters({ dateFilter, paid: paidStatus }); 
+            onApplyFilters({ dateFilter, paid: paidStatus });
         }
     };
 
@@ -26,7 +26,7 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
                     {["Today", "Tomorrow", "Weekend"].map((filter) => (
                         <li key={filter} className="flex items-center">
                             <input
-                                type="radio"
+                                type="checkbox"
                                 id={filter}
                                 name="dateFilter"
                                 value={filter}
@@ -45,11 +45,11 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
                 </ul>
             </div>
             <div className="mb-6">
-                <h3 className="font-semibold mb-1 text-[#2B2D42]">Event Type</h3>
+                <h3 className="font-semibold mb-1 text-[#2B2D42]">Price</h3>
                 <ul className="space-y-2">
                     <li className="flex items-center">
                         <input
-                            type="radio"
+                            type="checkbox"
                             id="paid"
                             name="paidFilter"
                             value={true}
@@ -66,7 +66,7 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
                     </li>
                     <li className="flex items-center">
                         <input
-                            type="radio"
+                            type="checkbox"
                             id="free"
                             name="paidFilter"
                             value={false}

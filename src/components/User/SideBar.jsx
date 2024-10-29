@@ -91,11 +91,6 @@ const SideBar = () => {
                 <Cog6ToothIcon className="h-6 w-6 mr-2 text-white" />
                 <span >Settings</span >
             </Link >
-            <Link to="/userProfilePage/support"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <QuestionMarkCircleIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Support</span >
-            </Link >
 
             <div className="mt-auto" > {/* Keeps Host Dashboard at the bottom */}
                 <button
