@@ -1,3 +1,5 @@
+import { categorizedOptions } from "../services/dataObjects/categoryData";
+
 const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
     const { dateFilter, paid, availability, customDate, nearMe} = activeFilters;
 
@@ -37,6 +39,15 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
             onApplyFilters({ dateFilter, paid, nearMe: true, customDate, availability});
         }
     };
+
+    const handleCategoryFilterChange = (selectedCategory) => {
+        if (activeFilters.category === selectedCategory) {
+            removeFilter("category");
+        } else {
+            onApplyFilters({ ...activeFilters, category: selectedCategory });
+        }
+    };
+    
     return (
         <div className="p-6 sticky left-10">
             <h2 className="text-xl font-bold text-[#2B2D42] mb-4">Filters</h2>
@@ -164,6 +175,26 @@ const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
                     </label>
                 </div>
             </div>
+            <div className="mb-6">
+                <h3 className="font-semibold mb-1 text-[#2B2D42]">Category</h3>
+                <ul className="space-y-2">
+                    {Object.keys(categorizedOptions).map((mainCategory) => (
+                        <li key={mainCategory} className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id={mainCategory}
+                                checked={activeFilters.category === mainCategory}
+                                onChange={() => handleCategoryFilterChange(mainCategory)}
+                                className="mr-2"
+                            />
+                            <label htmlFor={mainCategory} className="cursor-pointer text-[#2B2D42]">
+                                {mainCategory}
+                            </label>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
         </div>
     );
 };
