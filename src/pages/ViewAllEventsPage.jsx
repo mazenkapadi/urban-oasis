@@ -16,7 +16,7 @@ const ViewAllEventsPage = () => {
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [activeFilters, setActiveFilters] = useState({ dateFilter: null, paid: null , availability: null , customDate:null});
+    const [activeFilters, setActiveFilters] = useState({ dateFilter: null, paid: null , availability: null , customDate:null,nearMe:null});
     const [userLat, setUserLat] = useState(null);
     const [userLong, setUserLong] = useState(null);
 
@@ -208,7 +208,7 @@ const ViewAllEventsPage = () => {
                         </div>
 
                         <div className="w-3/4 space-y-6">
-                            {(activeFilters.dateFilter || activeFilters.paid !== null || activeFilters.availability||activeFilters.customDate) && (
+                            {(activeFilters.dateFilter || activeFilters.paid !== null || activeFilters.availability||activeFilters.customDate||activeFilters.nearMe) && (
                                 <div className="mb-6 flex space-x-4">
                                     {activeFilters.dateFilter && (
                                         <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
@@ -249,6 +249,17 @@ const ViewAllEventsPage = () => {
                                             <button
                                                 className="ml-2 text-red-500"
                                                 onClick={() => removeFilter('customDate')}
+                                            >
+                                                x
+                                            </button>
+                                        </div>
+                                    )}
+                                    {activeFilters.nearMe && (
+                                        <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
+                                            <p className="text-gray-500 text-sm">Near Me</p>
+                                            <button
+                                                className="ml-2 text-red-500"
+                                                onClick={() => removeFilter('nearMe')}
                                             >
                                                 x
                                             </button>
