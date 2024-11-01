@@ -1,7 +1,6 @@
 import Stripe from 'stripe';
 
-// const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
-const stripe = new Stripe('sk_test_51Q0aMK1ML9Ca0ARWsUClNw2zkqtFnlofxbqI1Am5HSNsLX9Mkz2fCNF8ZrM7YSkvdX46qYtVe8K07ae5X6onBdhG00Yd7taybj');
+const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
 
 export async function POST(req) {
     const reqBody = await req.json();
