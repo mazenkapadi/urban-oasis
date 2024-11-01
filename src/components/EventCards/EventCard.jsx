@@ -5,8 +5,11 @@ import { MapPinIcon } from '@heroicons/react/24/outline';
 function EventCard({title, location, date, price, image, eventId, event}) {
     const navigate = useNavigate();
 
+    // Log the entire event object at the beginning of the component
+    console.log("Event object received:", event);
+    // console.dir(event); // For a structured view of the event object in the console
+
     const handleNavigate = () => {
-        console.log(event);
         navigate(`/eventPage/${eventId}`);
     };
 
@@ -14,7 +17,8 @@ function EventCard({title, location, date, price, image, eventId, event}) {
         <div className="event-card flex-shrink-0 w-fit" >
             <div
                 className="rounded-lg bg-gray-800 p-4 flex flex-col justify-between h-56 w-72 bg-cover bg-center hover:scale-105 transition-transform duration-300 shadow-lg"
-                style={{backgroundImage: `url(${image})`}} onClick={handleNavigate}
+               style={{ backgroundImage: `url(${image})` }}
+            onClick={handleNavigate}
             >
                 <div >
                     <h3 className="text-white text-2xl font-bold truncate" >{title}</h3 >
