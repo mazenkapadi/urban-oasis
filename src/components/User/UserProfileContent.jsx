@@ -3,16 +3,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from "../../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
+import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import ExploreManage from './ExploreManage';
 
 const formatPhoneNumber = (phoneNumber) => {
     if (!phoneNumber) return 'Phone number not available';
-    const cleaned = ('' + phoneNumber).replace(/\D/g, ''); // Remove non-numeric characters
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-        return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
-    return phoneNumber;
+    return match ? `(${match[1]}) ${match[2]}-${match[3]}` : phoneNumber;
 };
 
 const UserProfileContent = () => {
@@ -21,14 +19,13 @@ const UserProfileContent = () => {
     const [email, setEmail] = useState('');
     const [userId, setUserId] = useState(null);
     const [profilePic, setProfilePic] = useState('');
-    const [nextEvent, setNextEvent] = useState(null); // Stores the next upcoming event
-    const [nextEventImage, setNextEventImage] = useState(''); // Store the event image
-    const [timeLeft, setTimeLeft] = useState({}); // State for countdown timer
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
+    const [activeEventIndex, setActiveEventIndex] = useState(0);
+    const [nextEventImage, setNextEventImage] = useState('');
+    const [timeLeft, setTimeLeft] = useState({});
     const navigate = useNavigate();
 
-    const handleEditProfile = () => {
-        navigate('/userProfilePage/contact-info');
-    };
+    const handleEditProfile = () => navigate('/userProfilePage/contact-info');
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -36,27 +33,33 @@ const UserProfileContent = () => {
                 setUserId(user.uid);
                 setEmail(user.email);
                 setProfilePic(user.photoURL || '');
-            } else {
-                console.log('No user logged in');
             }
         });
-        return () => unsubscribe();
+        return unsubscribe;
     }, []);
+
+    const fetchEventImage = async (eventId) => {
+        try {
+            const eventDoc = await getDoc(doc(db, 'Events', eventId));
+            if (eventDoc.exists()) {
+                const eventData = eventDoc.data();
+                setNextEventImage(eventData.eventDetails?.images?.[0]?.url || '');
+            }
+        } catch (error) {
+            console.error('Error fetching event image:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
             if (userId) {
                 try {
-                    const docRef = doc(db, 'Users', userId);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
+                    const userDoc = await getDoc(doc(db, 'Users', userId));
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                         setPhone(formatPhoneNumber(data.contact?.cellPhone));
-                        setEmail(data.contact?.email || email || 'Email not found');
-                    } else {
-                        console.log('No such document!');
+                        setEmail(data.contact?.email || email);
                     }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
@@ -67,18 +70,16 @@ const UserProfileContent = () => {
         const fetchUserRSVPs = async () => {
             if (userId) {
                 try {
-                    const rsvpRef = doc(db, 'UserRSVPs', userId);
-                    const rsvpSnap = await getDoc(rsvpRef);
+                    const rsvpDoc = await getDoc(doc(db, 'UserRSVPs', userId));
+                    if (rsvpDoc.exists()) {
+                        const rsvpData = rsvpDoc.data().events || {};
+                        const upcomingEvents = Object.values(rsvpData)
+                            .filter((event) => new Date(event.eventDateTime) > new Date())
+                            .sort((a, b) => new Date(a.eventDateTime) - new Date(b.eventDateTime));
 
-                    if (rsvpSnap.exists()) {
-                        const rsvpData = rsvpSnap.data().events || {};
-                        const allEvents = Object.values(rsvpData);
-
-                        const upcomingEvents = allEvents.filter((event) => new Date(event.eventDateTime) > new Date());
-
+                        setUpcomingEvents(upcomingEvents);
                         if (upcomingEvents.length > 0) {
-                            setNextEvent(upcomingEvents[0]); // Set the next upcoming event
-                            fetchEventImage(upcomingEvents[0].eventId); // Fetch the image for the next event
+                            fetchEventImage(upcomingEvents[0].eventId); // Load the image for the first upcoming event
                         }
                     } else {
                         console.log('No RSVPs found for this user.');
@@ -89,34 +90,16 @@ const UserProfileContent = () => {
             }
         };
 
-        const fetchEventImage = async (eventId) => {
-            try {
-                const eventRef = doc(db, 'Events', eventId);
-                const eventSnap = await getDoc(eventRef);
-
-                if (eventSnap.exists()) {
-                    const eventData = eventSnap.data();
-                    if (eventData.eventDetails?.images?.[0]) {
-                        setNextEventImage(eventData.eventDetails.images[0]); // Set event image
-                    }
-                } else {
-                    console.log('Event not found.');
-                }
-            } catch (error) {
-                console.error('Error fetching event image:', error);
-            }
-        };
-
         if (userId) {
             fetchUserData();
             fetchUserRSVPs();
         }
     }, [userId, email]);
 
-    // Countdown Logic for Next Event
     useEffect(() => {
-        if (nextEvent && nextEvent.eventDateTime) {
-            const intervalId = setInterval(() => {
+        const calculateTimeLeft = () => {
+            const nextEvent = upcomingEvents[activeEventIndex];
+            if (nextEvent && nextEvent.eventDateTime) {
                 const eventDate = new Date(nextEvent.eventDateTime).getTime();
                 const now = new Date().getTime();
                 const difference = eventDate - now;
@@ -129,14 +112,32 @@ const UserProfileContent = () => {
                         seconds: Math.floor((difference % (1000 * 60)) / 1000),
                     });
                 } else {
-                    clearInterval(intervalId);
                     setTimeLeft({});
                 }
-            }, 1000); // Update every second
+            }
+        };
 
-            return () => clearInterval(intervalId); // Clean up interval on component unmount
+        const timer = setInterval(calculateTimeLeft, 1000);
+        return () => clearInterval(timer);
+    }, [upcomingEvents, activeEventIndex]);
+
+    const handleNextEvent = () => {
+        if (activeEventIndex < upcomingEvents.length - 1) {
+            const newIndex = activeEventIndex + 1;
+            setActiveEventIndex(newIndex);
+            fetchEventImage(upcomingEvents[newIndex].eventId); // Load the image for the next event
         }
-    }, [nextEvent]);
+    };
+
+    const handlePrevEvent = () => {
+        if (activeEventIndex > 0) {
+            const newIndex = activeEventIndex - 1;
+            setActiveEventIndex(newIndex);
+            fetchEventImage(upcomingEvents[newIndex].eventId); // Load the image for the previous event
+        }
+    };
+
+    const nextEvent = upcomingEvents[activeEventIndex];
 
     return (
         <div className="w-full">
@@ -145,82 +146,84 @@ const UserProfileContent = () => {
                 <p className="text-gray-300">Welcome back, {name.split(' ')[0] || 'User'}</p>
             </div>
 
-            {/* Profile Details */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left side: Account info */}
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full">
-                    <img
-                        src={profilePic}
-                        alt="User Profile"
-                        className="rounded-full w-24 h-24 object-cover mb-4"
-                    />
+                    <img src={profilePic} alt="User Profile" className="rounded-full w-24 h-24 object-cover mb-4" />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
                     <p className="text-gray-400">{phone}</p>
                     <p className="text-gray-400">{email}</p>
                     <button
                         onClick={handleEditProfile}
-                        className="mt-4 w-full bg-blue-800 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition">
+                        className="mt-4 w-full bg-blue-800 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition"
+                    >
                         Edit Profile
                     </button>
                 </div>
 
-                {/* Right side: Next Event */}
                 {nextEvent && (
                     <div className="lg:col-span-2 flex flex-col justify-between">
-                        {/* Title */}
                         <h2 className="text-xl font-bold text-gray-200 mb-4">Your Next Event</h2>
-
-                        {/* Next Event Content */}
                         <div
                             className="relative shadow-md rounded-lg p-6 flex flex-col justify-center items-center text-center text-white h-full"
                             style={{
-                                backgroundImage: nextEventImage ? `url(${nextEventImage.url})` : "none",
+                                backgroundImage: nextEventImage ? `url(${nextEventImage})` : "none",
                                 backgroundSize: 'cover',
-                                backgroundPosition: 'center'
+                                backgroundPosition: 'center',
                             }}
                         >
                             <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg"></div>
                             <div className="relative z-10 flex flex-col items-center">
-                                {/* Event Title */}
                                 <h2 className="text-3xl font-bold mb-2">{nextEvent.eventTitle}</h2>
+                                <h3 className="text-base font-semibold mb-4">{new Date(nextEvent.eventDateTime).toDateString()}</h3>
 
-                                {/* Date (small) */}
-                                <h3 className="text-base font-semibold mb-4">{new Date(nextEvent.eventDateTime).toDateString()}</h3> {/* Smaller text for the date */}
-
-                                {/* Countdown */}
-                                <div className="flex justify-around w-full font-bold text-base mb-4 space-x-6"> {/* Smaller countdown */}
+                                <div className="flex justify-around w-full font-bold text-base mb-4 space-x-6">
                                     <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.days || 0}</div> {/* Smaller numbers */}
-                                        <div className="text-sm text-gray-300">Days</div> {/* Smaller labels */}
+                                        <div className="text-lg">{timeLeft.days || 0}</div>
+                                        <div className="text-sm text-gray-300">Days</div>
                                     </div>
                                     <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.hours || 0}</div> {/* Smaller numbers */}
-                                        <div className="text-sm text-gray-300">Hours</div> {/* Smaller labels */}
+                                        <div className="text-lg">{timeLeft.hours || 0}</div>
+                                        <div className="text-sm text-gray-300">Hours</div>
                                     </div>
                                     <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.minutes || 0}</div> {/* Smaller numbers */}
-                                        <div className="text-sm text-gray-300">Minutes</div> {/* Smaller labels */}
+                                        <div className="text-lg">{timeLeft.minutes || 0}</div>
+                                        <div className="text-sm text-gray-300">Minutes</div>
                                     </div>
                                     <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.seconds || 0}</div> {/* Smaller numbers */}
-                                        <div className="text-sm text-gray-300">Seconds</div> {/* Smaller labels */}
+                                        <div className="text-lg">{timeLeft.seconds || 0}</div>
+                                        <div className="text-sm text-gray-300">Seconds</div>
                                     </div>
                                 </div>
 
-                                {/* View Event Details Button */}
                                 <button
                                     className="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded text-lg text-white font-bold shadow-lg"
-                                    onClick={() => navigate(`/eventPage/${nextEvent.eventId}`)}>
+                                    onClick={() => navigate(`/eventPage/${nextEvent.eventId}`)}
+                                >
                                     View Event Details
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                )}
-            </div>
 
-            {/* Explore & Manage Section */}
-            <ExploreManage /> {/* Use the new component */}
+                            {/* Left and Right Arrows */}
+                            <button
+                                onClick={handlePrevEvent}
+                                disabled={activeEventIndex === 0}
+                                className={`absolute left-2 top-1/2 transform -translate-y-1/2 text-white-300 hover:text-white ${activeEventIndex === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                            >
+                                <ChevronLeftIcon className="w-8 h-8"/>
+                            </button>
+                            <button
+                                onClick={handleNextEvent}
+                                disabled={activeEventIndex === upcomingEvents.length - 1}
+                                className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-white-300 hover:text-white ${activeEventIndex === upcomingEvents.length - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                            >
+                                <ChevronRightIcon className="w-8 h-8"/>
+                            </button>
+                        </div>
+
+                    </div>
+                    )}
+            </div>
+            <ExploreManage/>
         </div>
     );
 };
