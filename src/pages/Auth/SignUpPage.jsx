@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import signUp from "../services/auth/signUp.js";
-import SignIn from "../services/auth/signIn.js";
-import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
+import signUp from "../../services/auth/signUp.js";
+import SignIn from "../../services/auth/signIn.js";
+import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -186,7 +186,7 @@ function SignUpPage() {
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="/public/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
+                                    <img src="/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24" />
                                     <p className="ml-2">Sign Up with Google</p>
                                 </button>
                             </div>

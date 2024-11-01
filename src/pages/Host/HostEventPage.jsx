@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { db, auth } from "../firebaseConfig.js";
-import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
-import HeaderComponent from "../components/HeaderComponent.jsx";
-import FooterComponent from "../components/FooterComponent.jsx";
-import LoadingPage from "./LoadingPage.jsx";
+import { db, auth } from "../../firebaseConfig.js";
+import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
+import HeaderComponent from "../../components/HeaderComponent.jsx";
+import FooterComponent from "../../components/FooterComponent.jsx";
+import LoadingPage from "../LoadingPage.jsx";
 
 const HostEventPage = () => {
     const { eventId } = useParams();

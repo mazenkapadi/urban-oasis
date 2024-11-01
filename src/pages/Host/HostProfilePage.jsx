@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
-import {auth, db} from "../firebaseConfig.js";
-import LoadingPage from "./LoadingPage.jsx";
+import {auth, db} from "../../firebaseConfig.js";
+import LoadingPage from "../LoadingPage.jsx";
 import {addDoc, collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc} from "firebase/firestore";
-import HeaderComponent from "../components/HeaderComponent.jsx";
+import HeaderComponent from "../../components/HeaderComponent.jsx";
 import {
     Avatar,
     Button,
@@ -19,7 +19,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import SendIcon from '@mui/icons-material/Send';
-import FooterComponent from "../components/FooterComponent.jsx";
+import FooterComponent from "../../components/FooterComponent.jsx";
 import {useParams} from "react-router-dom";
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 

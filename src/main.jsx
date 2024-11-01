@@ -6,9 +6,9 @@ import {
 } from "react-router-dom";
 
 import './index.css';
-import SignInPage from "./pages/SignInPage.jsx";
-import SignUpPage from "./pages/SignUpPage.jsx";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
+import SignInPage from "./pages/Auth/SignInPage.jsx";
+import SignUpPage from "./pages/Auth/SignUpPage.jsx";
+import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import NotFound from "./pages/404NotFound.jsx";
 
@@ -23,14 +23,14 @@ import "slick-carousel/slick/slick-theme.css";
 import PhotoCarousel from "./components/Carousels/PhotoCarousel.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
-import HostSignUpPage from "./pages/HostSignUpPage.jsx";
+import HostSignUpPage from "./pages/Host/HostSignUpPage.jsx";
 import ViewAllEventsPage from "./pages/ViewAllEventsPage.jsx";
-import HostDashboard from "./pages/HostDashboard.jsx";
-import HostEventPage from "./pages/HostEventPage.jsx";
-import HostChatList from "./pages/HostChatListPage.jsx";
+import HostDashboard from "./pages/Host/HostDashboard.jsx";
+import HostEventPage from "./pages/Host/HostEventPage.jsx";
+import HostChatList from "./pages/Host/HostChatListPage.jsx";
 import PaymentSuccess from "./pages/payments/PaymentSuccess.jsx";
 import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
-import HostProfilePage from "./pages/HostProfilePage.jsx";
+import HostProfilePage from "./pages/Host/HostProfilePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import PreferencePage from "./pages/User/PreferencePage.jsx";
 

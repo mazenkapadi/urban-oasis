@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth, db } from "../firebaseConfig";
+import { auth, db } from "../../firebaseConfig.js";
 import { doc, setDoc } from "firebase/firestore";
 
 function HostSignUpPage() {

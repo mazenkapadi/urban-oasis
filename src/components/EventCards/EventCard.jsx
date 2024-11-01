@@ -1,43 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 
-function EventCard({title, location, date, price, image, eventId, event}) {
+function EventCard({title, location, date, price, image, eventId}) {
     const navigate = useNavigate();
+    const [ isDragging, setIsDragging ] = useState(false);
+    const [ startPosition, setStartPosition ] = useState(0);
 
-    // Log the entire event object at the beginning of the component
-    console.log("Event object received:", event);
-    // console.dir(event); // For a structured view of the event object in the console
+    const handleMouseDown = (e) => {
+        setStartPosition(e.clientX); // Capture starting position
+        setIsDragging(false);
+    };
 
-    const handleNavigate = () => {
-        navigate(`/eventPage/${eventId}`);
+    const handleMouseMove = (e) => {
+        if (Math.abs(e.clientX - startPosition) > 5) { // Threshold for drag detection
+            setIsDragging(true);
+        }
+    };
+
+    const handleMouseUp = () => {
+        if (!isDragging) {
+            navigate(`/eventPage/${eventId}`);
+        }
     };
 
     return (
-        <div className="event-card flex-shrink-0 w-fit" >
-            <div
-                className="rounded-lg bg-gray-800 p-4 flex flex-col justify-between h-56 w-72 bg-cover bg-center hover:scale-105 transition-transform duration-300 shadow-lg"
-               style={{ backgroundImage: `url(${image})` }}
-            onClick={handleNavigate}
-            >
-                <div >
-                    <h3 className="text-white text-2xl font-bold truncate" >{title}</h3 >
-                    <div className="flex items-center text-gray-300 opacity-75 mt-1" >
-                        <MapPinIcon className="w-5 h-5 mr-1" />
-                        <p >{location}</p >
-                    </div >
+        <div
+            className="event-card w-80 rounded-lg overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+        >
+            <div className="relative h-40 bg-cover bg-center" style={{backgroundImage: `url(${image})`}} >
+                <div
+                    className="absolute top-2 left-2 bg-black bg-opacity-50 text-white text-xs font-semibold px-2 py-1 rounded-md" >
+                    {price === 0 ? "Free Event" : `$ ${price}`}
                 </div >
-                <div className="flex justify-between items-end mt-3" >
-                    <div className="text-white opacity-75" >
-                        <p className="text-lg" >{date}</p >
-                    </div >
-                    <div className="text-white" >
-                        <p className="text-lg font-bold" >{price === 0 ? "Free" : `$ ${price}`}</p >
-                    </div >
+            </div >
+
+            {/* Information Section */}
+            <div className="p-3 bg-white" >
+                <div className="flex justify-between items-center" >
+                    <h3 className="text-gray-900 text-lg font-semibold truncate" >{title}</h3 >
+                    <p className="text-gray-500 text-xs" >{date}</p >
+                </div >
+                <div className="flex items-center text-gray-500 text-sm mt-1" >
+                    <MapPinIcon className="w-4 h-4 mr-1" />
+                    <p className="truncate" >{location}</p >
                 </div >
             </div >
         </div >
     );
+
+
 }
 
 export default EventCard;

@@ -162,3 +162,7 @@ const BookmarkEventCard = ({ event, onBookmarkRemoved }) => {
 };
 
 export default BookmarkEventCard;
+
+
+
+// ToDo - work on this doesnt update the bookmarked events list on firestore

@@ -10,7 +10,7 @@ import {
   Timestamp,
   getDoc,
 } from "firebase/firestore";
-import { db, auth } from "../firebaseConfig";
+import { db, auth } from "../../firebaseConfig.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline/index.js";
 

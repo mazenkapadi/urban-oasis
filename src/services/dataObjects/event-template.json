@@ -1,0 +1,89 @@
+{
+    "id": "hcJl1q4E4VqbVyx2bueC",
+    "basicInfo": {
+        "description": "No description provided",
+        "location": {
+            "label": "Farmingdale, NY, USA",
+            "value": {
+                "types": [
+                    "political",
+                    "locality",
+                    "geocode"
+                ],
+                "structured_formatting": {
+                    "main_text": "Farmingdale",
+                    "main_text_matched_substrings": [
+                        {
+                            "offset": 0,
+                            "length": 11
+                        }
+                    ],
+                    "secondary_text": "NY, USA"
+                },
+                "matched_substrings": [
+                    {
+                        "offset": 0,
+                        "length": 11
+                    }
+                ],
+                "description": "Farmingdale, NY, USA",
+                "terms": [
+                    {
+                        "value": "Farmingdale",
+                        "offset": 0
+                    },
+                    {
+                        "value": "NY",
+                        "offset": 13
+                    },
+                    {
+                        "offset": 17,
+                        "value": "USA"
+                    }
+                ],
+                "place_id": "ChIJHzVsCLwq6IkRe8RPCBLpJxU",
+                "reference": "ChIJHzVsCLwq6IkRe8RPCBLpJxU"
+            }
+        },
+        "title": "BBQ "
+    },
+    "availability": {
+        "merchAvailability": false,
+        "alcInfo": null,
+        "fbAvail": false,
+        "alcAvail": false
+    },
+    "attendeesCount": 10,
+    "eventDetails": {
+        "images": [
+            {
+                "url": "https://firebasestorage.googleapis.com/v0/b/urban-oasis490.appspot.com/o/eventImages%2FBBQ%20%2F6.jpg?alt=media&token=1a5c4510-255d-4874-b830-7b432be650d4",
+                "name": "6.jpg"
+            }
+        ],
+        "eventDateTime": {
+            "seconds": 1730295240,
+            "nanoseconds": 528000000
+        },
+        "capacity": 10,
+        "paidEvent": false,
+        "eventPrice": 0
+    },
+    "policies": {
+        "refundAllowance": false,
+        "refundPolicy": null,
+        "ageRestriction": "All",
+        "petAllowance": true
+    },
+    "timestamps": {
+        "createdAt": {
+            "seconds": 1729604126,
+            "nanoseconds": 56000000
+        },
+        "updatedAt": {
+            "seconds": 1729604126,
+            "nanoseconds": 56000000
+        }
+    },
+    "hostId": "mtzoNvlcCVhNubQg2RpjAAtxbjS2"
+}

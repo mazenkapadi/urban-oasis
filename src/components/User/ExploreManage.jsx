@@ -160,12 +160,12 @@ const ExploreManage = () => {
     return (
         <div className="mt-12">
             <h2 className="text-2xl font-bold text-white mb-4">Explore & Manage</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px] overflow-y-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* First Column - Stacked items */}
                 <div className="grid grid-rows-2 gap-6 lg:col-span-1 h-full">
                     <div className="bg-gray-800 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full">
-                        <h3 className="text-lg font-semibold text-white mb-2">My Event History</h3>
+                        <h3 className="text-lg font-semibo  ld text-white mb-2">My Event History</h3>
                         <p className="text-gray-400">View all the events you've attended.</p>
                         <button
                             className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
@@ -191,7 +191,7 @@ const ExploreManage = () => {
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 text-center lg:col-span-2 lg:row-span-2 flex flex-col items-start">
                     <h3 className="text-lg font-semibold text-white mb-2">Bookmarked Events</h3>
                     <p className="text-gray-400 mb-4">These are events you have bookmarked.</p>
-                    <div className="flex flex-col gap-4 w-full h-[400px] overflow-y-auto">
+                    <div className="flex flex-col gap-4 w-full h-[300px] overflow-y-auto">
                         {bookmarkedEvents.length > 0 ? (
                             bookmarkedEvents.map((event) => (
                                 <BookmarkEventCard
@@ -211,3 +211,6 @@ const ExploreManage = () => {
 };
 
 export default ExploreManage;
+
+
+// ToDo - work on this doesnt update the bookmarked events list on firestore
