@@ -4,7 +4,7 @@ import {googleMapsConfig} from "../locationConfig.js";
 
 const containerStyle = {
     width: "50%",
-    height: "500px",
+    height: "75%",
 };
 
 const GoogleMapComponent = ({lat, lon}) => {
