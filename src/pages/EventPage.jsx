@@ -233,7 +233,6 @@ const EventPage = () => {
                 });
             }
 
-            // Add or update RSVP data in UserRSVPs collection
             const userRsvpsDocSnap = await getDoc(userRsvpsDocRef);
             if (userRsvpsDocSnap.exists()) {
                 await updateDoc(userRsvpsDocRef, {
