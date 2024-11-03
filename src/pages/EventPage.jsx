@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {doc, getDoc, setDoc, updateDoc,arrayUnion} from 'firebase/firestore';
 import {onAuthStateChanged} from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
 import {CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
@@ -51,6 +51,8 @@ const EventPage = () => {
     const [eventLong, setEventLong] = useState(0);
     const [eventLat, setEventLat] = useState(0);
     const [hostName, setHostName] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
+    const [eventAttendee, setEventAttendee] = useState('');
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -92,7 +94,6 @@ const EventPage = () => {
             setQuantity(quantity - 1);
         }
     };
-
 
     // const handleRSVP = async () => {
     //     if (!userId) {
@@ -225,8 +226,6 @@ const EventPage = () => {
         await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
     };
 
-
-
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -237,6 +236,7 @@ const EventPage = () => {
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
         const eventDocRef = doc(db, 'Events', eventId);
+        const eventWaitlistDocRef = doc(db, 'EventWaitlist', eventId);
 
         const rsvpData = {
             userId,
@@ -251,10 +251,13 @@ const EventPage = () => {
         };
 
         try {
+            if (eventAttendee>=eventCapacity) {
+                await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
+                return
+            }
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
 
-            // Save or update the RSVP in EventRSVPs and UserRSVPs collections
             await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData, eventId, true);
             await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData, userId, false);
 
@@ -268,9 +271,30 @@ const EventPage = () => {
         }
     };
 
+    
+    const handleWaitlist = async (waitlistDocRef, waitlistData) => {
+        try {
+            const waitlistDocSnap = await getDoc(waitlistDocRef);
+        const currentWaitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
+        const userAlreadyInWaitlist = currentWaitlist.some(waitlistEntry => waitlistEntry.userId === waitlistData.userId);
 
-
-
+        if (userAlreadyInWaitlist) {
+            console.log("User is already on the waitlist.");
+            alert("You are already on the waitlist for this event.");
+            return;
+        }
+        
+        await setDoc(waitlistDocRef, { 
+                waitlist: arrayUnion(waitlistData) 
+            }, { merge: true });
+            alert("You have been added to waitlist successfully.")
+            console.log("User added to waitlist successfully.");
+        } catch (error) {
+            alert("Unable to add to waitlist now.")
+            
+            console.error("Error adding user to waitlist:", error);
+        }
+    };
 
 
     /* deepa just in case  the helpers don't work
@@ -664,9 +688,6 @@ const EventPage = () => {
         }
     };
 
-
-
-
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -734,6 +755,8 @@ const EventPage = () => {
                     setEventCity(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
+                    setEventCapacity(data.eventDetails.capacity);
+                    setEventAttendee(data.attendeesCount);
 
                     if (data.hostId) {
                         const hostDocRef = doc(db, 'Users', data.hostId);
@@ -881,10 +904,10 @@ const EventPage = () => {
                                     className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg">
                                     <button
                                         className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
-                                        onClick={isPaidEvent ? handleCheckout : handleRSVP}
+                                        onClick={eventCapacity>eventAttendee?  isPaidEvent ? handleCheckout : handleRSVP:handleRSVP}
                                     >
                                         <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2"/>
-                                        <span>{isPaidEvent ? 'Checkout' : 'RSVP'}</span>
+                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':'Join Waitlist'}</span>
                                     </button>
                                 </div>
                                 <div className="flex flex-row gap-6 items-center">
