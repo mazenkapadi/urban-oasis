@@ -9,14 +9,12 @@ import FiltersComponent from "../components/FiltersComponent.jsx";
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { googleMapsConfig } from "../locationConfig.js";
 
-// import { getDistance } from 'geolib';
-
 const ViewAllEventsPage = () => {
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [activeFilters, setActiveFilters] = useState({ dateFilter: null, paid: null , availability: null , customDate:null});
+    const [activeFilters, setActiveFilters] = useState({ dateFilter: null, paid: null , availability: null , customDate:null,nearMe:null,priceRange:null,category:null});
     const [userLat, setUserLat] = useState(null);
     const [userLong, setUserLong] = useState(null);
 
@@ -103,7 +101,6 @@ const ViewAllEventsPage = () => {
                 console.log('here')
                 const eventDate = eventDateTimeParser(event.eventDetails.eventDateTime);
                 eventDate.setHours(0, 0, 0, 0);
-                // console.log(event.eventDetails.capacity);
                 console.log(eventDate);
 
                 
@@ -134,12 +131,36 @@ const ViewAllEventsPage = () => {
                 
             }));
 
-            const distanceLimit = 5; //it's km not mi
+            const distanceLimit = 5;
             filtered = eventsWithCoordinates.filter((event) => {
                 console.log('event with co-',event);
                 const distance = calculateDistance(userLat, userLong, event.lat, event.long);
                 return distance <= distanceLimit;
             });
+        }
+
+        if(filters.priceRange){
+            if (filters.priceRange.min && filters.priceRange.max) {
+                const minPrice = parseInt(filters.priceRange.min, 10);
+                const maxPrice = parseInt(filters.priceRange.max, 10);
+                filtered = filtered.filter((event) => { 
+                    const eventPrice = event.eventDetails.eventPrice || 0;
+                    console.log(minPrice,maxPrice,eventPrice)
+    
+                    return eventPrice >= minPrice && eventPrice <= maxPrice;
+                });
+            }
+        }   
+
+        if(filters.category){
+            
+            filtered = filtered.filter((event) => {
+                if(event.basicInfo.categories){
+                    const tempEvent =  event.basicInfo.categories.filter((cat)=> filters.category.includes(cat))
+                    return  tempEvent.length>0;
+                }
+            });
+            
         }
 
         setFilteredEvents(filtered);
@@ -208,7 +229,7 @@ const ViewAllEventsPage = () => {
                         </div>
 
                         <div className="w-3/4 space-y-6">
-                            {(activeFilters.dateFilter || activeFilters.paid !== null || activeFilters.availability||activeFilters.customDate) && (
+                            {(activeFilters.dateFilter || activeFilters.paid !== null || activeFilters.availability||activeFilters.customDate||activeFilters.nearMe||activeFilters.priceRange||activeFilters.category) && (
                                 <div className="mb-6 flex space-x-4">
                                     {activeFilters.dateFilter && (
                                         <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
@@ -254,6 +275,42 @@ const ViewAllEventsPage = () => {
                                             </button>
                                         </div>
                                     )}
+                                    {activeFilters.nearMe && (
+                                        <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
+                                            <p className="text-gray-500 text-sm">Near Me</p>
+                                            <button
+                                                className="ml-2 text-red-500"
+                                                onClick={() => removeFilter('nearMe')}
+                                            >
+                                                x
+                                            </button>
+                                        </div>
+                                    )}
+                                    {activeFilters.priceRange && (
+                                        <div className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
+                                            <p className="text-gray-500 text-sm">Price Range</p>
+                                            <button
+                                                className="ml-2 text-red-500"
+                                                onClick={() => removeFilter('priceRange')}
+                                            >
+                                                x
+                                            </button>
+                                        </div>
+                                    )}
+                                     {activeFilters.category && 
+                                        (activeFilters.category.map((subCategory)=>(
+                                            <div key={subCategory} 
+                                                className="flex items-center bg-gray-200 px-3 py-1 rounded-full">
+                                            <span 
+                                                className="text-gray-500 text-sm"> {subCategory}</span>
+                                            <button 
+                                                className="ml-2 text-red-500"
+                                                onClick={() => removeFilter('category')}
+                                                >x
+                                            </button>
+                                        </div>
+                                )))}
+                                        
                                 </div>
                             )}
                             {loading ? (
