@@ -232,27 +232,44 @@ const EventPage = () => {
             return;
         }
 
+        const totalAttendees = isPaidEvent ? quantity : Math.min(quantity, 10);
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
         const eventDocRef = doc(db, 'Events', eventId);
 
         const rsvpData = {
-            userId, eventId, eventTitle, eventDateTime, name, email, phone, quantity, createdAt: new Date().toISOString(),
+            userId,
+            eventId,
+            eventTitle,
+            eventDateTime,
+            name,
+            email,
+            phone,
+            quantity: totalAttendees,
+            createdAt: new Date().toISOString(),
         };
 
         try {
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
 
-            await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData);
-            await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData);
+            // Save or update the RSVP in EventRSVPs and UserRSVPs collections
+            await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData, eventId, true);
+            await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData, userId, false);
+
+            // Update the attendee count in the event document
             await updateAttendeesCount(eventDocRef);
 
+            console.log("RSVP successfully saved");
             setModalOpen(true);
         } catch (error) {
             console.error("Error handling RSVP:", error);
         }
     };
+
+
+
+
 
 
     /* deepa just in case  the helpers don't work
@@ -608,7 +625,15 @@ const EventPage = () => {
         const eventDocRef = doc(db, 'Events', eventId);
 
         const rsvpData = {
-            userId, eventId, eventTitle, eventDateTime, name, email, phone, quantity, createdAt: new Date().toISOString(),
+            userId,
+            eventId,
+            eventTitle,
+            eventDateTime,
+            name,
+            email,
+            phone,
+            quantity,
+            createdAt: new Date().toISOString(),
         };
 
         try {
@@ -624,8 +649,11 @@ const EventPage = () => {
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
 
-            await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData);
-            await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData);
+            // Save or update the RSVP in EventRSVPs and UserRSVPs collections
+            await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData, eventId, true);
+            await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData, userId, false);
+
+            // Update the attendee count in the event document
             await updateAttendeesCount(eventDocRef);
 
             // Redirect to Stripe checkout
@@ -634,6 +662,7 @@ const EventPage = () => {
             console.error("Error handling checkout:", error);
         }
     };
+
 
 
 
