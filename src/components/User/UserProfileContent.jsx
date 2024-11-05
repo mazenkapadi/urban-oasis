@@ -3,15 +3,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from "../../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 import ExploreManage from './ExploreManage';
-
-const formatPhoneNumber = (phoneNumber) => {
-    if (!phoneNumber) return 'Phone number not available';
-    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    return match ? `(${match[1]}) ${match[2]}-${match[3]}` : phoneNumber;
-};
 
 const UserProfileContent = () => {
     const [name, setName] = useState('');
@@ -19,8 +11,7 @@ const UserProfileContent = () => {
     const [email, setEmail] = useState('');
     const [userId, setUserId] = useState(null);
     const [profilePic, setProfilePic] = useState('');
-    const [upcomingEvents, setUpcomingEvents] = useState([]);
-    const [activeEventIndex, setActiveEventIndex] = useState(0);
+    const [nextEvent, setNextEvent] = useState(null);
     const [nextEventImage, setNextEventImage] = useState('');
     const [timeLeft, setTimeLeft] = useState({});
     const navigate = useNavigate();
@@ -28,14 +19,14 @@ const UserProfileContent = () => {
     const handleEditProfile = () => navigate('/userProfilePage/contact-info');
 
     useEffect(() => {
+        // Listen for authentication state and set user ID and email
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
                 setEmail(user.email);
-                setProfilePic(user.photoURL || '');
             }
         });
-        return unsubscribe;
+        return () => unsubscribe();
     }, []);
 
     const fetchEventImage = async (eventId) => {
@@ -43,7 +34,11 @@ const UserProfileContent = () => {
             const eventDoc = await getDoc(doc(db, 'Events', eventId));
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
-                setNextEventImage(eventData.eventDetails?.images?.[0]?.url || '');
+                const imageUrl = eventData.eventDetails?.images?.[0]?.url || '';
+                console.log("Fetched Event Image URL:", imageUrl);
+                setNextEventImage(imageUrl);
+            } else {
+                console.log("Event document not found for eventId:", eventId);
             }
         } catch (error) {
             console.error('Error fetching event image:', error);
@@ -58,8 +53,12 @@ const UserProfileContent = () => {
                     if (userDoc.exists()) {
                         const data = userDoc.data();
                         setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
-                        setPhone(formatPhoneNumber(data.contact?.cellPhone));
+                        setPhone(data.contact?.cellPhone || 'Phone number not available');
                         setEmail(data.contact?.email || email);
+
+                        // Prioritize profile pictures: uploaded profilePicture, then Google profilePic, then default icon
+                        const profilePicture = data.profilePicture || auth.currentUser.photoURL || '';
+                        setProfilePic(profilePicture);
                     }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
@@ -72,14 +71,15 @@ const UserProfileContent = () => {
                 try {
                     const rsvpDoc = await getDoc(doc(db, 'UserRSVPs', userId));
                     if (rsvpDoc.exists()) {
-                        const rsvpData = rsvpDoc.data().events || {};
+                        const rsvpData = rsvpDoc.data().rsvps || {};
                         const upcomingEvents = Object.values(rsvpData)
                             .filter((event) => new Date(event.eventDateTime) > new Date())
                             .sort((a, b) => new Date(a.eventDateTime) - new Date(b.eventDateTime));
 
-                        setUpcomingEvents(upcomingEvents);
                         if (upcomingEvents.length > 0) {
-                            fetchEventImage(upcomingEvents[0].eventId); // Load the image for the first upcoming event
+                            const nextEvent = upcomingEvents[0];
+                            setNextEvent(nextEvent);
+                            await fetchEventImage(nextEvent.eventId);
                         }
                     } else {
                         console.log('No RSVPs found for this user.');
@@ -98,7 +98,6 @@ const UserProfileContent = () => {
 
     useEffect(() => {
         const calculateTimeLeft = () => {
-            const nextEvent = upcomingEvents[activeEventIndex];
             if (nextEvent && nextEvent.eventDateTime) {
                 const eventDate = new Date(nextEvent.eventDateTime).getTime();
                 const now = new Date().getTime();
@@ -119,25 +118,7 @@ const UserProfileContent = () => {
 
         const timer = setInterval(calculateTimeLeft, 1000);
         return () => clearInterval(timer);
-    }, [upcomingEvents, activeEventIndex]);
-
-    const handleNextEvent = () => {
-        if (activeEventIndex < upcomingEvents.length - 1) {
-            const newIndex = activeEventIndex + 1;
-            setActiveEventIndex(newIndex);
-            fetchEventImage(upcomingEvents[newIndex].eventId); // Load the image for the next event
-        }
-    };
-
-    const handlePrevEvent = () => {
-        if (activeEventIndex > 0) {
-            const newIndex = activeEventIndex - 1;
-            setActiveEventIndex(newIndex);
-            fetchEventImage(upcomingEvents[newIndex].eventId); // Load the image for the previous event
-        }
-    };
-
-    const nextEvent = upcomingEvents[activeEventIndex];
+    }, [nextEvent]);
 
     return (
         <div className="w-full">
@@ -148,7 +129,11 @@ const UserProfileContent = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full">
-                    <img src={profilePic} alt="User Profile" className="rounded-full w-24 h-24 object-cover mb-4" />
+                    <img
+                        src={profilePic || '/path/to/default/icon.png'} // Replace with default icon path
+                        alt="User Profile"
+                        className="rounded-full w-24 h-24 object-cover mb-4"
+                    />
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
                     <p className="text-gray-400">{phone}</p>
                     <p className="text-gray-400">{email}</p>
@@ -202,26 +187,9 @@ const UserProfileContent = () => {
                                     View Event Details
                                 </button>
                             </div>
-
-                            {/* Left and Right Arrows */}
-                            <button
-                                onClick={handlePrevEvent}
-                                disabled={activeEventIndex === 0}
-                                className={`absolute left-2 top-1/2 transform -translate-y-1/2 text-white-300 hover:text-white ${activeEventIndex === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
-                            >
-                                <ChevronLeftIcon className="w-8 h-8"/>
-                            </button>
-                            <button
-                                onClick={handleNextEvent}
-                                disabled={activeEventIndex === upcomingEvents.length - 1}
-                                className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-white-300 hover:text-white ${activeEventIndex === upcomingEvents.length - 1 ? "opacity-50 cursor-not-allowed" : ""}`}
-                            >
-                                <ChevronRightIcon className="w-8 h-8"/>
-                            </button>
                         </div>
-
                     </div>
-                    )}
+                )}
             </div>
             <ExploreManage/>
         </div>

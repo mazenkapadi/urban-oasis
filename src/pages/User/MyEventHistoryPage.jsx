@@ -9,13 +9,14 @@ const MyEventHistoryPage = () => {
     const [userId, setUserId] = useState(null);
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [sortOption, setSortOption] = useState('newest'); // Default to newest to oldest
+    const [sortOption, setSortOption] = useState('newest');
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserId(user.uid);
+                console.log("User ID:", user.uid);
             } else {
                 console.log('No user logged in');
             }
@@ -25,28 +26,39 @@ const MyEventHistoryPage = () => {
 
     useEffect(() => {
         const fetchRSVPs = async () => {
-            if (!userId) return;
+            if (!userId) {
+                console.log("User ID is null, skipping RSVP fetch.");
+                return;
+            }
 
             try {
+                console.log("Fetching RSVPs for user:", userId);
                 const rsvpDocRef = doc(db, 'UserRSVPs', userId);
                 const rsvpDocSnap = await getDoc(rsvpDocRef);
 
                 if (rsvpDocSnap.exists()) {
+                    console.log("User RSVPs document found.");
                     const rsvpData = rsvpDocSnap.data();
-                    const userEvents = rsvpData.events || {};
+                    const userEvents = rsvpData.rsvps || {}; // Access 'rsvps' subfield
 
                     // Fetch additional event data including images for each RSVP'd event
                     const eventDetails = await Promise.all(
                         Object.values(userEvents).map(async (event) => {
+                            console.log("Fetching event details for eventId:", event.eventId);
                             const eventDocRef = doc(db, 'Events', event.eventId);
                             const eventDocSnap = await getDoc(eventDocRef);
 
                             if (eventDocSnap.exists()) {
                                 const eventData = eventDocSnap.data();
+                                const imageUrl = eventData.eventDetails?.images?.[0]?.url || '';
+                                console.log("Fetched Event Image URL:", imageUrl);
+
                                 return {
                                     ...event,
-                                    imageUrl: eventData.eventDetails?.images?.[0]?.url || '',
+                                    imageUrl,
                                     location: eventData.basicInfo?.location?.label || 'Location not available',
+                                    paidEvent: eventData.eventDetails?.paidEvent || false,
+                                    price: eventData.eventDetails?.eventPrice || 0,
                                 };
                             }
                             return event;
@@ -58,7 +70,7 @@ const MyEventHistoryPage = () => {
                     console.log('No RSVPs found for this user.');
                 }
             } catch (error) {
-                console.error("Error fetching RSVPs: ", error);
+                console.error("Error fetching RSVPs:", error);
             } finally {
                 setLoading(false);
             }
