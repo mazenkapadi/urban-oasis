@@ -25,6 +25,7 @@ import {
     LinkedinShareButton, RedditIcon, RedditShareButton,
     TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
 } from "react-share";
+import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
 
 const EventPage = () => {
     const [quantity, setQuantity] = useState(1);
@@ -659,6 +660,7 @@ const EventPage = () => {
                                     <p className="text-gray-300">{eventDescription}</p>
                                 </div>
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime}/>
+                                <GoogleMapComponent lat={eventLat} lon={eventLong}  />
                             </div>
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg">
                                 <div className="flex space-x-4">
