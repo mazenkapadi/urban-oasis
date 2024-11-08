@@ -1,9 +1,10 @@
-// components/AutocompleteSearch.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { autocomplete } from '@algolia/autocomplete-js';
 import { createRoot } from 'react-dom/client';
 import { searchClient } from '../algoliaConfig';
 import '@algolia/autocomplete-theme-classic';
+import { ClockIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 
 function debounce(func, delay) {
     let timer;
@@ -20,6 +21,7 @@ const AutocompleteSearch = () => {
     const [zipcode, setZipcode] = useState('');
     const [searchDate, setSearchDate] = useState('');
     const [searchInput, setSearchInput] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -51,6 +53,40 @@ const AutocompleteSearch = () => {
                 debouncedSearch(query);
 
                 return [
+                    // Recent Searches Plugin
+                    {
+                        sourceId: 'recentSearches',
+                        getItems() {
+                            const recentSearches = JSON.parse(localStorage.getItem('RECENT_SEARCHES') || '[]');
+                            return recentSearches
+                                .filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
+                                .map((item) => ({
+                                    ...item,
+                                    type: 'recent',
+                                }));
+                        },
+                        templates: {
+                            item({ item, setQuery }) {
+                                return (
+                                    <div
+                                        className="autocomplete-item flex items-center cursor-pointer px-4 py-2 hover:bg-gray-100"
+                                        onClick={() => {
+                                            setSearchInput(item.label);
+                                            setQuery(item.label);
+                                            navigate('/events');
+                                        }}
+                                    >
+                                        <ClockIcon className="h-5 w-5 text-gray-400 mr-2" />
+                                        <span className="text-gray-700">{item.label}</span>
+                                    </div>
+                                );
+                            },
+                            noResults() {
+                                return <div className="text-gray-500 px-4 py-2">No recent searches found.</div>;
+                            },
+                        },
+                    },
+                    // Events Search from Algolia
                     {
                         sourceId: 'events',
                         getItems() {
@@ -74,7 +110,10 @@ const AutocompleteSearch = () => {
                                     } else {
                                         console.log('Search Results:', hits);
                                     }
-                                    return hits;
+                                    return hits.map((hit) => ({
+                                        ...hit,
+                                        type: 'event',
+                                    }));
                                 })
                                 .catch((error) => {
                                     console.error('Error fetching search results:', error);
@@ -86,18 +125,20 @@ const AutocompleteSearch = () => {
                                 const title = item.basicInfo?.title || 'Untitled Event';
                                 return (
                                     <div
-                                        className="autocomplete-item flex flex-col cursor-pointer px-4 py-2 hover:bg-gray-100"
+                                        className="autocomplete-item flex items-center cursor-pointer px-4 py-2 hover:bg-gray-100"
                                         onClick={() => {
                                             setSearchInput(title);
                                             setQuery(title);
+                                            navigate('/events');
                                         }}
                                     >
+                                        <MagnifyingGlassIcon className="h-5 w-5 text-blue-400 mr-2" />
                                         <span className="text-gray-700">{title}</span>
                                     </div>
                                 );
                             },
                             noResults() {
-                                return <div className="text-gray-500 px-4 py-2">No results found.</div>;
+                                return <div className="text-gray-500 px-4 py-2">No events found.</div>;
                             },
                         },
                     },
@@ -106,7 +147,7 @@ const AutocompleteSearch = () => {
         });
 
         return () => autocompleteInstance.destroy();
-    }, []);
+    }, [navigate]);
 
     const handleZipcodeChange = (e) => {
         const value = e.target.value;
@@ -118,6 +159,7 @@ const AutocompleteSearch = () => {
 
     const handleSearch = () => {
         console.log("Searching for events:", searchInput, "on date:", searchDate, "in zipcode:", zipcode);
+        navigate('/events');
     };
 
     return (

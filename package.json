@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@algolia/autocomplete-js": "^1.17.7",
+    "@algolia/autocomplete-plugin-query-suggestions": "^1.17.7",
+    "@algolia/autocomplete-plugin-recent-searches": "^1.17.7",
     "@algolia/autocomplete-theme-classic": "^1.17.7",
     "@algolia/client-search": "^5.10.1",
     "@emotion/react": "^11.13.3",
