@@ -9,7 +9,7 @@ import {db, auth, storage} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./LoadingPage.jsx"
-import {Button, Modal} from "@mui/material";
+import {Button, Modal, Typography} from "@mui/material";
 import {loadStripe} from "@stripe/stripe-js";
 import {v4 as uuidv4} from "uuid";
 import ForecastComponent from "../components/ForecastComponent.jsx";
@@ -633,6 +633,8 @@ const EventPage = () => {
 
     const shareData = `Check out this event on Urban Oasis!\n\n${eventTitle}\n\n` + `${eventDescription}\n\n` + `${eventDateTime}\n` + `${eventLocation}\n\n`// + `${eventImages[0]}\n`
 
+    const formattedDescription = eventDescription
+        .replace(/(?:\r\n|\r|\n)/g, '<br/>');
 
     return (
         <>
@@ -656,7 +658,7 @@ const EventPage = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <h2 className="text-2xl text-white font-semibold">Description</h2>
-                                    <p className="text-gray-300">{eventDescription}</p>
+                                    <div className="text-gray-300" dangerouslySetInnerHTML={{ __html: formattedDescription }}/>
                                 </div>
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime}/>
                             </div>
