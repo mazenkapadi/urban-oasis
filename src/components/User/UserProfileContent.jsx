@@ -16,26 +16,79 @@ const UserProfileContent = () => {
     const [timeLeft, setTimeLeft] = useState({});
     const navigate = useNavigate();
 
+    // Function to handle profile edit navigation
     const handleEditProfile = () => navigate('/userProfilePage/contact-info');
 
+    // Function to get user initials
+    const getInitials = (name) => {
+        const nameParts = name.split(' ');
+        return nameParts.map(part => part[0]).join('').toUpperCase();
+    };
+
+    // Effect to listen for authentication state changes
     useEffect(() => {
-        // Listen for authentication state and set user ID and email
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setUserId(user.uid);
                 setEmail(user.email);
+                await fetchUserData(user.uid);
+                await fetchUserRSVPs(user.uid);
             }
         });
         return () => unsubscribe();
     }, []);
 
+    // Function to fetch user data from Firestore
+    const fetchUserData = async (userId) => {
+        try {
+            const userDoc = await getDoc(doc(db, 'Users', userId));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
+                setPhone(data.contact?.cellPhone || 'Phone number not available');
+
+                // Check profile picture: uploaded picture, Google profile picture, or initials
+                const profilePicture = data.profilePic || auth.currentUser?.photoURL || '';
+                setProfilePic(profilePicture);
+            } else {
+                // Default to Google profile picture if no document exists
+                setProfilePic(auth.currentUser?.photoURL || '');
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    // Function to fetch user RSVPs
+    const fetchUserRSVPs = async (userId) => {
+        try {
+            const rsvpDoc = await getDoc(doc(db, 'UserRSVPs', userId));
+            if (rsvpDoc.exists()) {
+                const rsvpData = rsvpDoc.data().rsvps || {};
+                const upcomingEvents = Object.values(rsvpData)
+                    .filter((event) => new Date(event.eventDateTime) > new Date())
+                    .sort((a, b) => new Date(a.eventDateTime) - new Date(b.eventDateTime));
+
+                if (upcomingEvents.length > 0) {
+                    const nextEvent = upcomingEvents[0];
+                    setNextEvent(nextEvent);
+                    await fetchEventImage(nextEvent.eventId);
+                }
+            } else {
+                console.log('No RSVPs found for this user.');
+            }
+        } catch (error) {
+            console.error('Error fetching RSVP data:', error);
+        }
+    };
+
+    // Function to fetch the event image
     const fetchEventImage = async (eventId) => {
         try {
             const eventDoc = await getDoc(doc(db, 'Events', eventId));
             if (eventDoc.exists()) {
                 const eventData = eventDoc.data();
                 const imageUrl = eventData.eventDetails?.images?.[0]?.url || '';
-                console.log("Fetched Event Image URL:", imageUrl);
                 setNextEventImage(imageUrl);
             } else {
                 console.log("Event document not found for eventId:", eventId);
@@ -45,57 +98,7 @@ const UserProfileContent = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (userId) {
-                try {
-                    const userDoc = await getDoc(doc(db, 'Users', userId));
-                    if (userDoc.exists()) {
-                        const data = userDoc.data();
-                        setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
-                        setPhone(data.contact?.cellPhone || 'Phone number not available');
-                        setEmail(data.contact?.email || email);
-
-                        // Prioritize profile pictures: uploaded profilePicture, then Google profilePic, then default icon
-                        const profilePicture = data.profilePicture || auth.currentUser.photoURL || '';
-                        setProfilePic(profilePicture);
-                    }
-                } catch (error) {
-                    console.error('Error fetching user data:', error);
-                }
-            }
-        };
-
-        const fetchUserRSVPs = async () => {
-            if (userId) {
-                try {
-                    const rsvpDoc = await getDoc(doc(db, 'UserRSVPs', userId));
-                    if (rsvpDoc.exists()) {
-                        const rsvpData = rsvpDoc.data().rsvps || {};
-                        const upcomingEvents = Object.values(rsvpData)
-                            .filter((event) => new Date(event.eventDateTime) > new Date())
-                            .sort((a, b) => new Date(a.eventDateTime) - new Date(b.eventDateTime));
-
-                        if (upcomingEvents.length > 0) {
-                            const nextEvent = upcomingEvents[0];
-                            setNextEvent(nextEvent);
-                            await fetchEventImage(nextEvent.eventId);
-                        }
-                    } else {
-                        console.log('No RSVPs found for this user.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching RSVP data:', error);
-                }
-            }
-        };
-
-        if (userId) {
-            fetchUserData();
-            fetchUserRSVPs();
-        }
-    }, [userId, email]);
-
+    // Effect to calculate time left for the next event
     useEffect(() => {
         const calculateTimeLeft = () => {
             if (nextEvent && nextEvent.eventDateTime) {
@@ -120,6 +123,7 @@ const UserProfileContent = () => {
         return () => clearInterval(timer);
     }, [nextEvent]);
 
+    // JSX for UserProfileContent component
     return (
         <div className="w-full">
             <div className="mb-6">
@@ -129,11 +133,19 @@ const UserProfileContent = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-800 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full">
-                    <img
-                        src={profilePic || '/path/to/default/icon.png'} // Replace with default icon path
-                        alt="User Profile"
-                        className="rounded-full w-24 h-24 object-cover mb-4"
-                    />
+                    <div className="w-24 h-24 rounded-full bg-gray-500 flex items-center justify-center">
+                        {profilePic ? (
+                            <img
+                                src={profilePic}
+                                alt="User Profile"
+                                className="rounded-full w-24 h-24 object-cover"
+                            />
+                        ) : (
+                            <span className="text-white font-bold text-2xl">
+                                {getInitials(name || 'User Name')}
+                            </span>
+                        )}
+                    </div>
                     <h2 className="text-xl font-semibold mb-2 text-white">{name || 'Your Name'}</h2>
                     <p className="text-gray-400">{phone}</p>
                     <p className="text-gray-400">{email}</p>
@@ -162,27 +174,27 @@ const UserProfileContent = () => {
                                 <h3 className="text-base font-semibold mb-4">{new Date(nextEvent.eventDateTime).toDateString()}</h3>
 
                                 <div className="flex justify-around w-full font-bold text-base mb-4 space-x-6">
-                                    <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.days || 0}</div>
-                                        <div className="text-sm text-gray-300">Days</div>
+                                    <div className="flex flex-col items-center">
+                                        <div>{timeLeft.days || 0}</div>
+                                        <div className="text-sm">Days</div>
                                     </div>
-                                    <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.hours || 0}</div>
-                                        <div className="text-sm text-gray-300">Hours</div>
+                                    <div className="flex flex-col items-center">
+                                        <div>{timeLeft.hours || 0}</div>
+                                        <div className="text-sm">Hours</div>
                                     </div>
-                                    <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.minutes || 0}</div>
-                                        <div className="text-sm text-gray-300">Minutes</div>
+                                    <div className="flex flex-col items-center">
+                                        <div>{timeLeft.minutes || 0}</div>
+                                        <div className="text-sm">Minutes</div>
                                     </div>
-                                    <div className="flex flex-col items-center shadow-lg">
-                                        <div className="text-lg">{timeLeft.seconds || 0}</div>
-                                        <div className="text-sm text-gray-300">Seconds</div>
+                                    <div className="flex flex-col items-center">
+                                        <div>{timeLeft.seconds || 0}</div>
+                                        <div className="text-sm">Seconds</div>
                                     </div>
                                 </div>
 
                                 <button
-                                    className="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded text-lg text-white font-bold shadow-lg"
                                     onClick={() => navigate(`/eventPage/${nextEvent.eventId}`)}
+                                    className="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded text-white"
                                 >
                                     View Event Details
                                 </button>
@@ -191,7 +203,8 @@ const UserProfileContent = () => {
                     </div>
                 )}
             </div>
-            <ExploreManage/>
+
+            <ExploreManage />
         </div>
     );
 };
