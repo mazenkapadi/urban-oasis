@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { handleEmailChange } from '../services/auth/UpdateEmail';
-import PasswordReset from '../services/auth/ResetPassword';
-import { handleAccountClosure } from '../services/auth/CloseAccount';
-import UserPreferences from '../components/UserPreferences';
-import { auth } from '../firebaseConfig';
+import { handleEmailChange } from '../../services/auth/UpdateEmail.js';
+import PasswordReset from '../../services/auth/ResetPassword.js';
+import { handleAccountClosure } from '../../services/auth/CloseAccount.js';
+import UserPreferences from '../../components/User/UserPreferences.jsx';
+import { auth } from '../../firebaseConfig.js';
 
 const SettingsPage = () => {
-    const [currentEmail, setCurrentEmail] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newEmail, setNewEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
-    const [modalError, setModalError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [preferences, setPreferences] = useState({
+    const [ currentEmail, setCurrentEmail ] = useState('');
+    const [ isModalOpen, setIsModalOpen ] = useState(false);
+    const [ newEmail, setNewEmail ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ isPasswordResetSent, setIsPasswordResetSent ] = useState(false);
+    const [ modalError, setModalError ] = useState('');
+    const [ successMessage, setSuccessMessage ] = useState('');
+    const [ preferences, setPreferences ] = useState({
         attendingEvents: {
             updates: false,
             requests: false,
@@ -65,85 +65,86 @@ const SettingsPage = () => {
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className="p-8 bg-gray-900 min-h-screen text-white">
+        <div className="p-8 bg-gray-900 min-h-screen text-white" >
             {/* Change Email Section */}
-            <div className="space-y-8">
-                <div>
-                    <h2 className="text-xl font-bold mb-4">Change Email</h2>
-                    <div className="flex items-center space-x-4">
-                        <div>
-                            <label className="block text-white" htmlFor="current_email">Account Email Address</label>
-                            <p id="current_email">{currentEmail}</p>
-                        </div>
+            <div className="space-y-8" >
+                <div >
+                    <h2 className="text-xl font-bold mb-4" >Change Email</h2 >
+                    <div className="flex items-center space-x-4" >
+                        <div >
+                            <label className="block text-white" htmlFor="current_email" >Account Email Address</label >
+                            <p id="current_email" >{currentEmail}</p >
+                        </div >
                         <button
                             id="change_email_button"
                             onClick={() => setIsModalOpen(true)}
                             className={buttonClass}
                         >
                             Change
-                        </button>
-                    </div>
-                </div>
+                        </button >
+                    </div >
+                </div >
 
                 {/* Success message */}
                 {successMessage && (
-                    <div className="mt-4 text-green-500" id="success_message">
+                    <div className="mt-4 text-green-500" id="success_message" >
                         {successMessage}
-                    </div>
+                    </div >
                 )}
 
                 {/* Change Password Section */}
-                <div>
-                    <h2 className="text-xl font-bold mb-4">Change Password</h2>
-                    <div className="flex flex-col space-y-4">
-                        <p>Click below to receive an email to reset your password.</p>
+                <div >
+                    <h2 className="text-xl font-bold mb-4" >Change Password</h2 >
+                    <div className="flex flex-col space-y-4" >
+                        <p >Click below to receive an email to reset your password.</p >
                         <button
                             id="password_reset_button"
                             onClick={handlePasswordChange} // Using the PasswordReset class
                             className={buttonClass}
                         >
                             {isPasswordResetSent ? 'Resend Email' : 'Change Password'}
-                        </button>
-                    </div>
-                </div>
-
+                        </button >
+                    </div >
+                </div >
 
 
                 {/* User Preferences Component */}
-                <UserPreferences preferences={preferences} togglePreference={(category, key) => setPreferences(prev => ({
-                    ...prev,
-                    [category]: {
-                        ...prev[category],
-                        [key]: !prev[category][key],
-                    },
-                }))} />
+                <UserPreferences preferences={preferences}
+                                 togglePreference={(category, key) => setPreferences(prev => ({
+                                     ...prev,
+                                     [category]: {
+                                         ...prev[category],
+                                         [key]: !prev[category][key],
+                                     },
+                                 }))} />
 
                 {/* Close Account Section */}
-                <div>
-                    <h2 className="text-xl font-bold mb-4">Close Account</h2>
+                <div >
+                    <h2 className="text-xl font-bold mb-4" >**DANGER ZONE**</h2 >
+                    <h2 className="text-xl font-bold mb-4 pl-1" >Close Account</h2 >
                     <button
                         id="close_account_button"
-                        onClick={handleAccountClosure} // Call the function from CloseAccount.js
-                        className={buttonClass}
+                        onClick={handleAccountClosure}
+                        className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-md  transition w-1/2 max-w-xs"
                     >
                         Close Account
-                    </button>
-                </div>
-            </div>
+                    </button >
+                </div >
+            </div >
 
             {/* Modal for Changing Email */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full relative">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" >
+                    <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full relative" >
                         <button
                             id="modal_close_button"
                             onClick={closeModal}
                             className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
                         >
                             &times;
-                        </button>
-                        <h3 className="text-xl font-bold mb-4 text-white">Change your email address</h3>
-                        <div className="space-y-4">
+                        </button >
+                        <h3 className="text-xl font-bold mb-4 text-white" >Change your email address</h3 >
+                        <div className="space-y-4" >
                             <input
                                 id="new_email_input"
                                 type="email"
@@ -166,19 +167,19 @@ const SettingsPage = () => {
                                 className={buttonClass}
                             >
                                 Save
-                            </button>
+                            </button >
 
                             {/* Error message inside modal */}
                             {modalError && (
-                                <div className="text-red-500 mt-2" id="modal_error_message">
+                                <div className="text-red-500 mt-2" id="modal_error_message" >
                                     {modalError}
-                                </div>
+                                </div >
                             )}
-                        </div>
-                    </div>
-                </div>
+                        </div >
+                    </div >
+                </div >
             )}
-        </div>
+        </div >
     );
 };
 

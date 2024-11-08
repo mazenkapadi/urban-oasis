@@ -1,54 +1,118 @@
-import { useState } from "react";
-import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
+import {useState, useEffect} from "react";
+import {GoogleMap, MarkerF, useJsApiLoader, useLoadScript} from "@react-google-maps/api";
+import {googleMapsConfig} from "../locationConfig.js";
 
-// Define the container styles for the map
 const containerStyle = {
-  width: "50%",
-  height: "500px",
+    width: "50%",
+    height: "75%",
 };
 
-const GoogleMaps = ({ latitude, longitude }) => {
-  const [mapLoaded, setMapLoaded] = useState(false); // State to track if the map has fully loaded
+const GoogleMapComponent = ({lat, lon}) => {
+    const [mapLoaded, setMapLoaded] = useState(false);
+    const [location, setLocation] = useState({ lat: 0, lng: 0 });
+    // const [eventLong, setEventLong] = useState(0);
+    // const [eventLat, setEventLat] = useState(0);
 
-  // Load the Google Maps script with the API key
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GM_KEY,
-  });
+    useEffect(() => {
+        setLocation({
+            lat: lat,
+            lng: lon,
+        });
+    }, [lat, lon]);
 
-  // Check if there's an error or the script is not loaded
-  if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading Maps...</div>;
 
-  // Set the center of the map using the provided latitude and longitude
-  const center = {
-    lat: latitude || 0,
-    lng: longitude || 0,
-  };
+    const {isLoaded} = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: googleMapsConfig.apiKey,
+        libraries: ['places'],
+    });
 
-  // Map load event handler
-  const handleMapLoad = () => {
-    setMapLoaded(true); // Set state when the map has loaded
-  };
-  const handleMapClick = () => {
-    // Construct the Google Maps URL with a marker
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&markers=${latitude},${longitude}`;
-    window.open(googleMapsUrl, "_blank"); // Open the URL in a new tab
-  };
+    // useEffect(() => {
+    //     if (isLoaded && eventPlaceId) {
+    //         geocodePlaceId(eventPlaceId);
+    //     }
+    // }, [isLoaded, eventPlaceId]);
+    //
+    // const geocodePlaceId = async (placeId) => {
+    //     try {
+    //         const service = new google.maps.places.PlacesService(document.createElement('div'));
+    //         const request = {
+    //             placeId: placeId,
+    //             fields: ['geometry'],
+    //         };
+    //
+    //         service.getDetails(request, (place, status) => {
+    //             if (status === google.maps.places.PlacesServiceStatus.OK) {
+    //                 const location = place.geometry.location;
+    //                 setEventLat(location.lat());
+    //                 setEventLong(location.lng());
+    //             } else {
+    //                 console.error('Error geocoding place ID:', status);
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.error('Error geocoding place ID:', error);
+    //     }
+    // };
 
-  return (
-    <div className="w-full h-[500px]">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={12}
-        onLoad={handleMapLoad}
-        onClick={handleMapClick} // Trigger when map loads
-      >
-        {/* Only show the marker when the map is fully loaded */}
-        {mapLoaded && <MarkerF position={center} />}
-      </GoogleMap>
-    </div>
-  );
+    // const { isLoaded, loadError } = useLoadScript({
+    //     googleMapsApiKey: import.meta.env.VITE_GM_KEY,
+    // });
+    //
+    // useEffect(() => {
+    //     const fetchLocation = async () => {
+    //         console.log("placeId",placeId);
+    //         if (!placeId) return;
+    //
+    //         try {
+    //             const response = await fetch(
+    //                 `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${import.meta.env.VITE_GM_KEY}`
+    //             );
+    //             const data = await response.json();
+    //
+    //             if (data.status === "OK") {
+    //                 const locationData = data.result.geometry.location;
+    //                 setLocation({
+    //                     lat: locationData.lat,
+    //                     lng: locationData.lng,
+    //                 });
+    //             } else {
+    //                 console.error('Failed to get place details:', data.status);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching place details:', error);
+    //         }
+    //     };
+    //
+    //     fetchLocation();
+    // }, [placeId]);
+    //
+    // if (loadError) return <div>Error loading maps</div>;
+    if (!isLoaded) return <div>Loading Maps...</div>;
+
+    const handleMapLoad = () => {
+        setMapLoaded(true);
+    };
+
+    const handleMapClick = () => {
+        const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&markers=${lat},${lon}`;
+        window.open(googleMapsUrl, "_blank");
+    };
+
+    return (
+        <div className="w-full h-[500px]">
+            <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={location}
+                zoom={12}
+                onLoad={handleMapLoad}
+                onClick={handleMapClick}
+            >
+                {mapLoaded && <MarkerF position={location}/>}
+            </GoogleMap>
+        </div>
+    );
+
 };
 
-export default GoogleMaps;
+export default GoogleMapComponent;

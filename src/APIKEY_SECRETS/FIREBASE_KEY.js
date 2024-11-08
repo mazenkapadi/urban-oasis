@@ -9,6 +9,7 @@ const FIREBASE_KEY = {
     weatherApiKey: import.meta.env.VITE_WEATHER_API_KEY,
     geoApiKey: import.meta.env.VITE_WEATHER_API_KEY,
     gmKey: import.meta.env.VITE_WEATHER_GM_KEY,
+    locationKey: import.meta.env.VITE_LOCATION_KEY,
 }
 
 export default FIREBASE_KEY;

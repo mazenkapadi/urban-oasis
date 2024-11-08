@@ -1,31 +1,44 @@
+import React from "react";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
-import EventCarousel from "../components/EventCarousel.jsx";
-import PhotoCarousel from "../components/PhotoCarousel.jsx";
-import React from "react";
+import EventCarousel from "../components/Carousels/EventCarousel.jsx";
+import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
+import EventMonthCarousel from "../components/Carousels/EventMonthCarousel.jsx";
+import Testimonials from "../components/Testimonials.jsx";
 
 function LandingPage() {
-    const defaultEventId = "landingPageEvent";
-    const defaultEventTitle = "LandingPage";
-
     return (
         <>
-            <div className="flex flex-col min-h-screen bg-primary-dark text-primary-light" >
-                <HeaderComponent />
-                <div className="flex-grow pt-24 bg-primary-light text-primary-dark" >
+            <div className="relative flex flex-col min-h-screen text-primary-light" >
+                <div className="relative h-screen w-full" >
+                    <HeroCarousel />
+                    <div className="absolute top-0 left-0 w-full z-20" >
+                        <HeaderComponent />
+                    </div >
+
+                    <div className="absolute inset-0 flex flex-col justify-center items-center text-center z-10" >
+                        <h1 className="text-5xl font-bold mb-2 text-white"
+                            style={{textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)"}} >
+                            Welcome to UrbanOasis
+                        </h1 >
+                        <p className="text-xl text-white" style={{textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)"}} >
+                            Discover events and manage your community seamlessly
+                        </p >
+                    </div >
+                </div >
+
+                <div className="flex-grow pt-12 bg-primary-light text-primary-dark" >
                     <div className="container mx-auto px-6 py-12" >
-                        <div className="text-center mb-16" >
-                            <h1 className="text-5xl font-bold mb-6 text-primary-dark" >Welcome to UrbanOasis</h1 >
-                            <p className="text-xl text-text-gray" >
-                                Discover events and manage your community seamlessly
-                            </p >
-                        </div >
                         <div className="space-y-16" >
-                            <div className="photo-carousel" >
-                                <PhotoCarousel eventId={defaultEventId} eventTitle={defaultEventTitle} />
-                            </div >
-                            <div className="event-carousel" >
+                            <div >
                                 <EventCarousel />
+                            </div >
+                            <div >
+                                <EventMonthCarousel />
+                            </div >
+                            <div >
+                                <span className="text-3xl font-bold" >User Testimonials</span >
+                                <Testimonials />
                             </div >
                         </div >
                     </div >

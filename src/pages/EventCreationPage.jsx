@@ -1,33 +1,74 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import eventCreation from "../services/eventCreation.js";
-import {auth, storage} from "../firebaseConfig.js";
-import {onAuthStateChanged} from "firebase/auth";
-import {Timestamp} from "firebase/firestore";
-import {PhotoIcon} from "@heroicons/react/24/outline/index.js";
-import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
+import { auth, storage } from "../firebaseConfig.js";
+import { onAuthStateChanged } from "firebase/auth";
+import { Timestamp } from "firebase/firestore";
+import { PhotoIcon } from "@heroicons/react/24/outline/index.js";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import { googleMapsConfig } from "../locationConfig.js";
+import {Modal, Button, ImageList, ImageListItem, Alert} from '@mui/material';
 
 function EventCreationPage() {
 
-    const [userId, setUserId] = useState(null); // Store the authenticated user's UID
-    const [eventTitle, setEventTitle] = useState('');
-    const [eventDescription, setEventDescription] = useState('');
-    const [eventLocation, setEventLocation] = useState('');
-    const [eventDateTime, setEventDateTime] = useState(''); // Store combined date and time
-    const [eventCapacity, setEventCapacity] = useState(0);
-    const [eventImages, setEventImages] = useState([]);
-    const [eventPrice, setEventPrice] = useState('');
-    const [isPaidEvent, setIsPaidEvent] = useState(false);
-    const [error, setError] = useState(null); // Fixed error handling
-    const [petAllowance, setPetAllowance] = useState(false);
-    const [refundAllowance, setRefundAllowance] = useState(false);
-    const [refundPolicy, setRefundPolicy] = useState('');
-    const [ageRestriction, setAgeRestriction] = useState('All');
-    const [fbAvail, setFbAvail] = useState(false);
-    const [merchAvailability, setMerchAvailability] = useState(false);
-    const [alcAvail, setAlcAvail] = useState(false);
-    const [alcInfo, setAlcInfo] = useState('');
+    const [ hostId ] = useState('defaultUserID');
+    const [ userId, setUserId ] = useState(null);
+    const [ eventTitle, setEventTitle ] = useState('');
+    const [ eventDescription, setEventDescription ] = useState('');
+    const [ eventLocation, setEventLocation ] = useState('');
+    const [ eventDateTime, setEventDateTime ] = useState('');
+    const [ eventCapacity, setEventCapacity ] = useState(null);
+    const [ eventImages, setEventImages ] = useState([]);
+    const [ eventPrice, setEventPrice ] = useState('');
+    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
+    const [ error, setError ] = useState(null); // Fixed error handling
+    const [ petAllowance, setPetAllowance ] = useState(false);
+    const [ refundAllowance, setRefundAllowance ] = useState(false);
+    const [ refundPolicy, setRefundPolicy ] = useState('');
+    const [ ageRestriction, setAgeRestriction ] = useState('All');
+    const [ fbAvail, setFbAvail ] = useState(false);
+    const [ merchAvailability, setMerchAvailability ] = useState(false);
+    const [ alcAvail, setAlcAvail ] = useState(false);
+    const [ alcInfo, setAlcInfo ] = useState('');
+    const [ modalOpen, setModalOpen ] = useState(false);
+    const [ previewImages, setPreviewImages ] = useState(false);
+    const [ eventImagesUrls, setEventImagesUrls ] = useState([]);
+    const [ selectedPrimaryCategory, setSelectedPrimaryCategory ] = useState('');
+    const [ selectedSubcategories, setSelectedSubcategories ] = useState([]);
+    const categorizedOptions = {
+        'Arts & Entertainment': [
+            'Music', 'Art', 'Comedy', 'Theater & Performing Arts',
+            'Film & Media', 'Photography & Art Exhibits', 'Opera',
+        ],
+        'Business & Networking': [
+            'Business', 'Networking', 'Politics & Activism',
+            'Charity & Fundraisers', 'Conferences',
+        ],
+        'Education & Innovation': [
+            'Technology', 'Science & Innovation', 'Education',
+            'Workshops & Classes', 'Talks & Seminars', 'Online Courses'
+        ],
+        'Lifestyle & Wellness': [
+            'Health', 'Spirituality & Wellness', 'Family & Kids',
+            'Fashion & Beauty', 'Mental Health',
+        ],
+        'Food & Leisure': [
+            'Food & Drink', 'Cooking & Culinary', 'Shopping & Markets',
+            'Travel & Outdoor', 'Wine Tasting', 'Dining Experiences'
+        ],
+        'Sports & Recreation': [
+            'Sports', 'Gaming & E-sports', 'Fitness & Training',
+            'Adventure Sports', 'Hiking & Nature',
+        ],
+    };
+    const [eventTitleEmpty, setEventTitleEmpty] = useState(false);
+    const [eventDescriptionEmpty, setEventDescriptionEmpty] = useState(false);
+    const [eventLocationEmpty, setEventLocationEmpty] = useState(false);
+    const [eventDateTimeEmpty, setEventDateTimeEmpty] = useState(false);
+    const [eventCapacityEmpty, setEventCapacityEmpty] = useState(false);
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -38,12 +79,15 @@ function EventCreationPage() {
                 console.log("User is not signed in.");
             }
         });
-        return () => unsubscribe(); // Clean up the listener on unmount
+        return () => unsubscribe();
     }, []);
 
     const handleFileChange = (e) => {
+        setPreviewImages(true);
         const imagesArray = Array.from(e.target.files);
+        const imageUrls = imagesArray.map(image => URL.createObjectURL(image));
         setEventImages(imagesArray);
+        setEventImagesUrls(imageUrls);
     };
 
     const handleImageUpload = async (eventTitle, imageFiles) => {
@@ -68,6 +112,11 @@ function EventCreationPage() {
             );
 
             setEventImages(imageUrls);
+
+            setTimeout(() => {
+                resetForm();
+            }, 5000);
+
             return imageUrls;
         } catch (error) {
             console.error("Error uploading images:", error);
@@ -76,53 +125,88 @@ function EventCreationPage() {
     };
 
 
+    const handlePrimaryCategoryChange = (e) => {
+        const selectedCategory = e.target.value;
+        setSelectedPrimaryCategory(selectedCategory);
+        setSelectedSubcategories([]); // Reset subcategories when a new primary category is selected
+    };
+
+    const handleSubcategoryChange = (subcategory) => {
+        setSelectedSubcategories((prev) =>
+            prev.includes(subcategory)
+                ? prev.filter((item) => item !== subcategory)
+                : [ ...prev, subcategory ]
+        );
+    };
+
+
+
+
     const handleSubmit = async () => {
-        console.log('Event button clicked');
-
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
-
         try {
             const uploadedImages = await handleImageUpload(eventTitle, eventImages);
+            const categories = selectedSubcategories.length > 0 ? selectedSubcategories : [ 'Uncategorized' ];
+
+            if (eventTitle === "" || eventDescription === "" || eventLocation === "" || eventDateTime === "" || eventCapacity === null ) {
+                if (eventTitle === "") {
+                    setEventTitleEmpty(true);
+                } else setEventTitleEmpty(false);
+                if (eventDescription === "") {
+                    setEventDescriptionEmpty(true);
+                } else setEventDescriptionEmpty(false);
+                if (eventLocation === "") {
+                    setEventLocationEmpty(true);
+                } else setEventLocationEmpty(false);
+                if (eventDateTime === "") {
+                    setEventDateTimeEmpty(true);
+                } else setEventDateTimeEmpty(false);
+                if (eventCapacity === null) {
+                    setEventCapacityEmpty(true);
+                } else setEventCapacityEmpty(false);
+                return;
+            }
 
             const eventData = {
-                userId: userId || 'defaultUserID', // Replace with a meaningful default if needed
+                hostId: userId || 'defaultUserID',
                 basicInfo: {
                     title: eventTitle || 'Untitled Event',
                     description: eventDescription || 'No description provided',
                     location: eventLocation || 'Location not specified',
+                    categories,
                 },
                 eventDetails: {
-                    eventDateTime: eventDateTimeTimestamp, // Use Firestore Timestamp for date and time
-                    capacity: eventCapacity || 0, // Default capacity to 0
+                    eventDateTime: eventDateTimeTimestamp,
+                    capacity: eventCapacity || 0,
                     images: uploadedImages,
-                    paidEvent: isPaidEvent || false, // Default to not a paid event
+                    paidEvent: isPaidEvent || false,
                     eventPrice: isPaidEvent ? parseFloat(eventPrice.replace(/[^0-9.]/g, '')) || 0 : 0,
                 },
                 policies: {
-                    petAllowance: petAllowance || false, // Default to no pets allowed
-                    refundAllowance: refundAllowance || false, // Default to no refunds allowed
+                    petAllowance: petAllowance || false,
+                    refundAllowance: refundAllowance || false,
                     refundPolicy: refundAllowance ? refundPolicy || 'No refund policy specified' : null,
-                    ageRestriction: ageRestriction || 'No age restriction', // Default to no restrictions
+                    ageRestriction: ageRestriction || 'No age restriction',
                 },
                 availability: {
-                    fbAvail: fbAvail || false, // Default to false
-                    merchAvailability: merchAvailability || false, // Default to false
-                    alcAvail: alcAvail || false, // Default to false
+                    fbAvail: fbAvail || false,
+                    merchAvailability: merchAvailability || false,
+                    alcAvail: alcAvail || false,
                     alcInfo: alcAvail ? alcInfo || 'No additional alcohol information' : null,
                 },
                 timestamps: {
-                    createdAt: Timestamp.now(), // Use Firestore Timestamp for creation
-                    updatedAt: Timestamp.now(), // Use Firestore Timestamp for update
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
                 },
             };
-
-            console.log("Final Event Data:", eventData);
             await eventCreation.writeEventData(eventData);
             setError(null);
-            // resetForm();
+            resetForm();
         } catch (error) {
             setError(error.message);
         }
+
+
     };
 
     const resetForm = () => {
@@ -130,8 +214,9 @@ function EventCreationPage() {
         setEventDescription('');
         setEventLocation('');
         setEventDateTime('');
-        setEventCapacity(0);
+        setEventCapacity(null);
         setEventImages([]);
+        setPreviewImages(false)
         setEventPrice('');
         setIsPaidEvent(false);
         setPetAllowance(false);
@@ -142,23 +227,37 @@ function EventCreationPage() {
         setMerchAvailability(false);
         setAlcAvail(false);
         setAlcInfo('');
+        setSelectedPrimaryCategory('');
+        setSelectedSubcategories([]);
+        setEventImagesUrls([]);
+        setPreviewImages(false);
+        setEventTitleEmpty(false);
+        setEventDescriptionEmpty(false);
+        setEventLocationEmpty(false);
+        setEventLocationEmpty(false);
+        setEventCapacityEmpty(false);
+    };
+
+    const handleModalClose = () => {
+        setModalOpen(false);
+        setTimeout(() => resetForm(), 3000);
     };
 
 
     return (
         <>
-            <div className="event-creation-page">
-                <HeaderComponent/>
+            <div className="event-creation-page" >
+                <HeaderComponent />
 
                 <div
-                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen">
-                    <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8">
-                        <h1 className="text-5xl text-white font-extrabold pb-6 text-center">Create Your Event</h1>
+                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen" >
+                    <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8" >
+                        <h1 className="text-5xl text-white font-extrabold pb-6 text-center" >Create Your Event</h1 >
 
                         {/* Error message */}
-                        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+                        {error && <div className="text-red-500 text-center mb-4" >{error}</div >}
 
-                        <div className="flex flex-col space-y-4 pt-4">
+                        <div className="flex flex-col space-y-4 pt-4" >
                             <div className="flex flex-col space-y-6">
 
                                 {/* Event Title */}
@@ -175,6 +274,11 @@ function EventCreationPage() {
                                         required
                                     />
                                 </div>
+                                {eventTitleEmpty && (
+                                    <Alert severity="error">
+                                        Event Title cannot be empty.
+                                    </Alert>
+                                )}
 
                                 {/* Description */}
                                 <div>
@@ -190,21 +294,64 @@ function EventCreationPage() {
                                         required
                                     />
                                 </div>
+                                {eventDescriptionEmpty && (
+                                    <Alert severity="error">
+                                        Event Description cannot be empty.
+                                    </Alert>
+                                )}
 
                                 {/* Location */}
                                 <div>
                                     <label htmlFor="eventLocation"
                                            className="text-lg font-semibold text-white">Location</label>
-                                    <input
-                                        type="text"
-                                        id="eventLocation"
-                                        value={eventLocation}
-                                        onChange={(e) => setEventLocation(e.target.value)}
-                                        placeholder="Enter event location"
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    <GooglePlacesAutocomplete
                                         required
+                                        apiKey={googleMapsConfig.apiKey}
+                                        selectProps={{
+                                            value: eventLocation, onChange: setEventLocation,
+                                            styles: {
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    backgroundColor: '#1F2937',
+                                                    borderColor: state.isFocused ? '#6366F1' : '#374151',
+                                                    borderWidth: state.isFocused ? '2px' : '1px',
+                                                    width: '100%',
+                                                    marginTop: '2px',
+                                                    padding: '3px',
+                                                    borderRadius: '6px',
+                                                }),
+                                                menu: (provided) => ({
+                                                    ...provided,
+                                                    backgroundColor: '#1F2937',
+                                                    borderColor: '#374151',
+                                                }),
+                                                input: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    border: 'none',
+                                                }),
+                                                option: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    backgroundColor: '#1F2937',
+                                                }),
+                                                singleValue: (provided) => ({
+                                                    ...provided,
+                                                    color: "white",
+                                                    backgroundColor: '#1F2937',
+                                                }),
+
+                                            },
+                                            placeholder: 'Enter location',
+                                        }}
+
                                     />
                                 </div>
+                                {eventLocationEmpty && (
+                                    <Alert severity="error">
+                                        Event Location cannot be empty.
+                                    </Alert>
+                                )}
 
                                 {/* Date and Capacity */}
                                 <div className="flex space-x-4">
@@ -238,6 +385,23 @@ function EventCreationPage() {
                                         />
                                     </div>
                                 </div>
+                                <div className="flex space-x-4">
+                                    <div className="flex-1">
+                                        {eventDateTimeEmpty && (
+                                            <Alert severity="error">
+                                                Event Date and Time cannot be empty.
+                                            </Alert>
+                                        )}
+                                    </div>
+                                    <div className="flex-1">
+                                        {eventCapacityEmpty && (
+                                            <Alert severity="error">
+                                                Event Capacity cannot be empty.
+                                            </Alert>
+                                        )}
+                                    </div>
+                                </div>
+
 
                                 {/* Image Upload */}
                                 <div>
@@ -263,12 +427,41 @@ function EventCreationPage() {
                                     </div>
                                 </div>
 
+                                {/* Image Preview */}
+                                {previewImages && (
+                                    <>
+                                        <div>
+                                            <label htmlFor="previewImages"
+                                                   className="text-lg font-semibold text-white">Event
+                                                Images</label>
+                                            <div className="mt-2">
+                                                <label
+                                                    htmlFor="previewImages"
+                                                    className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
+                                                >
+                                                    <ImageList sx={{width: 600, height: 200}} cols={3} rowHeight={200}
+                                                               gap={10}>
+                                                        {eventImagesUrls.map((item) => (
+                                                            <ImageListItem key={item}>
+                                                                <img
+                                                                    srcSet={`${item}`}
+                                                                    src={`${item}`}
+                                                                    alt={item.name}
+                                                                    loading="lazy"
+                                                                />
+                                                            </ImageListItem>
+                                                        ))}
+                                                    </ImageList>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
                                 {/* Paid Event */}
                                 <div className="space-y-4">
-                                    <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white">Is
-                                        this a
-                                        paid
-                                        event?</label>
+                                    <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white">
+                                        Is this a paid event?</label>
                                     <select
                                         id="isPaidEvent"
                                         value={isPaidEvent}
@@ -342,7 +535,6 @@ function EventCreationPage() {
                                     )}
                                 </div>
 
-                                {/* Other options */}
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
                                         {
@@ -386,7 +578,73 @@ function EventCreationPage() {
                                     ))}
                                 </div>
 
-                                {/* Submit Button */}
+                                {/*<div >*/}
+                                {/*    <label className="text-lg font-semibold text-white" >Categories</label >*/}
+                                {/*    <div className="space-y-4 mt-2" >*/}
+                                {/*        {Object.entries(categorizedOptions).map(([ categoryGroup, categories ], index) => (*/}
+                                {/*            <div key={index} className="border-b border-gray-700 pb-4" >*/}
+                                {/*                <h3 className="text-white font-bold" >{categoryGroup}</h3 >*/}
+                                {/*                <div className="grid grid-cols-2 gap-4 mt-2" >*/}
+                                {/*                    {categories.map((category) => (*/}
+                                {/*                        <label key={category}*/}
+                                {/*                               className="text-white flex items-center space-x-2" >*/}
+                                {/*                            <input*/}
+                                {/*                                type="checkbox"*/}
+                                {/*                                checked={[ selectedPrimaryCategory, ...selectedSubcategories ].includes(category)}*/}
+                                {/*                                onChange={() => handleSubcategoryChange(category)}*/}
+                                {/*                                className="form-checkbox h-4 w-4 text-indigo-500"*/}
+                                {/*                            />*/}
+                                {/*                            <span >{category}</span >*/}
+                                {/*                        </label >*/}
+                                {/*                    ))}*/}
+                                {/*                </div >*/}
+                                {/*            </div >*/}
+                                {/*        ))}*/}
+                                {/*    </div >*/}
+                                {/*</div >*/}
+
+
+                                <div>
+                                    <label className="text-lg font-semibold text-white">Primary Category</label>
+                                    {/* Dropdown for Primary Category Selection */}
+                                    <select
+                                        value={selectedPrimaryCategory}
+                                        onChange={handlePrimaryCategoryChange}
+                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="">Select a Category</option>
+                                        {Object.keys(categorizedOptions).map((category) => (
+                                            <option key={category} value={category}>
+                                                {category}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                {/* Subcategories Section */}
+                                {selectedPrimaryCategory && (
+                                    <div className="mt-4">
+                                        <label className="text-lg font-semibold text-white">
+                                            {selectedPrimaryCategory} Subcategories
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-4 mt-2">
+                                            {categorizedOptions[selectedPrimaryCategory].map((subcategory) => (
+                                                <label key={subcategory}
+                                                       className="text-white flex items-center space-x-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedSubcategories.includes(subcategory)}
+                                                        onChange={() => handleSubcategoryChange(subcategory)}
+                                                        className="form-checkbox h-4 w-4 text-indigo-500"
+                                                    />
+                                                    <span>{subcategory}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+
                                 <button
                                     onClick={handleSubmit}
                                     className="mt-6 w-full bg-indigo-500 text-white font-bold py-3 rounded-md hover:bg-indigo-600 transition duration-300"
@@ -395,17 +653,35 @@ function EventCreationPage() {
                                 </button>
                             </div>
                         </div>
-
                     </div>
-
-
-
                 </div>
+
+                <Modal
+                    open={modalOpen}
+                    onClose={handleModalClose}
+                >
+                    <div
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
+                        <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">
+                            Event Created!
+                        </h2>
+                        <p className="text-body text-detail-gray text-center mb-6 font-inter">
+                            Your event has been successfully created.
+                        </p>
+                        <Button
+                            onClick={handleModalClose}
+                            variant="contained"
+                            color="primary"
+                            className="mt-4 w-full bg-accent-blue hover:bg-accent-green text-neutral-white py-2 rounded-lg font-medium"
+                        >
+                            Close
+                        </Button>
+                    </div>
+                </Modal>
                 <FooterComponent/>
             </div>
         </>
     );
-
 }
 
 export default EventCreationPage;

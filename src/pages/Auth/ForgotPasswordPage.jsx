@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import AuthLeftComponent from "../components/AuthLeftComponent.jsx";
+import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
-import PasswordReset from "../services/auth/ResetPassword.js";
+import PasswordReset from "../../services/auth/ResetPassword.js";
 
 function SignInPage() {
 

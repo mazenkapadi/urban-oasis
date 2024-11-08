@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, auth, storage } from "../firebaseConfig.js"; // Import storage from firebase config
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Firebase Storage methods
+import { db, auth, storage } from "../../firebaseConfig.js";
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from "firebase/auth";
-import SelectUSState from 'react-select-us-states'; // Import the state selector
+import SelectUSState from 'react-select-us-states';
 
 const ContactInfoPage = () => {
     const [userId, setUserId] = useState(null);
@@ -11,8 +11,6 @@ const ContactInfoPage = () => {
     const [profilePic, setProfilePic] = useState('');
     const [profilePicFile, setProfilePicFile] = useState(null);
     const [uploading, setUploading] = useState(false);
-
-    // Additional user info fields
     const [prefix, setPrefix] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -21,7 +19,7 @@ const ContactInfoPage = () => {
     const [address, setAddress] = useState('');
     const [address2, setAddress2] = useState('');
     const [city, setCity] = useState('');
-    const [state, setState] = useState(''); // Track selected state
+    const [state, setState] = useState('');
     const [zip, setZip] = useState('');
     const [birthday, setBirthday] = useState('');
     const [isHost, setIsHost] = useState(false);
@@ -188,6 +186,7 @@ const ContactInfoPage = () => {
                             <option value="Mr">Mr</option>
                             <option value="Ms">Ms</option>
                             <option value="Mrs">Mrs</option>
+                            <option value="Dr.">Dr.</option>
                         </select>
                     </div>
 
@@ -292,7 +291,7 @@ const ContactInfoPage = () => {
                         <label className="block text-white font-semibold mb-2">State</label>
                         <SelectUSState
                             id="state"
-                            className="block w-full border border-blue-800 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                            className="block w-full border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             onChange={(val) => setState(val)} // Set selected state
                             value={state} // Display selected state
                         />
@@ -324,3 +323,4 @@ const ContactInfoPage = () => {
 };
 
 export default ContactInfoPage;
+
