@@ -7,14 +7,13 @@ import {
     InfiniteHits,
     RefinementList,
     SortBy,
-    useSearchBox,
 } from 'react-instantsearch';
 import { searchClient } from '../algoliaConfig';
 import FiltersComponent from '../components/FiltersComponent';
 import HitComponent from '../components/HitComponent';
+import HeaderComponent from '../components/HeaderComponent';
 
 const ViewAllEventsPage = () => {
-    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [activeFilters, setActiveFilters] = useState({});
     const navigate = useNavigate();
     const location = useLocation();
@@ -41,38 +40,30 @@ const ViewAllEventsPage = () => {
     };
 
     return (
-        <div className="view-all-events-page p-4">
-            <InstantSearch
-                searchClient={searchClient}
-                indexName="events"
-            >
-                <Configure hitsPerPage={10} query={searchQuery} />
+        <div className="view-all-events-page">
+            {/* Header Component */}
+            <HeaderComponent />
 
-                {/* Header Section */}
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Explore Events</h1>
-                    <button
-                        className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
-                        onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                    >
-                        {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
-                    </button>
+            {/* Main Content */}
+            <div className="flex flex-col lg:flex-row lg:items-start p-4">
+                {/* Filters Section */}
+                <div className="lg:w-1/4 p-4 border-r border-gray-200">
+                    <FiltersComponent
+                        onApplyFilters={onApplyFilters}
+                        activeFilters={activeFilters}
+                        removeFilter={removeFilter}
+                    />
                 </div>
 
-                {/* Filters Section */}
-                <div className="flex">
-                    {mobileFiltersOpen && (
-                        <div className="filters-container w-1/4 pr-4">
-                            <FiltersComponent
-                                onApplyFilters={onApplyFilters}
-                                activeFilters={activeFilters}
-                                removeFilter={removeFilter}
-                            />
-                        </div>
-                    )}
+                {/* Search Results Section */}
+                <div className="lg:w-3/4 p-4">
+                    <InstantSearch
+                        searchClient={searchClient}
+                        indexName="events"
+                    >
+                        <Configure hitsPerPage={10} query={searchQuery} />
 
-                    {/* Search Results Section */}
-                    <div className="w-full">
+                        {/* Refinements and Sorting Section */}
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
                             <CurrentRefinements />
                             <SortBy
@@ -85,6 +76,7 @@ const ViewAllEventsPage = () => {
                             />
                         </div>
 
+                        {/* Infinite Hits (Search Results) Section */}
                         <InfiniteHits
                             hitComponent={HitComponent}
                             classNames={{
@@ -92,9 +84,9 @@ const ViewAllEventsPage = () => {
                                 item: 'bg-white border rounded-lg p-4 shadow hover:shadow-lg transition-shadow',
                             }}
                         />
-                    </div>
+                    </InstantSearch>
                 </div>
-            </InstantSearch>
+            </div>
         </div>
     );
 };
