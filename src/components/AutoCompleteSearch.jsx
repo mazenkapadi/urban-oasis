@@ -73,7 +73,7 @@ const AutocompleteSearch = () => {
                                         onClick={() => {
                                             setSearchInput(item.label);
                                             setQuery(item.label);
-                                            navigate('/events');
+                                            navigate(`/events?query=${item.label}`);
                                         }}
                                     >
                                         <ClockIcon className="h-5 w-5 text-gray-400 mr-2" />
@@ -107,8 +107,6 @@ const AutocompleteSearch = () => {
                                     const hits = results[0]?.hits || [];
                                     if (hits.length === 0) {
                                         console.warn('No results found for query:', query);
-                                    } else {
-                                        console.log('Search Results:', hits);
                                     }
                                     return hits.map((hit) => ({
                                         ...hit,
@@ -129,7 +127,7 @@ const AutocompleteSearch = () => {
                                         onClick={() => {
                                             setSearchInput(title);
                                             setQuery(title);
-                                            navigate('/events');
+                                            navigate(`/events?query=${title}`);
                                         }}
                                     >
                                         <MagnifyingGlassIcon className="h-5 w-5 text-blue-400 mr-2" />
@@ -143,6 +141,10 @@ const AutocompleteSearch = () => {
                         },
                     },
                 ];
+            },
+            onSubmit({ state }) {
+                console.log('Search submitted:', state.query);
+                navigate(`/events?query=${state.query}`);
             },
         });
 
@@ -159,7 +161,7 @@ const AutocompleteSearch = () => {
 
     const handleSearch = () => {
         console.log("Searching for events:", searchInput, "on date:", searchDate, "in zipcode:", zipcode);
-        navigate('/events');
+        navigate(`/events?query=${searchInput}`);
     };
 
     return (
