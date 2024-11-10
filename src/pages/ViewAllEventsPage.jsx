@@ -3,24 +3,29 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
     InstantSearch,
     Configure,
-    CurrentRefinements,
     InfiniteHits,
-    RefinementList,
     SortBy,
 } from 'react-instantsearch';
 import { searchClient } from '../algoliaConfig';
 import FiltersComponent from '../components/FiltersComponent';
 import HitComponent from '../components/HitComponent';
 import HeaderComponent from '../components/HeaderComponent';
+import { ListBulletIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
+    const [viewMode, setViewMode] = useState('grid');
     const navigate = useNavigate();
     const location = useLocation();
 
     // Extract query parameters from the URL
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get('query') || '';
+
+    // Toggle view mode between grid and list
+    const handleViewToggle = () => {
+        setViewMode(viewMode === 'grid' ? 'list' : 'grid');
+    };
 
     // Function to apply filters
     const onApplyFilters = (newFilters) => {
@@ -57,15 +62,24 @@ const ViewAllEventsPage = () => {
 
                 {/* Search Results Section */}
                 <div className="lg:w-3/4 p-4">
-                    <InstantSearch
-                        searchClient={searchClient}
-                        indexName="events"
-                    >
-                        <Configure hitsPerPage={10} query={searchQuery} />
+                    <InstantSearch searchClient={searchClient} indexName="events">
+                        <Configure hitsPerPage={1000} query={searchQuery} />
 
-                        {/* Refinements and Sorting Section */}
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-                            <CurrentRefinements />
+                        {/* View Toggle and Sorting */}
+                        <div className="flex justify-between items-center mb-4">
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={handleViewToggle}
+                                    className="bg-white p-2 rounded-md shadow hover:bg-gray-100"
+                                    aria-label="Toggle View"
+                                >
+                                    {viewMode === 'grid' ? (
+                                        <ListBulletIcon className="w-6 h-6 text-black" />
+                                    ) : (
+                                        <Squares2X2Icon className="w-6 h-6 text-black" />
+                                    )}
+                                </button>
+                            </div>
                             <SortBy
                                 items={[
                                     { label: 'Relevance', value: 'events' },
@@ -78,10 +92,9 @@ const ViewAllEventsPage = () => {
 
                         {/* Infinite Hits (Search Results) Section */}
                         <InfiniteHits
-                            hitComponent={HitComponent}
+                            hitComponent={(props) => <HitComponent {...props} viewMode={viewMode} />}
                             classNames={{
-                                list: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6',
-                                item: 'bg-white border rounded-lg p-4 shadow hover:shadow-lg transition-shadow',
+                                list: viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col space-y-4',
                             }}
                         />
                     </InstantSearch>

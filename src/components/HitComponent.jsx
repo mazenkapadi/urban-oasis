@@ -1,21 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
+import { auth } from '../firebaseConfig';
+import { toggleBookmark } from '../services/toggleBookmark';
 
-const HitComponent = ({ hit }) => {
+const HitComponent = ({ hit, viewMode }) => {
     const navigate = useNavigate();
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        return auth.onAuthStateChanged(user => {
+            if (user) {
+                setUserId(user.uid);
+                checkIfBookmarked(user.uid, hit.objectID);
+            }
+        });
+    }, [hit.objectID]);
+
+    const checkIfBookmarked = async (userId, eventId) => {
+        const isBookmarked = await getBookmarkStatus(userId, eventId);
+        setIsBookmarked(isBookmarked);
+    };
+
+    const handleBookmarkToggle = async (e) => {
+        e.stopPropagation();
+        const result = await toggleBookmark(userId, hit);
+        setIsBookmarked(result);
+    };
 
     const handleClick = () => {
-        try {
-            navigate(`/eventPage/${hit.objectID}`);
-        } catch (error) {
-            console.error('Navigation error:', error);
-        }
+        navigate(`/eventPage/${hit.objectID}`);
     };
 
     const {
-        basicInfo: { title = 'Untitled Event', description = 'No description available', location = {} },
-        eventDetails: { eventDateTime, eventPrice = 0, images = [] },
-        policies: { ageRestriction = 'All' },
+        basicInfo: { title = 'Untitled Event', location = {} },
+        eventDetails: { eventDateTime, eventPrice = 0, images = [], paidEvent = false },
     } = hit;
 
     const imageUrl = images.length > 0 ? images[0].url : '/images/placeholder.png';
@@ -23,43 +44,41 @@ const HitComponent = ({ hit }) => {
 
     return (
         <div
-            className="relative bg-white border rounded-lg flex flex-col overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+            className={`relative flex ${viewMode === 'grid' ? 'flex-col' : 'flex-row'} p-4 rounded-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer bg-white`}
             onClick={handleClick}
-            aria-label={`View details for ${title}`}
         >
-            {/* Event Image */}
+            {userId && (
+                <button
+                    onClick={handleBookmarkToggle}
+                    className="absolute top-3 right-3"
+                    aria-label="Bookmark Event"
+                >
+                    {isBookmarked ? (
+                        <SolidBookmarkIcon className="w-6 h-6 text-black hover:text-gray-400" />
+                    ) : (
+                        <OutlineBookmarkIcon className="w-6 h-6 text-black hover:text-gray-400" strokeWidth={2.5} />
+                    )}
+                </button>
+            )}
+
             <img
                 src={imageUrl}
                 alt={title}
-                className="h-48 w-full object-cover"
-                loading="lazy"
+                className={viewMode === 'grid' ? 'h-48 w-full object-cover rounded-md' : 'w-32 h-32 object-cover rounded-md'}
             />
 
-            {/* Event Information */}
-            <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-                <p className="text-sm text-gray-600 mb-2">{description}</p>
-
-                {/* Location and Date */}
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <span className="mr-2">
-                        <i className="fas fa-map-marker-alt"></i> {location.label || 'Location not specified'}
-                    </span>
+            <div className={`ml-4 flex flex-col justify-between flex-grow ${viewMode === 'grid' ? '' : 'ml-4'}`}>
+                <h2 className="text-xl font-semibold text-black">{title}</h2>
+                <div className="flex items-center text-gray-600 mt-2">
+                    <MapPinIcon className="w-5 h-5 mr-1" />
+                    <p className="text-sm">{location.label || 'Location not specified'}</p>
                 </div>
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <span className="mr-2">
-                        <i className="fas fa-calendar-alt"></i> {eventDate}
-                    </span>
+                <div className="flex items-center text-gray-600 mt-1">
+                    <CalendarIcon className="w-5 h-5 mr-1" />
+                    <p className="text-sm">{eventDate}</p>
                 </div>
-
-                {/* Event Price and Age Restriction */}
-                <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700">
-                        {eventPrice > 0 ? `$${eventPrice.toFixed(2)}` : 'Free'}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                        Age: {ageRestriction}
-                    </span>
+                <div className="text-lg font-bold text-black mt-4">
+                    {paidEvent ? `$${eventPrice.toFixed(2)}` : 'Free RSVP'}
                 </div>
             </div>
         </div>
