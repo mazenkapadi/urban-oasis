@@ -14,6 +14,8 @@ function debounce(func, delay) {
     };
 }
 
+const RECENT_SEARCH_KEY = 'RECENT_SEARCHES';
+
 const AutocompleteSearch = () => {
     const containerRef = useRef(null);
     const panelRootRef = useRef(null);
@@ -23,10 +25,30 @@ const AutocompleteSearch = () => {
     const [searchInput, setSearchInput] = useState('');
     const navigate = useNavigate();
 
+    // Helper function to save recent searches
+    const saveRecentSearch = (query) => {
+        const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
+        const updatedSearches = [query, ...recentSearches.filter((item) => item !== query)].slice(0, 5);
+        localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updatedSearches));
+    };
+
+    // Define the handleSearch function
+    const handleSearch = (query) => {
+        const searchQuery = query || searchInput;
+        if (searchQuery) {
+            saveRecentSearch(searchQuery);
+            const searchParams = new URLSearchParams();
+            searchParams.set('query', searchQuery);
+            if (zipcode) searchParams.set('zipcode', zipcode);
+            if (searchDate) searchParams.set('date', searchDate);
+
+            navigate(`/events?${searchParams.toString()}`);
+        }
+    };
+
     useEffect(() => {
         if (!containerRef.current) return;
 
-        console.log('Initializing Autocomplete...');
         const debouncedSearch = debounce((query) => {
             console.log('Search Query Sent:', query);
         }, 300);
@@ -45,23 +67,20 @@ const AutocompleteSearch = () => {
                 panelRootRef.current.render(children);
             },
             getSources({ query }) {
-                if (!query) {
-                    console.log('Empty query, skipping search.');
-                    return [];
-                }
+                if (!query) return [];
 
                 debouncedSearch(query);
 
+                const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
+
                 return [
-                    // Recent Searches Plugin
                     {
                         sourceId: 'recentSearches',
                         getItems() {
-                            const recentSearches = JSON.parse(localStorage.getItem('RECENT_SEARCHES') || '[]');
                             return recentSearches
-                                .filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
+                                .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
                                 .map((item) => ({
-                                    ...item,
+                                    label: item,
                                     type: 'recent',
                                 }));
                         },
@@ -73,7 +92,7 @@ const AutocompleteSearch = () => {
                                         onClick={() => {
                                             setSearchInput(item.label);
                                             setQuery(item.label);
-                                            navigate(`/events?query=${item.label}`);
+                                            handleSearch(item.label);
                                         }}
                                     >
                                         <ClockIcon className="h-5 w-5 text-gray-400 mr-2" />
@@ -81,16 +100,11 @@ const AutocompleteSearch = () => {
                                     </div>
                                 );
                             },
-                            noResults() {
-                                return <div className="text-gray-500 px-4 py-2">No recent searches found.</div>;
-                            },
                         },
                     },
-                    // Events Search from Algolia
                     {
                         sourceId: 'events',
                         getItems() {
-                            console.log('Fetching results for query:', query);
                             return searchClient
                                 .search([
                                     {
@@ -103,20 +117,7 @@ const AutocompleteSearch = () => {
                                         },
                                     },
                                 ])
-                                .then(({ results }) => {
-                                    const hits = results[0]?.hits || [];
-                                    if (hits.length === 0) {
-                                        console.warn('No results found for query:', query);
-                                    }
-                                    return hits.map((hit) => ({
-                                        ...hit,
-                                        type: 'event',
-                                    }));
-                                })
-                                .catch((error) => {
-                                    console.error('Error fetching search results:', error);
-                                    return [];
-                                });
+                                .then(({ results }) => results[0]?.hits || []);
                         },
                         templates: {
                             item({ item, setQuery }) {
@@ -127,7 +128,7 @@ const AutocompleteSearch = () => {
                                         onClick={() => {
                                             setSearchInput(title);
                                             setQuery(title);
-                                            navigate(`/events?query=${title}`);
+                                            handleSearch(title);
                                         }}
                                     >
                                         <MagnifyingGlassIcon className="h-5 w-5 text-blue-400 mr-2" />
@@ -135,38 +136,40 @@ const AutocompleteSearch = () => {
                                     </div>
                                 );
                             },
-                            noResults() {
-                                return <div className="text-gray-500 px-4 py-2">No events found.</div>;
-                            },
                         },
                     },
                 ];
             },
             onSubmit({ state }) {
-                console.log('Search submitted:', state.query);
-                navigate(`/events?query=${state.query}`);
+                handleSearch(state.query);
+            },
+            onInput({ state }) {
+                setSearchInput(state.query);
             },
         });
 
         return () => autocompleteInstance.destroy();
-    }, [navigate]);
+    }, [navigate, zipcode, searchDate, searchInput]);
 
     const handleZipcodeChange = (e) => {
         const value = e.target.value;
         if (/^\d{0,5}$/.test(value)) {
             setZipcode(value);
-            console.log('Zipcode updated:', value);
         }
     };
 
-    const handleSearch = () => {
-        console.log("Searching for events:", searchInput, "on date:", searchDate, "in zipcode:", zipcode);
-        navigate(`/events?query=${searchInput}`);
+    const handleEnterPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(searchInput);
+        }
+    };
+
+    const handleSearchButtonClick = () => {
+        handleSearch(searchInput);
     };
 
     return (
         <div className="flex items-center space-x-4 rounded-lg p-4 bg-transparent">
-            {/* Zipcode Input */}
             <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
                 <input
                     type="text"
@@ -176,8 +179,6 @@ const AutocompleteSearch = () => {
                     className="bg-transparent border-none outline-none text-gray-700 w-24 text-center"
                 />
             </div>
-
-            {/* Date Picker */}
             <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
                 <input
                     type="date"
@@ -186,14 +187,10 @@ const AutocompleteSearch = () => {
                     className="bg-transparent border-none outline-none text-gray-700 text-center"
                 />
             </div>
-
-            {/* Autocomplete Input */}
             <div ref={containerRef} className="flex-grow relative w-full bg-transparent"></div>
-
-            {/* Search Button */}
             <button
                 className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"
-                onClick={handleSearch}
+                onClick={handleSearchButtonClick}
             >
                 Search
             </button>
