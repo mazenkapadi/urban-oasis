@@ -10,6 +10,7 @@ const HitComponent = ({ hit, viewMode }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [userId, setUserId] = useState(null);
 
+    // Check if the user is authenticated and update bookmark status
     useEffect(() => {
         return auth.onAuthStateChanged(user => {
             if (user) {
@@ -19,21 +20,25 @@ const HitComponent = ({ hit, viewMode }) => {
         });
     }, [hit.objectID]);
 
+    // Function to check bookmark status
     const checkIfBookmarked = async (userId, eventId) => {
         const isBookmarked = await getBookmarkStatus(userId, eventId);
         setIsBookmarked(isBookmarked);
     };
 
+    // Toggle bookmark status
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
         const result = await toggleBookmark(userId, hit);
         setIsBookmarked(result);
     };
 
+    // Navigate to event details page
     const handleClick = () => {
         navigate(`/eventPage/${hit.objectID}`);
     };
 
+    // Destructure event details from the hit object
     const {
         basicInfo: { title = 'Untitled Event', location = {} },
         eventDetails: { eventDateTime, eventPrice = 0, images = [], paidEvent = false },
@@ -47,6 +52,7 @@ const HitComponent = ({ hit, viewMode }) => {
             className={`relative flex ${viewMode === 'grid' ? 'flex-col' : 'flex-row'} p-4 rounded-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer bg-white`}
             onClick={handleClick}
         >
+            {/* Bookmark Icon */}
             {userId && (
                 <button
                     onClick={handleBookmarkToggle}
@@ -61,12 +67,14 @@ const HitComponent = ({ hit, viewMode }) => {
                 </button>
             )}
 
+            {/* Event Image */}
             <img
                 src={imageUrl}
                 alt={title}
                 className={viewMode === 'grid' ? 'h-48 w-full object-cover rounded-md' : 'w-32 h-32 object-cover rounded-md'}
             />
 
+            {/* Event Information */}
             <div className={`ml-4 flex flex-col justify-between flex-grow ${viewMode === 'grid' ? '' : 'ml-4'}`}>
                 <h2 className="text-xl font-semibold text-black">{title}</h2>
                 <div className="flex items-center text-gray-600 mt-2">

@@ -4,7 +4,6 @@ import {
     InstantSearch,
     Configure,
     InfiniteHits,
-    SortBy,
 } from 'react-instantsearch';
 import { searchClient } from '../algoliaConfig';
 import FiltersComponent from '../components/FiltersComponent';
@@ -63,31 +62,21 @@ const ViewAllEventsPage = () => {
                 {/* Search Results Section */}
                 <div className="lg:w-3/4 p-4">
                     <InstantSearch searchClient={searchClient} indexName="events">
-                        <Configure hitsPerPage={1000} query={searchQuery} />
+                        <Configure hitsPerPage={1000} query={searchQuery} enablePersonalization={false} />
 
-                        {/* View Toggle and Sorting */}
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={handleViewToggle}
-                                    className="bg-white p-2 rounded-md shadow hover:bg-gray-100"
-                                    aria-label="Toggle View"
-                                >
-                                    {viewMode === 'grid' ? (
-                                        <ListBulletIcon className="w-6 h-6 text-black" />
-                                    ) : (
-                                        <Squares2X2Icon className="w-6 h-6 text-black" />
-                                    )}
-                                </button>
-                            </div>
-                            <SortBy
-                                items={[
-                                    { label: 'Relevance', value: 'events' },
-                                    { label: 'Price (Low to High)', value: 'events_price_asc' },
-                                    { label: 'Price (High to Low)', value: 'events_price_desc' },
-                                ]}
-                                className="sort-by-dropdown"
-                            />
+                        {/* View Toggle Button */}
+                        <div className="flex justify-end mb-4">
+                            <button
+                                onClick={handleViewToggle}
+                                className="bg-white p-2 rounded-md shadow hover:bg-gray-100"
+                                aria-label="Toggle View"
+                            >
+                                {viewMode === 'grid' ? (
+                                    <ListBulletIcon className="w-6 h-6 text-black" />
+                                ) : (
+                                    <Squares2X2Icon className="w-6 h-6 text-black" />
+                                )}
+                            </button>
                         </div>
 
                         {/* Infinite Hits (Search Results) Section */}
