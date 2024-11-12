@@ -60,7 +60,7 @@ const EventMonthCarousel = () => {
     return (
         <div className="carousel-container py-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-4xl font-extrabold text-gray-100">Events Later This Month</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Events Later This Month</h2>
             </div>
             {events.length > 0 ? (
                 <Slider {...settings} className="mt-4">
