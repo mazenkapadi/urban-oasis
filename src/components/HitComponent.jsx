@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { auth } from '../firebaseConfig';
-import { toggleBookmark } from '../services/toggleBookmark';
+import { toggleBookmark, getBookmarkStatus } from '../services/toggleBookmark';
 
 const HitComponent = ({ hit, viewMode }) => {
     const navigate = useNavigate();
@@ -12,28 +12,37 @@ const HitComponent = ({ hit, viewMode }) => {
 
     // Check if the user is authenticated and update bookmark status
     useEffect(() => {
-        return auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
                 setUserId(user.uid);
                 checkIfBookmarked(user.uid, hit.objectID);
             }
         });
+        return () => unsubscribe();
     }, [hit.objectID]);
 
-    // Function to check bookmark status
+    // Function to check if the event is bookmarked
     const checkIfBookmarked = async (userId, eventId) => {
-        const isBookmarked = await getBookmarkStatus(userId, eventId);
-        setIsBookmarked(isBookmarked);
+        try {
+            const isBookmarked = await getBookmarkStatus(userId, eventId);
+            setIsBookmarked(isBookmarked);
+        } catch (error) {
+            console.error("Error checking bookmark status:", error);
+        }
     };
 
-    // Toggle bookmark status
+    // Toggle the bookmark status
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
-        const result = await toggleBookmark(userId, hit);
-        setIsBookmarked(result);
+        try {
+            const result = await toggleBookmark(userId, hit);
+            setIsBookmarked(result);
+        } catch (error) {
+            console.error("Error toggling bookmark:", error);
+        }
     };
 
-    // Navigate to event details page
+    // Navigate to the event details page
     const handleClick = () => {
         navigate(`/eventPage/${hit.objectID}`);
     };
