@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import AutocompleteSearch from "./AutocompleteSearch";
+import AutocompleteSearch from "./AutoCompleteSearch.jsx";
 
 const HeaderComponent = () => {
     const [menuOpen, setMenuOpen] = useState(false);
