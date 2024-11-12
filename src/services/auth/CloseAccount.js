@@ -27,7 +27,7 @@ export const handleAccountClosure = async (email, password, onSuccess) => {
 
             await user.delete();
             alert("Account has been closed. We're sorry to see you go.");
-            onSuccess(); // Call the success callback to handle navigation
+            onSuccess();
         } catch (error) {
             console.error('Error closing account:', error);
             if (error.code === 'auth/requires-recent-login') {
