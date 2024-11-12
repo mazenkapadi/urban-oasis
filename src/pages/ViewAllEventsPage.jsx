@@ -218,16 +218,13 @@ const ViewAllEventsPage = () => {
             <div className="pt-52 md:pt-24 lg:pt-24 xl:pt-24 bg-primary-light text-primary-dark">
                 <div className="max-w-7xl mx-auto px-4 py-8">
                     <div className="flex">
-
                         <div className="w-1/4 pr-6">
-
                             <FiltersComponent
                                 onApplyFilters={applyFilters}
                                 activeFilters={activeFilters}
                                 removeFilter={removeFilter}
                             />
                         </div>
-
                         <div className="w-3/4 space-y-6">
                             {(activeFilters.dateFilter || activeFilters.paid !== null || activeFilters.availability||activeFilters.customDate||activeFilters.nearMe||activeFilters.priceRange||activeFilters.category) && (
                                 <div className="mb-6 flex space-x-4">
