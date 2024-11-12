@@ -94,3 +94,4 @@ const ViewAllEventsPage = () => {
 };
 
 export default ViewAllEventsPage;
+

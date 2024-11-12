@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from "react";
-import { toggleBookmark } from "../../services/toggleBookmark.js";
+// import { getBookmarkStatus, toggleBookmark } from "../../services/toggleBookmark.js";
 import { auth } from "../../firebaseConfig.js";
+import { toggleBookmark } from "../../services/toggleBookmark.js";
 
 const WideEventCard = ({ event }) => {
     const navigate = useNavigate();
@@ -14,20 +15,22 @@ const WideEventCard = ({ event }) => {
         return auth.onAuthStateChanged(user => {
             if (user) {
                 setUserId(user.uid);
-                checkIfBookmarked(user.uid, event.id);
+                // checkIfBookmarked(user.uid, event.id);
             }
         });
     }, [event.id]);
 
-    const checkIfBookmarked = async (userId, eventId) => {
-        const isBookmarked = await getBookmarkStatus(userId, eventId);
-        setIsBookmarked(isBookmarked);
-    };
+    // const checkIfBookmarked = async (userId, eventId) => {
+    //     const isBookmarked = await getBookmarkStatus(userId, eventId);
+    //     setIsBookmarked(isBookmarked);
+    // };
 
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
-        const result = await toggleBookmark(userId, event);
-        setIsBookmarked(result);
+        if(userId) {
+            const result = await toggleBookmark(userId, event);
+            setIsBookmarked(result);
+        }
     };
 
     const handleNavigate = () => {
