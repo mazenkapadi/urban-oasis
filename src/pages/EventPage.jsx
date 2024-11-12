@@ -181,96 +181,17 @@ const EventPage = () => {
     //     }
     // };
 
-    const handleCancel = async () => {
-        if (!userId) {
-            console.error("User ID is undefined. Cannot proceed with cancellation.");
-            return;
-        }
-        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
-        const eventDocRef = doc(db, 'Events', eventId);
-        const waitlistDocRef = doc(db, 'EventWaitlist', eventId);
-        try {
-            const eventDocSnap = await getDoc(eventDocRef);
-            if (!eventDocSnap.exists()) {
-                console.error("Event not found");
-                return;
-            }
-            const eventData = eventDocSnap.data();
-            const eventDate = eventData.eventDetails.eventDateTime.toDate();
-            console.log('eventDate: ',eventDate)
-            const daysUntilEvent = (eventDate - new Date()) / (1000 * 60 * 60 * 24);
-            console.log('daysUntilEvent: ',daysUntilEvent)
-            const rsvpDocSnap = await getDoc(eventRsvpsDocRef);
-            const rsvps = rsvpDocSnap.exists() ? Object.entries(rsvpDocSnap.data().rsvps || {}).map(([key, value]) => ({
-                ...value,
-                id: key
-              })):[];
-            console.log('rsvps',rsvps);
-            const userRsvpEntry = rsvps.find(( rsvpData) => rsvpData.userId === userId);
-            console.log('userRsvpEntry: ',userRsvpEntry);
-            if (userRsvpEntry) {
-                if (daysUntilEvent <= 7 && isPaidEvent) {
-                    console.log("Cannot cancel RSVP with 7 or fewer days remaining for this paid event.");
-                    alert("Cancellation not allowed with less than 7 days remaining.");
-                    return;
-                }
-                const userQuantity = userRsvpEntry.quantity;
-                const newAttendeesCount = eventData.attendeesCount - userQuantity;
-                await updateDoc(eventDocRef, { attendeesCount: newAttendeesCount });
-                await updateDoc(eventRsvpsDocRef, {
-                    [`rsvps.${userRsvpEntry.id}`]: deleteField()
-                });
-                const waitlistDocSnap = await getDoc(waitlistDocRef);
-                const waitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
-                if (waitlist.length > 0) {
-                    notifyWaitlist(waitlist);
-                }
-                alert(`RSVP cancellation processed.`);
-                console.log("RSVP cancellation processed.");
-         
-                if (isPaidEvent) {
-                    processRefund(userId, eventId);
-                }
-            } else {
-                const waitlistDocSnap = await getDoc(waitlistDocRef);
-                if (waitlistDocSnap.exists()) {
-                    const waitlist = waitlistDocSnap.data().waitlist || [];
-                    const userInWaitlist = waitlist.some(entry => entry.userId === userId);
 
-                    if (userInWaitlist) {   
-                        alert(`You have been removed from the waitlist.`);
-                        console.log("User found in waitlist");
-                        const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
-                        await updateDoc(waitlistDocRef, { waitlist: updatedWaitlist });
-                        console.log("waitlist updated.");
-                    } else {
-                        alert(`You need to RSVP or join waitlist to perform this action.`);
+    const updateAttendeesCount = async (eventDocRef) => {
+        const snapshot = await getDoc(eventDocRef);
+        if (!snapshot.exists()) return;
 
-                        console.log("User is not in the waitlist; no update needed.");
-                    }
-                } else {
-                    alert(`You need to RSVP or join waitlist to perform this action.`);
+        const eventRsvps = snapshot.data().rsvps || {};
+        const totalRSVPs = Object.values(eventRsvps).reduce((acc, rsvp) => acc + (rsvp.quantity || 0), 0);
 
-                    console.log("Waitlist document does not exist.");
-                }
-            }
-        } catch (error) {
-            console.error("Error during cancellation:", error);
-        }
+        await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
     };
 
-    const notifyWaitlist = (waitlist) => {
-        waitlist.forEach(user => {
-            console.log(`Notification sent to waitlist user: ${user.email}`);
-        });
-    };
-    
-    const processRefund = (userId, eventId) => {
-        alert(`Refund initiated for event ${eventTitle}`);
-        
-        console.log(`Refund initiated for user ${userId} for event ${eventId}.`);
-    };
-    
 
     const findExistingRsvpId = async (collectionRef, userId, eventId) => {
         const snapshot = await getDoc(collectionRef);
@@ -306,17 +227,6 @@ const EventPage = () => {
         }
     };
 
-
-    const updateAttendeesCount = async (eventDocRef) => {
-        const snapshot = await getDoc(eventDocRef);
-        if (!snapshot.exists()) return;
-
-        const eventRsvps = snapshot.data().rsvps || {};
-        const totalRSVPs = Object.values(eventRsvps).reduce((acc, rsvp) => acc + (rsvp.quantity || 0), 0);
-
-        await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
-    };
-
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -342,14 +252,17 @@ const EventPage = () => {
         };
 
         try {
+
             if (eventAttendee>=eventCapacity) {
 
                 await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
                 return
+
             }
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
-
+            // Save or update the RSVP in EventRSVPs and UserRSVPs collections
+            
             await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData, eventId, true);
             await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData, userId, false);
 
@@ -360,31 +273,6 @@ const EventPage = () => {
             setModalOpen(true);
         } catch (error) {
             console.error("Error handling RSVP:", error);
-        }
-    };
-
-    
-    const handleWaitlist = async (waitlistDocRef, waitlistData) => {
-        try {
-            const waitlistDocSnap = await getDoc(waitlistDocRef);
-        const currentWaitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
-        const userAlreadyInWaitlist = currentWaitlist.some(waitlistEntry => waitlistEntry.userId === waitlistData.userId);
-
-        if (userAlreadyInWaitlist) {
-            console.log("User is already on the waitlist.");
-            alert("You are already on the waitlist for this event.");
-            return;
-        }
-        
-        await setDoc(waitlistDocRef, { 
-                waitlist: arrayUnion(waitlistData) 
-            }, { merge: true });
-            alert("You have been added to waitlist successfully.")
-            console.log("User added to waitlist successfully.");
-        } catch (error) {
-            alert("Unable to add to waitlist now.")
-            
-            console.error("Error adding user to waitlist:", error);
         }
     };
 
@@ -780,6 +668,114 @@ const EventPage = () => {
         }
     };
 
+    const handleCancel = async () => {
+        if (!userId) {
+            console.error("User ID is undefined. Cannot proceed with cancellation.");
+            return;
+        }
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);
+        const waitlistDocRef = doc(db, 'EventWaitlist', eventId);
+        try {
+            const eventDocSnap = await getDoc(eventDocRef);
+            if (!eventDocSnap.exists()) {
+                console.error("Event not found");
+                return;
+            }
+            const eventData = eventDocSnap.data();
+            const eventDate = eventData.eventDetails.eventDateTime.toDate();
+            console.log('eventDate: ',eventDate)
+            const daysUntilEvent = (eventDate - new Date()) / (1000 * 60 * 60 * 24);
+            console.log('daysUntilEvent: ',daysUntilEvent)
+            const rsvpDocSnap = await getDoc(eventRsvpsDocRef);
+            const rsvps = rsvpDocSnap.exists() ? Object.entries(rsvpDocSnap.data().rsvps || {}).map(([key, value]) => ({
+                ...value,
+                id: key
+              })):[];
+            console.log('rsvps',rsvps);
+            const userRsvpEntry = rsvps.find(( rsvpData) => rsvpData.userId === userId);
+            console.log('userRsvpEntry: ',userRsvpEntry);
+            if (userRsvpEntry) {
+                if (daysUntilEvent <= 7 && isPaidEvent) {
+                    console.log("Cannot cancel RSVP with 7 or fewer days remaining for this paid event.");
+                    alert("Cancellation not allowed with less than 7 days remaining.");
+                    return;
+                }
+                const userQuantity = userRsvpEntry.quantity;
+                const newAttendeesCount = eventData.attendeesCount - userQuantity;
+                await updateDoc(eventDocRef, { attendeesCount: newAttendeesCount });
+                await updateDoc(eventRsvpsDocRef, {
+                    [`rsvps.${userRsvpEntry.id}`]: deleteField()
+                });
+                const waitlistDocSnap = await getDoc(waitlistDocRef);
+                const waitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
+                if (waitlist.length > 0) {
+                    notifyWaitlist(waitlist);
+                }
+                alert(`RSVP cancellation processed.`);
+                console.log("RSVP cancellation processed.");
+         
+                if (isPaidEvent) {
+                    processRefund(userId, eventId);
+                }
+            } else {
+                const waitlistDocSnap = await getDoc(waitlistDocRef);
+                if (waitlistDocSnap.exists()) {
+                    const waitlist = waitlistDocSnap.data().waitlist || [];
+                    const userInWaitlist = waitlist.some(entry => entry.userId === userId);
+
+                    if (userInWaitlist) {   
+                        alert(`You have been removed from the waitlist.`);
+                        console.log("User found in waitlist");
+                        const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
+                        await updateDoc(waitlistDocRef, { waitlist: updatedWaitlist });
+                        console.log("waitlist updated.");
+                    } else {
+                        alert(`You need to RSVP or join waitlist to perform this action.`);
+
+                        console.log("User is not in the waitlist; no update needed.");
+                    }
+                } else {
+                    alert(`You need to RSVP or join waitlist to perform this action.`);
+
+                    console.log("Waitlist document does not exist.");
+                }
+            }
+        } catch (error) {
+            console.error("Error during cancellation:", error);
+        }
+    };
+
+    const notifyWaitlist = (waitlist) => {
+        waitlist.forEach(user => {
+            console.log(`Notification sent to waitlist user: ${user.email}`);
+        });
+    };
+    
+    const handleWaitlist = async (waitlistDocRef, waitlistData) => {
+        try {
+            const waitlistDocSnap = await getDoc(waitlistDocRef);
+        const currentWaitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
+        const userAlreadyInWaitlist = currentWaitlist.some(waitlistEntry => waitlistEntry.userId === waitlistData.userId);
+
+        if (userAlreadyInWaitlist) {
+            console.log("User is already on the waitlist.");
+            alert("You are already on the waitlist for this event.");
+            return;
+        }
+        
+        await setDoc(waitlistDocRef, { 
+                waitlist: arrayUnion(waitlistData) 
+            }, { merge: true });
+            alert("You have been added to waitlist successfully.")
+            console.log("User added to waitlist successfully.");
+        } catch (error) {
+            alert("Unable to add to waitlist now.")
+            
+            console.error("Error adding user to waitlist:", error);
+        }
+    };
+
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -847,8 +843,6 @@ const EventPage = () => {
                     setEventCity(data.basicInfo.location);
                     setEventDescription(data.basicInfo.description);
                     setEventRefundPolicy(data.policies.refundPolicy);
-                    setEventCapacity(data.eventDetails.capacity);
-                    setEventAttendee(data.attendeesCount);
 
                     if (data.hostId) {
                         const hostDocRef = doc(db, 'Users', data.hostId);
