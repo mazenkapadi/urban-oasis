@@ -74,6 +74,7 @@ const AutocompleteSearch = () => {
                 const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
 
                 return [
+                    // Recent Searches Source
                     {
                         sourceId: 'recentSearches',
                         getItems() {
@@ -85,13 +86,12 @@ const AutocompleteSearch = () => {
                                 }));
                         },
                         templates: {
-                            item({ item, setQuery }) {
+                            item({ item }) {
                                 return (
                                     <div
                                         className="autocomplete-item flex items-center cursor-pointer px-4 py-2 hover:bg-gray-100"
                                         onClick={() => {
                                             setSearchInput(item.label);
-                                            setQuery(item.label);
                                             handleSearch(item.label);
                                         }}
                                     >
@@ -102,6 +102,7 @@ const AutocompleteSearch = () => {
                             },
                         },
                     },
+                    // Algolia Events Source
                     {
                         sourceId: 'events',
                         getItems() {
@@ -120,14 +121,13 @@ const AutocompleteSearch = () => {
                                 .then(({ results }) => results[0]?.hits || []);
                         },
                         templates: {
-                            item({ item, setQuery }) {
+                            item({ item }) {
                                 const title = item.basicInfo?.title || 'Untitled Event';
                                 return (
                                     <div
                                         className="autocomplete-item flex items-center cursor-pointer px-4 py-2 hover:bg-gray-100"
                                         onClick={() => {
                                             setSearchInput(title);
-                                            setQuery(title);
                                             handleSearch(title);
                                         }}
                                     >
@@ -170,6 +170,7 @@ const AutocompleteSearch = () => {
 
     return (
         <div className="flex items-center space-x-4 rounded-lg p-4 bg-transparent">
+            {/* Zipcode Input */}
             <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
                 <input
                     type="text"
@@ -179,6 +180,8 @@ const AutocompleteSearch = () => {
                     className="bg-transparent border-none outline-none text-gray-700 w-24 text-center"
                 />
             </div>
+
+            {/* Date Picker */}
             <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
                 <input
                     type="date"
@@ -187,7 +190,11 @@ const AutocompleteSearch = () => {
                     className="bg-transparent border-none outline-none text-gray-700 text-center"
                 />
             </div>
+
+            {/* Autocomplete Container */}
             <div ref={containerRef} className="flex-grow relative w-full bg-transparent"></div>
+
+            {/* Search Button */}
             <button
                 className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"
                 onClick={handleSearchButtonClick}
