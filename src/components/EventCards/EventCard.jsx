@@ -51,8 +51,6 @@ function EventCard({title, location, date, price, image, eventId}) {
             </div >
         </div >
     );
-
-
 }
 
 export default EventCard;

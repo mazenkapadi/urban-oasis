@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from "react";
-import { toggleBookmark } from "../../services/toggleBookmark.js";
+import { getBookmarkStatus, toggleBookmark } from "../../services/toggleBookmark.js";
 import { auth } from "../../firebaseConfig.js";
 
 const WideEventCard = ({ event }) => {
@@ -26,8 +26,10 @@ const WideEventCard = ({ event }) => {
 
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
-        const result = await toggleBookmark(userId, event);
-        setIsBookmarked(result);
+        if(userId) {
+            const result = await toggleBookmark(userId, event);
+            setIsBookmarked(result);
+        }
     };
 
     const handleNavigate = () => {
