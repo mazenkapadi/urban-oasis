@@ -4,8 +4,10 @@ import PasswordReset from '../../services/auth/ResetPassword.js';
 import { handleAccountClosure } from '../../services/auth/CloseAccount.js';
 import UserPreferences from '../../components/User/UserPreferences.jsx';
 import { auth } from '../../firebaseConfig.js';
+import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
+    const navigate = useNavigate();
     const [ currentEmail, setCurrentEmail ] = useState('');
     const [ isModalOpen, setIsModalOpen ] = useState(false);
     const [ newEmail, setNewEmail ] = useState('');
@@ -53,6 +55,10 @@ const SettingsPage = () => {
         } catch (error) {
             console.error(error.message); // Log any error that occurs during the process
         }
+    };
+
+    const handleAccountClosureClick = () => {
+        handleAccountClosure(currentEmail, password, () => navigate('/')); // Navigate to main page after success
     };
 
     const closeModal = () => {
@@ -124,7 +130,7 @@ const SettingsPage = () => {
                     <h2 className="text-xl font-bold mb-4 pl-1" >Close Account</h2 >
                     <button
                         id="close_account_button"
-                        onClick={handleAccountClosure}
+                        onClick={handleAccountClosureClick}
                         className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-md  transition w-1/2 max-w-xs"
                     >
                         Close Account
