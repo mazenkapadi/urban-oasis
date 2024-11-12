@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {doc, getDoc, setDoc, updateDoc,arrayUnion,deleteField} from 'firebase/firestore';
 import {onAuthStateChanged} from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
 import {CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon} from "@heroicons/react/20/solid";
 import {ShoppingCartIcon} from "@heroicons/react/24/outline";
+import {XMarkIcon} from "@heroicons/react/24/outline";
 import {db, auth, storage} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
@@ -51,6 +52,8 @@ const EventPage = () => {
     const [eventLong, setEventLong] = useState(0);
     const [eventLat, setEventLat] = useState(0);
     const [hostName, setHostName] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
+    const [eventAttendee, setEventAttendee] = useState('');
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -92,7 +95,6 @@ const EventPage = () => {
             setQuantity(quantity - 1);
         }
     };
-
 
     // const handleRSVP = async () => {
     //     if (!userId) {
@@ -180,6 +182,17 @@ const EventPage = () => {
     // };
 
 
+    const updateAttendeesCount = async (eventDocRef) => {
+        const snapshot = await getDoc(eventDocRef);
+        if (!snapshot.exists()) return;
+
+        const eventRsvps = snapshot.data().rsvps || {};
+        const totalRSVPs = Object.values(eventRsvps).reduce((acc, rsvp) => acc + (rsvp.quantity || 0), 0);
+
+        await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
+    };
+
+
     const findExistingRsvpId = async (collectionRef, userId, eventId) => {
         const snapshot = await getDoc(collectionRef);
         if (!snapshot.exists()) return null;
@@ -214,19 +227,6 @@ const EventPage = () => {
         }
     };
 
-
-    const updateAttendeesCount = async (eventDocRef) => {
-        const snapshot = await getDoc(eventDocRef);
-        if (!snapshot.exists()) return;
-
-        const eventRsvps = snapshot.data().rsvps || {};
-        const totalRSVPs = Object.values(eventRsvps).reduce((acc, rsvp) => acc + (rsvp.quantity || 0), 0);
-
-        await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
-    };
-
-
-
     const handleRSVP = async () => {
         if (!userId) {
             console.error("User ID is undefined. Cannot proceed with RSVP.");
@@ -237,6 +237,7 @@ const EventPage = () => {
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
         const eventDocRef = doc(db, 'Events', eventId);
+        const eventWaitlistDocRef = doc(db, 'EventWaitlist', eventId);
 
         const rsvpData = {
             userId,
@@ -251,10 +252,17 @@ const EventPage = () => {
         };
 
         try {
+
+            if (eventAttendee>=eventCapacity) {
+
+                await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
+                return
+
+            }
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
-
             // Save or update the RSVP in EventRSVPs and UserRSVPs collections
+            
             await saveOrUpdateRsvp(eventRsvpsDocRef, existingEventRsvpId, rsvpData, eventId, true);
             await saveOrUpdateRsvp(userRsvpsDocRef, existingUserRsvpId, rsvpData, userId, false);
 
@@ -267,10 +275,6 @@ const EventPage = () => {
             console.error("Error handling RSVP:", error);
         }
     };
-
-
-
-
 
 
     /* deepa just in case  the helpers don't work
@@ -664,8 +668,113 @@ const EventPage = () => {
         }
     };
 
+    const handleCancel = async () => {
+        if (!userId) {
+            console.error("User ID is undefined. Cannot proceed with cancellation.");
+            return;
+        }
+        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+        const eventDocRef = doc(db, 'Events', eventId);
+        const waitlistDocRef = doc(db, 'EventWaitlist', eventId);
+        try {
+            const eventDocSnap = await getDoc(eventDocRef);
+            if (!eventDocSnap.exists()) {
+                console.error("Event not found");
+                return;
+            }
+            const eventData = eventDocSnap.data();
+            const eventDate = eventData.eventDetails.eventDateTime.toDate();
+            console.log('eventDate: ',eventDate)
+            const daysUntilEvent = (eventDate - new Date()) / (1000 * 60 * 60 * 24);
+            console.log('daysUntilEvent: ',daysUntilEvent)
+            const rsvpDocSnap = await getDoc(eventRsvpsDocRef);
+            const rsvps = rsvpDocSnap.exists() ? Object.entries(rsvpDocSnap.data().rsvps || {}).map(([key, value]) => ({
+                ...value,
+                id: key
+              })):[];
+            console.log('rsvps',rsvps);
+            const userRsvpEntry = rsvps.find(( rsvpData) => rsvpData.userId === userId);
+            console.log('userRsvpEntry: ',userRsvpEntry);
+            if (userRsvpEntry) {
+                if (daysUntilEvent <= 7 && isPaidEvent) {
+                    console.log("Cannot cancel RSVP with 7 or fewer days remaining for this paid event.");
+                    alert("Cancellation not allowed with less than 7 days remaining.");
+                    return;
+                }
+                const userQuantity = userRsvpEntry.quantity;
+                const newAttendeesCount = eventData.attendeesCount - userQuantity;
+                await updateDoc(eventDocRef, { attendeesCount: newAttendeesCount });
+                await updateDoc(eventRsvpsDocRef, {
+                    [`rsvps.${userRsvpEntry.id}`]: deleteField()
+                });
+                const waitlistDocSnap = await getDoc(waitlistDocRef);
+                const waitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
+                if (waitlist.length > 0) {
+                    notifyWaitlist(waitlist);
+                }
+                alert(`RSVP cancellation processed.`);
+                console.log("RSVP cancellation processed.");
+         
+                if (isPaidEvent) {
+                    processRefund(userId, eventId);
+                }
+            } else {
+                const waitlistDocSnap = await getDoc(waitlistDocRef);
+                if (waitlistDocSnap.exists()) {
+                    const waitlist = waitlistDocSnap.data().waitlist || [];
+                    const userInWaitlist = waitlist.some(entry => entry.userId === userId);
 
+                    if (userInWaitlist) {   
+                        alert(`You have been removed from the waitlist.`);
+                        console.log("User found in waitlist");
+                        const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
+                        await updateDoc(waitlistDocRef, { waitlist: updatedWaitlist });
+                        console.log("waitlist updated.");
+                    } else {
+                        alert(`You need to RSVP or join waitlist to perform this action.`);
 
+                        console.log("User is not in the waitlist; no update needed.");
+                    }
+                } else {
+                    alert(`You need to RSVP or join waitlist to perform this action.`);
+
+                    console.log("Waitlist document does not exist.");
+                }
+            }
+        } catch (error) {
+            console.error("Error during cancellation:", error);
+        }
+    };
+
+    const notifyWaitlist = (waitlist) => {
+        waitlist.forEach(user => {
+            console.log(`Notification sent to waitlist user: ${user.email}`);
+        });
+    };
+    
+    const handleWaitlist = async (waitlistDocRef, waitlistData) => {
+        try {
+            const waitlistDocSnap = await getDoc(waitlistDocRef);
+        const currentWaitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
+        const userAlreadyInWaitlist = currentWaitlist.some(waitlistEntry => waitlistEntry.userId === waitlistData.userId);
+
+        if (userAlreadyInWaitlist) {
+            console.log("User is already on the waitlist.");
+            alert("You are already on the waitlist for this event.");
+            return;
+        }
+        
+        await setDoc(waitlistDocRef, { 
+                waitlist: arrayUnion(waitlistData) 
+            }, { merge: true });
+            alert("You have been added to waitlist successfully.")
+            console.log("User added to waitlist successfully.");
+        } catch (error) {
+            alert("Unable to add to waitlist now.")
+            
+            console.error("Error adding user to waitlist:", error);
+        }
+    };
 
     const handleModalClose = () => {
         setModalOpen(false);
@@ -881,10 +990,22 @@ const EventPage = () => {
                                     className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg">
                                     <button
                                         className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
-                                        onClick={isPaidEvent ? handleCheckout : handleRSVP}
+                                        onClick={eventCapacity>eventAttendee?  isPaidEvent ? handleCheckout : handleRSVP:handleRSVP}
                                     >
                                         <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2"/>
-                                        <span>{isPaidEvent ? 'Checkout' : 'RSVP'}</span>
+                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':'Join Waitlist'}</span>
+                                    </button>
+                                    
+                                </div>
+                                <div
+                                    className="flex justify-center items-center w-full h-12 bg-gray-700 hover:bg-gray-500 transition duration-300 ease-in-out border-4 border-gray-500 rounded-lg">
+                                    
+                                    <button
+                                        className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
+                                        onClick={handleCancel}
+                                    >
+                                        <XMarkIcon className="text-gray-300 w-6 h-6 mr-2"/>
+                                        <span>{'Cancel RSVP'}</span>
                                     </button>
                                 </div>
                                 <div className="flex flex-row gap-6 items-center">
