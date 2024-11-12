@@ -1,275 +1,243 @@
-import { categorizedOptions } from "../services/dataObjects/categoryData";
-import  {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-const FiltersComponent = ({ onApplyFilters, activeFilters, removeFilter }) => {
-    const { dateFilter, paid, availability, customDate, nearMe,priceRange,category} = activeFilters;
+import { categorizedOptions } from "../services/dataObjects/categoryData";
+
+const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) => {
+    const {
+        dateFilter = '',
+        paid = null,
+        availability = '',
+        customDate = '',
+        nearMe = false,
+        priceRange = { min: '', max: '' },
+        category = [],
+    } = activeFilters;
+
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
-    const [ selectedPrimaryCategory, setSelectedPrimaryCategory ] = useState('');
-    const [ selectedSubcategories, setSelectedSubcategories ] = useState([]);
+    const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState('');
+    const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+    const [nearMeChecked, setNearMeChecked] = useState(nearMe);
 
+    // Handle Price Range Changes
     useEffect(() => {
         if (minPrice || maxPrice) {
-            onApplyFilters({ dateFilter, paid, customDate,availability,nearMe, priceRange: { min: minPrice, max: maxPrice } });
+            onApplyFilters({ 'eventDetails.eventPrice': { min: minPrice, max: maxPrice } });
         } else {
-            removeFilter("priceRange");
+            removeFilter('eventDetails.eventPrice');
         }
     }, [minPrice, maxPrice]);
 
+    // Handle Category Changes
     useEffect(() => {
-        if(selectedSubcategories.length<=0){
-            removeFilter('category')
-        }else{
-        onApplyFilters({ dateFilter, paid, availability, customDate, nearMe, priceRange, category: selectedSubcategories });
-    }
+        if (selectedSubcategories.length > 0) {
+            onApplyFilters({ 'basicInfo.categories': selectedSubcategories });
+        } else {
+            removeFilter('basicInfo.categories');
+        }
     }, [selectedSubcategories]);
-    
-   
-    const handleDateFilterChange = (filter) => {
-        if (dateFilter === filter) {
-            removeFilter("dateFilter");
-        } else {
-            onApplyFilters({ dateFilter: filter, paid, customDate: null,availability,nearMe,priceRange });
-        }
-    };
 
-    const handlePaidFilterChange = (paidStatus) => {
-        if (paid === paidStatus) {
-            removeFilter("paid");
-        } else {
-            onApplyFilters({ dateFilter, paid: paidStatus, customDate, availability, nearMe,priceRange  });
-        }
-    };
-
-    const handleAvailabilityChange = (availabilityStatus) => {
-        if (availability === availabilityStatus) {
-            removeFilter("availability");
-        } else {
-            onApplyFilters({ dateFilter, paid, availability: availabilityStatus, customDate, nearMe,priceRange });
-        }
-    };
-
+    // Handle Date Change
     const handleCustomDateChange = (event) => {
         const selectedDate = event.target.value;
-        onApplyFilters({ dateFilter: null, paid, customDate: selectedDate, availability, nearMe,priceRange });
+        onApplyFilters({ 'eventDetails.eventDateTime': selectedDate });
     };
 
-    const handleNearMeFilterChange = () => {
-        if (nearMe) {
-            removeFilter("nearMe");
+    // Handle Near Me Change
+    const handleNearMeChange = () => {
+        setNearMeChecked(!nearMeChecked);
+        if (!nearMeChecked) {
+            onApplyFilters({ nearMe: true });
         } else {
-            onApplyFilters({ dateFilter, paid, nearMe: true, customDate, availability,priceRange});
+            removeFilter('nearMe');
         }
     };
 
+    // Handle Date Filter Change
+    const handleDateFilterChange = (filter) => {
+        if (dateFilter === filter) {
+            removeFilter('dateFilter');
+        } else {
+            onApplyFilters({ dateFilter: filter });
+        }
+    };
+
+    // Handle Paid Filter Change
+    const handlePaidFilterChange = (paidStatus) => {
+        if (paid === paidStatus) {
+            removeFilter('eventDetails.paidEvent');
+        } else {
+            onApplyFilters({ 'eventDetails.paidEvent': paidStatus });
+        }
+    };
+
+    // Handle Availability Filter Change
+    const handleAvailabilityChange = (availabilityStatus) => {
+        if (availability === availabilityStatus) {
+            removeFilter('availability');
+        } else {
+            onApplyFilters({ 'availability.fbAvail': availabilityStatus === 'Available' });
+        }
+    };
+
+    // Handle Primary Category Change
     const handlePrimaryCategoryChange = (e) => {
         const selectedCategory = e.target.value;
         setSelectedPrimaryCategory(selectedCategory);
         setSelectedSubcategories([]);
-        
-        if(!selectedCategory){
-            removeFilter('category')
+
+        if (!selectedCategory) {
+            removeFilter('basicInfo.categories');
         }
     };
 
+    // Handle Subcategory Change
     const handleSubcategoryChange = (subcategory) => {
-        console.log(subcategory)
         if (selectedSubcategories.includes(subcategory)) {
-            setSelectedSubcategories(selectedSubcategories.filter((item)=> item !==subcategory));
+            setSelectedSubcategories(selectedSubcategories.filter((item) => item !== subcategory));
         } else {
-            setSelectedSubcategories([ ...selectedSubcategories, subcategory ]);
-        } 
-
+            setSelectedSubcategories([...selectedSubcategories, subcategory]);
+        }
     };
-    
+
     return (
-        <div className="p-6 sticky left-10">
-            <h2 className="text-xl font-bold text-[#2B2D42] mb-4">Filters</h2>
+        <div className="p-6 sticky top-0 bg-white border-r border-gray-200 h-full">
+            <h2 className="text-xl font-bold">Filters</h2>
+
+            {/* Date Filter */}
             <div className="mb-6">
-                <h3 className="font-semibold mb-1 text-[#2B2D42]">Date</h3>
+                <h3 className="font-semibold mb-1">Date</h3>
                 <ul className="space-y-2">
                     {["Today", "Tomorrow", "Weekend"].map((filter) => (
-                        <li key={filter} className="flex items-center">
+                        <li key={filter}>
                             <input
                                 type="checkbox"
-                                id={filter}
-                                name="dateFilter"
-                                value={filter}
                                 checked={dateFilter === filter}
                                 onChange={() => handleDateFilterChange(filter)}
                                 className="mr-2"
                             />
-                            <label
-                                htmlFor={filter}
-                                className={`cursor-pointer text-[#2B2D42]`}
-                            >
-                            {filter}
-                            </label>
+                            <label>{filter}</label>
                         </li>
                     ))}
-                     <li className="flex items-center">
-                        <input
-                            type="date"
-                            id="customDate"
-                            name="customDate"
-                            value={customDate || ""}
-                            onChange={handleCustomDateChange}
-                            className="mr-2"
-                        />
-                    </li>
+                    <input
+                        type="date"
+                        value={customDate}
+                        onChange={handleCustomDateChange}
+                        className="mt-2"
+                    />
                 </ul>
             </div>
+
+            {/* Price Range Filter */}
             <div className="mb-6">
-                <h3 className="font-semibold mb-1 text-[#2B2D42]">Price</h3>
-                <ul className="space-y-2">
-                    <li className="flex items-center">
+                <h3 className="font-semibold mb-1">Price Range</h3>
+                <Box display="flex" gap={2}>
+                    <TextField
+                        label="Min"
+                        type="number"
+                        value={minPrice}
+                        onChange={(e) => setMinPrice(e.target.value)}
+                    />
+                    <TextField
+                        label="Max"
+                        type="number"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                    />
+                </Box>
+            </div>
+
+            {/* Paid Filter */}
+            <div className="mb-6">
+                <h3 className="font-semibold mb-1">Price</h3>
+                <ul>
+                    <li>
                         <input
                             type="checkbox"
-                            id="paid"
-                            name="paidFilter"
-                            value={true}
                             checked={paid === true}
                             onChange={() => handlePaidFilterChange(true)}
                             className="mr-2"
                         />
-                        <label
-                            htmlFor="paid"
-                            className={'cursor-pointer text-[#2B2D42]'}
-                        >
-                            Paid
-                        </label>
+                        <label>Paid</label>
                     </li>
-                    <li className="flex items-center">
+                    <li>
                         <input
                             type="checkbox"
-                            id="free"
-                            name="paidFilter"
-                            value={false}
                             checked={paid === false}
                             onChange={() => handlePaidFilterChange(false)}
                             className="mr-2"
                         />
-                        <label
-                            htmlFor="free"
-                            className={'cursor-pointer text-[#2B2D42]'}
-                        >
-                            Free
-                        </label>
+                        <label>Free</label>
                     </li>
                 </ul>
-            </div>
-            <div className="mb-6">
-                <h3 className="font-semibold mb-3 text-[#2B2D42]">Price Range</h3>
-                <Box display="flex" gap={2}>
-                    <TextField
-                    label="Min"
-                    variant="outlined"
-                    size="small"
-                    type="number"
-                    
-                    value={minPrice}
-                    onChange={(e) => setMinPrice(e.target.value)}
-                    />
-                    <TextField
-                    label="Max"
-                    variant="outlined"
-                    size="small"
-                    type="number"
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(e.target.value)}
-                    />
-                </Box>
-            </div>
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1 text-[#2B2D42]">Availability</h3>
-                <ul className="space-y-2">
-                    <li className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="available"
-                            name="availabilityFilter"
-                            value="Available"
-                            checked={availability === "Available"}
-                            onChange={() => handleAvailabilityChange("Available")}
-                            className="mr-2"
-                        />
-                        <label htmlFor="available" className="cursor-pointer text-[#2B2D42]">
-                            Available
-                        </label>
-                    </li>
-                    <li className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="unavailable"
-                            name="availabilityFilter"
-                            value="Unavailable"
-                            checked={availability === "Unavailable"}
-                            onChange={() => handleAvailabilityChange("Unavailable")}
-                            className="mr-2"
-                        />
-                        <label htmlFor="unavailable" className="cursor-pointer text-[#2B2D42]">
-                            Unavailable
-                        </label>
-                    </li>
-                </ul>
-            </div>
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1 text-[#2B2D42]">Location</h3>
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        id="nearMe"
-                        name="nearMeFilter"
-                        value={true}
-                        checked={nearMe === true}
-                        onChange={handleNearMeFilterChange}
-                        className="mr-2"
-                    />
-                    <label htmlFor="nearMe" className="cursor-pointer text-[#2B2D42]">
-                        Near Me
-                    </label>
-                </div>
-            </div>
-            <div className="mb-6">
-                <h3 className="font-semibold text-[#2B2D42]">Category</h3>
-                <div >
-                    <select
-                        value={selectedPrimaryCategory}
-                        onChange={handlePrimaryCategoryChange}
-                        className="w-full mt-2 p-3 rounded-md border focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                    <option value="" >Select a Category</option >
-                    {Object.keys(categorizedOptions).map((category) => (
-                        <option key={category} value={category} >
-                            {category}
-                        </option >
-                    ))}
-                    </select >
-                </div >
-                {selectedPrimaryCategory && (
-                    <div className="mt-2"  >
-                        <label className="text-sm font-semibold" >
-                            {selectedPrimaryCategory} Subcategories
-                        </label >
-                        <div className="grid grid-cols-2 gap-2  mt-3" >
-                            {categorizedOptions[selectedPrimaryCategory].map((subcategory) => (
-                                <label key={subcategory}
-                                        className="flex items-center space-x-2" >
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedSubcategories.includes(subcategory)}
-                                        onChange={() => handleSubcategoryChange(subcategory)}
-                                        className="form-checkbox h-4 w-4 text-indigo-500"
-                                    />
-                                    <span >{subcategory}</span >
-                                </label >
-                            ))}
-                        </div >
-                    </div >
-                )}
             </div>
 
+            {/* Availability Filter */}
+            <div className="mb-6">
+                <h3 className="font-semibold mb-1">Availability</h3>
+                <ul>
+                    <li>
+                        <input
+                            type="checkbox"
+                            checked={availability === 'Available'}
+                            onChange={() => handleAvailabilityChange('Available')}
+                            className="mr-2"
+                        />
+                        <label>Available</label>
+                    </li>
+                    <li>
+                        <input
+                            type="checkbox"
+                            checked={availability === 'Unavailable'}
+                            onChange={() => handleAvailabilityChange('Unavailable')}
+                            className="mr-2"
+                        />
+                        <label>Unavailable</label>
+                    </li>
+                </ul>
+            </div>
+
+            {/* Near Me Filter */}
+            <div className="mb-6">
+                <h3 className="font-semibold mb-1">Location</h3>
+                <input
+                    type="checkbox"
+                    checked={nearMeChecked}
+                    onChange={handleNearMeChange}
+                />
+                <label className="ml-2">Near Me</label>
+            </div>
+
+            {/* Category Filter */}
+            <div className="mb-6">
+                <h3 className="font-semibold mb-1">Category</h3>
+                <select
+                    value={selectedPrimaryCategory}
+                    onChange={handlePrimaryCategoryChange}
+                    className="w-full mt-2 p-2"
+                >
+                    <option value="">Select a Category</option>
+                    {Object.keys(categorizedOptions).map((category) => (
+                        <option key={category} value={category}>{category}</option>
+                    ))}
+                </select>
+
+                {selectedPrimaryCategory && (
+                    <div className="mt-3">
+                        {categorizedOptions[selectedPrimaryCategory].map((subcategory) => (
+                            <div key={subcategory}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedSubcategories.includes(subcategory)}
+                                    onChange={() => handleSubcategoryChange(subcategory)}
+                                />
+                                <label className="ml-2">{subcategory}</label>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

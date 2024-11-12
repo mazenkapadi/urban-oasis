@@ -1,56 +1,41 @@
-// import { doc, setDoc, deleteDoc, getDoc, serverTimestamp } from "firebase/firestore";
-// import { db } from "../firebaseConfig";
-//
-// export const toggleBookmark = async (userId, event) => {
-//     const bookmarkId = `${userId}_${event.id}`; // Unique ID based on user and event
-//     const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
-//
-//     try {
-//         const bookmarkSnap = await getDoc(bookmarkRef);
-//         if (bookmarkSnap.exists()) {
-//             await deleteDoc(bookmarkRef);
-//             return false;
-//         } else {
-//             await setDoc(bookmarkRef, {
-//                 bookmarkId,
-//                 userId,
-//                 eventId: event.id,
-//                 eventTitle: event.basicInfo.title,
-//                 eventDateTime: event.eventDetails.eventDateTime,
-//                 eventLocation: event.basicInfo.location.label,
-//                 bookmarkedAt: serverTimestamp(),
-//             });
-//             return true;
-//         }
-//     } catch (error) {
-//         console.error("Error toggling bookmark:", error);
-//     }
-// };
-
-
-
 import { doc, setDoc, deleteDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
+// Function to check if an event is bookmarked
+export const getBookmarkStatus = async (userId, eventId) => {
+    const bookmarkId = `${userId}_${eventId}`; // Unique ID based on user and event
+    const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
+
+    try {
+        const bookmarkSnap = await getDoc(bookmarkRef);
+        return bookmarkSnap.exists(); // Return true if the bookmark exists, false otherwise
+    } catch (error) {
+        console.error("Error checking bookmark status:", error);
+        return false;
+    }
+};
+
+// Function to toggle the bookmark status
 export const toggleBookmark = async (userId, event) => {
-    const bookmarkId = `${userId}_${event.id}`; // Unique ID based on user and event
+    const eventId = event.objectID; // Use objectID instead of id
+    const bookmarkId = `${userId}_${eventId}`;
     const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
 
     try {
         const bookmarkSnap = await getDoc(bookmarkRef);
         if (bookmarkSnap.exists()) {
-            // If the bookmark exists, delete it
+            // Delete the bookmark if it exists
             await deleteDoc(bookmarkRef);
             return false;
         } else {
-            // If the bookmark doesn't exist, create it
+            // Create the bookmark if it doesn't exist
             await setDoc(bookmarkRef, {
                 bookmarkId,
                 userId,
-                eventId: event.id,
-                eventTitle: event.eventTitle,
-                eventDateTime: event.eventDateTime,
-                eventLocation: event.eventLoscation,
+                eventId,
+                eventTitle: event.basicInfo?.title || 'Untitled Event',
+                eventDateTime: event.eventDetails?.eventDateTime || null,
+                eventLocation: event.basicInfo?.location?.label || 'Location not specified',
                 bookmarkedAt: serverTimestamp(),
             });
             return true;
@@ -60,8 +45,3 @@ export const toggleBookmark = async (userId, event) => {
         return null; // Return null to indicate an error
     }
 };
-
-
-// ToDo - work on this doesnt update the bookmarked events list on firestore
-
-
