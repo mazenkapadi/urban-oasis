@@ -1,7 +1,6 @@
 import { doc, setDoc, deleteDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-// Function to check if an event is bookmarked
 export const getBookmarkStatus = async (userId, eventId) => {
     const bookmarkId = `${userId}_${eventId}`; // Unique ID based on user and event
     const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
@@ -15,9 +14,14 @@ export const getBookmarkStatus = async (userId, eventId) => {
     }
 };
 
-// Function to toggle the bookmark status
+
 export const toggleBookmark = async (userId, event) => {
-    const eventId = event.objectID; // Use objectID instead of id
+    // Adjust eventId extraction to handle different structures
+    const eventId = event.objectID || event.eventId || event.id;
+    if (!eventId) {
+        console.error("Error: eventId is undefined");
+        return null;
+    }
     const bookmarkId = `${userId}_${eventId}`;
     const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
 
@@ -28,20 +32,25 @@ export const toggleBookmark = async (userId, event) => {
             await deleteDoc(bookmarkRef);
             return false;
         } else {
+            // Adjust event property access
+            const eventTitle = event.basicInfo?.title || event.eventTitle || 'Untitled Event';
+            const eventDateTime = event.eventDetails?.eventDateTime || event.eventDateTime || null;
+            const eventLocation = event.basicInfo?.location?.label || event.eventLocation || 'Location not specified';
+
             // Create the bookmark if it doesn't exist
             await setDoc(bookmarkRef, {
                 bookmarkId,
                 userId,
                 eventId,
-                eventTitle: event.basicInfo?.title || 'Untitled Event',
-                eventDateTime: event.eventDetails?.eventDateTime || null,
-                eventLocation: event.basicInfo?.location?.label || 'Location not specified',
+                eventTitle,
+                eventDateTime,
+                eventLocation,
                 bookmarkedAt: serverTimestamp(),
             });
             return true;
         }
     } catch (error) {
         console.error("Error toggling bookmark:", error);
-        return null; // Return null to indicate an error
+        return null;
     }
 };

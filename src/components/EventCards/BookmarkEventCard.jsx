@@ -27,7 +27,6 @@ const BookmarkEventCard = ({ event, onBookmarkRemoved }) => {
         return () => unsubscribe();
     }, [event.eventId, event.imageUrl]);
 
-    // Function to fetch event image from Firestore
     const fetchEventImage = async (eventId) => {
         try {
             const eventDoc = await getDoc(doc(db, 'Events', eventId));
@@ -49,7 +48,7 @@ const BookmarkEventCard = ({ event, onBookmarkRemoved }) => {
         const result = await toggleBookmark(userId, event);
         setIsBookmarked(result);
         if (!result && onBookmarkRemoved) {
-            onBookmarkRemoved(event.id);
+            onBookmarkRemoved(event.eventId);
         }
     };
 
