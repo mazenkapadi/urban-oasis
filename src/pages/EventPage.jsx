@@ -993,7 +993,7 @@ const EventPage = () => {
                                         onClick={eventCapacity>eventAttendee?  isPaidEvent ? handleCheckout : handleRSVP:handleRSVP}
                                     >
                                         <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2"/>
-                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':'Join Waitlist'}</span>
+                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':eventAttendee ? 'Join Waitlist': 'RSVP'}</span>
                                     </button>
                                     
                                 </div>
