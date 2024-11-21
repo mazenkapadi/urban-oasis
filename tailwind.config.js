@@ -7,16 +7,16 @@ export default {
     theme: {
         extend: {
             colors: {
-                'primary-dark': '#1F2937',     // Dark Gray (Background/Main Theme)
-                'primary-light': '#F9FAFB',    // Off-white (Main Heading)
-                'text-gray': '#D1D5DB',        // Soft Gray (Text)
-                'detail-gray': '#9CA3AF',      // Light Gray (Details)
-                'accent-blue': '#3B82F6',      // Accent Blue
-                'accent-green': '#10B981',     // Accent Green
-                'accent-yellow': '#F59E0B',    // Accent Yellow
-                'neutral-white': '#FFFFFF',    // White (For Cards)
-                'neutral-black': '#111827',    // Black (For Text)
+                'primary-dark': '#11151A',     // Black (Background/Dark Theme)
+                'primary-light': '#F9FAFB',    // Off-white (Background/Light Theme)
 
+                'text-gray': '#F4EDE4',        // Soft Beige (Text)
+                'detail-gray': '#F9E3CC',      // Light Peach/Beige (Details)
+                'accent-orange': '#FF8C42',    // Vibrant Orange (Accent)
+                'accent-yellow': '#FFD166',    // Soft Yellow-Orange (Accent)
+
+                'neutral-white': '#FFFAF0',    // Warm White (For Cards)
+                'neutral-black': '#262626',    // Soft Black (For Text)
             },
             fontFamily: {
                 archivo: [ 'Archivo', 'sans-serif' ],

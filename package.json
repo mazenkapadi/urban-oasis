@@ -55,6 +55,7 @@
     "slick-carousel": "^1.8.1",
     "stripe": "^17.2.0",
     "styled-components": "^6.1.13",
+    "tailwindcss-scroll-snap": "^1.1.0",
     "uuid": "^10.0.0",
     "uuidv4": "^6.2.13",
     "vercel": "^37.12.1"
