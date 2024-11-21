@@ -27,3 +27,14 @@
 .hero-shadow-lg {
     box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.5);
 }
+
+.carousel-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+
+.carousel-container > * {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+}
