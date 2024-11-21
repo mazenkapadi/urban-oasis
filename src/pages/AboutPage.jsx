@@ -40,7 +40,7 @@ function AboutPage() {
 
     return (
         <div className="relative flex flex-col min-h-screen bg-primary-light text-primary-dark" >
-            <div className="absolute top-0 left-0 w-full z-20" >
+            <div className="absolute top-0 left-0 w-full z-20" id="about-hero" >
                 <HeaderComponent />
             </div >
             <div className="relative h-screen w-full" >
@@ -85,59 +85,6 @@ function AboutPage() {
                     </div >
                 </div >
             </div >
-
-
-
-            {/*<div className="flex flex-col md:flex-row items-start justify-between bg-gray-100 py-8 px-12 md:px-12" >*/}
-            {/*    <div className="md:w-1/2 flex flex-col justify-start space-y-4 mb-6 md:mb-0 md:pr-8" >*/}
-            {/*        <h2 className="text-3xl font-bold text-primary-dark" >Leave us a review!</h2 >*/}
-            {/*        {error && <p className="text-red-500" >{error}</p >}*/}
-            {/*        {successMessage && <p className="text-green-500" >{successMessage}</p >}*/}
-
-            {/*        <p className="text-gray-700" >*/}
-            {/*            <span >Need more space for your thoughts? Feel free to reach out on our </span >*/}
-            {/*            <Link to="/support" className="text-blue-500 underline hover:text-blue-700 transition-colors" >*/}
-            {/*                support page*/}
-            {/*            </Link >*/}
-            {/*            <span > for additional help or to leave a longer review.</span >*/}
-            {/*        </p >*/}
-            {/*    </div >*/}
-
-            {/*    <div*/}
-            {/*        className="md:w-1/2 flex flex-col items-end bg-white p-6 rounded-lg shadow-lg w-full max-w-lg space-y-4" >*/}
-            {/*        <div className="w-full" >*/}
-            {/*            <label className="block text-gray-700 font-semibold mb-2" >Your Name</label >*/}
-            {/*            <input*/}
-            {/*                type="text"*/}
-            {/*                value={reviewerName}*/}
-            {/*                onChange={(e) => setReviewerName(e.target.value)}*/}
-            {/*                className="w-full px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
-            {/*                required*/}
-            {/*            />*/}
-            {/*        </div >*/}
-            {/*        <div className="w-full" >*/}
-            {/*            <label className="block text-gray-700 font-semibold mb-2" >Your Review</label >*/}
-            {/*            <textarea*/}
-            {/*                value={reviewContent}*/}
-            {/*                onChange={(e) => setReviewContent(e.target.value)}*/}
-            {/*                className="w-full px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"*/}
-            {/*                rows="4"*/}
-            {/*                maxLength={maxReviewLength}*/}
-            {/*                required*/}
-            {/*            />*/}
-            {/*            <p className="text-sm text-gray-500 mt-1 text-right" >*/}
-            {/*                {reviewContent.length}/{maxReviewLength} characters*/}
-            {/*            </p >*/}
-            {/*        </div >*/}
-            {/*        <button*/}
-            {/*            onClick={handleReviewSubmit}*/}
-            {/*            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition"*/}
-            {/*        >*/}
-            {/*            Submit Review*/}
-            {/*        </button >*/}
-            {/*    </div >*/}
-            {/*</div >*/}
-
 
             <div className="flex flex-col md:flex-row items-start justify-between bg-gray-100 py-8 px-12 md:px-16">
                 {/* Left Column - Text Section */}
