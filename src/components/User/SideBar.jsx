@@ -1,44 +1,108 @@
+// import React, { useEffect, useState } from 'react';
+// import { Link, useNavigate } from 'react-router-dom';
+// import { HomeIcon, UserCircleIcon, Cog6ToothIcon, UserIcon } from '@heroicons/react/20/solid';
+// import { ChatBubbleLeftRightIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+// import { BiTask } from 'react-icons/bi';
+// import { signOutUser } from '../../services/auth/signOut';
+// import { onAuthStateChanged } from 'firebase/auth';
+// import { auth, db } from '../../firebaseConfig';
+// import { doc, getDoc } from 'firebase/firestore';
+//
+// const SideBar = () => {
+//     const navigate = useNavigate();
+//     const [isHost, setIsHost] = useState(false);
+//
+//     useEffect(() => {
+//         const checkAuthState = () => {
+//             onAuthStateChanged(auth, async (user) => {
+//                 if (user) {
+//                     const userDoc = await getDoc(doc(db, 'Users', user.uid));
+//                     if (userDoc.exists()) {
+//                         setIsHost(userDoc.data()?.isHost || false);
+//                     }
+//                 }
+//             });
+//         };
+//
+//         checkAuthState();
+//     }, []);
+//
+//     const handleSignOut = () => {
+//         signOutUser();
+//         navigate('/signIn');
+//     };
+//
+//     return (
+//         <div className="flex flex-col bg-secondary-dark-2 shadow-lg rounded-lg p-7 h-screen overflow-y-auto text-primary-light">
+//             <Link to="/#" className="sidebar-link">
+//                 <HomeIcon className="sidebar-icon" />
+//                 <span>HomePage</span>
+//             </Link>
+//             <Link to="/userProfilePage" className="sidebar-link">
+//                 <UserCircleIcon className="sidebar-icon" />
+//                 <span>Profile</span>
+//             </Link>
+//             <Link to="/userProfilePage/contact-info" className="sidebar-link">
+//                 <BiTask className="sidebar-icon" />
+//                 <span>Contact Info</span>
+//             </Link>
+//             <Link to="/userProfilePage/host-chatlist" className="sidebar-link">
+//                 <ChatBubbleLeftRightIcon className="sidebar-icon" />
+//                 <span>Chats</span>
+//             </Link>
+//             <Link to="/userProfilePage/preferences" className="sidebar-link">
+//                 <AdjustmentsHorizontalIcon className="sidebar-icon" />
+//                 <span>Event Preferences</span>
+//             </Link>
+//             <Link to="/userProfilePage/settings" className="sidebar-link">
+//                 <Cog6ToothIcon className="sidebar-icon" />
+//                 <span>Settings</span>
+//             </Link>
+//
+//             <div className="mt-auto">
+//                 <button
+//                     onClick={() => navigate('/hostProfilePage')}
+//                     className="sidebar-link w-full text-left"
+//                 >
+//                     <UserIcon className="sidebar-icon" />
+//                     <span>Host Dashboard</span>
+//                 </button>
+//                 <button
+//                     onClick={handleSignOut}
+//                     className="btn btn-secondary w-full mt-4"
+//                 >
+//                     Sign Out
+//                 </button>
+//             </div>
+//         </div>
+//     );
+// };
+//
+// export default SideBar;
+
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { HomeIcon, UserCircleIcon, Cog6ToothIcon, UserIcon } from '@heroicons/react/20/solid';
+import { ChatBubbleLeftRightIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { BiTask } from 'react-icons/bi';
-import {
-    CreditCardIcon,
-    HomeIcon,
-    QuestionMarkCircleIcon,
-    Cog6ToothIcon,
-    UserIcon,
-    UserCircleIcon
-} from "@heroicons/react/20/solid";
-import { ChatBubbleLeftRightIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { signOutUser } from "../../services/auth/signOut.js";
+import { signOutUser } from '../../services/auth/signOut';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '../../firebaseConfig.js';
+import { auth, db } from '../../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 
 const SideBar = () => {
     const navigate = useNavigate();
-    const [ isHost, setIsHost ] = useState(false);
-    const [ userId, setUserId ] = useState(null);
+    const [isHost, setIsHost] = useState(false);
 
-    // Check the auth state and fetch user data
     useEffect(() => {
         const checkAuthState = () => {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    setUserId(user.uid); // Get the user's UID
-                    console.log('User is signed in');
-
-                    const userDocRef = doc(db, 'Users', user.uid); // Adjust collection name if different
-                    const userDoc = await getDoc(userDocRef);
-
+                    const userDoc = await getDoc(doc(db, 'Users', user.uid));
                     if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        setIsHost(userData.isHost || false); // Set isHost state
+                        setIsHost(userDoc.data()?.isHost || false);
                     }
-                } else {
-                    console.log("User is not signed in.");
-                    setUserId(null);
-                    setIsHost(false);
                 }
             });
         };
@@ -48,67 +112,52 @@ const SideBar = () => {
 
     const handleSignOut = () => {
         signOutUser();
-        navigate("/signIn");
-    };
-
-    const handleHostDashboardClick = () => {
-        if (isHost) {
-            navigate("/hostProfilePage");
-        } else {
-            navigate("/userProfilePage/host-signup");
-        }
+        navigate('/signIn');
     };
 
     return (
-        <div className="flex flex-col bg-gray-900 shadow-lg rounded-lg p-7 h-screen overflow-y-auto" >
-            <Link to="/#"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <HomeIcon className="h-6 w-6 mr-2 text-white" />
-                <span >HomePage</span >
-            </Link >
-            <Link to="/userProfilePage"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <UserCircleIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Profile</span >
-            </Link >
-            <Link to="/userProfilePage/contact-info"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <BiTask className="h-6 w-6 mr-2 text-white" />
-                <span >Contact Info</span >
-            </Link >
-            <Link to="/userProfilePage/host-chatlist"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <ChatBubbleLeftRightIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Chats</span >
-            </Link >
-            <Link to="/userProfilePage/preferences"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <AdjustmentsHorizontalIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Event Preferences</span >
-            </Link >
-            <Link to="/userProfilePage/settings"
-                  className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white" >
-                <Cog6ToothIcon className="h-6 w-6 mr-2 text-white" />
-                <span >Settings</span >
-            </Link >
+        <div className="flex flex-col bg-secondary-dark-2 shadow-lg rounded-lg p-6 h-[calc(100vh-2rem)] fixed top-4 left-4 overflow-y-auto text-primary-light">
+            <Link to="/#" className="sidebar-link">
+                <HomeIcon className="sidebar-icon" />
+                <span>HomePage</span>
+            </Link>
+            <Link to="/userProfilePage" className="sidebar-link">
+                <UserCircleIcon className="sidebar-icon" />
+                <span>Profile</span>
+            </Link>
+            <Link to="/userProfilePage/contact-info" className="sidebar-link">
+                <BiTask className="sidebar-icon" />
+                <span>Contact Info</span>
+            </Link>
+            <Link to="/userProfilePage/host-chatlist" className="sidebar-link">
+                <ChatBubbleLeftRightIcon className="sidebar-icon" />
+                <span>Chats</span>
+            </Link>
+            <Link to="/userProfilePage/preferences" className="sidebar-link">
+                <AdjustmentsHorizontalIcon className="sidebar-icon" />
+                <span>Event Preferences</span>
+            </Link>
+            <Link to="/userProfilePage/settings" className="sidebar-link">
+                <Cog6ToothIcon className="sidebar-icon" />
+                <span>Settings</span>
+            </Link>
 
-            <div className="mt-auto" > {/* Keeps Host Dashboard at the bottom */}
+            <div className="mt-auto">
                 <button
-                    onClick={handleHostDashboardClick}
-                    className="item flex items-center p-3 rounded hover:bg-gray-700 transition text-white w-full text-left"
+                    onClick={() => navigate('/hostProfilePage')}
+                    className="sidebar-link w-full text-left"
                 >
-                    <UserIcon className="h-6 w-6 mr-2 text-white" />
-                    <span >Host Dashboard</span >
-                </button >
+                    <UserIcon className="sidebar-icon" />
+                    <span>Host Dashboard</span>
+                </button>
                 <button
-                    type="submit"
                     onClick={handleSignOut}
-                    className="w-full bg-red-600 hover:bg-red-800 text-white font-bold py-3 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mt-4"
+                    className="btn btn-secondary w-full mt-4"
                 >
                     Sign Out
-                </button >
-            </div >
-        </div >
+                </button>
+            </div>
+        </div>
     );
 };
 

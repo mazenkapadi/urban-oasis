@@ -35,9 +35,8 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                 const nearestForecast = forecastResponse.list.reduce(
                     (nearest, forecast) => {
                         const forecastTime = new Date(forecast.dt_txt).getTime();
-                        console.log("forecastTime:", forecastTime);
+                        // console.log("forecastTime:", forecastTime);
                         if (forecastTime <= eventTime) {
-                            // Only consider forecasts before the event time
                             if (
                                 !nearest ||
                                 eventTime - forecastTime <
@@ -53,7 +52,7 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                 setFilteredForecast(nearestForecast);
             } else {
                 console.log("No forecast data for the event date.");
-                setFilteredForecast(null); // No forecast data for the event date
+                setFilteredForecast(null);
             }
         } catch (e) {
             console.error("Error fetching forecast data:", e);
@@ -113,5 +112,5 @@ const formatDate = (date) => {
     // const hours = String(date.getHours()).padStart(2, "0");
     // const minutes = String(date.getMinutes()).padStart(2, "0");
     // const seconds = String(date.getSeconds()).padStart(2, "0");
-    return `${year}-${month}-${day}`; // Format as YYYY-MM-DD for comparison
+    return `${year}-${month}-${day}`;
 };

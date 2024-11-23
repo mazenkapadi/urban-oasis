@@ -61,17 +61,16 @@ const ExploreManage = () => {
     };
 
     return (
-        <div className="mt-12" >
-            <h2 className="text-2xl font-bold text-white mb-4" >Explore & Manage</h2 >
+        <div className="mt-4" >
+            <h2 className="font-lalezar text-h3 text-white mb-4" >EXPLORE & MANAGE</h2 >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
-
                 <div className="grid grid-rows-2 gap-6 lg:col-span-1 h-full" >
                     <div
-                        className="bg-gray-800 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
-                        <h3 className="text-lg font-semibo  ld text-white mb-2" >My Event History</h3 >
+                        className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
+                        <h3 className="text-h4 font-lalezar text-primary-light mb-2" >My Event History</h3 >
                         <p className="text-gray-400" >View all the events you've attended.</p >
                         <button
-                            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
+                            className="mt-4 bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
                             onClick={() => navigate(`/userProfilePage/my-event-history`, {state: {userId}})}
                         >
                             View History
@@ -79,21 +78,20 @@ const ExploreManage = () => {
                     </div >
 
                     <div
-                        className="bg-gray-800 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
-                        <h3 className="text-lg font-semibold text-white mb-2" >Manage RSVPs</h3 >
+                        className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
+                        <h3 className="text-h4 font-lalezar text-primary-light mb-2" >Manage RSVPs</h3 >
                         <p className="text-gray-400" >Modify or cancel your upcoming RSVPs.</p >
                         <button
-                            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
+                            className="mt-4 bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
                             onClick={() => navigate('/userProfilePage/manage-rsvps')}
                         >
                             Manage RSVPs
                         </button >
                     </div >
                 </div >
-
                 <div
-                    className="bg-gray-800 shadow-md rounded-lg p-6 text-center lg:col-span-2 lg:row-span-2 flex flex-col items-start" >
-                    <h3 className="text-lg font-semibold text-white mb-2" >Bookmarked Events</h3 >
+                    className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center lg:col-span-2 lg:row-span-2 flex flex-col items-start" >
+                    <h3 className="text-h4 font-semibold text-white mb-2" >Bookmarked Events</h3 >
                     <p className="text-gray-400 mb-4" >These are events you have bookmarked.</p >
                     <div className="flex flex-col gap-4 w-full h-[300px] overflow-y-auto" >
                         {bookmarkedEvents.length > 0 ? (

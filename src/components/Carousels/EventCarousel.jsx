@@ -34,7 +34,7 @@ const EventCarousel = ({ rangeType }) => {
     }, [rangeType]);
 
     return (
-        <div className="carousel-container py-6">
+        <div className="carousel-container scrollbar-hide py-6">
             <div className="relative mt-4">
                 <div
                     ref={carouselRef}

@@ -36,18 +36,18 @@ const Testimonials = () => {
     return (
         <section className="p-8" >
             <h2 className="text-3xl font-bold mb-6 text-center" >User Testimonials</h2 >
-            {testimonials.length > 0 ? (
-                <Slider {...settings}>
-                    {testimonials.map((testimonial) => (
-                        <div key={testimonial.id} className="p-4 bg-white shadow-md rounded-lg text-center mx-4" >
-                            <p className="text-lg italic mb-2" >{testimonial.content}</p >
-                            <p className="font-semibold" >- {testimonial.name}</p >
-                        </div >
-                    ))}
-                </Slider >
-            ) : (
-                <div className="text-center text-gray-500" >No testimonials available at this time.</div >
-            )}
+            {/*{testimonials.length > 0 ? (*/}
+            {/*    <Slider {...settings}>*/}
+            {/*        {testimonials.map((testimonial) => (*/}
+            {/*            <div key={testimonial.id} className="p-4 bg-white shadow-md rounded-lg text-center mx-4" >*/}
+            {/*                <p className="text-lg italic mb-2" >{testimonial.content}</p >*/}
+            {/*                <p className="font-semibold" >- {testimonial.name}</p >*/}
+            {/*            </div >*/}
+            {/*        ))}*/}
+            {/*    </Slider >*/}
+            {/*) : (*/}
+            {/*    <div className="text-center text-gray-500" >No testimonials available at this time.</div >*/}
+            {/*)}*/}
         </section >
     );
 };

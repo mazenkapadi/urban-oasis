@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+
+:root {
+    --primary-dark: #0A0C0F;
+    --primary-light: #F9FAFB;
+    --accent-orange: #EE703C;
+    --accent-red: #EB2032;
+    --accent-blue: #0056FF;
+    --accent-purple: #8B5CF6;
+    --secondary-dark-1: #171717;
+    --secondary-dark-2: #171A1C;
+    --secondary-light-1: #E4E0DB;
+    --secondary-light-2: #F2F0EB;
+    --secondary-light-3: #EEEDE9;
+}
+
+[data-theme="dark"] {
+    --primary-dark: #F9FAFB;
+    --primary-light: #0A0C0F;
+    --secondary-dark-1: #E4E0DB;
+    --secondary-dark-2: #F2F0EB;
+    --secondary-light-1: #171717;
+    --secondary-light-2: #171A1C;
+    --secondary-light-3: #222222;
+}
+
+
+
+h1 {
+    @apply font-lalezar text-h1 uppercase;
+}
+
+button {
+    @apply font-roboto font-bold text-button;
+}
+
+body {
+    @apply font-roboto font-regular text-body;
+}
+
+
 .date-picker::-webkit-calendar-picker-indicator {
     filter: invert(1) brightness(100%);
 }
@@ -37,4 +77,76 @@
 .carousel-container > * {
     flex: 0 0 auto;
     scroll-snap-align: center;
+}
+
+
+
+/* Text Box Styles */
+.text-box {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--secondary-light-1);
+    border-radius: 8px;
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    transition: box-shadow 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.text-box:focus {
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--accent-blue);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--accent-blue);
+    color: var(--primary-light);
+    border: none;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--accent-red);
+    color: var(--primary-light);
+    border: none;
+}
+
+.btn-secondary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.sidebar-link {
+    @apply flex items-center p-3 rounded-lg hover:bg-secondary-light-3 dark:hover:bg-secondary-dark-1 transition duration-300;
+}
+
+.sidebar-icon {
+    @apply h-6 w-6 mr-3;
+}
+
+.sidebar-container {
+    @apply fixed top-4 left-4 h-[calc(100vh-2rem)] w-1/6;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }
