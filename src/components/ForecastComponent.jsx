@@ -77,9 +77,9 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                 {/* {filteredForecast.map((forecast, index) => ( */}
                 <div
                     // key={index}
-                    className="bg-neutral-white p-4 rounded-lg min-w-[150px] flex-shrink-0"
+                    className=" p-4 rounded-lg min-w-[150px] flex-shrink-0"
                 >
-                    <p className="text-neutral-black" >
+                    <p className="text-neutral-white" >
                         {new Date(filteredForecast.dt_txt).toLocaleString()}
                     </p >
                     <img
@@ -87,8 +87,8 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                         alt={filteredForecast.weather[0].description}
                         className="mx-auto"
                     />
-                    <p className="text-neutral-black" >{filteredForecast.main.temp}°C</p >
-                    <p className="text-neutral-black" >
+                    <p className="text-neutral-white" >{filteredForecast.main.temp}°C</p >
+                    <p className="text-neutral-white" >
                         {filteredForecast.weather[0].description}
                     </p >
                 </div >

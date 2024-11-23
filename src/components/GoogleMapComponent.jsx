@@ -3,8 +3,8 @@ import {GoogleMap, MarkerF, useJsApiLoader, useLoadScript} from "@react-google-m
 import {googleMapsConfig} from "../locationConfig.js";
 
 const containerStyle = {
-    width: "50%",
-    height: "75%",
+    width: "100%",
+    height: "100%",
 };
 
 const GoogleMapComponent = ({lat, lon}) => {

@@ -964,9 +964,11 @@ const EventPage = () => {
                                     <div className="text-gray-300" dangerouslySetInnerHTML={{ __html: formattedDescription }}/>
                                 </div>
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime}/>
-                                <GoogleMapComponent lat={eventLat} lon={eventLong}  />
+                                {/* <GoogleMapComponent lat={eventLat} lon={eventLong}  /> */}
                             </div>
-                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg">
+                            
+                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 ">
+                            <div className="flex flex-col p-6 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg">
                                 <div className="flex space-x-4">
                                     <div
                                         className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg">
@@ -993,7 +995,7 @@ const EventPage = () => {
                                         onClick={eventCapacity>eventAttendee?  isPaidEvent ? handleCheckout : handleRSVP:handleRSVP}
                                     >
                                         <ShoppingCartIcon className="text-gray-300 w-6 h-6 mr-2"/>
-                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':'Join Waitlist'}</span>
+                                        <span>{eventCapacity>eventAttendee? isPaidEvent ? 'Checkout' : 'RSVP':eventAttendee ? 'Join Waitlist': 'RSVP'}</span>
                                     </button>
                                     
                                 </div>
@@ -1089,6 +1091,10 @@ const EventPage = () => {
                                 </div>
 
                             </div>
+                            <GoogleMapComponent lat={eventLat} lon={eventLong}  />
+                            </div>
+                            
+                           
                         </div>
                     </div>
                     <ChatWindowComponent
