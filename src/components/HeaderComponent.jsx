@@ -1,6 +1,5 @@
 // components/HeaderComponent.jsx
 import { useState, useEffect } from "react";
-import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -108,7 +107,7 @@ const HeaderComponent = () => {
                 </div>
             </div>
 
-            <DropdownMenu isOpen={menuOpen} />
+            {/*<DropdownMenu isOpen={menuOpen} />*/}
         </div>
     );
 };
