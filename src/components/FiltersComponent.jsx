@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { categorizedOptions } from "../services/dataObjects/categoryData";
+import { categorizedOptions } from "../services/categoryData";
 
 const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) => {
     const {
