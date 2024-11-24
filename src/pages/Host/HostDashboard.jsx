@@ -155,8 +155,8 @@ const HostDashboard = () => {
         datasets: [
             {
                 data: [ totalAttendees, totalCapacity - totalAttendees ],
-                backgroundColor: [ '#4CAF50', '#FFC107' ],
-                hoverBackgroundColor: [ '#45a049', '#ffca28' ],
+                backgroundColor: [ '#EE703C', '#EB2032' ],
+                hoverBackgroundColor: [ '#EE702D', '#EB2043' ],
             }
         ]
     };
@@ -166,25 +166,22 @@ const HostDashboard = () => {
         datasets: [
             {
                 data: [ totalFutureEvents, totalPastEvents ],
-                backgroundColor: [ '#2196F3', '#F44336' ],
-                hoverBackgroundColor: [ '#1976D2', '#D32F2F' ],
+                backgroundColor: [ '#0056FF', '#8B5CF6' ],
+                hoverBackgroundColor: [ '#0056D5', '#8B5CD5' ],
             }
         ]
     };
 
-    // Function to render a gray pie chart
     const renderGrayPie = () => ({
         labels: [ 'No Data' ],
         datasets: [
             {
                 data: [ 1 ],
-                backgroundColor: [ '#B0BEC5' ], // Gray color for no data
-                hoverBackgroundColor: [ '#9E9E9E' ],
+                backgroundColor: [ '#171A1C' ], // Gray color for no data
+                hoverBackgroundColor: [ '#171A2D' ],
             }
         ]
     });
-
-
 
     return (
         <div className="bg-gray-100 min-h-screen flex justify-start p-0" >
