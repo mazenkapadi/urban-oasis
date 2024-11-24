@@ -169,6 +169,7 @@ function EventCreationPage() {
 
             const eventData = {
                 hostId: userId || 'defaultUserID',
+                attendeesCount: 0,
                 basicInfo: {
                     title: eventTitle || 'Untitled Event',
                     description: eventDescription || 'No description provided',

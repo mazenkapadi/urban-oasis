@@ -99,7 +99,6 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
 
 export default ForecastComponent;
 
-// To parse date from db format to weather format
 const parseEventDate = (dt) => {
     const formattedDateString = dt.replace("UTC", "GMT").replace("at", "").trim();
     return new Date(formattedDateString);
