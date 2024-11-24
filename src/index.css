@@ -136,7 +136,7 @@ body {
 }
 
 .sidebar-link {
-    @apply flex items-center p-3 rounded-lg hover:bg-secondary-light-3 dark:hover:bg-secondary-dark-1 transition duration-300;
+    @apply flex items-center p-3 rounded-lg hover:bg-Light-L3 dark:hover:bg-Dark-D1 transition duration-300;
 }
 
 .sidebar-icon {
