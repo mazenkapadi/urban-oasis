@@ -45,7 +45,7 @@ class SignUp {
             await setDoc(doc(db, 'Users', user.uid), userData);
             console.log('Email sign-up successful:', user);
 
-            const emailResponse = await fetch('https://urban-oasis490.vercel.app/api/signup-email', {
+            const emailResponse = await fetch('https://urban-oasis490.vercel.app/api/signUp-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
