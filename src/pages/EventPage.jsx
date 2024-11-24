@@ -564,7 +564,6 @@ const EventPage = () => {
     };
 
     const emailUser = (value) => {
-        // EmailJS configuration
         const emailData = {
             user_name: value.name,     
             user_email: value.email, 
