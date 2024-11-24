@@ -25,14 +25,12 @@ const AutocompleteSearch = () => {
     const [searchInput, setSearchInput] = useState('');
     const navigate = useNavigate();
 
-    // Helper function to save recent searches
     const saveRecentSearch = (query) => {
         const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
         const updatedSearches = [query, ...recentSearches.filter((item) => item !== query)].slice(0, 5);
         localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updatedSearches));
     };
 
-    // Define the handleSearch function
     const handleSearch = (query) => {
         const searchQuery = query || searchInput;
         if (searchQuery) {
@@ -74,7 +72,6 @@ const AutocompleteSearch = () => {
                 const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
 
                 return [
-                    // Recent Searches Source
                     {
                         sourceId: 'recentSearches',
                         getItems() {
@@ -102,7 +99,6 @@ const AutocompleteSearch = () => {
                             },
                         },
                     },
-                    // Algolia Events Source
                     {
                         sourceId: 'events',
                         getItems() {
@@ -169,30 +165,30 @@ const AutocompleteSearch = () => {
     };
 
     return (
-        <div className="flex items-center space-x-4 rounded-lg p-4 bg-transparent">
+        <div className="flex items-center space-x-4 p-4 bg-transparent">
             {/* Zipcode Input */}
-            <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
+            <div className="relative w-full max-w-xs">
                 <input
                     type="text"
                     placeholder="Zipcode"
                     value={zipcode}
                     onChange={handleZipcodeChange}
-                    className="bg-transparent border-none outline-none text-gray-700 w-24 text-center"
+                    className="w-full py-2 px-4 border rounded-lg focus:ring-2 focus:ring-red-400 focus:outline-none"
                 />
             </div>
 
             {/* Date Picker */}
-            <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
+            <div className="relative w-full max-w-xs">
                 <input
                     type="date"
                     value={searchDate}
                     onChange={(e) => setSearchDate(e.target.value)}
-                    className="bg-transparent border-none outline-none text-gray-700 text-center"
+                    className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-400 focus:outline-none"
                 />
             </div>
 
             {/* Autocomplete Container */}
-            <div ref={containerRef} className="flex-grow relative w-full bg-transparent"></div>
+            <div ref={containerRef} className="flex-grow relative w-full bg-white"></div>
 
             {/* Search Button */}
             <button
