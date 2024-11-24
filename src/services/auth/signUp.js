@@ -2,6 +2,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebaseConfig.js";
 import { doc, setDoc } from "firebase/firestore";
 import bcrypt from "bcryptjs";
+import { POST as sendWelcomeEmail } from '../../../api/signUp-email.js'
 
 class SignUp {
     async signUpWithEmail(firstName, lastName, email, password) {
@@ -44,6 +45,12 @@ class SignUp {
 
             await setDoc(doc(db, 'Users', user.uid), userData);
             console.log('Email sign-up successful:', user);
+            await sendWelcomeEmail(
+                new Request('', {
+                    method: 'POST',
+                    body: JSON.stringify({firstName, lastName, email}),
+                })
+            )
             return user;
         } catch (error) {
             console.error('Error signing up with email', error);
