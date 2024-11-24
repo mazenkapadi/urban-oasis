@@ -1,9 +1,9 @@
-import { POST as sendEmail } from './send-email.js';
+import fetch from 'node-fetch';
 
 export async function POST(req) {
     try {
         const reqBody = await req.json();
-        const { firstName, lastName, email } = reqBody;
+        const {firstName, lastName, email} = reqBody;
 
         if (!firstName || !lastName || !email) {
             return new Response('Missing required fields: firstName, lastName, or email', {
@@ -42,13 +42,21 @@ export async function POST(req) {
             </html>
         `;
 
-        // Call the general email sender function
-        return await sendEmail(
-            new Request('', {
+        const response = await fetch(
+            "https://urban-oasis490.vercel.app/api/send-email",
+            {
                 method: 'POST',
-                body: JSON.stringify({ recipient: email, subject, html_content }),
-            })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({recipient: email, subject, html_content}),
+            }
         );
+
+        if (!response.ok) {
+            return new Response('Error sending email', {
+                status: 500
+            });
+        }
+
     } catch (error) {
         console.error(error);
         return new Response('Internal server error', {
