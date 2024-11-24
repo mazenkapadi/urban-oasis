@@ -98,16 +98,6 @@ const EventPage = () => {
         }
     };
 
-    // const updateAttendeesCount = async (eventDocRef) => {
-    //     const snapshot = await getDoc(eventDocRef);
-    //     if (!snapshot.exists()) return;
-    //
-    //     const eventRsvps = snapshot.data().rsvps || {};
-    //     const totalRSVPs = Object.values(eventRsvps).reduce((acc, rsvp) => acc + (rsvp.quantity || 0), 0);
-    //
-    //     await updateDoc(eventDocRef, { attendeesCount: totalRSVPs });
-    // };
-
     const updateAttendeesCount = async (eventId, eventDocRef) => {
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const eventRsvpsSnap = await getDoc(eventRsvpsDocRef);
@@ -142,21 +132,21 @@ const EventPage = () => {
 
     // Adjust the function signature to accept rsvpId as a parameter
     const saveOrUpdateRsvp = async (collectionRef, rsvpId, rsvpData, topLevelId, isEventRsvp = true) => {
-        if (rsvpId) {
-            await updateDoc(collectionRef, {
-                [`rsvps.${rsvpId}`]: rsvpData,
-            });
-        } else {
-            const newRsvpId = rsvpId || uuidv4(); // Use provided rsvpId or generate a new one
-            const topLevelField = isEventRsvp ? {eventId: topLevelId} : {userId: topLevelId};
+        // if (rsvpId) {
+        //     await updateDoc(collectionRef, {
+        //         [`rsvps.${rsvpId}`]: rsvpData,
+        //     });
+        // } else {
+        const newRsvpId = rsvpId || uuidv4(); // Use provided rsvpId or generate a new one
+        const topLevelField = isEventRsvp ? {eventId: topLevelId} : {userId: topLevelId};
 
-            await setDoc(collectionRef, {
-                ...topLevelField,
-                rsvps: {
-                    [newRsvpId]: {...rsvpData, rsvpId: newRsvpId},
-                },
-            }, {merge: true});
-        }
+        await setDoc(collectionRef, {
+            ...topLevelField,
+            rsvps: {
+                [newRsvpId]: {...rsvpData, rsvpId: newRsvpId},
+            },
+        }, {merge: true});
+        // }
     };
 
     const handleRSVP = async () => {
