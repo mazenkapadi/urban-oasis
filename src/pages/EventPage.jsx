@@ -27,6 +27,7 @@ import {
     TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
+import emailjs from '@emailjs/browser';
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -466,8 +467,9 @@ const EventPage = () => {
     };
 
     const notifyWaitlist = (waitlist) => {
-        waitlist.forEach(user => {
-            console.log(`Notification sent to waitlist user: ${user.email}`);
+        waitlist.forEach(value => {
+            console.log(`Notification sent to waitlist user: ${value.email}`);
+            emailUser(value);
         });
     };
 
@@ -542,6 +544,28 @@ const EventPage = () => {
         } catch (error) {
             console.error('Error geocoding place ID:', error);
         }
+    };
+
+    const emailUser = (value) => {
+        // EmailJS configuration
+        const emailData = {
+            user_name: value.name,     
+            user_email: value.email, 
+            message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
+        };
+    
+        emailjs.send(
+            import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY, 
+            'template_5lpk33l', 
+            emailData,
+            import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY 
+        )
+        .then((result) => {
+            console.log(`Email successfully sent to ${value.email}`);
+        })
+        .catch((error) => {
+            console.error(`Failed to send email to ${value.email}:`, error);
+        });
     };
 
     useEffect(() => {
