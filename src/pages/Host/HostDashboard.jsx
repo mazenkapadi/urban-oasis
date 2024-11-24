@@ -9,7 +9,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import LoadingPage from "../LoadingPage.jsx";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import StarIcon from "@mui/icons-material/Star";
 import { Rating } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -71,25 +70,6 @@ const HostDashboard = () => {
             setIsLoading(false);
         }
     };
-
-    // const fetchHostedEvents = async (hostId) => {
-    //     try {
-    //         const eventsRef = collection(db, 'Events');
-    //         const q = query(eventsRef, where('hostId', '==', hostId));
-    //         const querySnapshot = await getDocs(q);
-    //
-    //         if (!querySnapshot.empty) {
-    //             const events = querySnapshot.docs.map((doc) => ({
-    //                 id: doc.id,
-    //                 ...doc.data()
-    //             }));
-    //             setHostedEvents(events);
-    //         }
-    //     } catch (err) {
-    //         console.error('Error fetching hosted events:', err);
-    //         setError('An error occurred while fetching hosted events.');
-    //     }
-    // };
 
     const fetchHostedEvents = async (hostId) => {
         try {

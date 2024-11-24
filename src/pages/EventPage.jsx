@@ -27,6 +27,8 @@ import {
     TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
+import emailjs from '@emailjs/browser';
+
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -56,7 +58,7 @@ const EventPage = () => {
     const [ eventAttendee, setEventAttendee ] = useState('');
     const [ userHasRSVPed, setUserHasRSVPed ] = useState(false);
     const [ userRSVPQuantity, setUserRSVPQuantity ] = useState(0);
-    const [availableTickets, setAvailableTickets] = useState(0);
+    const [ availableTickets, setAvailableTickets ] = useState(0);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -467,6 +469,7 @@ const EventPage = () => {
 
     const notifyWaitlist = (waitlist) => {
         waitlist.forEach(user => {
+            // emailUser(value);
             console.log(`Notification sent to waitlist user: ${user.email}`);
         });
     };
@@ -543,6 +546,27 @@ const EventPage = () => {
             console.error('Error geocoding place ID:', error);
         }
     };
+
+    // const emailUser = (value) => {
+    //     const emailData = {
+    //         user_name: value.name,
+    //         user_email: value.email,
+    //         message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
+    //     };
+    //
+    //     emailjs.send(
+    //         import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY,
+    //         'template_5lpk33l',
+    //         emailData,
+    //         import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
+    //     )
+    //            .then((result) => {
+    //                console.log(`Email successfully sent to ${value.email}`);
+    //            })
+    //            .catch((error) => {
+    //                console.error(`Failed to send email to ${value.email}:`, error);
+    //            });
+    // };
 
     useEffect(() => {
         const fetchEventData = async () => {
@@ -670,7 +694,6 @@ const EventPage = () => {
                 </div >
                 <div
                     className="flex flex-col justify-center items-center py-12 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600" >
-
                     <div className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-10/12 h-fit shadow-lg" >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
@@ -689,14 +712,13 @@ const EventPage = () => {
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                             </div >
-
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
                                 <div className="flex flex-col p-6 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
                                     <div className="flex space-x-4" >
                                         {availableTickets < 10 && availableTickets > 0 && (
-                                            <p className="text-white text-center">
+                                            <p className="text-white text-center" >
                                                 Only {availableTickets} tickets left!
-                                            </p>
+                                            </p >
                                         )}
                                         <div
                                             className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
