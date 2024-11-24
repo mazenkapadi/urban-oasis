@@ -56,6 +56,7 @@ const EventPage = () => {
     const [ eventAttendee, setEventAttendee ] = useState('');
     const [ userHasRSVPed, setUserHasRSVPed ] = useState(false);
     const [ userRSVPQuantity, setUserRSVPQuantity ] = useState(0);
+    const [availableTickets, setAvailableTickets] = useState(0);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -86,11 +87,21 @@ const EventPage = () => {
         hostId: ''
     });
 
+    // const handleIncrement = () => {
+    //     if (isPaidEvent || (quantity < 10)) {
+    //         setQuantity(quantity + 1);
+    //     }
+    // };
+
     const handleIncrement = () => {
-        if (isPaidEvent || (quantity < 10)) {
+        const maxQuantity = isPaidEvent ? availableTickets : Math.min(availableTickets, 10);
+        if (quantity < maxQuantity) {
             setQuantity(quantity + 1);
+        } else {
+            alert(`Only ${availableTickets} tickets are available.`);
         }
     };
+
 
     const handleDecrement = () => {
         if (quantity > 1) {
@@ -183,11 +194,22 @@ const EventPage = () => {
             const eventData = eventDocSnap.data();
             const eventCapacity = eventData.eventDetails.capacity || 0;
             const eventAttendee = eventData.attendeesCount || 0;
+            const availableTickets = eventCapacity - eventAttendee;
 
-            if (eventAttendee >= eventCapacity) {
+            if (availableTickets <= 0) {
                 await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
                 return;
             }
+
+            if (totalAttendees > availableTickets) {
+                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
+                return;
+            }
+
+            // if (eventAttendee >= eventCapacity) {
+            //     await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
+            //     return;
+            // }
 
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
@@ -203,6 +225,7 @@ const EventPage = () => {
             setModalOpen(true);
             setUserHasRSVPed(true);
             setUserRSVPQuantity(totalAttendees);
+            setAvailableTickets(availableTickets - totalAttendees);
         } catch (error) {
             console.error("Error handling RSVP:", error);
         }
@@ -244,11 +267,22 @@ const EventPage = () => {
             const eventData = eventDocSnap.data();
             const eventCapacity = eventData.eventDetails.capacity || 0;
             const eventAttendee = eventData.attendeesCount || 0;
+            const availableTickets = eventCapacity - eventAttendee;
 
-            if (eventAttendee >= eventCapacity) {
+            if (availableTickets <= 0) {
                 await handleWaitlist(eventWaitlistDocRef, rsvpData);
                 return;
             }
+
+            if (quantity > availableTickets) {
+                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
+                return;
+            }
+
+            // if (eventAttendee >= eventCapacity) {
+            //     await handleWaitlist(eventWaitlistDocRef, rsvpData);
+            //     return;
+            // }
 
             const checkoutData = {eventId, quantity, price: eventPrice, eventTitle, userId};
             const response = await fetch('/api/stripe', {
@@ -267,6 +301,8 @@ const EventPage = () => {
             await saveOrUpdateRsvp(userRsvpsDocRef, rsvpId, rsvpData, userId, false);
 
             await updateAttendeesCount(eventId, eventDocRef);
+
+            setAvailableTickets(availableTickets - quantity);
 
             window.location.href = sessionUrl;
         } catch (error) {
@@ -527,6 +563,8 @@ const EventPage = () => {
                     setEventRefundPolicy(data.policies.refundPolicy);
                     setEventCapacity(data.eventDetails.capacity);
                     setEventAttendee(data.attendeesCount || 0);
+                    const ticketsAvailable = data.eventDetails.capacity - (data.attendeesCount || 0);
+                    setAvailableTickets(ticketsAvailable);
 
                     if (data.hostId) {
                         const hostDocRef = doc(db, 'Users', data.hostId);
@@ -650,12 +688,16 @@ const EventPage = () => {
                                          dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
-                                {/* <GoogleMapComponent lat={eventLat} lon={eventLong}  /> */}
                             </div >
 
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
                                 <div className="flex flex-col p-6 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
                                     <div className="flex space-x-4" >
+                                        {availableTickets < 10 && availableTickets > 0 && (
+                                            <p className="text-white text-center">
+                                                Only {availableTickets} tickets left!
+                                            </p>
+                                        )}
                                         <div
                                             className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
                                             <TicketIcon className="text-gray-300 w-6 h-6" />
