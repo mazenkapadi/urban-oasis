@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
     InstantSearch,
     Configure,
-    InfiniteHits,
+    Hits,
+    Pagination,
 } from 'react-instantsearch';
 import { searchClient } from '../algoliaConfig';
 import FiltersComponent from '../components/FiltersComponent';
@@ -62,7 +63,7 @@ const ViewAllEventsPage = () => {
                 {/* Search Results Section */}
                 <div className="lg:w-3/4 p-4">
                     <InstantSearch searchClient={searchClient} indexName="events">
-                        <Configure hitsPerPage={1000} query={searchQuery} enablePersonalization={false} />
+                        <Configure hitsPerPage={21} query={searchQuery} enablePersonalization={false}/>
 
                         {/* View Toggle Button */}
                         <div className="flex justify-end mb-4">
@@ -72,26 +73,40 @@ const ViewAllEventsPage = () => {
                                 aria-label="Toggle View"
                             >
                                 {viewMode === 'grid' ? (
-                                    <ListBulletIcon className="w-6 h-6 text-black" />
+                                    <ListBulletIcon className="w-6 h-6 text-black"/>
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-black" />
+                                    <Squares2X2Icon className="w-6 h-6 text-black"/>
                                 )}
                             </button>
                         </div>
 
-                        {/* Infinite Hits (Search Results) Section */}
-                        <InfiniteHits
-                            hitComponent={(props) => <HitComponent {...props} viewMode={viewMode} />}
+                        {/* Hits Section */}
+                        <Hits
+                            hitComponent={(props) => <HitComponent {...props} viewMode={viewMode}/>}
                             classNames={{
                                 list: viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col space-y-4',
                             }}
                         />
+
+                        {/* Pagination Section */}
+                        <div className="flex justify-center mt-6">
+                            <Pagination
+                                padding={2}
+                                classNames={{
+                                    list: "flex space-x-2",
+                                    item: "px-3 py-2 rounded-md cursor-pointer border border-gray-300",
+                                    selectedItem: "bg-blue-500 text-white",
+                                    disabledItem: "cursor-not-allowed opacity-50",
+                                }}
+                            />
+                            </div>
+
+
                     </InstantSearch>
                 </div>
             </div>
         </div>
-    );
+);
 };
 
 export default ViewAllEventsPage;
-
