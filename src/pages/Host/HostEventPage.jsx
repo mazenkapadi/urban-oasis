@@ -18,15 +18,20 @@ const HostEventPage = () => {
     const [eventImages, setEventImages] = useState([]);
     const [isPaidEvent, setIsPaidEvent] = useState(false);
     const [userId, setUserId] = useState(null);
+
     const [hostDetails, setHostDetails] = useState({
         bio: '',
         companyName: '',
         website: '',
         hostLocation: { city: '', state: '' },
     });
+
     const [loading, setLoading] = useState(true);
     const [isHost, setIsHost] = useState(false); // To check if user is host
     const [editable, setEditable] = useState(false); // Edit mode for host details
+    const [ticketQuantity, setTicketQuantity] = useState([]);
+    const [attendeeId, setAttendeeId] = useState([]);
+    const [attendeeDetails, setAttendeeDetails] = useState([]);
 
     // Get Authenticated User ID
     useEffect(() => {
@@ -73,6 +78,35 @@ const HostEventPage = () => {
                         }
                     }
                 }
+
+                const docRef2 = doc(db, 'EventRSVPs', eventId);
+                const docSnap2 = await getDoc(docRef2);
+
+                if (docSnap2.exists()) {
+                    const data = docSnap2.data();
+                    const rsvps = data.rsvps;
+                    const attendees = [];
+
+                    for (const [key, innerMap] of Object.entries(rsvps)) {
+                        const userId = innerMap.userId;
+                        const quantity = innerMap.quantity;
+
+                        const attendeeDocRef = doc(db, 'Users', userId);
+                        const attendeeDocSnap = await getDoc(attendeeDocRef);
+
+                        if (attendeeDocSnap.exists()) {
+                            const attendeeData = attendeeDocSnap.data();
+                            attendees.push({
+                                firstName: attendeeData.name.firstName,
+                                lastName: attendeeData.name.lastName,
+                                quantity,
+                            });
+                        }
+                    }
+
+                    setAttendeeDetails(attendees);
+                }
+
                 setLoading(false);
             }
         };
@@ -108,6 +142,13 @@ const HostEventPage = () => {
     if (loading) {
         return <LoadingPage />;
     }
+
+    const handleModifyButton = (e) => {
+
+    };
+    const handleContactButton = (e) => {
+
+    };
 
     return (
         <>
@@ -195,6 +236,28 @@ const HostEventPage = () => {
                             </div>
                         )}
                     </div>
+                    {isHost && (
+                        <div>
+                            <label className="block text-gray-600 mt-4">Attendees</label>
+                            <div className="">
+                                <div
+                                    className="block text-gray-600 mt-4">{attendeeDetails.map((attendee, index) => (
+                                    <div className="flex items-center" key={index}>
+                                        <p>{attendee.firstName} {attendee.lastName} -
+                                            Held Tickets: {attendee.quantity}</p>
+                                        <button className="button bg-gray-500 mr-2 ml-auto"
+                                                onClick={handleModifyButton}>
+                                            Modify Quantity
+                                        </button>
+                                        <button className="button bg-gray-500"
+                                                onClick={handleContactButton}>
+                                            Contact Attendee
+                                        </button>
+                                    </div>
+                                ))}</div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             <FooterComponent />
