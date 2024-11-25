@@ -30,9 +30,6 @@ export async function POST(req) {
             quantity: reqBody.quantity,
         },
         mode: 'payment',
-        // success_url: `http://localhost:3000/paymentSuccess`,
-        // cancel_url: `http://localhost:3000/paymentCancel`,
-
         success_url: `https://urban-oasis490.vercel.app/paymentSuccess`,
         cancel_url: `https://urban-oasis490.vercel.app/paymentCancel`,
 
