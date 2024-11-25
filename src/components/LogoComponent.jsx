@@ -4,13 +4,10 @@ const LogoComponent = () => {
             <button onClick={() => window.location.href = "/"} >
                 <div className="flex items-center" >
                     <img
-                        src="/public/oasis.png"
+                        src="/public/assets/Logos/SVG/Wordmark/Wordmark_Darkmode.svg"
                         alt="Oasis Logo"
                         className="w-12 h-auto"
                     />
-                    <span className="ml-2 text-white text-2xl font-archivo" >
-                        Urban Oasis
-                    </span >
                 </div >
             </button >
         </div >
