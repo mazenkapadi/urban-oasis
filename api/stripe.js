@@ -1,6 +1,5 @@
 import Stripe from 'stripe';
 
-// import.meta
 const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_KEY);
 
 export async function POST(req) {
