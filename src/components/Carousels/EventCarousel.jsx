@@ -59,6 +59,7 @@ const EventCarousel = ({ rangeType }) => {
         setIsDragging(false);
     };
 
+
     return (
         <div className="carousel-container scrollbar-hide py-6" onMouseLeave={handleMouseLeave}>
             <div className="relative mt-4">
