@@ -38,10 +38,9 @@ const EventCarousel = ({ rangeType }) => {
     }, [rangeType]);
 
     return (
-        <div className="carousel-container py-6">
+        <div className="py-6">
             <div className="relative mt-4">
                 <Swiper
-
                     modules={[Navigation, Pagination]}
                     spaceBetween={16}
                     slidesPerView="auto"
@@ -49,9 +48,8 @@ const EventCarousel = ({ rangeType }) => {
                     pagination={false}
                     loop={false}
                     centeredSlides={false}
-                    allowTouchMove={false}
-                    freeMode={false}
-                    scrollbar={{ draggable: false }}
+                    allowTouchMove={true}
+                    freeMode={true}
                 >
                     {events.length > 0 ? (
                         events.map((event) => (
