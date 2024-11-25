@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, deleteField } from 'firebase/firestore';
+import { arrayUnion, deleteField, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { db, auth } from "../firebaseConfig.js";
+import { CalendarDaysIcon, MapPinIcon, MinusIcon, PlusIcon, TicketIcon } from "@heroicons/react/20/solid";
+import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { auth, db } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./service/LoadingPage.jsx"
@@ -21,13 +20,21 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import {
     EmailIcon,
-    EmailShareButton, FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton,
-    FacebookShareButton, LinkedinIcon,
-    LinkedinShareButton, RedditIcon, RedditShareButton,
-    TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
+    EmailShareButton,
+    FacebookIcon,
+    FacebookMessengerIcon,
+    FacebookMessengerShareButton,
+    FacebookShareButton,
+    LinkedinIcon,
+    LinkedinShareButton,
+    RedditIcon,
+    RedditShareButton,
+    TwitterShareButton,
+    WhatsappIcon,
+    WhatsappShareButton,
+    XIcon,
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
-import emailjs from '@emailjs/browser';
 
 
 const EventPage = () => {
@@ -297,18 +304,15 @@ const EventPage = () => {
                 return;
             }
 
-            // if (eventAttendee >= eventCapacity) {
-            //     await handleWaitlist(eventWaitlistDocRef, rsvpData);
-            //     return;
-            // }
-
             const checkoutData = {eventId, quantity, price: eventPrice, eventTitle, userId};
             const response = await fetch('/api/stripe', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(checkoutData),
             });
-            const sessionUrl = await response.text();
+            window.location.href = await response.text();
+
+            // everythonig after here should be moved to the webhook
 
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
@@ -323,9 +327,6 @@ const EventPage = () => {
             setAvailableTickets(availableTickets - quantity);
             setModalOpen(true);
             setUserHasRSVPed(true);
-            setUserRSVPQuantity(totalAttendees);
-
-            window.location.href = sessionUrl;
         } catch (error) {
             console.error("Error handling checkout:", error);
         }

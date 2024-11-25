@@ -15,12 +15,6 @@ export async function POST(req) {
                         name: `${reqBody.eventTitle} - ${reqBody.eventDateTime}` ,
                     },
                     unit_amount: reqBody.price * 100,
-                    metadata: {
-                        eventId: reqBody.eventId,
-                        userId: reqBody.userId,
-                        email: reqBody.email,
-                        quantity: reqBody.quantity,
-                    },
                 },
                 quantity: reqBody.quantity,
                 adjustable_quantity: {
@@ -29,7 +23,14 @@ export async function POST(req) {
                     maximum: 10,
                 }
             }
+
         ],
+        metadata: {
+            eventId: reqBody.eventId,
+            userId: reqBody.userId,
+            email: reqBody.email,
+            quantity: reqBody.quantity,
+        },
         mode: 'payment',
         success_url: `http://localhost:3000/paymentSuccess`,
         cancel_url: `http://localhost:3000/paymentCancel`,
@@ -39,4 +40,10 @@ export async function POST(req) {
 
     return new Response(session.url);
 
+}
+
+export async function GET(req) {
+    return new Response('GET request received', {
+        status: 200
+    });
 }
