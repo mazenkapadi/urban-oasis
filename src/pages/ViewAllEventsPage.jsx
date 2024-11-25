@@ -27,7 +27,7 @@ const ViewAllEventsPage = () => {
         setViewMode(viewMode === 'grid' ? 'list' : 'grid');
     };
 
-    // Function to apply filters
+    // Functions to apply or remove filters
     const onApplyFilters = (newFilters) => {
         setActiveFilters((prevFilters) => ({
             ...prevFilters,
@@ -35,7 +35,6 @@ const ViewAllEventsPage = () => {
         }));
     };
 
-    // Function to remove a specific filter
     const removeFilter = (filterKey) => {
         setActiveFilters((prevFilters) => {
             const updatedFilters = { ...prevFilters };
@@ -44,26 +43,58 @@ const ViewAllEventsPage = () => {
         });
     };
 
+    // Build Algolia-compatible filters from activeFilters
+    const buildFilters = () => {
+        const filters = [];
+
+        // Price Filter
+        if (activeFilters.eventPrice) {
+            const { min, max } = activeFilters.eventPrice;
+            filters.push(`eventDetails.eventPrice >= ${min} AND eventDetails.eventPrice <= ${max}`);
+        }
+
+        // Date Filter
+        if (activeFilters.eventDateTime) {
+            const { start, end } = activeFilters.eventDateTime;
+            filters.push(`eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`);
+        }
+
+        // Paid Event Filter
+        if (activeFilters.paidEvent !== undefined) {
+            // Algolia may interpret `1` or `0` as true/false, so convert to integers.
+            filters.push(`eventDetails.paidEvent = ${activeFilters.paidEvent ? 1 : 0}`);
+        }
+
+        // Availability Filter
+        if (activeFilters.availability) {
+            filters.push(`availability.fbAvail = ${activeFilters.availability === 'Available'}`);
+        }
+
+        console.log('Generated Filters:', filters.join(' AND '));
+        return filters.join(' AND ');
+    };
+
     return (
-        <div className="view-all-events-page">
-            {/* Header Component */}
-            <HeaderComponent />
+        <InstantSearch searchClient={searchClient} indexName="events">
+            <div className="view-all-events-page">
+                {/* Header Component */}
+                <HeaderComponent />
 
-            {/* Main Content */}
-            <div className="flex flex-col lg:flex-row lg:items-start p-4">
-                {/* Filters Section */}
-                <div className="lg:w-1/4 p-4 border-r border-gray-200">
-                    <FiltersComponent
-                        onApplyFilters={onApplyFilters}
-                        activeFilters={activeFilters}
-                        removeFilter={removeFilter}
-                    />
-                </div>
+                {/* Main Content */}
+                <div className="flex flex-col lg:flex-row lg:items-start p-4">
+                    {/* Filters Section */}
+                    <div className="lg:w-1/4 p-4 border-r border-gray-200">
+                        <FiltersComponent
+                            onApplyFilters={onApplyFilters}
+                            activeFilters={activeFilters}
+                            removeFilter={removeFilter}
+                        />
+                    </div>
 
-                {/* Search Results Section */}
-                <div className="lg:w-3/4 p-4">
-                    <InstantSearch searchClient={searchClient} indexName="events">
-                        <Configure hitsPerPage={21} query={searchQuery} enablePersonalization={false}/>
+                    {/* Search Results Section */}
+                    <div className="lg:w-3/4 p-4">
+                        {/* Configure Search */}
+                        <Configure hitsPerPage={21} filters={buildFilters()} query={searchQuery} />
 
                         {/* View Toggle Button */}
                         <div className="flex justify-end mb-4">
@@ -73,18 +104,20 @@ const ViewAllEventsPage = () => {
                                 aria-label="Toggle View"
                             >
                                 {viewMode === 'grid' ? (
-                                    <ListBulletIcon className="w-6 h-6 text-black"/>
+                                    <ListBulletIcon className="w-6 h-6 text-black" />
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-black"/>
+                                    <Squares2X2Icon className="w-6 h-6 text-black" />
                                 )}
                             </button>
                         </div>
 
                         {/* Hits Section */}
                         <Hits
-                            hitComponent={(props) => <HitComponent {...props} viewMode={viewMode}/>}
+                            hitComponent={(props) => <HitComponent {...props} viewMode={viewMode} />}
                             classNames={{
-                                list: viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'flex flex-col space-y-4',
+                                list: viewMode === 'grid'
+                                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+                                    : 'flex flex-col space-y-4',
                             }}
                         />
 
@@ -93,20 +126,18 @@ const ViewAllEventsPage = () => {
                             <Pagination
                                 padding={2}
                                 classNames={{
-                                    list: "flex space-x-2",
-                                    item: "px-3 py-2 rounded-md cursor-pointer border border-gray-300",
-                                    selectedItem: "bg-blue-500 text-white",
-                                    disabledItem: "cursor-not-allowed opacity-50",
+                                    list: 'flex space-x-2',
+                                    item: 'px-3 py-2 rounded-md cursor-pointer border border-gray-300',
+                                    selectedItem: 'bg-blue-500 text-white',
+                                    disabledItem: 'cursor-not-allowed opacity-50',
                                 }}
                             />
-                            </div>
-
-
-                    </InstantSearch>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-);
+        </InstantSearch>
+    );
 };
 
 export default ViewAllEventsPage;

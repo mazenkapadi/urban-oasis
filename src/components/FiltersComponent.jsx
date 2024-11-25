@@ -1,103 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { categorizedOptions } from "../services/categoryData";
+import { formatDateForFilter } from "../utils/dateHelpers.jsx";
 
-const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) => {
-    const {
-        dateFilter = '',
-        paid = null,
-        availability = '',
-        customDate = '',
-        nearMe = false,
-        priceRange = { min: '', max: '' },
-        category = [],
-    } = activeFilters;
-
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
+const FiltersComponent = ({ activeFilters, onApplyFilters, removeFilter }) => {
     const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState('');
     const [selectedSubcategories, setSelectedSubcategories] = useState([]);
-    const [nearMeChecked, setNearMeChecked] = useState(nearMe);
 
-    // Handle Price Range Changes
-    useEffect(() => {
-        if (minPrice || maxPrice) {
-            onApplyFilters({ 'eventDetails.eventPrice': { min: minPrice, max: maxPrice } });
-        } else {
-            removeFilter('eventDetails.eventPrice');
-        }
-    }, [minPrice, maxPrice]);
-
-    // Handle Category Changes
-    useEffect(() => {
-        if (selectedSubcategories.length > 0) {
-            onApplyFilters({ 'basicInfo.categories': selectedSubcategories });
-        } else {
-            removeFilter('basicInfo.categories');
-        }
-    }, [selectedSubcategories]);
-
-    // Handle Date Change
-    const handleCustomDateChange = (event) => {
-        const selectedDate = event.target.value;
-        onApplyFilters({ 'eventDetails.eventDateTime': selectedDate });
+    const categorizedOptions = {
+        Art: ['Painting', 'Sculpture', 'Photography'],
+        Music: ['Rock', 'Pop', 'Classical'],
+        Sports: ['Basketball', 'Soccer', 'Tennis'],
+        Technology: ['AI', 'Blockchain', 'Web Development'],
     };
 
-    // Handle Near Me Change
-    const handleNearMeChange = () => {
-        setNearMeChecked(!nearMeChecked);
-        if (!nearMeChecked) {
-            onApplyFilters({ nearMe: true });
+    // Handle individual filters and pass them to the parent component
+    const handlePriceChange = (min, max) => {
+        if (min || max) {
+            onApplyFilters({
+                eventPrice: { min: Number(min) || 0, max: Number(max) || Infinity },
+            });
         } else {
-            removeFilter('nearMe');
+            removeFilter('eventPrice');
         }
     };
 
-    // Handle Date Filter Change
-    const handleDateFilterChange = (filter) => {
-        if (dateFilter === filter) {
-            removeFilter('dateFilter');
+    const handleDateChange = (filter) => {
+        if (filter) {
+            const dateRange = formatDateForFilter(filter);
+            onApplyFilters({ eventDateTime: dateRange });
         } else {
-            onApplyFilters({ dateFilter: filter });
+            removeFilter('eventDateTime');
         }
     };
 
-    // Handle Paid Filter Change
-    const handlePaidFilterChange = (paidStatus) => {
-        if (paid === paidStatus) {
-            removeFilter('eventDetails.paidEvent');
+    const handlePaidChange = (paidStatus) => {
+        if (paidStatus !== null) {
+            onApplyFilters({ paidEvent: paidStatus });
         } else {
-            onApplyFilters({ 'eventDetails.paidEvent': paidStatus });
+            removeFilter('paidEvent');
         }
     };
 
-    // Handle Availability Filter Change
-    const handleAvailabilityChange = (availabilityStatus) => {
-        if (availability === availabilityStatus) {
+    const handleAvailabilityChange = (availability) => {
+        if (availability) {
+            onApplyFilters({ availability });
+        } else {
             removeFilter('availability');
-        } else {
-            onApplyFilters({ 'availability.fbAvail': availabilityStatus === 'Available' });
         }
     };
 
-    // Handle Primary Category Change
     const handlePrimaryCategoryChange = (e) => {
-        const selectedCategory = e.target.value;
-        setSelectedPrimaryCategory(selectedCategory);
-        setSelectedSubcategories([]);
+        const category = e.target.value;
+        setSelectedPrimaryCategory(category);
 
-        if (!selectedCategory) {
-            removeFilter('basicInfo.categories');
+        if (category) {
+            onApplyFilters({ primaryCategory: category });
+        } else {
+            removeFilter('primaryCategory');
         }
     };
 
-    // Handle Subcategory Change
     const handleSubcategoryChange = (subcategory) => {
-        if (selectedSubcategories.includes(subcategory)) {
-            setSelectedSubcategories(selectedSubcategories.filter((item) => item !== subcategory));
+        const updatedSubcategories = selectedSubcategories.includes(subcategory)
+            ? selectedSubcategories.filter((item) => item !== subcategory)
+            : [...selectedSubcategories, subcategory];
+
+        setSelectedSubcategories(updatedSubcategories);
+
+        if (updatedSubcategories.length > 0) {
+            onApplyFilters({ subcategories: updatedSubcategories });
         } else {
-            setSelectedSubcategories([...selectedSubcategories, subcategory]);
+            removeFilter('subcategories');
         }
     };
 
@@ -109,23 +83,17 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Date</h3>
                 <ul className="space-y-2">
-                    {["Today", "Tomorrow", "Weekend"].map((filter) => (
+                    {['Today', 'Tomorrow', 'Weekend'].map((filter) => (
                         <li key={filter}>
                             <input
-                                type="checkbox"
-                                checked={dateFilter === filter}
-                                onChange={() => handleDateFilterChange(filter)}
+                                type="radio"
+                                checked={activeFilters.eventDateTime === filter}
+                                onChange={() => handleDateChange(filter)}
                                 className="mr-2"
                             />
                             <label>{filter}</label>
                         </li>
                     ))}
-                    <input
-                        type="date"
-                        value={customDate}
-                        onChange={handleCustomDateChange}
-                        className="mt-2"
-                    />
                 </ul>
             </div>
 
@@ -136,14 +104,14 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                     <TextField
                         label="Min"
                         type="number"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value)}
+                        value={activeFilters.eventPrice?.min || ''}
+                        onChange={(e) => handlePriceChange(e.target.value, activeFilters.eventPrice?.max)}
                     />
                     <TextField
                         label="Max"
                         type="number"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
+                        value={activeFilters.eventPrice?.max || ''}
+                        onChange={(e) => handlePriceChange(activeFilters.eventPrice?.min, e.target.value)}
                     />
                 </Box>
             </div>
@@ -154,18 +122,18 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                 <ul>
                     <li>
                         <input
-                            type="checkbox"
-                            checked={paid === true}
-                            onChange={() => handlePaidFilterChange(true)}
+                            type="radio"
+                            checked={activeFilters.paidEvent === true}
+                            onChange={() => handlePaidChange(true)}
                             className="mr-2"
                         />
                         <label>Paid</label>
                     </li>
                     <li>
                         <input
-                            type="checkbox"
-                            checked={paid === false}
-                            onChange={() => handlePaidFilterChange(false)}
+                            type="radio"
+                            checked={activeFilters.paidEvent === false}
+                            onChange={() => handlePaidChange(false)}
                             className="mr-2"
                         />
                         <label>Free</label>
@@ -180,33 +148,13 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                     <li>
                         <input
                             type="checkbox"
-                            checked={availability === 'Available'}
+                            checked={activeFilters.availability === 'Available'}
                             onChange={() => handleAvailabilityChange('Available')}
                             className="mr-2"
                         />
                         <label>Available</label>
                     </li>
-                    <li>
-                        <input
-                            type="checkbox"
-                            checked={availability === 'Unavailable'}
-                            onChange={() => handleAvailabilityChange('Unavailable')}
-                            className="mr-2"
-                        />
-                        <label>Unavailable</label>
-                    </li>
                 </ul>
-            </div>
-
-            {/* Near Me Filter */}
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1">Location</h3>
-                <input
-                    type="checkbox"
-                    checked={nearMeChecked}
-                    onChange={handleNearMeChange}
-                />
-                <label className="ml-2">Near Me</label>
             </div>
 
             {/* Category Filter */}
@@ -231,8 +179,9 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                                     type="checkbox"
                                     checked={selectedSubcategories.includes(subcategory)}
                                     onChange={() => handleSubcategoryChange(subcategory)}
+                                    className="mr-2"
                                 />
-                                <label className="ml-2">{subcategory}</label>
+                                <label>{subcategory}</label>
                             </div>
                         ))}
                     </div>

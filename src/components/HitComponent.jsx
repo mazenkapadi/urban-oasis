@@ -53,8 +53,21 @@ const HitComponent = ({ hit, viewMode }) => {
         eventDetails: { eventDateTime, eventPrice = 0, images = [], paidEvent = false },
     } = hit;
 
+    // Format event date to match the filtering logic
+    const formatEventDate = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
     const imageUrl = images.length > 0 ? images[0].url : '/images/placeholder.png';
-    const eventDate = new Date(eventDateTime).toLocaleString();
+    const eventDate = formatEventDate(eventDateTime);
 
     return (
         <div
