@@ -12,7 +12,7 @@ export async function POST(req) {
                 price_data: {
                     currency: 'usd',
                     product_data: {
-                        name: `${reqBody.eventTitle} - ${reqBody.eventDateTime}` ,
+                        name: `${reqBody.eventTitle} - ${reqBody.eventDateTime}`,
                     },
                     unit_amount: reqBody.price * 100,
                 },
@@ -23,7 +23,6 @@ export async function POST(req) {
                     maximum: 10,
                 }
             }
-
         ],
         metadata: {
             eventId: reqBody.eventId,

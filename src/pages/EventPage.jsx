@@ -332,7 +332,6 @@ const EventPage = () => {
     //     }
     // };
 
-
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
@@ -345,7 +344,6 @@ const EventPage = () => {
         const eventWaitlistDocRef = doc(db, 'EventWaitlist', eventId);
 
         try {
-            // Fetch current event data
             const eventDocSnap = await getDoc(eventDocRef);
             if (!eventDocSnap.exists()) {
                 console.error("Event not found");
@@ -358,7 +356,8 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
-                const rsvpData = {
+                // Handle waitlist logic directly
+                await handleWaitlist(eventWaitlistDocRef, {
                     userId,
                     eventId,
                     eventTitle,
@@ -368,8 +367,7 @@ const EventPage = () => {
                     phone,
                     quantity,
                     createdAt: new Date().toISOString(),
-                };
-                await handleWaitlist(eventWaitlistDocRef, rsvpData);
+                });
                 return;
             }
 
@@ -385,20 +383,20 @@ const EventPage = () => {
                 eventTitle,
                 userId,
             };
+
             const response = await fetch('/api/stripe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(checkoutData),
             });
 
-            // Redirect to Stripe Checkout
             const sessionUrl = await response.text();
-            window.location.href = sessionUrl;
-
+            window.location.href = sessionUrl; // Redirect to Stripe Checkout
         } catch (error) {
             console.error("Error handling checkout:", error);
         }
     };
+
 
     const handleCancel = async () => {
         if (!userId) {
