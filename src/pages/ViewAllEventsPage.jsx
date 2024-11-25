@@ -64,7 +64,7 @@ const ViewAllEventsPage = () => {
             filters.push(`eventDetails.eventPrice >= ${min} AND eventDetails.eventPrice <= ${max}`);
         }
 
-        // Date Filter
+        // Date Filter from FiltersComponent (e.g., Today, Tomorrow, Weekend)
         if (activeFilters.eventDateTime) {
             const dateRange = formatDateForFilter(activeFilters.eventDateTime);
 
@@ -73,6 +73,19 @@ const ViewAllEventsPage = () => {
                 filters.push(`eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`);
             }
         }
+
+        // Date Range from AutocompleteSearch
+        const queryParams = new URLSearchParams(location.search);
+        const startDate = queryParams.get("startDate");
+        const endDate = queryParams.get("endDate");
+
+        if (startDate && endDate) {
+            filters.push(
+                `eventDetails.eventDateTime >= ${new Date(startDate).getTime()} AND eventDetails.eventDateTime <= ${new Date(endDate).getTime()}`
+            );
+        }
+
+        return filters.join(' AND ');
 
         // Paid Event Filter
         if (activeFilters.paidEvent !== undefined) {
@@ -97,6 +110,7 @@ const ViewAllEventsPage = () => {
         console.log('Generated Filters:', filters.join(' AND '));
         return filters.join(' AND ');
     };
+
 
 
     return (
