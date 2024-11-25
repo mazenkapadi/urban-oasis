@@ -256,6 +256,83 @@ const EventPage = () => {
         }
     };
 
+    // const handleCheckout = async () => {
+    //     console.log("Processing on Stripe...");
+    //
+    //     if (!userId) {
+    //         console.error("User ID is undefined. Cannot proceed with checkout.");
+    //         return;
+    //     }
+    //
+    //     const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
+    //     const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
+    //     const eventDocRef = doc(db, 'Events', eventId);
+    //     const eventWaitlistDocRef = doc(db, 'EventWaitlist', eventId);
+    //
+    //     const rsvpData = {
+    //         userId,
+    //         eventId,
+    //         eventTitle,
+    //         eventDateTime,
+    //         name,
+    //         email,
+    //         phone,
+    //         quantity,
+    //         createdAt: new Date().toISOString(),
+    //     };
+    //
+    //     try {
+    //         // Fetch current event data
+    //         const eventDocSnap = await getDoc(eventDocRef);
+    //         if (!eventDocSnap.exists()) {
+    //             console.error("Event not found");
+    //             return;
+    //         }
+    //
+    //         const eventData = eventDocSnap.data();
+    //         const eventCapacity = eventData.eventDetails.capacity || 0;
+    //         const eventAttendee = eventData.attendeesCount || 0;
+    //         const availableTickets = eventCapacity - eventAttendee;
+    //
+    //         if (availableTickets <= 0) {
+    //             await handleWaitlist(eventWaitlistDocRef, rsvpData);
+    //             return;
+    //         }
+    //
+    //         if (quantity > availableTickets) {
+    //             alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
+    //             return;
+    //         }
+    //
+    //         const checkoutData = {eventId, quantity, price: eventPrice, eventTitle, userId};
+    //         const response = await fetch('/api/stripe', {
+    //             method: 'POST',
+    //             headers: {'Content-Type': 'application/json'},
+    //             body: JSON.stringify(checkoutData),
+    //         });
+    //         window.location.href = await response.text();
+    //
+    //         // everythonig after here should be moved to the webhook
+    //
+    //         const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
+    //         const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
+    //
+    //         const rsvpId = existingEventRsvpId || existingUserRsvpId || uuidv4();
+    //
+    //         await saveOrUpdateRsvp(eventRsvpsDocRef, rsvpId, rsvpData, eventId, true);
+    //         await saveOrUpdateRsvp(userRsvpsDocRef, rsvpId, rsvpData, userId, false);
+    //
+    //         await updateAttendeesCount(eventId, eventDocRef);
+    //
+    //         setAvailableTickets(availableTickets - quantity);
+    //         setModalOpen(true);
+    //         setUserHasRSVPed(true);
+    //     } catch (error) {
+    //         console.error("Error handling checkout:", error);
+    //     }
+    // };
+
+
     const handleCheckout = async () => {
         console.log("Processing on Stripe...");
 
@@ -264,22 +341,8 @@ const EventPage = () => {
             return;
         }
 
-        const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
-        const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
         const eventDocRef = doc(db, 'Events', eventId);
         const eventWaitlistDocRef = doc(db, 'EventWaitlist', eventId);
-
-        const rsvpData = {
-            userId,
-            eventId,
-            eventTitle,
-            eventDateTime,
-            name,
-            email,
-            phone,
-            quantity,
-            createdAt: new Date().toISOString(),
-        };
 
         try {
             // Fetch current event data
@@ -295,6 +358,18 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
+                // Add to waitlist if tickets are unavailable
+                const rsvpData = {
+                    userId,
+                    eventId,
+                    eventTitle,
+                    eventDateTime,
+                    name,
+                    email,
+                    phone,
+                    quantity,
+                    createdAt: new Date().toISOString(),
+                };
                 await handleWaitlist(eventWaitlistDocRef, rsvpData);
                 return;
             }
@@ -304,29 +379,24 @@ const EventPage = () => {
                 return;
             }
 
-            const checkoutData = {eventId, quantity, price: eventPrice, eventTitle, userId};
+            // Create checkout session
+            const checkoutData = {
+                eventId,
+                quantity,
+                price: eventPrice,
+                eventTitle,
+                userId,
+            };
             const response = await fetch('/api/stripe', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(checkoutData),
             });
-            window.location.href = await response.text();
 
-            // everythonig after here should be moved to the webhook
+            // Redirect to Stripe Checkout
+            const sessionUrl = await response.text();
+            window.location.href = sessionUrl;
 
-            const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
-            const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
-
-            const rsvpId = existingEventRsvpId || existingUserRsvpId || uuidv4();
-
-            await saveOrUpdateRsvp(eventRsvpsDocRef, rsvpId, rsvpData, eventId, true);
-            await saveOrUpdateRsvp(userRsvpsDocRef, rsvpId, rsvpData, userId, false);
-
-            await updateAttendeesCount(eventId, eventDocRef);
-
-            setAvailableTickets(availableTickets - quantity);
-            setModalOpen(true);
-            setUserHasRSVPed(true);
         } catch (error) {
             console.error("Error handling checkout:", error);
         }

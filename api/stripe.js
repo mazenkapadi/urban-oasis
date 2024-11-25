@@ -37,13 +37,5 @@ export async function POST(req) {
 
     });
     console.log(session.url);
-
     return new Response(session.url);
-
-}
-
-export async function GET(req) {
-    return new Response('GET request received', {
-        status: 200
-    });
 }
