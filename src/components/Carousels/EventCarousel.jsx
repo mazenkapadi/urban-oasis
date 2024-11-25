@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig.js";
 import EventCard from "../EventCards/EventCard.jsx";
 import { collection, getDocs } from "firebase/firestore";
 import { getDateRange } from "../../services/dateUtils.js";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
 
 const EventCarousel = ({ rangeType }) => {
     const [events, setEvents] = useState([]);
-    const carouselRef = useRef(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
 
     useEffect(() => {
         const { startDate, endDate } = getDateRange(rangeType);
@@ -36,58 +37,41 @@ const EventCarousel = ({ rangeType }) => {
         fetchEvents();
     }, [rangeType]);
 
-    const handleMouseDown = (e) => {
-        e.preventDefault();
-        setIsDragging(true);
-        setStartX(e.pageX - carouselRef.current.offsetLeft);
-        setScrollLeft(carouselRef.current.scrollLeft);
-    };
-
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - carouselRef.current.offsetLeft;
-        const walk = (x - startX) * 2;
-        carouselRef.current.scrollLeft = scrollLeft - walk;
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
-
-    const handleMouseLeave = () => {
-        setIsDragging(false);
-    };
-
     return (
-        <div className="carousel-container scrollbar-hide py-6" onMouseLeave={handleMouseLeave}>
+        <div className="carousel-container py-6">
             <div className="relative mt-4">
-                <div
-                    ref={carouselRef}
-                    className="flex overflow-y-auto space-x-6 snap-y snap-mandatory"
-                    style={{ scrollBehavior: "smooth", cursor: isDragging ? "grabbing" : "grab" }}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
+                <Swiper
+
+                    modules={[Navigation, Pagination]}
+                    spaceBetween={16}
+                    slidesPerView="auto"
+                    navigation={false}
+                    pagination={false}
+                    loop={false}
+                    centeredSlides={false}
+                    allowTouchMove={false}
+                    freeMode={false}
+                    scrollbar={{ draggable: false }}
                 >
                     {events.length > 0 ? (
                         events.map((event) => (
-                            <EventCard
-                                key={event.id}
-                                eventId={event.id}
-                                title={event.basicInfo.title}
-                                location={event.basicInfo.location.label || "Location not specified"}
-                                date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
-                                price={event.eventDetails.eventPrice}
-                                image={event.eventDetails.images[0]?.url || "/images/placeholder.png"}
-                            />
+                            <SwiperSlide key={event.id} style={{ width: "auto", padding: '8px'}}>
+                                <EventCard
+                                    eventId={event.id}
+                                    title={event.basicInfo.title}
+                                    location={event.basicInfo.location.label || "Location not specified"}
+                                    date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
+                                    price={event.eventDetails.eventPrice}
+                                    image={event.eventDetails.images[0]?.url || "/images/placeholder.png"}
+                                />
+                            </SwiperSlide>
                         ))
                     ) : (
                         <div className="text-center text-gray-400 mt-8 w-full">
                             No events this {rangeType}!
                         </div>
                     )}
-                </div>
+                </Swiper>
             </div>
         </div>
     );
