@@ -352,7 +352,6 @@ function EventCreationPage() {
                                             },
                                             placeholder: 'Enter location',
                                         }}
-
                                     />
                                 </div>
                                 {eventLocationEmpty && (
