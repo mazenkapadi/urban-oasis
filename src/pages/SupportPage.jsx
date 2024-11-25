@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import HeaderComponent from "../components/HeaderComponent.jsx";
+import FooterComponent from "../components/FooterComponent.jsx";
 
 const SupportPage = () => {
     const [ activeTab, setActiveTab ] = useState('attending');
@@ -76,86 +77,89 @@ const SupportPage = () => {
     };
 
     return (
-        <div className="bg-gray-900 min-h-screen px-4 md:p-8 text-white flex flex-col gap-8" >
+        <div className="bg-primary-dark text-primary-light flex flex-col min-h-screen font-roboto">
             <HeaderComponent />
 
-            <div className="flex flex-col md:flex-row gap-8 w-full max-w-full" >
-                <div className="md:w-2/3 bg-gray-800 rounded-lg shadow-lg p-4 md:p-6" >
-
-                    <h2 className="text-2xl font-bold mb-6" >Frequently Asked Questions</h2 >
-
-                    <div className="flex space-x-4 mb-6 border-b border-gray-600" >
-                        {[ 'attending', 'organizing', 'account' ].map((tab) => (
+            <div className="flex-grow flex flex-col md:flex-row md:p-8 gap-8">
+                {/* FAQs Section */}
+                <div className="md:w-2/3 bg-Dark-D2 rounded-lg shadow-lg p-6">
+                    <h2 className="text-h1 font-bold text-primary-light font-lalezar mb-6">Frequently Asked Questions</h2>
+                    <div className="flex space-x-4 mb-6 ">
+                        {['attending', 'organizing', 'account'].map((tab) => (
                             <button
                                 key={tab}
-                                className={`pb-2 font-semibold ${
-                                    activeTab === tab ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-400'
+                                className={`pb-2 font-medium text-body ${
+                                    activeTab === tab
+                                        ? 'border-b-2 border-accent-purple text-accent-purple'
+                                        : 'text-Light-L2'
                                 }`}
                                 onClick={() => setActiveTab(tab)}
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button >
+                            </button>
                         ))}
-                    </div >
+                    </div>
 
-                    <div className="space-y-4" >
+                    <div className="space-y-4">
                         {faqs[activeTab].map((faq, index) => (
                             <button
                                 key={index}
                                 onClick={() => toggleQuestion(index)}
-                                className="w-full text-left border border-gray-600 rounded-md p-4 text-lg font-semibold hover:bg-gray-700 transition"
+                                className="w-full text-left border border-Light-L1 rounded-md p-4 text-body font-medium hover:bg-Dark-D1 transition"
                             >
-                                <div className="flex justify-between items-center" >
+                                <div className="flex justify-between items-center">
                                     {faq.question}
-                                </div >
+                                </div>
                                 {openQuestion === index && (
-                                    <p className="mt-2 text-gray-300" >{faq.answer}</p >
+                                    <p className="mt-2 text-Light-L3">{faq.answer}</p>
                                 )}
-                            </button >
+                            </button>
                         ))}
-                    </div >
-                </div >
+                    </div>
+                </div>
 
-                {/* Support Form Section - 1/3 width on md and lg screens */}
-                <div className="md:w-1/3 bg-gray-800 rounded-lg shadow-lg p-4 md:p-6" >
-                    <h2 className="text-2xl font-bold mb-4" >Submit a Support Request</h2 >
-                    <form onSubmit={handleSubmit} className="space-y-4" >
+                {/* Support Form Section */}
+                <div className="md:w-1/3 bg-Dark-D2 rounded-lg shadow-lg p-6">
+                    <h2 className="text-h2 font-bold text-primary-light mb-4">Submit a Support Request</h2>
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         {[
-                            {label: "Name", value: name, setter: setName, type: "text"},
-                            {label: "Email", value: email, setter: setEmail, type: "email"},
-                            {label: "Phone Number", value: phone, setter: setPhone, type: "tel"}
-                        ].map(({label, value, setter, type}) => (
-                            <div key={label} >
-                                <label className="block text-gray-300" >{label}</label >
+                            { label: "Name", value: name, setter: setName, type: "text" },
+                            { label: "Email", value: email, setter: setEmail, type: "email" },
+                            { label: "Phone Number", value: phone, setter: setPhone, type: "tel" }
+                        ].map(({ label, value, setter, type }) => (
+                            <div key={label}>
+                                <label className="block text-Light-L1">{label}</label>
                                 <input
                                     type={type}
                                     value={value}
                                     onChange={(e) => setter(e.target.value)}
-                                    className="w-full p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full p-2 bg-Dark-D1 text-primary-light rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red"
                                     required
                                 />
-                            </div >
+                            </div>
                         ))}
-                        <div >
-                            <label className="block text-gray-300" >Describe Your Issue</label >
+                        <div>
+                            <label className="block text-Light-L1">Describe Your Issue</label>
                             <textarea
                                 value={issue}
                                 onChange={(e) => setIssue(e.target.value)}
-                                className="w-full p-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full p-2 bg-Dark-D1 text-primary-light rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red"
                                 rows="4"
                                 required
                             />
-                        </div >
+                        </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                            className="w-full bg-accent-red text-primary-light py-2 rounded-md hover:bg-accent-red transition text-button font-bold"
                         >
                             Submit
-                        </button >
-                    </form >
-                </div >
-            </div >
-        </div >
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <FooterComponent className="bg-Dark-D1 mt-auto" />
+        </div>
     );
 };
 

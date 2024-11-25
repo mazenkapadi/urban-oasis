@@ -15,10 +15,10 @@ function FooterComponent() {
                     <Link to="/support" className="transition duration-300">
                         Support
                     </Link>
-                    <a href="#" className="transition duration-300">
+                    <a href="/privacy" className="transition duration-300">
                         Privacy Policy
                     </a>
-                    <a href="#" className="transition duration-300">
+                    <a href="/terms-service" className="transition duration-300">
                         Terms of Service
                     </a>
                 </nav>

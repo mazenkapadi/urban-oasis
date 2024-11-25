@@ -10,7 +10,7 @@ import SignInPage from "./pages/Auth/SignInPage.jsx";
 import SignUpPage from "./pages/Auth/SignUpPage.jsx";
 import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
-import NotFound from "./pages/404NotFound.jsx";
+import NotFound from "./pages/service/404NotFound.jsx";
 
 import UserProfilePage from "./pages/User/UserProfilePage.jsx";
 import ContactInfoPage from './pages/User/ContactInfoPage.jsx';
@@ -31,6 +31,8 @@ import PaymentCancel from "./pages/payments/PaymentCancel.jsx";
 import HostProfilePage from "./pages/Host/HostProfilePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import PreferencePage from "./pages/User/PreferencePage.jsx";
+import TermsServicePage from "./pages/TermsServicePage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -107,6 +109,14 @@ const router = createBrowserRouter([
     {
         path: "/support",
         element: <SupportPage />
+    },
+    {
+        path: "/terms-service",
+        element: <TermsServicePage />
+    },
+    {
+        path: "/privacy",
+        element: <PrivacyPage />
     },
     {
         path: "*",
