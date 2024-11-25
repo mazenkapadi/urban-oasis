@@ -11,6 +11,7 @@ import FiltersComponent from '../components/FiltersComponent';
 import HitComponent from '../components/HitComponent';
 import HeaderComponent from '../components/HeaderComponent';
 import { ListBulletIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
+import { formatDateForFilter } from "../utils/dateHelpers.jsx";
 
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
@@ -55,19 +56,31 @@ const ViewAllEventsPage = () => {
 
         // Date Filter
         if (activeFilters.eventDateTime) {
-            const { start, end } = activeFilters.eventDateTime;
-            filters.push(`eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`);
+            const dateRange = formatDateForFilter(activeFilters.eventDateTime);
+
+            if (dateRange) {
+                const { start, end } = dateRange;
+                filters.push(`eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`);
+            }
         }
 
         // Paid Event Filter
         if (activeFilters.paidEvent !== undefined) {
-            // Algolia may interpret `1` or `0` as true/false, so convert to integers.
             filters.push(`eventDetails.paidEvent = ${activeFilters.paidEvent ? 1 : 0}`);
         }
 
         // Availability Filter
         if (activeFilters.availability) {
             filters.push(`availability.fbAvail = ${activeFilters.availability === 'Available'}`);
+        }
+
+        // Category Filter
+        if (activeFilters.categories && activeFilters.categories.length > 0) {
+            const categoryFilter = activeFilters.categories
+                .map((category) => `basicInfo.categories:"${category}"`)
+                .join(' OR ');
+
+            filters.push(`(${categoryFilter})`);
         }
 
         console.log('Generated Filters:', filters.join(' AND '));
