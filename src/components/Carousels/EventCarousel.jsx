@@ -64,7 +64,7 @@ const EventCarousel = ({ rangeType }) => {
             <div className="relative mt-4">
                 <div
                     ref={carouselRef}
-                    className="flex overflow-y-auto space-x-6 snap-y snap-mandatory"
+                    className="flex overflow-x-auto overflow-y-hidden space-x-6 p-2 snap-y snap-mandatory"
                     style={{ scrollBehavior: "smooth", cursor: isDragging ? "grabbing" : "grab" }}
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}

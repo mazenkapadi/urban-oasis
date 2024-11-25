@@ -372,6 +372,7 @@ function EventCreationPage() {
                                                 id="eventDateTime"
                                                 value={eventDateTime}
                                                 onChange={(e) => setEventDateTime(e.target.value)}
+                                                min={new Date().toISOString().slice(0, 16)}
                                                 className="w-full p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                                 required
                                             />
