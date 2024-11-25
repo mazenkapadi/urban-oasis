@@ -29,6 +29,47 @@ const FiltersComponent = ({
     const [showMoreCategories, setShowMoreCategories] = useState(false);
     const visibleCategoryCount = 5; // Number of categories to show in "Show Less" mode
 
+    // Handle Paid/Free Filter
+    const handlePaidChange = (paidStatus) => {
+        if (paidStatus !== null) {
+            onApplyFilters({ paidEvent: paidStatus });
+        } else {
+            removeFilter('paidEvent');
+        }
+    };
+
+    // Handle Price Range Filter
+    const handlePriceChange = (min, max) => {
+        if (min || max) {
+            onApplyFilters({
+                eventPrice: { min: Number(min) || 0, max: Number(max) || Infinity },
+            });
+        } else {
+            removeFilter('eventPrice');
+        }
+    };
+
+    // Handle Availability Filter
+    const handleAvailabilityChange = (availability) => {
+        if (availability) {
+            onApplyFilters({ availability });
+        } else {
+            removeFilter('availability');
+        }
+    };
+
+    // Handle Date Filter
+    const handleDateChange = (filter) => {
+        const dateRange = formatDateForFilter(filter);
+
+        if (dateRange) {
+            onApplyFilters({ eventDateTime: filter });
+        } else {
+            removeFilter('eventDateTime');
+        }
+    };
+
+    // Handle Categories Filter
     const handleCategoryChange = (category) => {
         const updatedCategories = activeFilters.categories || [];
         const newCategories = updatedCategories.includes(category)
