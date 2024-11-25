@@ -208,11 +208,6 @@ const EventPage = () => {
                 return;
             }
 
-            // if (eventAttendee >= eventCapacity) {
-            //     await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
-            //     return;
-            // }
-
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
             const rsvpId = existingEventRsvpId || existingUserRsvpId || uuidv4();
@@ -326,6 +321,9 @@ const EventPage = () => {
             await updateAttendeesCount(eventId, eventDocRef);
 
             setAvailableTickets(availableTickets - quantity);
+            setModalOpen(true);
+            setUserHasRSVPed(true);
+            setUserRSVPQuantity(totalAttendees);
 
             window.location.href = sessionUrl;
         } catch (error) {
@@ -373,21 +371,17 @@ const EventPage = () => {
                     return;
                 }
 
-                // Delete the RSVP entry from EventRSVPs
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userRsvpEntryId}`]: deleteField()
                 });
 
-                // Delete the RSVP entry from UserRSVPs
                 const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
                 await updateDoc(userRsvpsDocRef, {
                     [`rsvps.${userRsvpEntryId}`]: deleteField()
                 });
 
-                // Update the attendee count in the event document
                 await updateAttendeesCount(eventId, eventDocRef);
 
-                // Notify waitlisted users if any
                 const waitlistDocSnap = await getDoc(waitlistDocRef);
                 const waitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
 
