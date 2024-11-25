@@ -6,7 +6,7 @@ import SideBar from "../../components/User/SideBar.jsx";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import HostEventCard from '../../components/EventCards/HostEventCard.jsx';
 import { onAuthStateChanged } from "firebase/auth";
-import LoadingPage from "../LoadingPage.jsx";
+import LoadingPage from "../service/LoadingPage.jsx";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Rating } from "@mui/material";

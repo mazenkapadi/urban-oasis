@@ -6,7 +6,7 @@ import { db, auth } from "../../firebaseConfig.js";
 import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
 import HeaderComponent from "../../components/HeaderComponent.jsx";
 import FooterComponent from "../../components/FooterComponent.jsx";
-import LoadingPage from "../LoadingPage.jsx";
+import LoadingPage from "../service/LoadingPage.jsx";
 
 const HostEventPage = () => {
     const { eventId } = useParams();
