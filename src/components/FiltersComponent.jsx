@@ -10,9 +10,9 @@ const FiltersComponent = ({
                           }) => {
     const categories = [
         { label: "Film & Media", count: 2 },
-        { label: "Food & Drink", count: 2 },
+        { label: "Food & Drink", count: 3 },
         { label: "Art", count: 1 },
-        { label: "Comedy", count: 1 },
+        { label: "Comedy", count: 2 },
         { label: "Family & Kids", count: 1 },
         { label: "Health", count: 1 },
         { label: "Mental Health", count: 1 },

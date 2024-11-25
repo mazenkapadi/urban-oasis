@@ -67,14 +67,13 @@ const ViewAllEventsPage = () => {
         // Date Filter from FiltersComponent (e.g., Today, Tomorrow, Weekend)
         if (activeFilters.eventDateTime) {
             const dateRange = formatDateForFilter(activeFilters.eventDateTime);
-
             if (dateRange) {
                 const { start, end } = dateRange;
                 filters.push(`eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`);
             }
         }
 
-        // Date Range from AutocompleteSearch
+        // Date Range Filter from AutocompleteSearch
         const queryParams = new URLSearchParams(location.search);
         const startDate = queryParams.get("startDate");
         const endDate = queryParams.get("endDate");
@@ -84,8 +83,6 @@ const ViewAllEventsPage = () => {
                 `eventDetails.eventDateTime >= ${new Date(startDate).getTime()} AND eventDetails.eventDateTime <= ${new Date(endDate).getTime()}`
             );
         }
-
-        return filters.join(' AND ');
 
         // Paid Event Filter
         if (activeFilters.paidEvent !== undefined) {
@@ -103,7 +100,6 @@ const ViewAllEventsPage = () => {
             const categoryFilter = activeFilters.categories
                 .map((category) => `basicInfo.categories:"${category}"`)
                 .join(' OR ');
-
             filters.push(`(${categoryFilter})`);
         }
 
