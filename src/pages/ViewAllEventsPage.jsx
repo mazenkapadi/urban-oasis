@@ -44,7 +44,17 @@ const ViewAllEventsPage = () => {
         });
     };
 
-    // Build Algolia-compatible filters from activeFilters
+    const calculateAvailabilityFilter = (availability) => {
+        if (availability === 'Available') {
+            // Check capacity > attendeesCount
+            return `eventDetails.capacity > attendeesCount`;
+        } else if (availability === 'Unavailable') {
+            // Check capacity <= attendeesCount
+            return `eventDetails.capacity <= attendeesCount`;
+        }
+        return null;
+    };
+
     const buildFilters = () => {
         const filters = [];
 
@@ -70,8 +80,9 @@ const ViewAllEventsPage = () => {
         }
 
         // Availability Filter
-        if (activeFilters.availability) {
-            filters.push(`availability.fbAvail = ${activeFilters.availability === 'Available'}`);
+        const availabilityFilter = calculateAvailabilityFilter(activeFilters.availability);
+        if (availabilityFilter) {
+            filters.push(availabilityFilter);
         }
 
         // Category Filter
@@ -86,6 +97,7 @@ const ViewAllEventsPage = () => {
         console.log('Generated Filters:', filters.join(' AND '));
         return filters.join(' AND ');
     };
+
 
     return (
         <InstantSearch searchClient={searchClient} indexName="events">

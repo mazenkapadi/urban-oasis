@@ -167,6 +167,8 @@ function EventCreationPage() {
                 return;
             }
 
+            const isAvailable = eventCapacity > 0;
+
             const eventData = {
                 hostId: userId || 'defaultUserID',
                 attendeesCount: 0,
@@ -190,6 +192,7 @@ function EventCreationPage() {
                     ageRestriction: ageRestriction || 'No age restriction',
                 },
                 availability: {
+                    isAvailable,
                     fbAvail: fbAvail || false,
                     merchAvailability: merchAvailability || false,
                     alcAvail: alcAvail || false,

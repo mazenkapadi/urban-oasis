@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { formatDateForFilter } from "../utils/dateHelpers.jsx";
@@ -14,43 +14,20 @@ const FiltersComponent = ({
         { label: "Art", count: 1 },
         { label: "Comedy", count: 1 },
         { label: "Family & Kids", count: 1 },
+        { label: "Health", count: 1 },
+        { label: "Mental Health", count: 1 },
+        { label: "Music", count: 1 },
+        { label: "Networking", count: 1 },
+        { label: "Photography & Art Exhibits", count: 1 },
+        { label: "Shopping & Markets", count: 1 },
+        { label: "Spirituality & Wellness", count: 1 },
+        { label: "Technology", count: 1 },
+        { label: "Uncategorized", count: 1 },
+        { label: "Wine Tasting", count: 1 },
     ];
 
-    const handlePriceChange = (min, max) => {
-        if (min || max) {
-            onApplyFilters({
-                eventPrice: { min: Number(min) || 0, max: Number(max) || Infinity },
-            });
-        } else {
-            removeFilter('eventPrice');
-        }
-    };
-
-    const handleDateChange = (filter) => {
-        if (filter) {
-            const dateRange = formatDateForFilter(filter);
-            onApplyFilters({ eventDateTime: filter });
-            onApplyFilters({ dateRange });
-        } else {
-            removeFilter('eventDateTime');
-        }
-    };
-
-    const handlePaidChange = (paidStatus) => {
-        if (paidStatus !== null) {
-            onApplyFilters({ paidEvent: paidStatus });
-        } else {
-            removeFilter('paidEvent');
-        }
-    };
-
-    const handleAvailabilityChange = (availability) => {
-        if (availability) {
-            onApplyFilters({ availability });
-        } else {
-            removeFilter('availability');
-        }
-    };
+    const [showMoreCategories, setShowMoreCategories] = useState(false);
+    const visibleCategoryCount = 5; // Number of categories to show in "Show Less" mode
 
     const handleCategoryChange = (category) => {
         const updatedCategories = activeFilters.categories || [];
@@ -64,6 +41,14 @@ const FiltersComponent = ({
             removeFilter('categories');
         }
     };
+
+    const toggleShowMoreCategories = () => {
+        setShowMoreCategories(!showMoreCategories);
+    };
+
+    const displayedCategories = showMoreCategories
+        ? categories
+        : categories.slice(0, visibleCategoryCount);
 
     return (
         <div className="p-6 sticky top-0 bg-white border-r border-gray-200 h-full">
@@ -152,7 +137,7 @@ const FiltersComponent = ({
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Category</h3>
                 <ul className="space-y-2">
-                    {categories.map((category) => (
+                    {displayedCategories.map((category) => (
                         <li key={category.label}>
                             <label className="flex items-center">
                                 <input
@@ -166,6 +151,12 @@ const FiltersComponent = ({
                         </li>
                     ))}
                 </ul>
+                <button
+                    onClick={toggleShowMoreCategories}
+                    className="text-blue-500 mt-2 underline"
+                >
+                    {showMoreCategories ? "Show Less" : "Show More"}
+                </button>
             </div>
         </div>
     );
