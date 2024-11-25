@@ -5,7 +5,6 @@ export async function POST(req) {
     const {recipient, subject, html_content} = reqBody;
 
     const response = await fetch(
-        // import.meta
         process.env.VITE_EMAIL_ENDPOINT_URL,
         {
             method: 'POST',
