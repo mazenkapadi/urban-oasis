@@ -358,7 +358,6 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
-                // Add to waitlist if tickets are unavailable
                 const rsvpData = {
                     userId,
                     eventId,
@@ -379,7 +378,6 @@ const EventPage = () => {
                 return;
             }
 
-            // Create checkout session
             const checkoutData = {
                 eventId,
                 quantity,
