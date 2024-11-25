@@ -23,13 +23,13 @@ export async function POST(req) {
         const event = await req.json();
 
         if (event.type !== 'checkout.session.completed') {
-            return new Response('Event type not handled', {status: 400});
+            return new Response('Event type not handled', { status: 400 });
         }
 
         const session = event.data.object;
 
-        const {metadata, amount_total, customer_details} = session;
-        const {userId, eventId, quantity} = metadata;
+        const { metadata, amount_total, customer_details } = session;
+        const { userId, eventId, quantity } = metadata;
         const email = customer_details?.email;
 
         const rsvpData = {
@@ -52,7 +52,7 @@ export async function POST(req) {
                     [session.id]: rsvpData,
                 },
             },
-            {merge: true}
+            { merge: true }
         );
 
         await setDoc(
@@ -62,7 +62,7 @@ export async function POST(req) {
                     [session.id]: rsvpData,
                 },
             },
-            {merge: true}
+            { merge: true }
         );
 
         await updateDoc(eventDocRef, {
@@ -71,9 +71,9 @@ export async function POST(req) {
 
         console.log('Checkout session processed successfully:', session.id);
 
-        return new Response('Event processed successfully', {status: 200});
+        return new Response('Event processed successfully', { status: 200 });
     } catch (error) {
         console.error('Error processing webhook:', error);
-        return new Response('Error processing webhook', {status: 500});
+        return new Response('Error processing webhook', { status: 500 });
     }
 }
