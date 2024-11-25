@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { db, auth } from "../../firebaseConfig.js";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {onAuthStateChanged} from "firebase/auth";
+import {db, auth} from "../../firebaseConfig.js";
 import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
 import HeaderComponent from "../../components/HeaderComponent.jsx";
 import FooterComponent from "../../components/FooterComponent.jsx";
 import LoadingPage from "../LoadingPage.jsx";
 
 const HostEventPage = () => {
-    const { eventId } = useParams();
+    const {eventId} = useParams();
     const [eventTitle, setEventTitle] = useState('');
     const [eventDescription, setEventDescription] = useState('');
     const [eventLocation, setEventLocation] = useState('');
@@ -22,11 +22,15 @@ const HostEventPage = () => {
         bio: '',
         companyName: '',
         website: '',
-        hostLocation: { city: '', state: '' },
+        hostLocation: {city: '', state: ''},
     });
     const [loading, setLoading] = useState(true);
     const [isHost, setIsHost] = useState(false); // To check if user is host
     const [editable, setEditable] = useState(false); // Edit mode for host details
+    const [ticketQuantity, setTicketQuantity] = useState([]);
+    const [attendeeId, setAttendeeId] = useState([]);
+    const [attendeeDetails, setAttendeeDetails] = useState([]);
+
 
     // Get Authenticated User ID
     useEffect(() => {
@@ -68,11 +72,40 @@ const HostEventPage = () => {
                                 bio: hostData.bio || '',
                                 companyName: hostData.companyName || '',
                                 website: hostData.website || '',
-                                hostLocation: hostData.hostLocation || { city: '', state: '' }
+                                hostLocation: hostData.hostLocation || {city: '', state: ''}
                             });
                         }
                     }
                 }
+
+                const docRef2 = doc(db, 'EventRSVPs', eventId);
+                const docSnap2 = await getDoc(docRef2);
+
+                if (docSnap2.exists()) {
+                    const data = docSnap2.data();
+                    const rsvps = data.rsvps;
+                    const attendees = [];
+
+                    for (const [key, innerMap] of Object.entries(rsvps)) {
+                        const userId = innerMap.userId;
+                        const quantity = innerMap.quantity;
+
+                        const attendeeDocRef = doc(db, 'Users', userId);
+                        const attendeeDocSnap = await getDoc(attendeeDocRef);
+
+                        if (attendeeDocSnap.exists()) {
+                            const attendeeData = attendeeDocSnap.data();
+                            attendees.push({
+                                firstName: attendeeData.name.firstName,
+                                lastName: attendeeData.name.lastName,
+                                quantity,
+                            });
+                        }
+                    }
+
+                    setAttendeeDetails(attendees);
+                }
+
                 setLoading(false);
             }
         };
@@ -101,20 +134,28 @@ const HostEventPage = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setHostDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+        const {name, value} = e.target;
+        setHostDetails((prevDetails) => ({...prevDetails, [name]: value}));
     };
 
+    const handleModifyButton = (e) => {
+
+    };
+    const handleContactButton = (e) => {
+
+    };
+
+
     if (loading) {
-        return <LoadingPage />;
+        return <LoadingPage/>;
     }
 
     return (
         <>
-            <HeaderComponent />
+            <HeaderComponent/>
             <div className="event-page py-10 px-4 pt-32 bg-gray-200 min-h-screen">
                 <div className="box-border bg-white p-8 rounded-lg shadow-lg">
-                    <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
+                    <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
 
                     <div className="flex flex-col mt-6">
                         <h1 className="text-3xl font-bold">{eventTitle}</h1>
@@ -191,13 +232,38 @@ const HostEventPage = () => {
                                             </button>
                                         )}
                                     </div>
+
+
                                 </div>
                             </div>
                         )}
                     </div>
+                    {isHost && (
+                        <div>
+                            <label className="block text-gray-600 mt-4">Attendees</label>
+                            <div className="">
+                                <div
+                                    className="block text-gray-600 mt-4">{attendeeDetails.map((attendee, index) => (
+                                    <div className="flex items-center" key={index}>
+                                        <p>{attendee.firstName} {attendee.lastName} -
+                                            Held Tickets: {attendee.quantity}</p>
+                                        <button className="button bg-gray-500 mr-2 ml-auto"
+                                                onClick={handleModifyButton}>
+                                            Modify Quantity
+                                        </button>
+                                        <button className="button bg-gray-500"
+                                                onClick={handleContactButton}>
+                                            Contact Attendee
+                                        </button>
+                                    </div>
+                                ))}</div>
+
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
-            <FooterComponent />
+            <FooterComponent/>
         </>
     );
 };
