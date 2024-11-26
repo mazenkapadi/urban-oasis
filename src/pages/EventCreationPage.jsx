@@ -413,7 +413,6 @@ function EventCreationPage() {
                                 </div >
 
 
-                                {/* Image Upload */}
                                 <div >
                                     <label htmlFor="eventImages" className="text-lg font-semibold text-white" >Upload
                                         Event

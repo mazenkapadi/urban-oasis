@@ -69,7 +69,7 @@ const router = createBrowserRouter([
         children: [
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
-            {path: "my-event-history", element: <MyEventHistoryPage />},
+            {path: "event-history", element: <MyEventHistoryPage />},
             {path: "preferences", element: <PreferencePage />},
             {path: "settings", element: <SettingsPage />},
             {path: "host-signup", element: <HostSignUpPage />},

@@ -4,8 +4,24 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import EventCarousel from "../components/Carousels/EventCarousel.jsx";
 import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
 import Testimonials from "../components/Testimonials.jsx";
+import { useNavigate } from "react-router-dom";
+import { ArrowDownIcon, ChevronDoubleDownIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 function LandingPage() {
+
+    const navigate = useNavigate();
+
+    const scrollToWeekEvents = () => {
+        const element = document.getElementById("weekEvents");
+        if (element) {
+            element.scrollIntoView({behavior: "smooth"});
+        }
+    };
+
+    const handleViewAll = () => {
+        navigate("/events");
+    }
+
     return (
         <>
             <div className="relative flex flex-col min-h-screen text-primary-light" >
@@ -24,13 +40,20 @@ function LandingPage() {
                             Discover events and manage your community seamlessly
                         </p >
                     </div >
+                    <div className="absolute bottom-5 left-0 right-0 flex justify-center items-center z-20" >
+                        <button
+                            onClick={scrollToWeekEvents}
+                            className="mx-2 p-3 text-white bg-Dark-D2 font-bold rounded-full transition duration-300 opacity-70 hover:opacity-100"
+                        >
+                            <ChevronDoubleDownIcon className="w-6 h-6" />
+                        </button >
+                    </div >
                 </div >
 
-                <div className="flex-grow pt-12 bg-primary-light text-primary-dark" >
-                    <div className="container mx-auto px-6 py-12" >
-
+                <div className="flex-grow pt-2 bg-primary-light text-primary-dark" >
+                    <div className="container mx-auto px-6" >
                         <div className="space-y-16" >
-                            <div >
+                            <div id="weekEvents" >
                                 <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
                                 <EventCarousel rangeType="week" />
                             </div >
@@ -40,9 +63,17 @@ function LandingPage() {
                                 <EventCarousel rangeType="month" />
                             </div >
                         </div >
-                        {/*<div >*/}
-                        {/*    <Testimonials />*/}
-                        {/*</div >*/}
+                    </div >
+                    <div className="flex justify-center mt-8 pb-6" >
+                        <button
+                            onClick={handleViewAll}
+                            className="px-6 py-3 bg-accent-blue text-white text-lg font-bold rounded-md hover:bg-accent-orange transition duration-300"
+                        >
+                            View All Events
+                        </button >
+                    </div >
+                    <div >
+                        <Testimonials />
                     </div >
                 </div >
                 <FooterComponent />

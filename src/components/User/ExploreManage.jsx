@@ -71,7 +71,7 @@ const ExploreManage = () => {
                         <p className="text-gray-400" >View all the events you've attended.</p >
                         <button
                             className="mt-4 bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
-                            onClick={() => navigate(`/userProfilePage/my-event-history`, {state: {userId}})}
+                            onClick={() => navigate(`/userProfilePage/event-history`, {state: {userId}})}
                         >
                             View History
                         </button >

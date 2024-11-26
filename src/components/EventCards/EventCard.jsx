@@ -11,7 +11,7 @@ function EventCard({ title, location, date, price, image, eventId }) {
 
     return (
         <div
-            className="event-card w-80 min-w-[20rem] flex-shrink-0 rounded-lg overflow-hidden shadow-lg cursor-pointer transform transition-transform duration-300 hover:scale-105 snap-start"
+            className="event-card w-80 min-w-[20rem] flex-shrink-0 rounded-lg overflow-hidden shadow-md cursor-pointer transform transition-transform duration-300 hover:scale-105 snap-start"
             onClick={handleClick}
         >
             <div
