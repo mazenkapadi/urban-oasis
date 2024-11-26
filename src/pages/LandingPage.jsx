@@ -5,9 +5,29 @@ import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
 import Testimonials from "../components/Testimonials.jsx";
 import { useNavigate } from "react-router-dom";
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig.js";
 
 function LandingPage() {
     const navigate = useNavigate();
+
+    const [userPreferences, setUserPreferences] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const docRef = doc(db, 'Users', user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data().preferences || {};
+                    setUserPreferences(data);
+                }
+            }
+        });
+        return () => unsubscribe();
+    }, []);
 
     const scrollToWeekEvents = () => {
         const element = document.getElementById("weekEvents");
@@ -60,6 +80,20 @@ function LandingPage() {
 
             <div className="flex-grow pt-2 bg-primary-light text-primary-dark" >
                 <div className="container mx-auto px-6 space-y-8" >
+
+
+                    {userPreferences && userPreferences.categories && userPreferences.categories.length > 0 && (
+                        <div>
+                            <h1 className="text-3xl font-bold mb-1">Suggested Events For You</h1>
+                            <EventCarousel
+                                rangeType="week" // You can define 'future' in your dateUtils
+                                categories={userPreferences.categories}
+                            />
+                        </div>
+                    )}
+
+
+
                     <div id="weekEvents" >
                         <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
                         <EventCarousel rangeType="week" />
