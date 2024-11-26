@@ -35,6 +35,7 @@ import {
     XIcon,
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
+import emailjs from '@emailjs/browser';
 
 
 const EventPage = () => {
@@ -483,9 +484,9 @@ const EventPage = () => {
     };
 
     const notifyWaitlist = (waitlist) => {
-        waitlist.forEach(user => {
-            // emailUser(value);
-            console.log(`Notification sent to waitlist user: ${user.email}`);
+        waitlist.forEach(value => {
+            console.log(`Notification sent to waitlist user: ${value.email}`);
+            emailUser(value);
         });
     };
 
@@ -562,26 +563,26 @@ const EventPage = () => {
         }
     };
 
-    // const emailUser = (value) => {
-    //     const emailData = {
-    //         user_name: value.name,
-    //         user_email: value.email,
-    //         message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
-    //     };
-    //
-    //     emailjs.send(
-    //         import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY,
-    //         'template_5lpk33l',
-    //         emailData,
-    //         import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
-    //     )
-    //            .then((result) => {
-    //                console.log(`Email successfully sent to ${value.email}`);
-    //            })
-    //            .catch((error) => {
-    //                console.error(`Failed to send email to ${value.email}:`, error);
-    //            });
-    // };
+    const emailUser = (value) => {
+        const emailData = {
+            user_name: value.name,     
+            user_email: value.email, 
+            message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
+        };
+    
+        emailjs.send(
+            import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY, 
+            'template_5lpk33l', 
+            emailData,
+            import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY 
+        )
+        .then((result) => {
+            console.log(`Email successfully sent to ${value.email}`);
+        })
+        .catch((error) => {
+            console.error(`Failed to send email to ${value.email}:`, error);
+        });
+    };
 
     useEffect(() => {
         const fetchEventData = async () => {
