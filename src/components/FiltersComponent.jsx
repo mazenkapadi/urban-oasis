@@ -23,6 +23,7 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
     // Handle Price Range Changes
     useEffect(() => {
         if (minPrice || maxPrice) {
+
             onApplyFilters({ 'eventDetails.eventPrice': { min: minPrice, max: maxPrice } });
         } else {
             removeFilter('eventDetails.eventPrice');
