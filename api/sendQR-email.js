@@ -4,20 +4,17 @@ import fetch from 'node-fetch';
 export async function POST(req) {
     try {
         const reqBody = await req.json();
-        const { rsvpId, userId, eventId, email, phone, quantity, eventTitle, eventDateTime } = reqBody;
+        const { rsvpId, userId, eventId, email, quantity, eventTitle, eventDateTime } = reqBody;
 
-        // Validate input fields
-        if (!rsvpId || !userId || !eventId || !email || !phone || !quantity || !eventTitle || !eventDateTime) {
+        if (!rsvpId || !userId || !eventId || !email || !quantity || !eventTitle || !eventDateTime) {
             return new Response('Missing required fields', { status: 400 });
         }
 
-        // Step 1: Generate QR Code
         const qrData = JSON.stringify({
             rsvpId,
             userId,
             eventId,
             email,
-            phone,
             quantity,
             eventTitle,
             eventDateTime,
@@ -25,7 +22,6 @@ export async function POST(req) {
 
         const qrCodeDataURL = await QRCode.toDataURL(qrData);
 
-        // Step 2: Prepare Email Content
         const subject = `Your RSVP for ${eventTitle}`;
         const html_content = `
             <html>
@@ -41,7 +37,6 @@ export async function POST(req) {
             </html>
         `;
 
-        // Step 3: Send Email
         const response = await fetch(process.env.VITE_EMAIL_ENDPOINT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
