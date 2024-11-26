@@ -18,6 +18,7 @@ import SettingsPage from './pages/User/SettingsPage.jsx';
 import SupportPage from './pages/SupportPage.jsx';
 import UserProfileContent from './components/User/UserProfileContent.jsx';
 import MyEventHistoryPage from './pages/User/MyEventHistoryPage.jsx';
+import ManageRSVPPage from './pages/User/ManageRSVPPage.jsx';
 import PhotoCarousel from "./components/Carousels/PhotoCarousel.jsx";
 import EventPage from "./pages/EventPage.jsx";
 import EventCreationPage from "./pages/EventCreationPage.jsx";
@@ -69,7 +70,8 @@ const router = createBrowserRouter([
         children: [
             {index: true, element: <UserProfileContent />},
             {path: "contact-info", element: <ContactInfoPage />},
-            {path: "my-event-history", element: <MyEventHistoryPage />},
+            {path: "event-history", element: <MyEventHistoryPage />},
+            { path: "manage-rsvps", element: <ManageRSVPPage /> },
             {path: "preferences", element: <PreferencePage />},
             {path: "settings", element: <SettingsPage />},
             {path: "host-signup", element: <HostSignUpPage />},

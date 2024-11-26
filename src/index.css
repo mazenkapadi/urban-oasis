@@ -170,6 +170,6 @@ body {
     pointer-events: none;
 }
 
-/*input[type="datetime-local"]::-webkit-calendar-picker-indicator {*/
-/*    display: none;*/
-/*}*/
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(100%) opacity(0);
+}

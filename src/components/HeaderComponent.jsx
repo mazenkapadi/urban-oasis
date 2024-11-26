@@ -165,13 +165,13 @@ const HeaderComponent = () => {
     };
 
     return (
-        <header className="bg-transparent w-full p-2" >
+        <header className="bg-transparent w-full" >
             <div className="flex justify-between items-center" >
                 {/* Logo */}
                 <div className="flex items-center pl-8" >
                     <button onClick={() => navigate("/")} >
                         <span
-                            className="ml-1 text-white text-4xl font-archivo"
+                            className="ml-1 text-white text-h1 font-lalezar"
                             style={{textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)"}}
                         >
                             Urban Oasis

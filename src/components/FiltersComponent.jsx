@@ -1,3 +1,31 @@
+import React, { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { categorizedOptions } from "../services/categoryData";
+
+const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) => {
+    const {
+        dateFilter = '',
+        paid = null,
+        availability = '',
+        customDate = '',
+        nearMe = false,
+        priceRange = { min: '', max: '' },
+        category = [],
+    } = activeFilters;
+
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState('');
+    const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+    const [nearMeChecked, setNearMeChecked] = useState(nearMe);
+
+    // Handle Price Range Changes
+    useEffect(() => {
+        if (minPrice || maxPrice) {
+
+            onApplyFilters({ 'eventDetails.eventPrice': { min: minPrice, max: maxPrice } });
+
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";

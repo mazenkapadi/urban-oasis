@@ -10,6 +10,7 @@ import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { googleMapsConfig } from "../locationConfig.js";
 import { Modal, Button, ImageList, ImageListItem, Alert } from '@mui/material';
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 
 function EventCreationPage() {
 
@@ -245,13 +246,16 @@ function EventCreationPage() {
 
     return (
         <>
+
             <div className="event-creation-page" >
-                <HeaderComponent />
 
                 <div
-                    className="flex justify-center items-center py-10 px-4 pt-32 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 min-h-screen" >
-                    <div className="box-border w-full max-w-3xl rounded-lg bg-gray-900 shadow-lg p-8" >
-                        <h1 className="text-5xl text-white font-extrabold pb-6 text-center" >Create Your Event</h1 >
+                    className="flex flex-col justify-center items-center pb-10 px-4 min-h-screen" style={{backgroundColor: 'var(--secondary-dark-2)'}} >
+                    <HeaderComponent />
+
+
+                    <div className="box-border w-full max-w-3xl rounded-lg bg-primary-dark shadow-lg p-8" >
+                        <h1 className="text-5xl text-primary-light pb-6 text-center" >Create Your Event</h1 >
 
                         {/* Error message */}
                         {error && <div className="text-red-500 text-center mb-4" >{error}</div >}
@@ -261,15 +265,15 @@ function EventCreationPage() {
 
                                 {/* Event Title */}
                                 <div >
-                                    <label htmlFor="eventTitle" className="text-lg font-semibold text-white" >Event
-                                        Title</label >
+                                    <p htmlFor="eventTitle" className="text-lg font-semibold text-primary-light" >Event
+                                        Title</p >
                                     <input
                                         type="text"
                                         id="eventTitle"
                                         value={eventTitle}
                                         onChange={(e) => setEventTitle(e.target.value)}
                                         placeholder="Enter event title"
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="text-box w-full mt-2 p-3 text-box:focus"
                                         required
                                     />
                                 </div >
@@ -281,14 +285,14 @@ function EventCreationPage() {
 
                                 {/* Description */}
                                 <div >
-                                    <label htmlFor="eventDescription"
-                                           className="text-lg font-semibold text-white" >Description</label >
+                                    <p htmlFor="eventDescription"
+                                           className="text-lg font-semibold text-primary-light" >Description</p >
                                     <textarea
                                         id="eventDescription"
                                         value={eventDescription}
                                         onChange={(e) => setEventDescription(e.target.value)}
                                         placeholder="Enter event description"
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full mt-2 p-3 text-box"
                                         rows="4"
                                         required
                                     />
@@ -301,8 +305,8 @@ function EventCreationPage() {
 
                                 {/* Location */}
                                 <div >
-                                    <label htmlFor="eventLocation"
-                                           className="text-lg font-semibold text-white" >Location</label >
+                                    <p htmlFor="eventLocation"
+                                           className="text-lg font-semibold text-primary-light" >Location</p >
                                     <GooglePlacesAutocomplete
                                         required
                                         apiKey={googleMapsConfig.apiKey}
@@ -311,13 +315,13 @@ function EventCreationPage() {
                                             styles: {
                                                 placeholder: (base) => ({
                                                     ...base,
-                                                    color: '#9CA3AF'
+                                                    color: '#9ca3af',
                                                 }),
                                                 control: (provided, state) => ({
                                                     ...provided,
-                                                    backgroundColor: '#1F2937',
-                                                    borderColor: state.isFocused ? '#6366F1' : '#374151',
-                                                    borderWidth: state.isFocused ? '2px' : '1px',
+                                                    backgroundColor: 'var(--primary-light)',
+                                                    borderColor: state.isFocused ? 'var(--secondary-light-1)' : 'var(--accent-blue)',
+                                                    // borderWidth: state.isFocused ? '2px' : '1px',
                                                     width: '100%',
                                                     marginTop: '2px',
                                                     padding: '3px',
@@ -325,26 +329,26 @@ function EventCreationPage() {
                                                 }),
                                                 menu: (provided) => ({
                                                     ...provided,
-                                                    backgroundColor: '#1F2937',
-                                                    borderColor: '#374151',
+                                                    backgroundColor: 'var(--primary-light)',
+                                                    borderColor: 'var(--secondary-light-1)',
                                                     maxHeight: "200px",
                                                     overflowY: "auto",
                                                 }),
                                                 input: (provided) => ({
                                                     ...provided,
-                                                    color: "white",
+                                                    color: 'var(--primary-dark)',
                                                     border: 'none',
                                                 }),
                                                 option: (provided, state) => ({
                                                     ...provided,
-                                                    color: state.isFocused ? "#6366F1" : "white",
-                                                    backgroundColor: state.isFocused ? "#374151" : "#1F2937",
+                                                    color: state.isFocused ? 'var(--accent-blue)' : 'var(--primary-light)',
+                                                    backgroundColor: state.isFocused ?  'var(--primary-light)' : 'var(--primary-dark)',
                                                     cursor: "pointer",
                                                 }),
                                                 singleValue: (provided) => ({
                                                     ...provided,
-                                                    color: "white",
-                                                    backgroundColor: '#1F2937',
+                                                    color: 'var(--primary-light)',
+                                                    backgroundColor: 'var(--primary-light)',
                                                 }),
 
                                             },
@@ -361,31 +365,28 @@ function EventCreationPage() {
                                 {/* Date and Capacity */}
                                 <div className="flex space-x-4" >
                                     <div className="flex-1" >
-                                        <label htmlFor="eventDateTime" className="text-lg font-semibold text-white" >Event
+                                        <p htmlFor="eventDateTime" className="text-lg font-semibold text-primary-light" >Event
                                             Date
-                                            and Time</label >
+                                            and Time</p >
                                         <div className="relative mt-2" >
                                             <input
                                                 type="datetime-local"
                                                 id="eventDateTime"
                                                 value={eventDateTime}
                                                 onChange={(e) => setEventDateTime(e.target.value)}
-                                                className="w-full p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                className="w-full p-3 text-box"
                                                 required
                                             />
-                                            {/*<div*/}
-                                            {/*    className="absolute inset-y-0 right-3 flex items-center text-gray-400 pointer-events-none" >*/}
-                                            {/*    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"*/}
-                                            {/*         viewBox="0 0 24 24" stroke="currentColor" >*/}
-                                            {/*        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}*/}
-                                            {/*              d="M8 7V3m8 4V3m-9 4h10M3 21h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v12a2 2 0 002 2z" />*/}
-                                            {/*    </svg >*/}
-                                            {/*</div >*/}
+                                            <div
+                                                className="absolute inset-y-0 right-3 flex items-center text-primary-dark pointer-events-none" >
+
+                                                < CalendarDaysIcon className=" h-5 w-5" />
+                                            </div >
                                         </div >
                                     </div >
                                     <div className="flex-1" >
-                                        <label htmlFor="eventCapacity"
-                                               className="text-lg font-semibold text-white" >Capacity</label >
+                                        <p htmlFor="eventCapacity"
+                                               className="text-lg font-semibold text-primary-light" >Capacity</p >
                                         <input
                                             type="number"
                                             id="eventCapacity"
@@ -395,7 +396,7 @@ function EventCreationPage() {
                                                 setEventCapacity(Math.max(parsedValue, 0));
                                             }}
                                             placeholder="Enter event capacity"
-                                            className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            className="w-full mt-2 p-3 text-box"
                                             required
                                         />
                                     </div >
@@ -418,18 +419,17 @@ function EventCreationPage() {
                                 </div >
 
 
-                                {/* Image Upload */}
                                 <div >
-                                    <label htmlFor="eventImages" className="text-lg font-semibold text-white" >Upload
+                                    <p htmlFor="eventImages" className="text-lg font-semibold text-primary-light" >Upload
                                         Event
-                                        Images</label >
+                                        Images</p >
                                     <div className="mt-2" >
                                         <label
                                             htmlFor="eventImages"
-                                            className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
+                                            className="flex items-center justify-center w-full p-3 bg-primary-light rounded-md border border-secondary-dark-1 cursor-pointer hover:bg-secondary-dark-1 transition-all"
                                         >
-                                            <PhotoIcon className="h-6 w-6 text-white mr-2" />
-                                            <span className="text-white" >Choose Images</span >
+                                            <PhotoIcon className="h-6 w-6 text-primary-dark mr-2" />
+                                            <span className="text-primary-dark" >Choose Images</span >
                                             <input
                                                 type="file"
                                                 id="eventImages"
@@ -446,13 +446,13 @@ function EventCreationPage() {
                                 {previewImages && (
                                     <>
                                         <div >
-                                            <label htmlFor="previewImages"
-                                                   className="text-lg font-semibold text-white" >Event
-                                                Images</label >
+                                            <p htmlFor="previewImages"
+                                                   className="text-lg font-semibold text-primary-light" >Event
+                                                Images</p >
                                             <div className="mt-2" >
                                                 <label
                                                     htmlFor="previewImages"
-                                                    className="flex items-center justify-center w-full p-3 bg-gray-800 rounded-md border border-gray-700 cursor-pointer hover:bg-gray-700 transition-all"
+                                                    className="flex items-center justify-center w-full p-3 bg-primary-light rounded-md border border-secondary-dark-1 cursor-pointer hover:bg-secondary-light-3 transition-all"
                                                 >
                                                     <ImageList sx={{width: 600, height: 200}} cols={3} rowHeight={200}
                                                                gap={10} >
@@ -475,8 +475,8 @@ function EventCreationPage() {
 
                                 {/* Paid Event */}
                                 <div className="space-y-4" >
-                                    <label htmlFor="isPaidEvent" className="text-lg font-semibold text-white" >
-                                        Is this a paid event?</label >
+                                    <p htmlFor="isPaidEvent" className="text-lg font-semibold text-primary-light" >
+                                        Is this a paid event?</p >
                                     <select
                                         id="isPaidEvent"
                                         value={isPaidEvent}
@@ -488,7 +488,7 @@ function EventCreationPage() {
                                                 setRefundPolicy('');
                                             }
                                         }}
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full mt-2 p-3 rounded-md border border-secondary-dark-1 bg-primary-light text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent-blue"
                                     >
                                         <option value={true} >Yes</option >
                                         <option value={false} >No</option >
@@ -497,9 +497,9 @@ function EventCreationPage() {
                                     {isPaidEvent && (
                                         <>
                                             <div >
-                                                <label htmlFor="eventPrice"
-                                                       className="text-lg font-semibold text-white" >Ticket
-                                                    Price</label >
+                                                <p htmlFor="eventPrice"
+                                                       className="text-lg font-semibold text-primary-light" >Ticket
+                                                    Price</p >
                                                 <input
                                                     type="text"
                                                     id="eventPrice"
@@ -509,14 +509,14 @@ function EventCreationPage() {
                                                         setEventPrice(`$${price}`);
                                                     }}
                                                     placeholder="Enter ticket price"
-                                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                    className="w-full mt-2 p-3 rounded-md border border-secondary-dark-1 bg-primary-light text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent-blue"
                                                 />
                                             </div >
 
                                             <div >
-                                                <label htmlFor="refundAllowance"
-                                                       className="text-lg font-semibold text-white" >Allow
-                                                    Refunds?</label >
+                                                <p htmlFor="refundAllowance"
+                                                       className="text-lg font-semibold text-primary-light" >Allow
+                                                    Refunds?</p >
                                                 <select
                                                     id="refundAllowance"
                                                     value={refundAllowance}
@@ -524,7 +524,7 @@ function EventCreationPage() {
                                                         setRefundAllowance(!refundAllowance);
                                                         if (!refundAllowance) setRefundPolicy('');
                                                     }}
-                                                    className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                    className="w-full mt-2 p-3 rounded-md border border-secondary-dark-1 bg-primary-light text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent-blue"
                                                 >
                                                     <option value={true} >Yes</option >
                                                     <option value={false} >No</option >
@@ -532,16 +532,16 @@ function EventCreationPage() {
 
                                                 {refundAllowance && (
                                                     <div >
-                                                        <label htmlFor="refundPolicy"
-                                                               className="text-lg font-semibold text-white" >Refund
-                                                            Policy</label >
+                                                        <p htmlFor="refundPolicy"
+                                                               className="text-lg font-semibold text-primary-light" >Refund
+                                                            Policy</p >
                                                         <input
                                                             type="text"
                                                             id="refundPolicy"
                                                             value={refundPolicy}
                                                             onChange={(e) => setRefundPolicy(e.target.value)}
                                                             placeholder="Enter refund policy"
-                                                            className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                            className="w-full mt-2 p-3 text-box"
                                                         />
                                                     </div >
                                                 )}
@@ -578,13 +578,13 @@ function EventCreationPage() {
                                         },
                                     ].map((item, index) => (
                                         <div key={index} >
-                                            <label htmlFor={item.id}
-                                                   className="text-lg font-semibold text-white" >{item.label}</label >
+                                            <p htmlFor={item.id}
+                                                   className="text-lg font-semibold text-primary-light" >{item.label}</p >
                                             <select
                                                 id={item.id}
                                                 value={item.value}
                                                 onChange={() => item.setter(!item.value)}
-                                                className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                className="w-full mt-2 p-3 rounded-md border border-secondary-dark-1 bg-primary-light text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent-blue"
                                             >
                                                 <option value={true} >Yes</option >
                                                 <option value={false} >No</option >
@@ -593,12 +593,12 @@ function EventCreationPage() {
                                     ))}
                                 </div >
                                 <div >
-                                    <label className="text-lg font-semibold text-white" >Primary Category</label >
+                                    <p className="text-lg font-semibold text-primary-light" >Primary Category</p >
                                     {/* Dropdown for Primary Category Selection */}
                                     <select
                                         value={selectedPrimaryCategory}
                                         onChange={handlePrimaryCategoryChange}
-                                        className="w-full mt-2 p-3 rounded-md border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full mt-2 p-3 rounded-md border border-secondary-dark-1 bg-primary-light text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent-blue"
                                     >
                                         <option value="" >Select a Category</option >
                                         {Object.keys(categorizedOptions).map((category) => (
@@ -612,18 +612,18 @@ function EventCreationPage() {
                                 {/* Subcategories Section */}
                                 {selectedPrimaryCategory && (
                                     <div className="mt-4" >
-                                        <label className="text-lg font-semibold text-white" >
+                                        <p className="text-lg font-semibold text-primary-light" >
                                             {selectedPrimaryCategory} Subcategories
-                                        </label >
+                                        </p >
                                         <div className="grid grid-cols-2 gap-4 mt-2" >
                                             {categorizedOptions[selectedPrimaryCategory].map((subcategory) => (
                                                 <label key={subcategory}
-                                                       className="text-white flex items-center space-x-2" >
+                                                       className="text-primary-light flex items-center space-x-2" >
                                                     <input
                                                         type="checkbox"
                                                         checked={selectedSubcategories.includes(subcategory)}
                                                         onChange={() => handleSubcategoryChange(subcategory)}
-                                                        className="form-checkbox h-4 w-4 text-indigo-500"
+                                                        className="form-checkbox h-4 w-4 text-accent-blue"
                                                     />
                                                     <span >{subcategory}</span >
                                                 </label >
@@ -635,7 +635,7 @@ function EventCreationPage() {
 
                                 <button
                                     onClick={handleSubmit}
-                                    className="mt-6 w-full bg-indigo-500 text-white font-bold py-3 rounded-md hover:bg-indigo-600 transition duration-300"
+                                    className="mt-6 w-full py-3 btn btn-primary"
                                 >
                                     Create Event
                                 </button >
@@ -649,7 +649,7 @@ function EventCreationPage() {
                     onClose={handleModalClose}
                 >
                     <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8" >
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8" style={{ backgroundColor: 'var(--secondary-light-1)' }}  >
                         <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo" >
                             Event Created!
                         </h2 >
@@ -660,7 +660,7 @@ function EventCreationPage() {
                             onClick={handleModalClose}
                             variant="contained"
                             color="primary"
-                            className="mt-4 w-full bg-accent-blue hover:bg-accent-green text-neutral-white py-2 rounded-lg font-medium"
+                            className="mt-4 w-full py-2 btn btn-primary"
                         >
                             Close
                         </Button >

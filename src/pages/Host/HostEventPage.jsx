@@ -27,8 +27,8 @@ const HostEventPage = () => {
     });
 
     const [ loading, setLoading ] = useState(true);
-    const [ isHost, setIsHost ] = useState(false); // To check if user is host
-    const [ editable, setEditable ] = useState(false); // Edit mode for host details
+    const [ isHost, setIsHost ] = useState(false);
+    const [ editable, setEditable ] = useState(false);
     const [ ticketQuantity, setTicketQuantity ] = useState([]);
     const [ attendeeId, setAttendeeId ] = useState([]);
     const [ attendeeDetails, setAttendeeDetails ] = useState([]);
@@ -47,11 +47,11 @@ const HostEventPage = () => {
     useEffect(() => {
         const fetchEventData = async () => {
             if (eventId) {
-                const docRef = doc(db, 'Events', eventId);
-                const docSnap = await getDoc(docRef);
+                const EventDocRef = doc(db, 'Events', eventId);
+                const EventDocSnap = await getDoc(EventDocRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
+                if (EventDocSnap.exists()) {
+                    const data = EventDocSnap.data();
                     setEventTitle(data.basicInfo.title);
                     setEventDescription(data.basicInfo.description);
                     setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleDateString());
@@ -79,11 +79,11 @@ const HostEventPage = () => {
                     }
                 }
 
-                const docRef2 = doc(db, 'EventRSVPs', eventId);
-                const docSnap2 = await getDoc(docRef2);
+                const EventRSVPDocRef = doc(db, 'EventRSVPs', eventId);
+                const EventRSVPDocSnap = await getDoc(EventRSVPDocRef);
 
-                if (docSnap2.exists()) {
-                    const data = docSnap2.data();
+                if (EventRSVPDocSnap.exists()) {
+                    const data = EventRSVPDocSnap.data();
                     const rsvps = data.rsvps;
                     const attendees = [];
 
@@ -238,27 +238,6 @@ const HostEventPage = () => {
                         )}
                     </div >
                     {isHost && (
-                        // <div>
-                        //     <label className="block text-gray-600 mt-4">Attendees</label>
-                        //     <div className="">
-                        //         <div
-                        //             className="block text-gray-600 mt-4">{attendeeDetails.map((attendee, index) => (
-                        //             <div className="flex items-center" key={index}>
-                        //                 <p>{attendee.firstName} {attendee.lastName} -
-                        //                     Tickets held: {attendee.quantity}</p>
-                        //                 <button className="button bg-accent-purple m-2 ml-auto"
-                        //                         onClick={handleModifyButton}>
-                        //                     Modify Quantity
-                        //                 </button>
-                        //                 <button className="button bg-gray-500"
-                        //                         onClick={handleContactButton}>
-                        //                     Contact Attendee
-                        //                 </button>
-                        //             </div>
-                        //         ))}</div>
-                        //     </div>
-                        // </div>
-
                         <div className="mt-6" >
                             <label className=" text-Dark-D2a font-lalezar text-body font-medium mb-2" >
                                 Attendees
