@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Slider from "@mui/material/Slider";
 import { formatDateForFilter } from "../utils/dateHelpers.jsx";
 
 const FiltersComponent = ({
@@ -28,34 +29,23 @@ const FiltersComponent = ({
 
     const [showMoreCategories, setShowMoreCategories] = useState(false);
     const visibleCategoryCount = 5; // Number of categories to show in "Show Less" mode
+    const [priceRange, setPriceRange] = useState([0, 1000]); // Default price range
 
     // Handle Paid/Free Filter
     const handlePaidChange = (paidStatus) => {
         if (paidStatus !== null) {
             onApplyFilters({ paidEvent: paidStatus });
         } else {
-            removeFilter('paidEvent');
+            removeFilter("paidEvent");
         }
     };
 
-    // Handle Price Range Filter
-    const handlePriceChange = (min, max) => {
-        if (min || max) {
-            onApplyFilters({
-                eventPrice: { min: Number(min) || 0, max: Number(max) || Infinity },
-            });
-        } else {
-            removeFilter('eventPrice');
-        }
-    };
-
-    // Handle Availability Filter
-    const handleAvailabilityChange = (availability) => {
-        if (availability) {
-            onApplyFilters({ availability });
-        } else {
-            removeFilter('availability');
-        }
+    // Handle Slider Change for Price Range
+    const handleSliderChange = (event, newValue) => {
+        setPriceRange(newValue);
+        onApplyFilters({
+            eventPrice: { min: newValue[0], max: newValue[1] },
+        });
     };
 
     // Handle Date Filter
@@ -65,7 +55,7 @@ const FiltersComponent = ({
         if (dateRange) {
             onApplyFilters({ eventDateTime: filter });
         } else {
-            removeFilter('eventDateTime');
+            removeFilter("eventDateTime");
         }
     };
 
@@ -79,7 +69,7 @@ const FiltersComponent = ({
         if (newCategories.length > 0) {
             onApplyFilters({ categories: newCategories });
         } else {
-            removeFilter('categories');
+            removeFilter("categories");
         }
     };
 
@@ -87,19 +77,38 @@ const FiltersComponent = ({
         setShowMoreCategories(!showMoreCategories);
     };
 
+    const removeAllFilters = () => {
+        const filterKeys = [
+            "eventDateTime",
+            "eventPrice",
+            "paidEvent",
+            "availability",
+            "categories",
+        ];
+        filterKeys.forEach((key) => removeFilter(key));
+    };
+
     const displayedCategories = showMoreCategories
         ? categories
         : categories.slice(0, visibleCategoryCount);
 
     return (
-        <div className="p-6 sticky top-0 bg-white border-r border-gray-200 h-full">
-            <h2 className="text-xl font-bold">Filters</h2>
+        <div className="p-6 sticky top-0 bg-Light-L3 dark:bg-Dark-D1 text-primary-dark dark:text-primary-light border-r border-Light-L1 dark:border-Dark-D2 h-full font-roboto">
+            <h2 className="text-xl font-bold flex justify-between items-center">
+                Filters
+                <button
+                    className="text-accent-red underline text-sm hover:text-accent-orange"
+                    onClick={removeAllFilters}
+                >
+                    Clear All
+                </button>
+            </h2>
 
             {/* Date Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Date</h3>
                 <ul className="space-y-2">
-                    {['Today', 'Tomorrow', 'Weekend'].map((filter) => (
+                    {["Today", "Tomorrow", "Weekend"].map((filter) => (
                         <li key={filter}>
                             <input
                                 type="radio"
@@ -117,19 +126,43 @@ const FiltersComponent = ({
             {/* Price Range Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Price Range</h3>
-                <Box display="flex" gap={2}>
-                    <TextField
-                        label="Min"
-                        type="number"
-                        value={activeFilters.eventPrice?.min || ''}
-                        onChange={(e) => handlePriceChange(e.target.value, activeFilters.eventPrice?.max)}
+                <Box className="flex flex-col gap-2">
+                    <Slider
+                        value={priceRange}
+                        onChange={handleSliderChange}
+                        valueLabelDisplay="auto"
+                        min={0}
+                        max={1000}
+                        step={10}
+                        className="dark:bg-accent-white"
                     />
-                    <TextField
-                        label="Max"
-                        type="number"
-                        value={activeFilters.eventPrice?.max || ''}
-                        onChange={(e) => handlePriceChange(activeFilters.eventPrice?.min, e.target.value)}
-                    />
+                    <Box display="flex" gap={2}>
+                        <TextField
+                            label="Min"
+                            type="number"
+                            value={priceRange[0]}
+                            onChange={(e) => handleSliderChange(null, [Number(e.target.value), priceRange[1]])}
+                            InputLabelProps={{
+                                style: { color: 'var(--primary-light)' }, // Make label white in dark mode
+                            }}
+                            InputProps={{
+                                style: { color: 'var(--primary-light)' }, // Make input text white in dark mode
+                            }}
+
+                        />
+                        <TextField
+                            label="Max"
+                            type="number"
+                            value={priceRange[1]}
+                            onChange={(e) => handleSliderChange(null, [priceRange[0], Number(e.target.value)])}
+                            InputLabelProps={{
+                                style: { color: 'var(--primary-light)' }, // Make label white in dark mode
+                            }}
+                            InputProps={{
+                                style: { color: 'var(--primary-light)' }, // Make input text white in dark mode
+                            }}
+                        />
+                    </Box>
                 </Box>
             </div>
 
@@ -158,22 +191,6 @@ const FiltersComponent = ({
                 </ul>
             </div>
 
-            {/* Availability Filter */}
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1">Availability</h3>
-                <ul>
-                    <li>
-                        <input
-                            type="checkbox"
-                            checked={activeFilters.availability === 'Available'}
-                            onChange={() => handleAvailabilityChange('Available')}
-                            className="mr-2"
-                        />
-                        <label>Available</label>
-                    </li>
-                </ul>
-            </div>
-
             {/* Category Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Category</h3>
@@ -194,7 +211,7 @@ const FiltersComponent = ({
                 </ul>
                 <button
                     onClick={toggleShowMoreCategories}
-                    className="text-blue-500 mt-2 underline"
+                    className="text-accent-blue mt-2 underline"
                 >
                     {showMoreCategories ? "Show Less" : "Show More"}
                 </button>
@@ -204,6 +221,3 @@ const FiltersComponent = ({
 };
 
 export default FiltersComponent;
-
-
-//urbanoasis045
