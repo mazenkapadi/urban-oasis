@@ -38,11 +38,11 @@ const EventCarousel = ({ rangeType }) => {
     }, [rangeType]);
 
     return (
-        <div className="py-6">
+        <div >
             <div className="relative mt-4">
                 <Swiper
                     modules={[Navigation, Pagination]}
-                    spaceBetween={16}
+                    spaceBetween={8}
                     slidesPerView="auto"
                     navigation={false}
                     pagination={false}
