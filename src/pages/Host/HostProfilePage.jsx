@@ -166,18 +166,18 @@ const HostProfilePage = () => {
         <>
 
             <div
-                className="host-profile-page flex-col min-h-screen bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600 flex pt-2 px-4">
+                className="host-profile-page flex-col min-h-screen flex pt-2 px-4" style={{backgroundColor: 'var(--secondary-dark-2)'}}>
                 <HeaderComponent/>
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
 
-                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-2 ">
+                    <div className="rounded-lg shadow-lg p-6 space-y-2 " style={{backgroundColor: 'var(--primary-dark)'}}>
 
                         <div
-                            className="bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between ">
+                            className="p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between " style={{backgroundColor: 'var(--secondary-dark-2)'}}>
                             <div className="flex flex-row justify-center items-center">
                                 <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
                                         sx={{width: 100, height: 100}}/>
-                                <Typography variant="p" component="div" className="text-4xl text-white font-bold pl-3">
+                                <Typography variant="p" component="div" className="text-4xl text-primary-light font-bold pl-3">
                                     {`${hostDetails.firstName} ${hostDetails.lastName}`}
                                 </Typography>
                             </div>
@@ -187,7 +187,7 @@ const HostProfilePage = () => {
                         </div>
 
                         <div className="flex space-x-8 pb-36">
-                            <List className="text-white space-y-12">
+                            <List className="text-primary-light space-y-12">
                                 <ListItem>
                                     <ListItemIcon><EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
                                     <ListItemText
@@ -205,9 +205,9 @@ const HostProfilePage = () => {
                             </List>
                         </div>
 
-                        <div className="bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg p-6 space-y-6">
+                        <div className="bg-opacity-30 border-4 rounded-lg p-6 space-y-6" style={{backgroundColor: 'var(--secondary-dark-1)', borderColor: 'var(--secondary-dark-2)'}}>
                             <div className="flex flex-row justify-between">
-                                <Typography variant="h5" component="div" className="text-white">Add Review</Typography>
+                                <Typography variant="h5" component="div" className="text-primary-light">Add Review</Typography>
                                 <Rating name="simple-controlled" value={value}
                                         onChange={(event, newValue) => setValue(newValue)} size="large"/>
                             </div>
@@ -219,33 +219,33 @@ const HostProfilePage = () => {
                                 multiline
                                 slotProps={{input: {style: {color: 'white'}}}}
                                 sx={{
-                                    label: {color: 'white'},
-                                    bgcolor: 'rgb(17 24 39)',
+                                    label: {color: 'var(--primary-light)'},
+                                    bgcolor: 'var(--primary-dark)',
                                     borderRadius: '.5rem',
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
                                             borderRadius: '.5rem',
-                                            input: {color: 'white'},
+                                            input: {color: 'var(--primary-light)'},
                                         },
                                     },
                                 }}
                             />
                             <Button variant="contained" endIcon={<SendIcon/>} onClick={handleSubmit} fullWidth
-                                    className="rounded-lg">
+                                    className="btn btn-primary">
                                 Send
                             </Button>
                         </div>
                     </div>
 
-                    <div className="bg-gray-900 rounded-lg shadow-lg p-6 space-y-8 ">
+                    <div className="rounded-lg shadow-lg p-6 space-y-8 " style={{backgroundColor: 'var(--primary-dark)'}}>
                         <div>
-                            <Typography variant="h5" component="div" className="text-white mb-4"
+                            <Typography variant="h5" component="div" className="text-primary-light mb-4"
                                         sx={{
                                             textAlign: 'center',
                                             fontWeight: 'bold',
                                             fontSize: '36px'
                                         }}>Reviews</Typography>
-                            <h5 className="mb-4 border-b-2 border-gray-600 pb-2"></h5>
+                            <h5 className="mb-4 border-b-2 pb-2" style={{borderColor: 'var(--secondary-light-2)'}}></h5>
                         </div>
 
                         <div style={{maxHeight: '625px', overflowY: 'auto'}}>
@@ -253,7 +253,7 @@ const HostProfilePage = () => {
                                 reviewDetails.map((review, index) => (
                                     <Card key={index}
                                           sx={{
-                                              bgcolor: 'rgb(107 114 128)',
+                                              bgcolor: 'var(--secondary-light-2)',
                                               borderRadius: '16px',
                                               padding: '16px',
                                               marginBottom: '20px',
@@ -261,7 +261,7 @@ const HostProfilePage = () => {
                                           }}>
                                         <CardContent>
                                             <div className="flex items-center justify-between">
-                                                <Typography variant="p" component="div" color="white"
+                                                <Typography variant="p" component="div" color="primary-light"
                                                             className="text-2xl font-bold">
                                                     {review.reviewerDetails ? `${review.reviewerDetails.firstName} ${review.reviewerDetails.lastName}` : 'Reviewer Not Found'}
                                                 </Typography>
@@ -273,7 +273,7 @@ const HostProfilePage = () => {
                                                     {review.createdAt.toDate().toLocaleDateString()}
                                                 </Typography>
                                             </div>
-                                            <h5 className="mb-4 border-b-2 border-gray-900 pb-2"></h5>
+                                            <h5 className="mb-4 border-b-2 pb-2" style={{borderColor: 'var(--secondary-light-2)'}}></h5>
 
                                             <Typography variant="body2" color="textSecondary"
                                                         sx={{
@@ -289,7 +289,7 @@ const HostProfilePage = () => {
                                     </Card>
                                 ))
                             ) : (
-                                <Typography variant="body1" component="div" className="text-white">No reviews
+                                <Typography variant="body1" component="div" className="text-primary-light">No reviews
                                     yet.</Typography>
                             )}
                         </div>
