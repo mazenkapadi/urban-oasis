@@ -14,32 +14,43 @@ export async function POST(req) {
         // Generate the email content
         const subject = `Welcome to Our App, ${firstName} ${lastName}!`;
         const html_content = `
-            <html>
-                <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <tr>
-                            <td align="center" style="background-color: #0056FF; padding: 20px 0; border-radius: 8px 8px 0 0;">
-                                <h1 style="color: #ffffff; margin: 0;">Welcome to Our App!</h1>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 20px; text-align: left; color: #333333;">
-                                <p>Hi ${firstName} ${lastName},</p>
-                                <p>We're thrilled to have you join us! Explore the app, and let us know if you have any questions.</p>
-                                <p>If you need assistance, feel free to contact our support team anytime.</p>
-                                <p>Enjoy your journey with us!</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td align="center" style="padding: 20px; background-color: #f4f4f4; border-radius: 0 0 8px 8px;">
-                                <p style="font-size: 14px; color: #888888; margin: 0;">
-                                    &copy; 2024 Our App. All rights reserved.
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
-                </body>
-            </html>
+<html>
+    <body style="font-family: 'Roboto', sans-serif; background-color: #F9FAFB; margin: 0; padding: 20px; text-align: center;">
+        <div style="background-color: #0A0C0F; padding: 20px;">
+            <h1 style="color: #F9FAFB; font-family: 'Lalezar', sans-serif; font-size: 2.5rem; margin: 0;">
+                Welcome to Urban Oasis!
+            </h1>
+        </div>
+
+        <div style="padding: 20px; color: #333333; font-size: 1rem; line-height: 1.8;">
+            <p style="margin-top: 0;">Hi ${firstName} ${lastName},</p>
+            <p>
+                Welcome to <span style="color: #EE703C; font-weight: bold;">Urban Oasis</span>, where new opportunities and experiences await you! We’re thrilled to have you join our community.
+            </p>
+            <p>Here’s how to make the most of your journey with us:</p>
+            <ul style="list-style: none; padding: 0; text-align: left; display: inline-block; color: #171717; line-height: 1.6;">
+                <li>• Discover and explore exclusive events, meetups, and activities.</li>
+                <li>• Connect with others who share your passions and interests.</li>
+                <li>• Save your favorites and personalize your experience.</li>
+            </ul>
+            <p style="color: #171A1C;">Need help? Our support team is here for you. Feel free to reach out anytime for assistance.</p>
+        </div>
+
+        <div style="padding: 20px;">
+            <a href="https://urban-oasis490.vercel.app" target="_blank" style="text-decoration: none;">
+                <button style="background-color: #0056FF; color: #FFFFFF; padding: 12px 24px; font-size: 1.125rem; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+                    Get Started
+                </button>
+            </a>
+        </div>
+
+        <div style="background-color: #F2F0EB; padding: 20px; font-size: 0.875rem; color: #888888;">
+            <p style="margin: 0;">Thank you for choosing <span style="color: #EE703C; font-weight: bold;">Urban Oasis</span>.</p>
+            <p style="margin: 0;">© 2024 Urban Oasis. All rights reserved.</p>
+        </div>
+    </body>
+</html>
+
         `;
 
         const response = await fetch(

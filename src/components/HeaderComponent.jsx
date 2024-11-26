@@ -206,33 +206,12 @@ const HeaderComponent = () => {
                             <ul className="" >
                                 {isLoggedIn ? (
                                     <>
-                                        {/*<li className="flex items-center px-4 py-2">*/}
-                                        {/*    {profilePic ? (*/}
-                                        {/*        <img*/}
-                                        {/*            src={profilePic}*/}
-                                        {/*            alt="User Profile"*/}
-                                        {/*            className="w-8 h-8 rounded-full mr-2"*/}
-                                        {/*        />*/}
-                                        {/*    ) : (*/}
-                                        {/*        <span className="w-8 h-8 flex items-center justify-center bg-gray-600 text-white rounded-full mr-2">*/}
-                                        {/*            {name.charAt(0).toUpperCase()}*/}
-                                        {/*        </span>*/}
-                                        {/*    )}*/}
-                                        {/*    <span>{name}</span>*/}
-                                        {/*</li>*/}
-                                        {/*<li>*/}
-                                        {/*    <button*/}
-                                        {/*        onClick={() => navigate("/userProfilePage")}*/}
-                                        {/*        className="block px-4 py-2 hover:bg-gray-700 w-full text-left"*/}
-                                        {/*    >*/}
-                                        {/*        Profile*/}
-                                        {/*    </button>*/}
-                                        {/*</li>*/}
                                         <li >
                                             <button
                                                 onClick={() => navigate("/userProfilePage")}
-                                                className="flex items-center px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                             >
+                                                <span >{name}</span >
                                                 {profilePic ? (
                                                     <img
                                                         src={profilePic}
@@ -245,7 +224,6 @@ const HeaderComponent = () => {
                                                         {name.charAt(0).toUpperCase()}
                                                     </span >
                                                 )}
-                                                <span >{name}</span >
                                             </button >
                                         </li >
                                         <li >
