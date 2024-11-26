@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(import.meta.env.VITE_STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.VITE_STRIPE_SECRET_KEY);
 
 export async function POST(req) {
     const reqBody = await req.json();
@@ -11,7 +11,7 @@ export async function POST(req) {
                 price_data: {
                     currency: 'usd',
                     product_data: {
-                        name: `${reqBody.eventTitle} - ${reqBody.eventDateTime}` ,
+                        name: `${reqBody.eventTitle} - ${reqBody.eventDateTime}`,
                     },
                     unit_amount: reqBody.price * 100,
                 },
@@ -23,16 +23,19 @@ export async function POST(req) {
                 }
             }
         ],
-        mode: 'payment',
-        success_url: `http://localhost:3000/paymentSuccess`,
-        cancel_url: `http://localhost:3000/paymentCancel`,
         metadata: {
             eventId: reqBody.eventId,
             userId: reqBody.userId,
+            email: reqBody.email,
+            quantity: reqBody.quantity,
         },
+        mode: 'payment',
+        success_url: `https://urban-oasis490.vercel.app/paymentSuccess`,
+        cancel_url: `https://urban-oasis490.vercel.app/paymentCancel`,
+
+
+
     });
     console.log(session.url);
-
     return new Response(session.url);
-
 }

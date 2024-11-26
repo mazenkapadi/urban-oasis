@@ -66,10 +66,10 @@ const PhotoCarousel = ({ eventId }, { eventTitle }) => {
     );
 
     const carouselSettings = {
-        dots: true,
-        infinite: (isLandingPage ? images.length > 1 : eventImages.length > 1), // Disable infinite scroll if only 1 image
+        dots: false,
+        infinite: (isLandingPage ? images.length > 1 : eventImages.length > 1),
         speed: 1000,
-        slidesToShow: 1, // Always show 1 image per slide
+        slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 5000,

@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig.js";
 import EventCard from "../EventCards/EventCard.jsx";
 import { collection, getDocs } from "firebase/firestore";
 import { getDateRange } from "../../services/dateUtils.js";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
 
 const EventCarousel = ({ rangeType }) => {
     const [events, setEvents] = useState([]);
-    const carouselRef = useRef(null);
 
     useEffect(() => {
         const { startDate, endDate } = getDateRange(rangeType);
@@ -34,31 +38,38 @@ const EventCarousel = ({ rangeType }) => {
     }, [rangeType]);
 
     return (
-        <div className="carousel-container scrollbar-hide py-6">
+        <div >
             <div className="relative mt-4">
-                <div
-                    ref={carouselRef}
-                    className="flex overflow-y-auto space-x-6 snap-y snap-mandatory"
-                    style={{ scrollBehavior: "smooth" }}
+                <Swiper
+                    modules={[Navigation, Pagination]}
+                    spaceBetween={8}
+                    slidesPerView="auto"
+                    navigation={false}
+                    pagination={false}
+                    loop={false}
+                    centeredSlides={false}
+                    allowTouchMove={true}
+                    freeMode={true}
                 >
                     {events.length > 0 ? (
                         events.map((event) => (
-                            <EventCard
-                                key={event.id}
-                                eventId={event.id}
-                                title={event.basicInfo.title}
-                                location={event.basicInfo.location.label || "Location not specified"}
-                                date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
-                                price={event.eventDetails.eventPrice}
-                                image={event.eventDetails.images[0]?.url || "/images/placeholder.png"}
-                            />
+                            <SwiperSlide key={event.id} style={{ width: "auto", padding: '8px'}}>
+                                <EventCard
+                                    eventId={event.id}
+                                    title={event.basicInfo.title}
+                                    location={event.basicInfo.location.label || "Location not specified"}
+                                    date={event.eventDetails.eventDateTime.toDate().toLocaleDateString()}
+                                    price={event.eventDetails.eventPrice}
+                                    image={event.eventDetails.images[0]?.url || "/images/placeholder.png"}
+                                />
+                            </SwiperSlide>
                         ))
                     ) : (
                         <div className="text-center text-gray-400 mt-8 w-full">
                             No events this {rangeType}!
                         </div>
                     )}
-                </div>
+                </Swiper>
             </div>
         </div>
     );

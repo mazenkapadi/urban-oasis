@@ -44,6 +44,24 @@ class SignUp {
 
             await setDoc(doc(db, 'Users', user.uid), userData);
             console.log('Email sign-up successful:', user);
+
+            const emailResponse = await fetch('https://urban-oasis490.vercel.app/api/signUp-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName,
+                    lastName,
+                    email,
+                }),
+            });
+
+            if (!emailResponse.ok) {
+                console.error('Error sending welcome email:', await emailResponse.text());
+                throw new Error('Failed to send welcome email');
+            }
+
             return user;
         } catch (error) {
             console.error('Error signing up with email', error);

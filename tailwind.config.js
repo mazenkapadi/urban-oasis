@@ -13,11 +13,11 @@ export default {
                 'accent-red': '#EB2032',       // Soft Yellow-Orange (Accent)
                 'accent-blue': '#0056FF',      // Bright Blue (Accent)
                 'accent-purple': '#8B5CF6',    // Soft Purple (Accent)
-                'secondary-dark-1': '#171717', // Dark Gray (Secondary)
-                'secondary-dark-2': '#171A1C', // Dark Gray (Secondary)
-                'secondary-light-1': '#E4E0DB', // Light Gray (Secondary)
-                'secondary-light-2': '#F2F0EB', // Light Gray (Secondary)
-                'secondary-light-3': '#EEEDE9', // Light Gray (Secondary)
+                'Dark-D1': '#171717', // Dark Gray (Secondary)
+                'Dark-D2': '#171A1C', // Dark Gray (Secondary)
+                'Light-L1': '#E4E0DB', // Light Gray (Secondary)
+                'Light-L2': '#F2F0EB', // Light Gray (Secondary)
+                'Light-L3': '#EEEDE9', // Light Gray (Secondary)
             },
             fontFamily: {
                 archivo: ['Archivo', 'sans-serif'],

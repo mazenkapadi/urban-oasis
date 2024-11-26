@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, deleteField } from 'firebase/firestore';
+import { arrayUnion, deleteField, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, TicketIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { db, auth } from "../firebaseConfig.js";
+import { CalendarDaysIcon, MapPinIcon, MinusIcon, PlusIcon, TicketIcon } from "@heroicons/react/20/solid";
+import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { auth, db } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
-import LoadingPage from "./LoadingPage.jsx"
+import LoadingPage from "./service/LoadingPage.jsx"
 import { Button, Modal } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
@@ -21,12 +20,22 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import {
     EmailIcon,
-    EmailShareButton, FacebookIcon, FacebookMessengerIcon, FacebookMessengerShareButton,
-    FacebookShareButton, LinkedinIcon,
-    LinkedinShareButton, RedditIcon, RedditShareButton,
-    TwitterShareButton, WhatsappIcon, WhatsappShareButton, XIcon,
+    EmailShareButton,
+    FacebookIcon,
+    FacebookMessengerIcon,
+    FacebookMessengerShareButton,
+    FacebookShareButton,
+    LinkedinIcon,
+    LinkedinShareButton,
+    RedditIcon,
+    RedditShareButton,
+    TwitterShareButton,
+    WhatsappIcon,
+    WhatsappShareButton,
+    XIcon,
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
+
 
 const EventPage = () => {
     const [ quantity, setQuantity ] = useState(1);
@@ -56,6 +65,7 @@ const EventPage = () => {
     const [ eventAttendee, setEventAttendee ] = useState('');
     const [ userHasRSVPed, setUserHasRSVPed ] = useState(false);
     const [ userRSVPQuantity, setUserRSVPQuantity ] = useState(0);
+    const [ availableTickets, setAvailableTickets ] = useState(0);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -86,11 +96,21 @@ const EventPage = () => {
         hostId: ''
     });
 
+    // const handleIncrement = () => {
+    //     if (isPaidEvent || (quantity < 10)) {
+    //         setQuantity(quantity + 1);
+    //     }
+    // };
+
     const handleIncrement = () => {
-        if (isPaidEvent || (quantity < 10)) {
+        const maxQuantity = isPaidEvent ? availableTickets : Math.min(availableTickets, 10);
+        if (quantity < maxQuantity) {
             setQuantity(quantity + 1);
+        } else {
+            alert(`Only ${availableTickets} tickets are available.`);
         }
     };
+
 
     const handleDecrement = () => {
         if (quantity > 1) {
@@ -183,26 +203,55 @@ const EventPage = () => {
             const eventData = eventDocSnap.data();
             const eventCapacity = eventData.eventDetails.capacity || 0;
             const eventAttendee = eventData.attendeesCount || 0;
+            const availableTickets = eventCapacity - eventAttendee;
 
-            if (eventAttendee >= eventCapacity) {
+            if (availableTickets <= 0) {
                 await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
+                return;
+            }
+
+            if (totalAttendees > availableTickets) {
+                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
                 return;
             }
 
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
-
             const rsvpId = existingEventRsvpId || existingUserRsvpId || uuidv4();
 
             await saveOrUpdateRsvp(eventRsvpsDocRef, rsvpId, rsvpData, eventId, true);
             await saveOrUpdateRsvp(userRsvpsDocRef, rsvpId, rsvpData, userId, false);
-
             await updateAttendeesCount(eventId, eventDocRef);
 
             console.log("RSVP successfully saved");
+
             setModalOpen(true);
             setUserHasRSVPed(true);
             setUserRSVPQuantity(totalAttendees);
+            const sendQRCodeEmail = async (rsvpData) => {
+                console.log("Payload sent to /api/sendQR-email:", rsvpData); // Add this line
+                try {
+                    const response = await fetch('/api/sendQR-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(rsvpData),
+                    });
+
+                    if (!response.ok) {
+                        console.error("Failed to send QR code email:", await response.text());
+                        alert("There was an issue sending your RSVP confirmation email.");
+                        return;
+                    }
+
+                    console.log("QR code email sent successfully");
+                    alert("Your RSVP confirmation email with the QR code has been sent!");
+                } catch (error) {
+                    console.error("Error sending QR code email:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            };
+
+            setAvailableTickets(availableTickets - totalAttendees);
         } catch (error) {
             console.error("Error handling RSVP:", error);
         }
@@ -244,9 +293,15 @@ const EventPage = () => {
             const eventData = eventDocSnap.data();
             const eventCapacity = eventData.eventDetails.capacity || 0;
             const eventAttendee = eventData.attendeesCount || 0;
+            const availableTickets = eventCapacity - eventAttendee;
 
-            if (eventAttendee >= eventCapacity) {
+            if (availableTickets <= 0) {
                 await handleWaitlist(eventWaitlistDocRef, rsvpData);
+                return;
+            }
+
+            if (quantity > availableTickets) {
+                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
                 return;
             }
 
@@ -256,7 +311,7 @@ const EventPage = () => {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(checkoutData),
             });
-            const sessionUrl = await response.text();
+            window.location.href = await response.text();
 
             const existingEventRsvpId = await findExistingRsvpId(eventRsvpsDocRef, userId, eventId);
             const existingUserRsvpId = await findExistingRsvpId(userRsvpsDocRef, userId, eventId);
@@ -268,7 +323,9 @@ const EventPage = () => {
 
             await updateAttendeesCount(eventId, eventDocRef);
 
-            window.location.href = sessionUrl;
+            setAvailableTickets(availableTickets - quantity);
+            setModalOpen(true);
+            setUserHasRSVPed(true);
         } catch (error) {
             console.error("Error handling checkout:", error);
         }
@@ -314,21 +371,17 @@ const EventPage = () => {
                     return;
                 }
 
-                // Delete the RSVP entry from EventRSVPs
                 await updateDoc(eventRsvpsDocRef, {
                     [`rsvps.${userRsvpEntryId}`]: deleteField()
                 });
 
-                // Delete the RSVP entry from UserRSVPs
                 const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
                 await updateDoc(userRsvpsDocRef, {
                     [`rsvps.${userRsvpEntryId}`]: deleteField()
                 });
 
-                // Update the attendee count in the event document
                 await updateAttendeesCount(eventId, eventDocRef);
 
-                // Notify waitlisted users if any
                 const waitlistDocSnap = await getDoc(waitlistDocRef);
                 const waitlist = waitlistDocSnap.exists() ? waitlistDocSnap.data().waitlist || [] : [];
 
@@ -431,6 +484,7 @@ const EventPage = () => {
 
     const notifyWaitlist = (waitlist) => {
         waitlist.forEach(user => {
+            // emailUser(value);
             console.log(`Notification sent to waitlist user: ${user.email}`);
         });
     };
@@ -508,6 +562,27 @@ const EventPage = () => {
         }
     };
 
+    // const emailUser = (value) => {
+    //     const emailData = {
+    //         user_name: value.name,
+    //         user_email: value.email,
+    //         message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
+    //     };
+    //
+    //     emailjs.send(
+    //         import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY,
+    //         'template_5lpk33l',
+    //         emailData,
+    //         import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
+    //     )
+    //            .then((result) => {
+    //                console.log(`Email successfully sent to ${value.email}`);
+    //            })
+    //            .catch((error) => {
+    //                console.error(`Failed to send email to ${value.email}:`, error);
+    //            });
+    // };
+
     useEffect(() => {
         const fetchEventData = async () => {
             if (eventId) {
@@ -527,6 +602,8 @@ const EventPage = () => {
                     setEventRefundPolicy(data.policies.refundPolicy);
                     setEventCapacity(data.eventDetails.capacity);
                     setEventAttendee(data.attendeesCount || 0);
+                    const ticketsAvailable = data.eventDetails.capacity - (data.attendeesCount || 0);
+                    setAvailableTickets(ticketsAvailable);
 
                     if (data.hostId) {
                         const hostDocRef = doc(db, 'Users', data.hostId);
@@ -632,7 +709,6 @@ const EventPage = () => {
                 </div >
                 <div
                     className="flex flex-col justify-center items-center py-12 bg-gradient-to-r from-blue-500 via-blue-800 to-blue-600" >
-
                     <div className="box-border rounded-lg bg-gray-900 p-8 flex flex-col w-10/12 h-fit shadow-lg" >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
@@ -650,12 +726,15 @@ const EventPage = () => {
                                          dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
-                                {/* <GoogleMapComponent lat={eventLat} lon={eventLong}  /> */}
                             </div >
-
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
                                 <div className="flex flex-col p-6 h-fit gap-4 bg-gray-800 rounded-lg shadow-lg" >
                                     <div className="flex space-x-4" >
+                                        {availableTickets < 10 && availableTickets > 0 && (
+                                            <p className="text-white text-center" >
+                                                Only {availableTickets} tickets left!
+                                            </p >
+                                        )}
                                         <div
                                             className="flex justify-center items-center w-52 h-12 bg-gray-500 bg-opacity-30 border-4 border-gray-500 rounded-lg" >
                                             <TicketIcon className="text-gray-300 w-6 h-6" />

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 import {auth, db} from "../../firebaseConfig.js";
-import LoadingPage from "../LoadingPage.jsx";
+import LoadingPage from "../service/LoadingPage.jsx";
 import {addDoc, collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc} from "firebase/firestore";
 import HeaderComponent from "../../components/HeaderComponent.jsx";
 import {

@@ -6,10 +6,9 @@ import SideBar from "../../components/User/SideBar.jsx";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import HostEventCard from '../../components/EventCards/HostEventCard.jsx';
 import { onAuthStateChanged } from "firebase/auth";
-import LoadingPage from "../LoadingPage.jsx";
+import LoadingPage from "../service/LoadingPage.jsx";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import StarIcon from "@mui/icons-material/Star";
 import { Rating } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -71,25 +70,6 @@ const HostDashboard = () => {
             setIsLoading(false);
         }
     };
-
-    // const fetchHostedEvents = async (hostId) => {
-    //     try {
-    //         const eventsRef = collection(db, 'Events');
-    //         const q = query(eventsRef, where('hostId', '==', hostId));
-    //         const querySnapshot = await getDocs(q);
-    //
-    //         if (!querySnapshot.empty) {
-    //             const events = querySnapshot.docs.map((doc) => ({
-    //                 id: doc.id,
-    //                 ...doc.data()
-    //             }));
-    //             setHostedEvents(events);
-    //         }
-    //     } catch (err) {
-    //         console.error('Error fetching hosted events:', err);
-    //         setError('An error occurred while fetching hosted events.');
-    //     }
-    // };
 
     const fetchHostedEvents = async (hostId) => {
         try {
@@ -175,8 +155,8 @@ const HostDashboard = () => {
         datasets: [
             {
                 data: [ totalAttendees, totalCapacity - totalAttendees ],
-                backgroundColor: [ '#4CAF50', '#FFC107' ],
-                hoverBackgroundColor: [ '#45a049', '#ffca28' ],
+                backgroundColor: [ '#EE703C', '#EB2032' ],
+                hoverBackgroundColor: [ '#EE702D', '#EB2043' ],
             }
         ]
     };
@@ -186,25 +166,22 @@ const HostDashboard = () => {
         datasets: [
             {
                 data: [ totalFutureEvents, totalPastEvents ],
-                backgroundColor: [ '#2196F3', '#F44336' ],
-                hoverBackgroundColor: [ '#1976D2', '#D32F2F' ],
+                backgroundColor: [ '#0056FF', '#8B5CF6' ],
+                hoverBackgroundColor: [ '#0056D5', '#8B5CD5' ],
             }
         ]
     };
 
-    // Function to render a gray pie chart
     const renderGrayPie = () => ({
         labels: [ 'No Data' ],
         datasets: [
             {
                 data: [ 1 ],
-                backgroundColor: [ '#B0BEC5' ], // Gray color for no data
-                hoverBackgroundColor: [ '#9E9E9E' ],
+                backgroundColor: [ '#171A1C' ], // Gray color for no data
+                hoverBackgroundColor: [ '#171A2D' ],
             }
         ]
     });
-
-
 
     return (
         <div className="bg-gray-100 min-h-screen flex justify-start p-0" >
