@@ -4,17 +4,15 @@ import fetch from 'node-fetch';
 export async function POST(req) {
     try {
         const reqBody = await req.json();
-        const { rsvpId, userId, eventId, email, quantity, eventTitle, eventDateTime } = reqBody;
+        const {userId, eventId, email, quantity, eventTitle, eventDateTime } = reqBody;
 
-        if (!rsvpId || !userId || !eventId || !email || !quantity || !eventTitle || !eventDateTime) {
+        if (!userId || !eventId || !email || !quantity || !eventTitle || !eventDateTime) {
             return new Response('Missing required fields', { status: 400 });
         }
 
         const qrData = JSON.stringify({
-            rsvpId,
             userId,
             eventId,
-            email,
             quantity,
             eventTitle,
             eventDateTime,
@@ -24,14 +22,14 @@ export async function POST(req) {
 
         const subject = `Your RSVP for ${eventTitle}`;
         const html_content = `
-            <html>
+            <html lang="en">
                 <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px;">
                     <h1>Your RSVP Details</h1>
                     <p><strong>Event:</strong> ${eventTitle}</p>
                     <p><strong>Date & Time:</strong> ${eventDateTime}</p>
                     <p><strong>Quantity:</strong> ${quantity}</p>
                     <p>Below is your QR code:</p>
-                    <img src="${qrCodeDataURL}" alt="QR Code" style="width: 200px; height: 200px;" />
+                    <img src="${qrCodeDataURL}" alt="QR Code" style="width: 200px; height: 200px;">
                     <p>Please show this code at the event for validation.</p>
                 </body>
             </html>

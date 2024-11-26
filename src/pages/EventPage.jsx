@@ -229,29 +229,25 @@ const EventPage = () => {
             setModalOpen(true);
             setUserHasRSVPed(true);
             setUserRSVPQuantity(totalAttendees);
-            const sendQRCodeEmail = async (rsvpData) => {
-                console.log("Payload sent to /api/sendQR-email:", rsvpData); // Add this line
-                try {
-                    const response = await fetch('/api/sendQR-email', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(rsvpData),
-                    });
+            try {
+                const response = await fetch('/api/sendQR-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rsvpData),
+                });
 
-                    if (!response.ok) {
-                        console.error("Failed to send QR code email:", await response.text());
-                        alert("There was an issue sending your RSVP confirmation email.");
-                        return;
-                    }
-
-                    console.log("QR code email sent successfully");
-                    alert("Your RSVP confirmation email with the QR code has been sent!");
-                } catch (error) {
-                    console.error("Error sending QR code email:", error);
-                    alert("An error occurred. Please try again.");
+                if (!response.ok) {
+                    console.error("Failed to send QR code email:", await response.text());
+                    alert("There was an issue sending your RSVP confirmation email.");
+                    return;
                 }
-            };
 
+                console.log("QR code email sent successfully");
+                alert("Your RSVP confirmation email with the QR code has been sent!");
+            } catch (error) {
+                console.error("Error sending QR code email:", error);
+                alert("An error occurred. Please try again.");
+            }
             setAvailableTickets(availableTickets - totalAttendees);
         } catch (error) {
             console.error("Error handling RSVP:", error);

@@ -147,9 +147,14 @@ const HostEventPage = () => {
     const handleModifyButton = (e) => {
 
     };
-    const handleContactButton = (e) => {
 
-    };
+    const handleSendEmail = async (email, subject, html_content) => {
+
+    }
+
+    const handleBlastEmail = async (emailList, subject, html_content) => {
+
+    }
 
     return (
         <>
@@ -239,9 +244,17 @@ const HostEventPage = () => {
                     </div >
                     {isHost && (
                         <div className="mt-6" >
-                            <label className=" text-Dark-D2a font-lalezar text-body font-medium mb-2" >
-                                Attendees
-                            </label >
+                            <div className="flex items-center justify-between mb-4" >
+                                <label className="text-Dark-D2a font-lalezar text-body font-medium" >
+                                    Attendees
+                                </label >
+                                <button
+                                    onClick={handleBlastEmail}
+                                    className="bg-primary-dark text-primary-light px-4 py-2 rounded-lg"
+                                >
+                                    Blast Email
+                                </button >
+                            </div >
                             <div className="bg-primary-light rounded-lg p-4 shadow-md" >
                                 {attendeeDetails.map((attendee, index) => (
                                     <div
@@ -268,7 +281,7 @@ const HostEventPage = () => {
                                             </button >
                                             <button
                                                 className="bg-Dark-D1 text-Light-L1 font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
-                                                onClick={handleContactButton}
+                                                onClick={handleSendEmail}
                                             >
                                                 Contact Attendee
                                             </button >
