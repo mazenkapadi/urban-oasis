@@ -164,8 +164,12 @@ body {
 .shadow-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.2); /* Optional overlay color */
+    background: rgba(0, 0, 0, 0.2);
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
     z-index: 2;
-    pointer-events: none; /* Ensures it doesn't interfere with interactions */
+    pointer-events: none;
 }
+
+/*input[type="datetime-local"]::-webkit-calendar-picker-indicator {*/
+/*    display: none;*/
+/*}*/
