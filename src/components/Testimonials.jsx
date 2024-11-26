@@ -32,11 +32,11 @@ const Testimonials = () => {
     const settings = {
         dots: true,
         infinite: testimonials.length > 1,
-        speed: 1000,
+        speed: 2000,
         slidesToShow: Math.min(testimonials.length, 2),
         slidesToScroll: 1,
         autoplay: testimonials.length > 1,
-        autoplaySpeed: 4000,
+        autoplaySpeed: 3000,
         pauseOnHover: true,
         arrows: false,
         centerMode: true,

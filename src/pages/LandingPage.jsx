@@ -13,7 +13,7 @@ import { auth, db } from "../firebaseConfig.js";
 function LandingPage() {
     const navigate = useNavigate();
 
-    const [userPreferences, setUserPreferences] = useState(null);
+    const [ userPreferences, setUserPreferences ] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -80,31 +80,24 @@ function LandingPage() {
 
             <div className="flex-grow pt-2 bg-primary-light text-primary-dark" >
                 <div className="container mx-auto px-6 space-y-8" >
-
-
                     {userPreferences && userPreferences.categories && userPreferences.categories.length > 0 && (
-                        <div>
-                            <h1 className="text-3xl font-bold mb-1">Suggested Events For You</h1>
+                        <div >
+                            <h1 className="text-3xl font-bold mb-1" >Suggested Events For You</h1 >
                             <EventCarousel
-                                rangeType="week" // You can define 'future' in your dateUtils
+                                rangeType="week"
                                 categories={userPreferences.categories}
                             />
-                        </div>
+                        </div >
                     )}
-
-
-
                     <div id="weekEvents" >
                         <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
                         <EventCarousel rangeType="week" />
                     </div >
-
                     <div >
                         <h1 className="text-3xl font-bold mb-1" >Events Later this Month</h1 >
                         <EventCarousel rangeType="month" />
                     </div >
                 </div >
-
                 <div className="flex justify-center mt-8 pb-6" >
                     <button
                         onClick={handleViewAll}
