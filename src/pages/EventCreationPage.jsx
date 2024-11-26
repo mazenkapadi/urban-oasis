@@ -35,6 +35,8 @@ function EventCreationPage() {
     const [ alcInfo, setAlcInfo ] = useState('');
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ previewImages, setPreviewImages ] = useState(false);
+    const [ eventLong, setEventLong ] = useState(0);
+    const [ eventLat, setEventLat ] = useState(0);
     const [ eventImagesUrls, setEventImagesUrls ] = useState([]);
     const [ selectedPrimaryCategory, setSelectedPrimaryCategory ] = useState('');
     const [ selectedSubcategories, setSelectedSubcategories ] = useState([]);
@@ -69,7 +71,6 @@ function EventCreationPage() {
     const [ eventLocationEmpty, setEventLocationEmpty ] = useState(false);
     const [ eventDateTimeEmpty, setEventDateTimeEmpty ] = useState(false);
     const [ eventCapacityEmpty, setEventCapacityEmpty ] = useState(false);
-
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -137,6 +138,28 @@ function EventCreationPage() {
         );
     };
 
+    const geocodePlaceId = async (placeId)=> {
+        try {
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            const request = {
+                placeId: placeId,
+                fields: [ 'geometry' ],
+            };
+
+            service.getDetails(request, (place, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    const location = place.geometry.location;
+                    setEventLat(location.lat());
+                    setEventLong(location.lng());
+                } else {
+                    console.error('Error geocoding place ID:', status);
+                }
+            });
+        } catch (error) {
+            console.error('Error geocoding place ID:', error);
+        }
+    };
+
     const handleSubmit = async () => {
         const eventDateTimeTimestamp = Timestamp.fromDate(new Date(eventDateTime));
         try {
@@ -194,6 +217,10 @@ function EventCreationPage() {
                     createdAt: Timestamp.now(),
                     updatedAt: Timestamp.now(),
                 },
+                _geoloc: {
+                    lat: eventLat,
+                    lng: eventLong,
+                }
             };
             await eventCreation.writeEventData(eventData);
             setError(null);
@@ -233,11 +260,18 @@ function EventCreationPage() {
         setEventLocationEmpty(false);
         setEventLocationEmpty(false);
         setEventCapacityEmpty(false);
+        setEventLong(0);
+        setEventLat(0);
     };
 
     const handleModalClose = () => {
         setModalOpen(false);
         setTimeout(() => resetForm(), 3000);
+    };
+
+    const handleLocationChange = (value) => {
+        setEventLocation(value);
+        geocodePlaceId(value.value.place_id.toString());
     };
 
 
@@ -308,7 +342,7 @@ function EventCreationPage() {
                                         required
                                         apiKey={googleMapsConfig.apiKey}
                                         selectProps={{
-                                            value: eventLocation, onChange: setEventLocation,
+                                            value: eventLocation, onChange: handleLocationChange,
                                             styles: {
                                                 placeholder: (base) => ({
                                                     ...base,
@@ -344,8 +378,8 @@ function EventCreationPage() {
                                                 }),
                                                 singleValue: (provided) => ({
                                                     ...provided,
-                                                    color: 'var(--primary-light)',
-                                                    backgroundColor: 'var(--primary-light)',
+                                                    color: 'var(Dark-D1)',
+                                                    backgroundColor: 'var(primary-light)',
                                                 }),
 
                                             },
