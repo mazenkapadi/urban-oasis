@@ -32,6 +32,14 @@ const SideBar = () => {
         navigate('/signIn');
     };
 
+    const handleHostButtonClick = () => {
+        if (isHost) {
+            navigate('/hostProfilePage');
+        } else {
+            navigate('/userProfilePage/host-signup');
+        }
+    };
+
     return (
         <div
             className="flex flex-col bg-secondary-dark-2 shadow-lg rounded-lg p-6 h-[calc(100vh-2rem)] fixed top-4 left-4 overflow-y-auto text-primary-light" >
@@ -62,7 +70,7 @@ const SideBar = () => {
 
             <div className="mt-auto" >
                 <button
-                    onClick={() => navigate('/hostProfilePage')}
+                    onClick={handleHostButtonClick}
                     className="sidebar-link w-full text-left"
                 >
                     <UserIcon className="sidebar-icon" />

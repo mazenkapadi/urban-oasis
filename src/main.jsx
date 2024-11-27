@@ -34,6 +34,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import PreferencePage from "./pages/User/PreferencePage.jsx";
 import TermsServicePage from "./pages/TermsServicePage.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
+import RSVPValidationPage from "./pages/RSVPValidationPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
     {
         path: "/privacy",
         element: <PrivacyPage />
+    },
+    {
+        path: "/rsvp/validate",
+        element: <RSVPValidationPage />
     },
     {
         path: "*",

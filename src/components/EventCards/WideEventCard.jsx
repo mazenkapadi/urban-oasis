@@ -20,11 +20,6 @@ const WideEventCard = ({ event }) => {
         });
     }, [event.id]);
 
-    // const checkIfBookmarked = async (userId, eventId) => {
-    //     const isBookmarked = await getBookmarkStatus(userId, eventId);
-    //     setIsBookmarked(isBookmarked);
-    // };
-
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
         if(userId) {
@@ -100,5 +95,3 @@ const WideEventCard = ({ event }) => {
 
 export default WideEventCard;
 
-
-// ToDo - work on this doesnt update the bookmarked events list on firestore

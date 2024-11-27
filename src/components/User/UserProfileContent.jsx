@@ -16,16 +16,13 @@ const UserProfileContent = () => {
     const [ timeLeft, setTimeLeft ] = useState({});
     const navigate = useNavigate();
 
-    // Function to handle profile edit navigation
     const handleEditProfile = () => navigate('/userProfilePage/contact-info');
 
-    // Function to get user initials
     const getInitials = (name) => {
         const nameParts = name.split(' ');
         return nameParts.map(part => part[0]).join('').toUpperCase();
     };
 
-    // Effect to listen for authentication state changes
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {

@@ -13,6 +13,7 @@ import {
 import { db, auth } from "../../firebaseConfig.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline/index.js";
+import { format } from "date-fns";
 
 const HostChatList = () => {
     const [ chats, setChats ] = useState([]);
@@ -182,15 +183,25 @@ const HostChatList = () => {
 
                         <div className="flex-grow overflow-y-auto mb-4" >
                             {messages.map((msg, index) => (
-                                <div
-                                    key={index}
-                                    className={`mb-2 p-2 w-fit rounded-lg ${
-                                        msg.senderId === auth.currentUser.uid
-                                            ? "bg-blue-500 text-white self-end"
-                                            : "bg-gray-200 text-black self-start"
-                                    }`}
-                                >
-                                    {msg.msg}
+                                <div key={index} className="mb-2" >
+                                    <div
+                                        className={`flex ${
+                                            msg.senderId === userId ? "justify-end" : "justify-start"
+                                        }`}
+                                    >
+                                        <div
+                                            className={`max-w-xs px-4 py-2 rounded-lg ${
+                                                msg.senderId === userId
+                                                    ? "bg-accent-blue text-white"
+                                                    : "bg-Light-L3 dark:bg-Dark-D1 text-black dark:text-white"
+                                            }`}
+                                        >
+                                            <p className="text-sm font-inter" >{msg.msg}</p >
+                                            <p className="text-xs text-right opacity-75 mt-1" >
+                                                {format(msg.ts.toDate(), "p")}
+                                            </p >
+                                        </div >
+                                    </div >
                                 </div >
                             ))}
                             <div ref={messagesEndRef} />

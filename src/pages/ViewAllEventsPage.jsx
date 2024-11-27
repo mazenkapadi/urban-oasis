@@ -20,16 +20,13 @@ const ViewAllEventsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Extract query parameters from the URL
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get('query') || '';
 
-    // Toggle view mode between grid and list
     const handleViewToggle = () => {
         setViewMode(viewMode === 'grid' ? 'list' : 'grid');
     };
 
-    // Functions to apply or remove filters
     const onApplyFilters = (newFilters) => {
         setActiveFilters((prevFilters) => ({
             ...prevFilters,
