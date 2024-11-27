@@ -1,61 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { autocomplete } from '@algolia/autocomplete-js';
-import { createRoot } from 'react-dom/client';
-import { searchClient } from '../algoliaConfig';
-import '@algolia/autocomplete-theme-classic';
-import { ClockIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { autocomplete } from "@algolia/autocomplete-js";
+import { createRoot } from "react-dom/client";
+import { searchClient } from "../algoliaConfig";
+import { DateRangePicker } from "react-date-range";
+import "@algolia/autocomplete-theme-classic";
+import "react-date-range/dist/styles.css"; // Main style for DateRangePicker
+import "react-date-range/dist/theme/default.css"; // Theme style for DateRangePicker
+import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function debounce(func, delay) {
-    let timer;
-    return function (...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => func.apply(this, args), delay);
-    };
-}
+const RECENT_SEARCH_KEY = "RECENT_SEARCHES";
 
-const RECENT_SEARCH_KEY = 'RECENT_SEARCHES';
-
-const AutocompleteSearch = () => {
+const AutocompleteSearch = ({ onApplyFilters }) => {
     const containerRef = useRef(null);
     const panelRootRef = useRef(null);
     const rootRef = useRef(null);
-    const [zipcode, setZipcode] = useState('');
-    const [searchDate, setSearchDate] = useState('');
-    const [searchInput, setSearchInput] = useState('');
+    const [locationInput, setLocationInput] = useState("");
+    const [dateRange, setDateRange] = useState({
+        startDate: null,
+        endDate: null,
+    });
+    const [searchInput, setSearchInput] = useState("");
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // Helper function to save recent searches
+    // Save recent searches in localStorage
     const saveRecentSearch = (query) => {
-        const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
+        const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || "[]");
         const updatedSearches = [query, ...recentSearches.filter((item) => item !== query)].slice(0, 5);
         localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(updatedSearches));
     };
 
-    // Define the handleSearch function
     const handleSearch = (query) => {
         const searchQuery = query || searchInput;
-        if (searchQuery) {
+        const { startDate, endDate } = dateRange;
+
+        if (searchQuery || startDate || endDate) {
             saveRecentSearch(searchQuery);
-            const searchParams = new URLSearchParams();
-            searchParams.set('query', searchQuery);
-            if (zipcode) searchParams.set('zipcode', zipcode);
-            if (searchDate) searchParams.set('date', searchDate);
+            const searchParams = new URLSearchParams(location.search);
+            searchParams.set("query", searchQuery || "");
+
+            if (locationInput) searchParams.set("location", locationInput);
+            if (startDate && endDate) {
+                searchParams.set("startDate", startDate.toISOString());
+                searchParams.set("endDate", endDate.toISOString());
+            }
 
             navigate(`/events?${searchParams.toString()}`);
+
+            // Call onApplyFilters if available
+            if (onApplyFilters) {
+                onApplyFilters({
+                    dateRange: { startDate, endDate },
+                });
+            }
         }
+    };
+
+    const handleDateChange = (ranges) => {
+        setDateRange({
+            startDate: ranges.selection.startDate,
+            endDate: ranges.selection.endDate,
+        });
     };
 
     useEffect(() => {
         if (!containerRef.current) return;
 
-        const debouncedSearch = debounce((query) => {
-            console.log('Search Query Sent:', query);
-        }, 300);
-
         const autocompleteInstance = autocomplete({
             container: containerRef.current,
-            placeholder: 'Search events...',
+            placeholder: "Search events...",
             openOnFocus: true,
             renderer: { createElement: React.createElement, Fragment: React.Fragment, render: () => {} },
             render({ children }, root) {
@@ -69,20 +84,17 @@ const AutocompleteSearch = () => {
             getSources({ query }) {
                 if (!query) return [];
 
-                debouncedSearch(query);
-
-                const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]');
+                const recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || "[]");
 
                 return [
-                    // Recent Searches Source
                     {
-                        sourceId: 'recentSearches',
+                        sourceId: "recentSearches",
                         getItems() {
                             return recentSearches
                                 .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
                                 .map((item) => ({
                                     label: item,
-                                    type: 'recent',
+                                    type: "recent",
                                 }));
                         },
                         templates: {
@@ -102,42 +114,6 @@ const AutocompleteSearch = () => {
                             },
                         },
                     },
-                    // Algolia Events Source
-                    {
-                        sourceId: 'events',
-                        getItems() {
-                            return searchClient
-                                .search([
-                                    {
-                                        indexName: 'events',
-                                        query,
-                                        params: {
-                                            hitsPerPage: 5,
-                                            attributesToRetrieve: ['basicInfo.title'],
-                                            attributesToHighlight: ['basicInfo.title'],
-                                        },
-                                    },
-                                ])
-                                .then(({ results }) => results[0]?.hits || []);
-                        },
-                        templates: {
-                            item({ item }) {
-                                const title = item.basicInfo?.title || 'Untitled Event';
-                                return (
-                                    <div
-                                        className="autocomplete-item flex items-center cursor-pointer px-4 py-2 hover:bg-gray-100"
-                                        onClick={() => {
-                                            setSearchInput(title);
-                                            handleSearch(title);
-                                        }}
-                                    >
-                                        <MagnifyingGlassIcon className="h-5 w-5 text-blue-400 mr-2" />
-                                        <span className="text-gray-700">{title}</span>
-                                    </div>
-                                );
-                            },
-                        },
-                    },
                 ];
             },
             onSubmit({ state }) {
@@ -149,55 +125,53 @@ const AutocompleteSearch = () => {
         });
 
         return () => autocompleteInstance.destroy();
-    }, [navigate, zipcode, searchDate, searchInput]);
-
-    const handleZipcodeChange = (e) => {
-        const value = e.target.value;
-        if (/^\d{0,5}$/.test(value)) {
-            setZipcode(value);
-        }
-    };
-
-    const handleEnterPress = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch(searchInput);
-        }
-    };
-
-    const handleSearchButtonClick = () => {
-        handleSearch(searchInput);
-    };
+    }, [navigate, locationInput, dateRange, searchInput]);
 
     return (
-        <div className="flex items-center space-x-4 rounded-lg p-4 bg-transparent">
-            {/* Zipcode Input */}
-            <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
+        <div className="flex items-center space-x-4 p-4 bg-transparent relative">
+            {/* Zipcode or City Input */}
+            <div className="relative w-full max-w-xs">
                 <input
                     type="text"
-                    placeholder="Zipcode"
-                    value={zipcode}
-                    onChange={handleZipcodeChange}
-                    className="bg-transparent border-none outline-none text-gray-700 w-24 text-center"
+                    placeholder="Zipcode or City"
+                    value={locationInput}
+                    onChange={(e) => setLocationInput(e.target.value)}
+                    className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-400 focus:outline-none"
                 />
             </div>
 
-            {/* Date Picker */}
-            <div className="flex items-center bg-white bg-opacity-70 rounded-lg px-4 py-2">
-                <input
-                    type="date"
-                    value={searchDate}
-                    onChange={(e) => setSearchDate(e.target.value)}
-                    className="bg-transparent border-none outline-none text-gray-700 text-center"
-                />
+            {/* Date Range Picker */}
+            <div className="relative w-full max-w-xs">
+                <button
+                    className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-400 focus:outline-none whitespace-nowrap overflow-hidden font-normal"
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                >
+                    {dateRange.startDate && dateRange.endDate
+                        ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
+                        : "All Dates"}
+                </button>
+
+                {showDatePicker && (
+                    <div className="absolute top-14 z-50 bg-white shadow-lg p-8">
+                        <DateRangePicker
+                            ranges={[{
+                                startDate: dateRange.startDate || new Date(),
+                                endDate: dateRange.endDate || new Date(),
+                                key: "selection",
+                            }]}
+                            onChange={handleDateChange}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Autocomplete Container */}
-            <div ref={containerRef} className="flex-grow relative w-full bg-transparent"></div>
+            <div ref={containerRef} className="flex-grow relative w-full bg-white"></div>
 
             {/* Search Button */}
             <button
                 className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"
-                onClick={handleSearchButtonClick}
+                onClick={() => handleSearch(searchInput)}
             >
                 Search
             </button>

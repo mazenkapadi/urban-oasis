@@ -1,110 +1,108 @@
-import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import { categorizedOptions } from "../services/categoryData";
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Slider from "@mui/material/Slider";
+import { formatDateForFilter } from "../utils/dateHelpers.jsx";
 
-const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) => {
-    const {
-        dateFilter = '',
-        paid = null,
-        availability = '',
-        customDate = '',
-        nearMe = false,
-        priceRange = { min: '', max: '' },
-        category = [],
-    } = activeFilters;
+const FiltersComponent = ({
+                              activeFilters,
+                              onApplyFilters,
+                              removeFilter,
+                          }) => {
+    const categories = [
+        { label: "Film & Media", count: 2 },
+        { label: "Food & Drink", count: 4 },
+        { label: "Art", count: 2 },
+        { label: "Comedy", count: 2 },
+        { label: "Family & Kids", count: 1 },
+        { label: "Health", count: 3 },
+        { label: "Mental Health", count: 2 },
+        { label: "Music", count: 2 },
+        { label: "Networking", count: 1 },
+        { label: "Photography & Art Exhibits", count: 2 },
+        { label: "Shopping & Markets", count: 1 },
+        { label: "Spirituality & Wellness", count: 2 },
+        { label: "Technology", count: 0 },
+        { label: "Uncategorized", count: 1 },
+        { label: "Wine Tasting", count: 1 },
+    ];
 
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
-    const [selectedPrimaryCategory, setSelectedPrimaryCategory] = useState('');
-    const [selectedSubcategories, setSelectedSubcategories] = useState([]);
-    const [nearMeChecked, setNearMeChecked] = useState(nearMe);
+    const [showMoreCategories, setShowMoreCategories] = useState(false);
+    const visibleCategoryCount = 5; // Number of categories to show in "Show Less" mode
+    const [priceRange, setPriceRange] = useState([0, 1000]); // Default price range
 
-    // Handle Price Range Changes
-    useEffect(() => {
-        if (minPrice || maxPrice) {
-
-            onApplyFilters({ 'eventDetails.eventPrice': { min: minPrice, max: maxPrice } });
+    // Handle Paid/Free Filter
+    const handlePaidChange = (paidStatus) => {
+        if (paidStatus !== null) {
+            onApplyFilters({ paidEvent: paidStatus });
         } else {
-            removeFilter('eventDetails.eventPrice');
-        }
-    }, [minPrice, maxPrice]);
-
-    // Handle Category Changes
-    useEffect(() => {
-        if (selectedSubcategories.length > 0) {
-            onApplyFilters({ 'basicInfo.categories': selectedSubcategories });
-        } else {
-            removeFilter('basicInfo.categories');
-        }
-    }, [selectedSubcategories]);
-
-    // Handle Date Change
-    const handleCustomDateChange = (event) => {
-        const selectedDate = event.target.value;
-        onApplyFilters({ 'eventDetails.eventDateTime': selectedDate });
-    };
-
-    // Handle Near Me Change
-    const handleNearMeChange = () => {
-        setNearMeChecked(!nearMeChecked);
-        if (!nearMeChecked) {
-            onApplyFilters({ nearMe: true });
-        } else {
-            removeFilter('nearMe');
+            removeFilter("paidEvent");
         }
     };
 
-    // Handle Date Filter Change
-    const handleDateFilterChange = (filter) => {
-        if (dateFilter === filter) {
-            removeFilter('dateFilter');
+    // Handle Slider Change for Price Range
+    const handleSliderChange = (event, newValue) => {
+        setPriceRange(newValue);
+        onApplyFilters({
+            eventPrice: { min: newValue[0], max: newValue[1] },
+        });
+    };
+
+    // Handle Date Filter
+    const handleDateChange = (filter) => {
+        const dateRange = formatDateForFilter(filter);
+
+        if (dateRange) {
+            onApplyFilters({ eventDateTime: filter });
         } else {
-            onApplyFilters({ dateFilter: filter });
+            removeFilter("eventDateTime");
         }
     };
 
-    // Handle Paid Filter Change
-    const handlePaidFilterChange = (paidStatus) => {
-        if (paid === paidStatus) {
-            removeFilter('eventDetails.paidEvent');
+    // Handle Categories Filter
+    const handleCategoryChange = (category) => {
+        const updatedCategories = activeFilters.categories || [];
+        const newCategories = updatedCategories.includes(category)
+            ? updatedCategories.filter((c) => c !== category)
+            : [...updatedCategories, category];
+
+        if (newCategories.length > 0) {
+            onApplyFilters({ categories: newCategories });
         } else {
-            onApplyFilters({ 'eventDetails.paidEvent': paidStatus });
+            removeFilter("categories");
         }
     };
 
-    // Handle Availability Filter Change
-    const handleAvailabilityChange = (availabilityStatus) => {
-        if (availability === availabilityStatus) {
-            removeFilter('availability');
-        } else {
-            onApplyFilters({ 'availability.fbAvail': availabilityStatus === 'Available' });
-        }
+    const toggleShowMoreCategories = () => {
+        setShowMoreCategories(!showMoreCategories);
     };
 
-    // Handle Primary Category Change
-    const handlePrimaryCategoryChange = (e) => {
-        const selectedCategory = e.target.value;
-        setSelectedPrimaryCategory(selectedCategory);
-        setSelectedSubcategories([]);
-
-        if (!selectedCategory) {
-            removeFilter('basicInfo.categories');
-        }
+    const removeAllFilters = () => {
+        const filterKeys = [
+            "eventDateTime",
+            "eventPrice",
+            "paidEvent",
+            "availability",
+            "categories",
+        ];
+        filterKeys.forEach((key) => removeFilter(key));
     };
 
-    // Handle Subcategory Change
-    const handleSubcategoryChange = (subcategory) => {
-        if (selectedSubcategories.includes(subcategory)) {
-            setSelectedSubcategories(selectedSubcategories.filter((item) => item !== subcategory));
-        } else {
-            setSelectedSubcategories([...selectedSubcategories, subcategory]);
-        }
-    };
+    const displayedCategories = showMoreCategories
+        ? categories
+        : categories.slice(0, visibleCategoryCount);
 
     return (
-        <div className="p-6 sticky top-0 bg-white border-r border-gray-200 h-full">
-            <h2 className="text-xl font-bold">Filters</h2>
+        <div className="p-6 sticky top-0 bg-Light-L3 dark:bg-Dark-D1 text-primary-dark dark:text-primary-light border-r border-Light-L1 dark:border-Dark-D2 h-full font-roboto">
+            <h2 className="text-xl font-bold flex justify-between items-center">
+                Filters
+                <button
+                    className="text-accent-red underline text-sm hover:text-accent-orange"
+                    onClick={removeAllFilters}
+                >
+                    Clear All
+                </button>
+            </h2>
 
             {/* Date Filter */}
             <div className="mb-6">
@@ -113,39 +111,58 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                     {["Today", "Tomorrow", "Weekend"].map((filter) => (
                         <li key={filter}>
                             <input
-                                type="checkbox"
-                                checked={dateFilter === filter}
-                                onChange={() => handleDateFilterChange(filter)}
+                                type="radio"
+                                name="dateFilter"
+                                checked={activeFilters.eventDateTime === filter}
+                                onChange={() => handleDateChange(filter)}
                                 className="mr-2"
                             />
                             <label>{filter}</label>
                         </li>
                     ))}
-                    <input
-                        type="date"
-                        value={customDate}
-                        onChange={handleCustomDateChange}
-                        className="mt-2"
-                    />
                 </ul>
             </div>
 
             {/* Price Range Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Price Range</h3>
-                <Box display="flex" gap={2}>
-                    <TextField
-                        label="Min"
-                        type="number"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value)}
+                <Box className="flex flex-col gap-2">
+                    <Slider
+                        value={priceRange}
+                        onChange={handleSliderChange}
+                        valueLabelDisplay="auto"
+                        min={0}
+                        max={1000}
+                        step={10}
+                        className="dark:bg-accent-white"
                     />
-                    <TextField
-                        label="Max"
-                        type="number"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                    />
+                    <Box display="flex" gap={2}>
+                        <TextField
+                            label="Min"
+                            type="number"
+                            value={priceRange[0]}
+                            onChange={(e) => handleSliderChange(null, [Number(e.target.value), priceRange[1]])}
+                            InputLabelProps={{
+                                style: { color: 'var(--primary-light)' }, // Make label white in dark mode
+                            }}
+                            InputProps={{
+                                style: { color: 'var(--primary-light)' }, // Make input text white in dark mode
+                            }}
+
+                        />
+                        <TextField
+                            label="Max"
+                            type="number"
+                            value={priceRange[1]}
+                            onChange={(e) => handleSliderChange(null, [priceRange[0], Number(e.target.value)])}
+                            InputLabelProps={{
+                                style: { color: 'var(--primary-light)' }, // Make label white in dark mode
+                            }}
+                            InputProps={{
+                                style: { color: 'var(--primary-light)' }, // Make input text white in dark mode
+                            }}
+                        />
+                    </Box>
                 </Box>
             </div>
 
@@ -155,18 +172,18 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                 <ul>
                     <li>
                         <input
-                            type="checkbox"
-                            checked={paid === true}
-                            onChange={() => handlePaidFilterChange(true)}
+                            type="radio"
+                            checked={activeFilters.paidEvent === true}
+                            onChange={() => handlePaidChange(true)}
                             className="mr-2"
                         />
                         <label>Paid</label>
                     </li>
                     <li>
                         <input
-                            type="checkbox"
-                            checked={paid === false}
-                            onChange={() => handlePaidFilterChange(false)}
+                            type="radio"
+                            checked={activeFilters.paidEvent === false}
+                            onChange={() => handlePaidChange(false)}
                             className="mr-2"
                         />
                         <label>Free</label>
@@ -174,73 +191,33 @@ const FiltersComponent = ({ onApplyFilters, activeFilters = {}, removeFilter }) 
                 </ul>
             </div>
 
-            {/* Availability Filter */}
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1">Availability</h3>
-                <ul>
-                    <li>
-                        <input
-                            type="checkbox"
-                            checked={availability === 'Available'}
-                            onChange={() => handleAvailabilityChange('Available')}
-                            className="mr-2"
-                        />
-                        <label>Available</label>
-                    </li>
-                    <li>
-                        <input
-                            type="checkbox"
-                            checked={availability === 'Unavailable'}
-                            onChange={() => handleAvailabilityChange('Unavailable')}
-                            className="mr-2"
-                        />
-                        <label>Unavailable</label>
-                    </li>
-                </ul>
-            </div>
-
-            {/* Near Me Filter */}
-            <div className="mb-6">
-                <h3 className="font-semibold mb-1">Location</h3>
-                <input
-                    type="checkbox"
-                    checked={nearMeChecked}
-                    onChange={handleNearMeChange}
-                />
-                <label className="ml-2">Near Me</label>
-            </div>
-
             {/* Category Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Category</h3>
-                <select
-                    value={selectedPrimaryCategory}
-                    onChange={handlePrimaryCategoryChange}
-                    className="w-full mt-2 p-2"
-                >
-                    <option value="">Select a Category</option>
-                    {Object.keys(categorizedOptions).map((category) => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                </select>
-
-                {selectedPrimaryCategory && (
-                    <div className="mt-3">
-                        {categorizedOptions[selectedPrimaryCategory].map((subcategory) => (
-                            <div key={subcategory}>
+                <ul className="space-y-2">
+                    {displayedCategories.map((category) => (
+                        <li key={category.label}>
+                            <label className="flex items-center">
                                 <input
                                     type="checkbox"
-                                    checked={selectedSubcategories.includes(subcategory)}
-                                    onChange={() => handleSubcategoryChange(subcategory)}
+                                    checked={activeFilters.categories?.includes(category.label)}
+                                    onChange={() => handleCategoryChange(category.label)}
+                                    className="mr-2"
                                 />
-                                <label className="ml-2">{subcategory}</label>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                                {category.label} ({category.count})
+                            </label>
+                        </li>
+                    ))}
+                </ul>
+                <button
+                    onClick={toggleShowMoreCategories}
+                    className="text-accent-blue mt-2 underline"
+                >
+                    {showMoreCategories ? "Show Less" : "Show More"}
+                </button>
             </div>
         </div>
     );
 };
 
-export default FiltersComponent;
+export default FiltersComponent
