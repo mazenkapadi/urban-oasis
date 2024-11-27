@@ -9,10 +9,10 @@ import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { auth } from '../firebaseConfig';
 import { toggleBookmark, getBookmarkStatus } from '../services/toggleBookmark';
 
-const HitComponent = ({ hit, viewMode }) => {
+const HitComponent = ({hit, viewMode}) => {
     const navigate = useNavigate();
-    const [isBookmarked, setIsBookmarked] = useState(false);
-    const [userId, setUserId] = useState(null);
+    const [ isBookmarked, setIsBookmarked ] = useState(false);
+    const [ userId, setUserId ] = useState(null);
 
     // Check if the user is authenticated and update bookmark status
     useEffect(() => {
@@ -23,7 +23,7 @@ const HitComponent = ({ hit, viewMode }) => {
             }
         });
         return () => unsubscribe();
-    }, [hit.objectID]);
+    }, [ hit.objectID ]);
 
     // Function to check if the event is bookmarked
     const checkIfBookmarked = async (userId, eventId) => {
@@ -53,8 +53,8 @@ const HitComponent = ({ hit, viewMode }) => {
 
     // Destructure event details from the hit object
     const {
-        basicInfo: { title = 'Untitled Event', location = {} },
-        eventDetails: { eventDateTime, eventPrice = 0, images = [], paidEvent = false },
+        basicInfo: {title = 'Untitled Event', location = {}},
+        eventDetails: {eventDateTime, eventPrice = 0, images = [], paidEvent = false},
     } = hit;
 
     // Format event date to MM/DD/YYYY
@@ -89,35 +89,35 @@ const HitComponent = ({ hit, viewMode }) => {
                         ) : (
                             <OutlineBookmarkIcon className="w-5 h-5 text-primary-light" strokeWidth={2.5} />
                         )}
-                    </button>
+                    </button >
                 )}
 
                 {/* Event Image */}
                 <div
                     className="relative h-40 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${imageUrl})` }}
+                    style={{backgroundImage: `url(${imageUrl})`}}
                 >
-                    <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white text-xs font-semibold px-2 py-1 rounded-md">
+                    <div
+                        className="absolute top-2 left-2 bg-black bg-opacity-50 text-white text-xs font-semibold px-2 py-1 rounded-md" >
                         {paidEvent ? `$${eventPrice.toFixed(2)}` : 'Free Event'}
-                    </div>
-                </div>
+                    </div >
+                </div >
 
                 {/* Event Information Section */}
-                <div className="p-3 bg-secondary-light-3 dark:bg-secondary-light-2 text-primary-dark dark:text-primary-light">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-semibold truncate">{title}</h3>
-                        <p className="text-sm">{eventDate}</p>
-                    </div>
-                    <div className="flex items-center text-sm mt-1">
+                <div className="p-3 bg-Light-L3 dark:bg-Dark-D2 text-primary-dark dark:text-primary-light" >
+                    <div className="flex justify-between items-center" >
+                        <h3 className="text-lg font-semibold truncate" >{title}</h3 >
+                        <p className="text-sm" >{eventDate}</p >
+                    </div >
+                    <div className="flex items-center text-sm mt-1" >
                         <MapPinIcon className="w-4 h-4 mr-1" />
-                        <p className="truncate">{location.label || 'Location not specified'}</p>
-                    </div>
-                </div>
-            </div>
+                        <p className="truncate" >{location.label || 'Location not specified'}</p >
+                    </div >
+                </div >
+            </div >
         );
     }
 
-    // Render for List View
     return (
         <div
             className="relative flex flex-row p-4 rounded-lg shadow-lg cursor-pointer bg-secondary-light-1 dark:bg-secondary-dark-2"
@@ -127,15 +127,15 @@ const HitComponent = ({ hit, viewMode }) => {
             {userId && (
                 <button
                     onClick={handleBookmarkToggle}
-                    className="absolute top-3 right-3 bg-accent-orange dark:bg-accent-blue p-1 rounded-full z-10"
+                    className="absolute top-2 right-2 bg-black p-1 rounded-md z-10"
                     aria-label="Bookmark Event"
                 >
                     {isBookmarked ? (
-                        <SolidBookmarkIcon className="w-6 h-6 text-primary-light" />
+                        <SolidBookmarkIcon className="w-5 h-5 text-primary-light" />
                     ) : (
-                        <OutlineBookmarkIcon className="w-6 h-6 text-primary-light" strokeWidth={2.5} />
+                        <OutlineBookmarkIcon className="w-5 h-5 text-primary-light" strokeWidth={2.5} />
                     )}
-                </button>
+                </button >
             )}
 
             {/* Event Image */}
@@ -146,21 +146,21 @@ const HitComponent = ({ hit, viewMode }) => {
             />
 
             {/* Event Information */}
-            <div className="ml-4 flex flex-col justify-between flex-grow">
-                <h2 className="text-lg font-semibold text-primary-dark dark:text-primary-light">{title}</h2>
-                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-2">
+            <div className="ml-4 flex flex-col justify-between flex-grow" >
+                <h2 className="text-lg font-semibold text-primary-dark dark:text-primary-light" >{title}</h2 >
+                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-2" >
                     <MapPinIcon className="w-5 h-5 mr-1" />
-                    <p className="text-sm">{location.label || 'Location not specified'}</p>
-                </div>
-                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-1">
+                    <p className="text-sm" >{location.label || 'Location not specified'}</p >
+                </div >
+                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-1" >
                     <CalendarIcon className="w-5 h-5 mr-1" />
-                    <p className="text-sm">{eventDate}</p>
-                </div>
-                <div className="text-lg font-bold mt-4">
+                    <p className="text-sm" >{eventDate}</p >
+                </div >
+                <div className="text-lg font-bold mt-4" >
                     {paidEvent ? `$${eventPrice.toFixed(2)}` : 'Free RSVP'}
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 };
 
