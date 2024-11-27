@@ -32,6 +32,12 @@ const HostEventPage = () => {
     const [ ticketQuantity, setTicketQuantity ] = useState([]);
     const [ attendeeId, setAttendeeId ] = useState([]);
     const [ attendeeDetails, setAttendeeDetails ] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [emailData, setEmailData] = useState({
+        to: '',
+        subject: '',
+        body: '',
+    });
 
     // Get Authenticated User ID
     useEffect(() => {
@@ -148,9 +154,35 @@ const HostEventPage = () => {
 
     };
 
-    const handleSendEmail = async (email, subject, html_content) => {
+    const handleSendEmail = async () => {
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: emailData.to,
+                    subject: emailData.subject,
+                    body: emailData.body,
+                }),
+            });
 
-    }
+            if (response.ok) {
+                alert('Email sent successfully!');
+                setShowModal(false);
+                setEmailData({ to: '', subject: '', body: '' });
+            } else {
+                alert('Failed to send email.');
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    };
+
+    const openEmailModal = (email) => {
+        setEmailData((prev) => ({ ...prev, to: email }));
+        setShowModal(true);
+    };
+
 
     const handleBlastEmail = async (emailList, subject, html_content) => {
 
@@ -281,7 +313,7 @@ const HostEventPage = () => {
                                             </button >
                                             <button
                                                 className="bg-Dark-D1 text-Light-L1 font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
-                                                onClick={handleSendEmail}
+                                                onClick={() => openEmailModal(attendee.email)}
                                             >
                                                 Contact Attendee
                                             </button >
@@ -291,6 +323,43 @@ const HostEventPage = () => {
                             </div >
                         </div >
                     )}
+
+                    {showModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                            <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
+                                <h2 className="text-2xl font-bold mb-6">Send Email</h2>
+                                <p className="mb-4 text-lg">To: {emailData.to}</p>
+                                <input
+                                    type="text"
+                                    placeholder="Subject"
+                                    value={emailData.subject}
+                                    onChange={(e) => setEmailData((prev) => ({ ...prev, subject: e.target.value }))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg"
+                                />
+                                <textarea
+                                    placeholder="Message"
+                                    value={emailData.body}
+                                    onChange={(e) => setEmailData((prev) => ({ ...prev, body: e.target.value }))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
+                                />
+                                <div className="flex justify-end gap-4">
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleSendEmail}
+                                        className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
+                                    >
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div >
             </div >
             <FooterComponent />
