@@ -81,13 +81,13 @@ const HitComponent = ({ hit, viewMode }) => {
                 {userId && (
                     <button
                         onClick={handleBookmarkToggle}
-                        className="absolute top-3 right-3 bg-accent-orange dark:bg-accent-blue p-1 rounded-full z-10"
+                        className="absolute top-2 right-2 bg-black opacity-50 p-1 rounded-md z-10"
                         aria-label="Bookmark Event"
                     >
                         {isBookmarked ? (
-                            <SolidBookmarkIcon className="w-6 h-6 text-primary-light" />
+                            <SolidBookmarkIcon className="w-5 h-5 text-primary-light" />
                         ) : (
-                            <OutlineBookmarkIcon className="w-6 h-6 text-primary-light" strokeWidth={2.5} />
+                            <OutlineBookmarkIcon className="w-5 h-5 text-primary-light" strokeWidth={2.5} />
                         )}
                     </button>
                 )}

@@ -156,7 +156,7 @@ const ViewAllEventsPage = () => {
                         </div>
 
                         {/* Hits Section */}
-                        <div className="min-h-[500px] max-h-[calc(100vh-180px)] overflow-auto">
+                        <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
                             <Hits
                                 hitComponent={(props) => <HitComponent {...props} viewMode={viewMode}/>}
                                 classNames={{
