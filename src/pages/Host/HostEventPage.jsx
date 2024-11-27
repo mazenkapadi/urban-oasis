@@ -39,6 +39,13 @@ const HostEventPage = () => {
         body: '',
     });
 
+    const [ showBlastModal, setShowBlastModal ] = useState(false);
+    const [ blastEmailData, setBlastEmailData ] = useState({
+        subject: '',
+        body: '',
+    });
+
+
     // Get Authenticated User ID
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -150,7 +157,7 @@ const HostEventPage = () => {
         return <LoadingPage />;
     }
 
-    const handleModifyButton = (e) => {
+    const handleModifyButton = async () => {
 
     };
 
@@ -158,18 +165,18 @@ const HostEventPage = () => {
         try {
             const response = await fetch('/api/send-email', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    to: emailData.to,
+                    recipient: emailData.to,
                     subject: emailData.subject,
-                    body: emailData.body,
+                    html_content: `<html lang="en">${emailData.body}</html>`,
                 }),
             });
 
             if (response.ok) {
                 alert('Email sent successfully!');
                 setShowModal(false);
-                setEmailData({ to: '', subject: '', body: '' });
+                setEmailData({to: '', subject: '', body: ''});
             } else {
                 const errorText = await response.text();
                 alert(`Failed to send email: ${errorText}`);
@@ -186,9 +193,36 @@ const HostEventPage = () => {
         setShowModal(true);
     };
 
-    const handleBlastEmail = async (emailList, subject, html_content) => {
+    const handleBlastEmail = async () => {
+        try {
+            // Iterate over each attendee and send an email
+            for (const attendee of attendeeDetails) {
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        recipient: attendee.email,
+                        subject: blastEmailData.subject,
+                        html_content: `<html lang="en">${blastEmailData.body}</html>`,
+                    }),
+                });
 
-    }
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Failed to send email to ${attendee.email}: ${errorText}`);
+                } else {
+                    console.log(`Email sent successfully to ${attendee.email}`);
+                }
+            }
+
+            alert('Blast emails sent successfully!');
+            setShowBlastModal(false);
+            setBlastEmailData({subject: '', body: ''});
+        } catch (error) {
+            console.error('Error sending blast emails:', error);
+            alert('An error occurred while trying to send the blast emails.');
+        }
+    };
 
     return (
         <>
@@ -283,7 +317,7 @@ const HostEventPage = () => {
                                     Attendees
                                 </label >
                                 <button
-                                    onClick={handleBlastEmail}
+                                    onClick={() => setShowBlastModal(true)}
                                     className="bg-primary-dark text-primary-light px-4 py-2 rounded-lg"
                                 >
                                     Blast Email
@@ -322,6 +356,41 @@ const HostEventPage = () => {
                                         </div >
                                     </div >
                                 ))}
+                            </div >
+                        </div >
+                    )}
+
+                    {showBlastModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >
+                            <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >
+                                <h2 className="text-2xl font-bold mb-6" >Send Blast Email</h2 >
+                                <input
+                                    type="text"
+                                    placeholder="Subject"
+                                    value={blastEmailData.subject}
+                                    onChange={(e) => setBlastEmailData((prev) => ({...prev, subject: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg"
+                                />
+                                <textarea
+                                    placeholder="Message"
+                                    value={blastEmailData.body}
+                                    onChange={(e) => setBlastEmailData((prev) => ({...prev, body: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
+                                />
+                                <div className="flex justify-end gap-4" >
+                                    <button
+                                        onClick={() => setShowBlastModal(false)}
+                                        className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
+                                    >
+                                        Cancel
+                                    </button >
+                                    <button
+                                        onClick={handleBlastEmail}
+                                        className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
+                                    >
+                                        Send
+                                    </button >
+                                </div >
                             </div >
                         </div >
                     )}
