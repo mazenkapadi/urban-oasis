@@ -708,46 +708,46 @@ const EventPage = () => {
                     <HeaderComponent />
                 </div >
                 <div
-                    className="flex flex-col justify-center items-center py-12 " style={{backgroundColor: 'var(--secondary-dark-2)'}} >
-                    <div className="box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg" style={{backgroundColor: 'var(--primary-dark)'}}>
+                    className="flex flex-col justify-center items-center py-12 bg-Dark-D2"  >
+                    <div className="box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg bg-primary-dark" >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
                             <div className="flex content w-full flex-col gap-8" >
                                 <div className="flex flex-col pt-4 space-y-6" >
                                     <div className="flex items-center space-x-3" >
                                         <CalendarDaysIcon className="text-primary-light w-6 h-6" />
-                                        <label className="font-bold text-primary-light opacity-80" >{eventDateTime}</label >
+                                        <span className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventDateTime}</span >
                                     </div >
-                                    <label className="block text-primary-light text-5xl font-semibold" >{eventTitle}</label >
+                                    <span className="text-h2 block text-primary-light font-semibold font-lalezar" >{eventTitle}</span >
                                 </div >
                                 <div className="flex flex-col" >
-                                    <h2 className="text-2xl text-primary-light font-semibold" >Description</h2 >
-                                    <div className="text-primary-light"
+                                    <span className="text-h4 text-primary-light font-archivo font-semibold" >Description</span >
+                                    <span className="text-body text-primary-light font-archivo"
                                          dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
-                                <div className="flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg" style={{backgroundColor: 'var(--secondary-dark-2)'}}>
+                                <div className="flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg bg-Dark-D2" >
                                     <div className="flex space-x-4" >
                                         {availableTickets < 10 && availableTickets > 0 && (
-                                            <p className="text-primary-light text-center" >
+                                            <span className="text-primary-light font-archivo text-body text-center" >
                                                 Only {availableTickets} tickets left!
-                                            </p >
+                                            </span >
                                         )}
                                         <div
-                                            className="flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark'}}>
+                                            className="flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg bg-Dark-D2 border-primary-dark">
                                             <TicketIcon className="text-primary-light w-6 h-6" />
-                                            <label
-                                                className="font-bold text-primary-light pl-3" >{isPaidEvent && '$'}{eventPrice}</label >
+                                            <span
+                                                className="font-bold text-primary-light text-body pl-3" >{isPaidEvent && '$'}{eventPrice}</span >
                                         </div >
                                         <div
-                                            className="flex justify-center items-center w-36 h-12 gap-3 bg-opacity-30 border-4 rounded-lg" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark'}} >
+                                            className="flex justify-center items-center w-36 h-12 gap-3 bg-opacity-30 border-4 rounded-lg  bg-Dark-D2 border-primary-dark" >
                                             <button onClick={handleDecrement} disabled={quantity === 1}
                                                     className="text-primary-light" >
                                                 <MinusIcon className="w-6 h-6" />
                                             </button >
-                                            <span className="text-primary-light font-bold text-lg" >{quantity}</span >
+                                            <span className="font-bold text-primary-light text-body" >{quantity}</span >
                                             <button onClick={handleIncrement} className="text-primary-light" >
                                                 <PlusIcon className="w-6 h-6" />
                                             </button >
@@ -757,29 +757,29 @@ const EventPage = () => {
                                     {userHasRSVPed ? (
                                         <>
                                             <div
-                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark', ':hover': {backgroundColor: 'var(--secondary-dark-1)'}}}>
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple">
                                                 <button
                                                     className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleCancel}
                                                 >
                                                     <XMarkIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                    <span >{'Cancel RSVP'}</span >
+                                                    <span className="font-bold text-primary-light text-body">{'Cancel RSVP'}</span >
                                                 </button >
                                             </div >
                                             <div
-                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark', ':hover': {backgroundColor: 'var(--secondary-dark-1)'}}}>
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple">
                                                 <button
                                                     className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleModifyRSVP}
                                                 >
                                                     <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                    <span >{'Modify RSVP'}</span >
+                                                    <span className="font-bold text-primary-light text-body">{'Modify RSVP'}</span >
                                                 </button >
                                             </div >
                                         </>
                                     ) : (
                                         <div
-                                            className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark', '--tw-hover-bg': 'var(--secondary-dark-1)'}}>
+                                            className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-blue hover:border-accent-purple">
                                             <button
                                                 className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
                                                 onClick={
@@ -791,7 +791,7 @@ const EventPage = () => {
                                                 }
                                             >
                                                 <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                <span >
+                                                <span className="font-bold text-primary-light text-body">
                                                     {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span >
                                             </button >
                                         </div >
@@ -800,18 +800,18 @@ const EventPage = () => {
 
                                     <div className="flex flex-row gap-6 items-center" >
                                         <MapPinIcon className="text-primary-light w-6 h-6" />
-                                        <label className="font-bold text-primary-light opacity-80" >{eventLocation}</label >
+                                        <span className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventLocation}</span >
                                     </div >
                                     <div
-                                        className="flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4" style={{backgroundColor: 'var(--secondary-dark-2)', borderColor: 'var(--primary-dark'}}>
-                                        <h3 className="text-primary-light font-bold mb-2" >Hosted by</h3 >
+                                        className="flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 bg-Dark-D2 border-primary-dark" >
+                                        <span className="text-primary-light text-h4 font-bold font-archivo  mb-2" >Hosted by</span >
                                         {hostDetails && (
                                             <div className="flex flex-col items-center space-y-2" >
                                                 <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
-                                                    <h3 className="text-lg text-primary-light font-semibold cursor-pointer"
-                                                        onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</h3 >
+                                                    <span className="text-h4 font-medium font-archivo text-primary-light cursor-pointer"
+                                                        onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</span >
                                                 </Tooltip >
-                                                <button style={{color: 'var(--accent-purple)'}} onClick={toggleChatWindow} >Host Chat</button >
+                                                <button className="text-accent-purple" onClick={toggleChatWindow} >Host Chat</button >
                                             </div >
                                         )}
                                     </div >
@@ -892,12 +892,12 @@ const EventPage = () => {
                 </div >
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8" style={{backgroundColor: 'var(--primary-light)'}}>
-                        <h2 className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP
-                            Successful</h2 >
-                        <p className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >
+                        <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP
+                            Successful</span >
+                        <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
                             Your RSVP has been successfully registered.
-                        </p >
+                        </span >
                         <Button
                             onClick={handleModalClose}
                             variant="contained"
