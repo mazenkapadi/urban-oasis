@@ -198,7 +198,7 @@ const HostEventPage = () => {
             const emailPromises = attendeeDetails.map((attendee) =>
                 fetch('/api/send-email', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         recipient: attendee.email,
                         subject: blastEmailData.subject,
@@ -223,13 +223,12 @@ const HostEventPage = () => {
             }
 
             setShowBlastModal(false);
-            setBlastEmailData({ subject: '', body: '' });
+            setBlastEmailData({subject: '', body: ''});
         } catch (error) {
             console.error('Error sending blast emails:', error);
             alert('An error occurred while trying to send the blast emails.');
         }
     };
-
 
     return (
         <>
