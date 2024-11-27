@@ -22,9 +22,14 @@ import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../../components/FooterComponent.jsx";
 import {useParams} from "react-router-dom";
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
+import resolveConfig from 'tailwindcss/resolveConfig';
+import tailwindConfig from '/tailwind.config.js';
+import StarBorderPurple500SharpIcon from '@mui/icons-material/StarBorderPurple500Sharp';
 
 
 const HostProfilePage = () => {
+    const fullConfig = resolveConfig(tailwindConfig);
+    const colors = fullConfig.theme.colors;
     const [userId, setUserId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [hostDetails, setHostDetails] = useState({
@@ -166,50 +171,50 @@ const HostProfilePage = () => {
         <>
 
             <div
-                className="host-profile-page flex-col min-h-screen flex pt-2 px-4" style={{backgroundColor: 'var(--secondary-dark-2)'}}>
+                className="host-profile-page flex-col min-h-screen flex pt-2 px-4 bg-Dark-D2" >
                 <HeaderComponent/>
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24 pb-10">
 
-                    <div className="rounded-lg shadow-lg p-6 space-y-2 " style={{backgroundColor: 'var(--primary-dark)'}}>
+                    <div className="rounded-lg shadow-lg p-6 space-y-2 bg-primary-dark" >
 
                         <div
-                            className="p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between " style={{backgroundColor: 'var(--secondary-dark-2)'}}>
+                            className="p-4 rounded-lg shadow-lg flex space-x-4 items-center justify-between bg-Dark-D2">
                             <div className="flex flex-row justify-center items-center">
                                 <Avatar alt={hostDetails.firstName} src={hostDetails.profilePic}
                                         sx={{width: 100, height: 100}}/>
-                                <Typography variant="p" component="div" className="text-4xl text-primary-light font-bold pl-3">
+                                <Typography variant="span" component="div" className="text-h3 text-primary-light font-inter font-bold pl-3">
                                     {`${hostDetails.firstName} ${hostDetails.lastName}`}
                                 </Typography>
                             </div>
 
-                            <Rating className="" name="read-only" value={hostDetails.ratings} readOnly size="large"
+                            <Rating className="" name="read-only" value={hostDetails.ratings} readOnly emptyIcon={<StarBorderPurple500SharpIcon sx={{ color: colors["primary-light"], fontSize: 30 }}/>} size="large"
                                     precision={0.1}/>
                         </div>
 
                         <div className="flex space-x-8 pb-36">
                             <List className="text-primary-light space-y-12">
                                 <ListItem>
-                                    <ListItemIcon><EmailTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
+                                    <ListItemIcon><EmailTwoToneIcon sx={{fontSize: 40, color: colors["accent-blue"]}}/></ListItemIcon>
                                     <ListItemText
                                         primary={hostDetails.email}
-                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '30px'}}
+                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '1.75rem'}}
                                     />
                                 </ListItem>
                                 <ListItem className="justify-center items-center">
-                                    <ListItemIcon><InfoTwoToneIcon color="primary" sx={{fontSize: 40}}/></ListItemIcon>
+                                    <ListItemIcon><InfoTwoToneIcon  sx={{fontSize: 40, color: colors["accent-blue"]}}/></ListItemIcon>
                                     <ListItemText
                                         primary={hostDetails.bio}
-                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '30px'}}
+                                        primaryTypographyProps={{fontWeight: 'medium', fontSize: '1.75rem'}}
                                     />
                                 </ListItem>
                             </List>
                         </div>
 
-                        <div className="bg-opacity-30 border-4 rounded-lg p-6 space-y-6" style={{backgroundColor: 'var(--secondary-dark-1)', borderColor: 'var(--secondary-dark-2)'}}>
+                        <div className="bg-opacity-30 border-4 rounded-lg p-6 space-y-6 bg-Dark-D1 border-Dark-D2" >
                             <div className="flex flex-row justify-between">
-                                <Typography variant="h5" component="div" className="text-primary-light">Add Review</Typography>
-                                <Rating name="simple-controlled" value={value}
-                                        onChange={(event, newValue) => setValue(newValue)} size="large"/>
+                                <Typography variant="span" component="div" className="text-h4 font-inter text-primary-light">Add Review</Typography>
+                                <Rating name="simple-controlled" value={value} precision={0.1}
+                                        onChange={(event, newValue) => setValue(newValue)} emptyIcon={<StarBorderPurple500SharpIcon sx={{ color: colors["primary-light"], fontSize: 30 }}/>} size="large"/>
                             </div>
 
                             <TextField
@@ -217,43 +222,43 @@ const HostProfilePage = () => {
                                 onChange={(e) => setReview(e.target.value)}
                                 fullWidth
                                 multiline
-                                slotProps={{input: {style: {color: 'white'}}}}
+                                slotProps={{input: {style: {color: colors["Light-L3"]}}}}
                                 sx={{
-                                    label: {color: 'var(--primary-light)'},
-                                    bgcolor: 'var(--primary-dark)',
+                                    label: {color: colors["primary-light"]},
+                                    bgcolor: colors["primary-dark"],
                                     borderRadius: '.5rem',
                                     '& .MuiOutlinedInput-root': {
                                         '& fieldset': {
                                             borderRadius: '.5rem',
-                                            input: {color: 'var(--primary-light)'},
+                                            input: {color: colors["primary-light"]},
                                         },
                                     },
                                 }}
                             />
-                            <Button variant="contained" endIcon={<SendIcon/>} onClick={handleSubmit} fullWidth
-                                    className="btn btn-primary">
-                                Send
-                            </Button>
+                            <button onClick={handleSubmit}
+                                    className="button btn btn-primary w-full">
+                                <SendIcon className="mr-3"/>
+                                <span className="text-button font-inter text-primary-light">Send</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div className="rounded-lg shadow-lg p-6 space-y-8 " style={{backgroundColor: 'var(--primary-dark)'}}>
+                    <div className="rounded-lg shadow-lg p-6 space-y-8 bg-primary-dark">
                         <div>
-                            <Typography variant="h5" component="div" className="text-primary-light mb-4"
+                            <Typography variant="span" component="div" className="text-h4 font-inter text-primary-light mb-4"
                                         sx={{
                                             textAlign: 'center',
                                             fontWeight: 'bold',
-                                            fontSize: '36px'
                                         }}>Reviews</Typography>
-                            <h5 className="mb-4 border-b-2 pb-2" style={{borderColor: 'var(--secondary-light-2)'}}></h5>
+                            <div className="mb-4 border-b-2 pb-2 border-Light-L2" ></div>
                         </div>
 
-                        <div style={{maxHeight: '625px', overflowY: 'auto'}}>
+                        <div style={{maxHeight: '625px', overflowY: 'hidden'}}>
                             {reviewDetails.length > 0 ? (
                                 reviewDetails.map((review, index) => (
                                     <Card key={index}
                                           sx={{
-                                              bgcolor: 'var(--secondary-light-2)',
+                                              bgcolor: colors["Light-L1"],
                                               borderRadius: '16px',
                                               padding: '16px',
                                               marginBottom: '20px',
@@ -261,21 +266,21 @@ const HostProfilePage = () => {
                                           }}>
                                         <CardContent>
                                             <div className="flex items-center justify-between">
-                                                <Typography variant="p" component="div" color="primary-light"
-                                                            className="text-2xl font-bold">
+                                                <Typography variant="span" component="div" color="primary-light"
+                                                            className="font-inter text-h4 font-bold">
                                                     {review.reviewerDetails ? `${review.reviewerDetails.firstName} ${review.reviewerDetails.lastName}` : 'Reviewer Not Found'}
                                                 </Typography>
-                                                <Rating value={review.rating} readOnly size="large"/>
+                                                <Rating value={review.rating} readOnly precision={0.1} emptyIcon={<StarBorderPurple500SharpIcon sx={{ color: colors["primary-dark"], fontSize: 30 }}/>} size="large"/>
                                             </div>
                                             <div>
-                                                <Typography variant="p" component="div"
-                                                            color="textSecondary">
+                                                <Typography variant="span" component="div"
+                                                            color="Light-L1" className="font-inter text-body">
                                                     {review.createdAt.toDate().toLocaleDateString()}
                                                 </Typography>
                                             </div>
-                                            <h5 className="mb-4 border-b-2 pb-2" style={{borderColor: 'var(--secondary-light-2)'}}></h5>
+                                            <h5 className="mb-4 border-b-2 pb-2 border-Dark-D1"></h5>
 
-                                            <Typography variant="body2" color="textSecondary"
+                                            <Typography variant="body2" color="Dark-D2"
                                                         sx={{
                                                             marginTop: '8px',
                                                             fontSize: '20px',
@@ -289,7 +294,7 @@ const HostProfilePage = () => {
                                     </Card>
                                 ))
                             ) : (
-                                <Typography variant="body1" component="div" className="text-primary-light">No reviews
+                                <Typography variant="span" component="div" className="font-inter text-h4 text-primary-light">No reviews
                                     yet.</Typography>
                             )}
                         </div>
@@ -300,17 +305,17 @@ const HostProfilePage = () => {
             </div>
             <Modal open={modalOpen} onClose={handleModalClose}>
                 <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-neutral-white rounded-lg shadow-lg p-8">
-                    <h2 className="text-h3 font-semibold text-neutral-black mb-4 text-center font-archivo">Review
-                        Sent</h2>
-                    <p className="text-body text-detail-gray text-center mb-6 font-inter">
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-primary-light rounded-lg shadow-lg p-8 text-center">
+                    <h3 className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo">Review
+                        Sent</h3>
+                    <span className="text-body text-Dark-D2 text-center mb-6 font-inter">
                         Your review has been submitted.
-                    </p>
+                    </span>
                     <Button
                         onClick={handleModalClose}
                         variant="contained"
                         color="primary"
-                        className="mt-4 w-full bg-accent-blue hover:bg-primary-dark text-neutral-white py-2 rounded-lg font-medium"
+                        className="mt-4 w-full btn btn-primary"
                     >
                         Close
                     </Button>

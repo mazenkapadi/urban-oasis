@@ -33,6 +33,18 @@ h1 {
     @apply font-lalezar text-h1 uppercase;
 }
 
+/*h2 {*/
+/*    @apply font-roboto font-bold text-h2 uppercase;*/
+/*}*/
+
+/*h3 {*/
+/*    @apply font-roboto font-bold text-h3 uppercase;*/
+/*}*/
+
+/*h4 {*/
+/*    @apply font-roboto font-bold text-h4 uppercase;*/
+/*}*/
+
 button {
     @apply font-roboto font-bold text-button;
 }
