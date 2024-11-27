@@ -193,36 +193,79 @@ const HostEventPage = () => {
         setShowModal(true);
     };
 
+    // const handleBlastEmail = async () => {
+    //     try {
+    //         // Iterate over each attendee and send an email
+    //         for (const attendee of attendeeDetails) {
+    //             const response = await fetch('/api/send-email', {
+    //                 method: 'POST',
+    //                 headers: {'Content-Type': 'application/json'},
+    //                 body: JSON.stringify({
+    //                     recipient: attendee.email,
+    //                     subject: blastEmailData.subject,
+    //                     html_content: `<html lang="en">${blastEmailData.body}</html>`,
+    //                 }),
+    //             });
+    //
+    //             if (!response.ok) {
+    //                 const errorText = await response.text();
+    //                 console.error(`Failed to send email to ${attendee.email}: ${errorText}`);
+    //             } else {
+    //                 console.log(`Email sent successfully to ${attendee.email}`);
+    //             }
+    //         }
+    //
+    //         alert('Blast emails sent successfully!');
+    //         setShowBlastModal(false);
+    //         setBlastEmailData({subject: '', body: ''});
+    //     } catch (error) {
+    //         console.error('Error sending blast emails:', error);
+    //         alert('An error occurred while trying to send the blast emails.');
+    //     }
+    // };
+
     const handleBlastEmail = async () => {
         try {
-            // Iterate over each attendee and send an email
-            for (const attendee of attendeeDetails) {
-                const response = await fetch('/api/send-email', {
+            // Create an array of fetch promises for each attendee
+            const emailPromises = attendeeDetails.map((attendee) =>
+                fetch('/api/send-email', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         recipient: attendee.email,
                         subject: blastEmailData.subject,
                         html_content: `<html lang="en">${blastEmailData.body}</html>`,
                     }),
-                });
+                })
+            );
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error(`Failed to send email to ${attendee.email}: ${errorText}`);
-                } else {
-                    console.log(`Email sent successfully to ${attendee.email}`);
+            // Execute all email requests concurrently
+            const results = await Promise.allSettled(emailPromises);
+
+            // Handle results: Collect failures and successes
+            const failedEmails = [];
+            results.forEach((result, index) => {
+                if (result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.ok)) {
+                    failedEmails.push(attendeeDetails[index].email);
                 }
+            });
+
+            // Alert user about the results
+            if (failedEmails.length > 0) {
+                alert(`Some emails failed to send: ${failedEmails.join(', ')}`);
+            } else {
+                alert('All blast emails sent successfully!');
             }
 
-            alert('Blast emails sent successfully!');
+            // Reset modal and email data
             setShowBlastModal(false);
-            setBlastEmailData({subject: '', body: ''});
+            setBlastEmailData({ subject: '', body: '' });
         } catch (error) {
             console.error('Error sending blast emails:', error);
             alert('An error occurred while trying to send the blast emails.');
         }
     };
+
 
     return (
         <>
