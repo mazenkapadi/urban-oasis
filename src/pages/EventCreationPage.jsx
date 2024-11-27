@@ -229,7 +229,6 @@ function EventCreationPage() {
             await eventCreation.writeEventData(eventData);
             setError(null);
             setModalOpen(true);
-            resetForm();
         } catch (error) {
             setError(error.message);
         }
@@ -261,7 +260,6 @@ function EventCreationPage() {
         setPreviewImages(false);
         setEventTitleEmpty(false);
         setEventDescriptionEmpty(false);
-        setEventLocationEmpty(false);
         setEventLocationEmpty(false);
         setEventCapacityEmpty(false);
         setEventLong(0);
