@@ -169,7 +169,6 @@ const HostProfilePage = () => {
 
     return (
         <>
-
             <div
                 className="host-profile-page flex-col min-h-screen flex pt-2 px-4 bg-Dark-D2" >
                 <HeaderComponent/>
