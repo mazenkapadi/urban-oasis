@@ -14,6 +14,7 @@ import { db, auth } from "../../firebaseConfig.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline/index.js";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const HostChatList = () => {
     const [ chats, setChats ] = useState([]);
@@ -114,6 +115,13 @@ const HostChatList = () => {
         }
     };
 
+    const navigate = useNavigate();
+
+    const handleEventNavigate = () => {
+        // console.log(selectedChat.event.id);
+        navigate(`/eventPage/${selectedChat.event.id}`);
+    }
+
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({behavior: "smooth"});
@@ -172,7 +180,7 @@ const HostChatList = () => {
                                 className="w-12 h-12 rounded-full mr-3"
                             />
                             <div >
-                                <div className="font-medium" >{selectedChat.event.name}</div >
+                                <div className="font-medium cursor-pointer" onClick={handleEventNavigate}>{selectedChat.event.name}</div >
                                 <div className="font-medium" >
                                     {selectedChat.sender.id === userId
                                         ? selectedChat.receiver.name
