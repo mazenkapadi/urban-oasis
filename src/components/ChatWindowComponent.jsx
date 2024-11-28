@@ -145,8 +145,8 @@ const ChatWindowComponent = ({
                                 <div
                                     className={`max-w-xs px-4 py-2 rounded-lg ${
                                         msg.senderId === userId
-                                            ? "bg-accent-blue text-white"
-                                            : "bg-Light-L3 dark:bg-Dark-D1 text-black dark:text-white"
+                                            ? "bg-gradient-to-r from-accent-blue to-blue-500 text-white rounded-br-none"
+                                            : "bg-gradient-to-r from-Light-L3 to-Light-L2 dark:from-Dark-D1 dark:to-Dark-D2 text-black dark:text-white rounded-bl-none"
                                     }`}
                                 >
                                     <p className="text-sm font-inter">{msg.msg}</p>
