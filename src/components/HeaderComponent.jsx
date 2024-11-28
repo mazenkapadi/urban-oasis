@@ -89,7 +89,7 @@ const HeaderComponent = () => {
                         </svg >
                     </button >
                     {menuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg text-white z-50" >
+                        <div className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark opacity-90 rounded-lg shadow-lg text-white z-50 mr-2" >
                             <ul className="" >
                                 {isLoggedIn ? (
                                     <>
