@@ -6,7 +6,7 @@ import '../../index.css';
 
 const HeroCarousel = () => {
     const [images, setImages] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(0); // Track the active index
+    const [activeIndex, setActiveIndex] = useState(0);
     const [viewportRef, embla] = useEmblaCarousel({ loop: true, align: 'start' });
 
     useEffect(() => {
