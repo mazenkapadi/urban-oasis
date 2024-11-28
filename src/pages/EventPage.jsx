@@ -67,8 +67,10 @@ const EventPage = () => {
     const [ userHasRSVPed, setUserHasRSVPed ] = useState(false);
     const [ userRSVPQuantity, setUserRSVPQuantity ] = useState(0);
     const [ availableTickets, setAvailableTickets ] = useState(0);
+    const [ cancelModalOpen, setCancelModalOpen ] = useState(false);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
+
 
 
     const navigate = useNavigate();
@@ -413,7 +415,6 @@ const EventPage = () => {
                     console.log("Waitlist document does not exist.");
                 }
             }
-            window.location.reload();
         } catch (error) {
             console.error("Error during cancellation:", error);
         }
@@ -524,7 +525,9 @@ const EventPage = () => {
             }
         });
         return () => unsubscribe();
-    }, []);
+    }, [
+        cancelModalOpen
+    ]);
 
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
