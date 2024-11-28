@@ -9,7 +9,7 @@ import { auth, db } from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./service/LoadingPage.jsx"
-import { Button, Modal } from "@mui/material";
+import { Alert, Button, Modal, Snackbar } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
 import ForecastComponent from "../components/ForecastComponent.jsx";
@@ -56,6 +56,8 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
+    const [modalState, setModalState] = useState({ open: false, title: "", message: "" });
+    const [snackbarState, setSnackbarState] = useState({ open: false, message: "", severity: "success" });
     const [ profilePicture, setProfilePicture ] = useState('');
     const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
     const [ eventPlaceId, setEventPlaceId ] = useState('');
@@ -70,7 +72,6 @@ const EventPage = () => {
     const [ cancelModalOpen, setCancelModalOpen ] = useState(false);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
-
 
 
     const navigate = useNavigate();
@@ -209,7 +210,7 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
-                await handleWaitlist(eventWaitlistDocRef, rsvpData); // Add to waitlist if at capacity
+                setModalState({ open: true, title: "Event Full", message: "This event is fully booked." });
                 return;
             }
 
@@ -234,7 +235,7 @@ const EventPage = () => {
             try {
                 const response = await fetch('/api/sendQR-email', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(rsvpData),
                 });
 
@@ -251,7 +252,9 @@ const EventPage = () => {
                 alert("An error occurred. Please try again.");
             }
             setAvailableTickets(availableTickets - totalAttendees);
+            setSnackbarState({ open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success" });
         } catch (error) {
+            setSnackbarState({ open: true, message: "Failed to RSVP. Please try again.", severity: "error" });
             console.error("Error handling RSVP:", error);
         }
     };
@@ -365,8 +368,9 @@ const EventPage = () => {
             if (userRsvpEntryId) {
 
                 if (daysUntilEvent <= 7 && isPaidEvent) {
-                    console.log("Cannot cancel RSVP with 7 or fewer days remaining for this paid event.");
-                    alert("Cancellation not allowed with less than 7 days remaining.");
+                    console.log("Cancellations are not permitted within 7 days of the event.");
+                    setSnackbarState({ open: true, message: "Cancellations are not permitted within 7 days of the event.", severity: "error" });
+
                     return;
                 }
 
@@ -388,7 +392,7 @@ const EventPage = () => {
                     notifyWaitlist(waitlist);
                 }
 
-                alert(`RSVP cancellation processed.`);
+                setSnackbarState({ open: true, message: "RSVP Cancelled.", severity: "info" });
                 console.log("RSVP cancellation processed.");
 
                 if (isPaidEvent) {
@@ -401,25 +405,23 @@ const EventPage = () => {
                     const userInWaitlist = waitlist.some(entry => entry.userId === userId);
 
                     if (userInWaitlist) {
-                        alert(`You have been removed from the waitlist.`);
-                        console.log("User found in waitlist");
+                        setSnackbarState({ open: true, message: "You have been removed from the waitlist.", severity: "info" });
                         const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
                         await updateDoc(waitlistDocRef, {waitlist: updatedWaitlist});
-                        console.log("Waitlist updated.");
                     } else {
                         alert(`You need to RSVP or join waitlist to perform this action.`);
                         console.log("User is not in the waitlist; no update needed.");
                     }
                 } else {
-                    alert(`You need to RSVP or join waitlist to perform this action.`);
                     console.log("Waitlist document does not exist.");
+                    setSnackbarState({ open: true, message: "You need to RSVP or join waitlist to perform this action.", severity: "error" });
                 }
             }
         } catch (error) {
             console.error("Error during cancellation:", error);
+
         }
     };
-
 
     const handleModifyRSVP = async () => {
         if (!userId) {
@@ -503,16 +505,20 @@ const EventPage = () => {
             await setDoc(waitlistDocRef, {
                 waitlist: arrayUnion(waitlistData)
             }, {merge: true});
-            alert("You have been added to waitlist successfully.")
+            setSnackbarState({ open: true, message: "Added to the waitlist successfully.", severity: "info" });
             console.log("User added to waitlist successfully.");
         } catch (error) {
-            alert("Unable to add to waitlist now.")
+            setSnackbarState({ open: true, message: "Failed to join the waitlist.", severity: "error" });
             console.error("Error adding user to waitlist:", error);
         }
     };
 
     const handleModalClose = () => {
         setModalOpen(false);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarState({ ...snackbarState, open: false });
     };
 
     useEffect(() => {
@@ -565,23 +571,23 @@ const EventPage = () => {
 
     const emailUser = (value) => {
         const emailData = {
-            user_name: value.name,     
-            user_email: value.email, 
+            user_name: value.name,
+            user_email: value.email,
             message: `Dear ${value.name},\n\nWe are excited to let you know that a spot has just opened up for the event ${value.eventTitle}. You can now rsvp by visiting Urban Oasis.\n\nBest regards,\nUrban Oasis Team`
         };
-    
+
         emailjs.send(
-            import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY, 
-            'template_5lpk33l', 
+            import.meta.env.VITE_PUBLIC_EMAIL_SERVICE_KEY,
+            'template_5lpk33l',
             emailData,
-            import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY 
+            import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
         )
-        .then((result) => {
-            console.log(`Email successfully sent to ${value.email}`);
-        })
-        .catch((error) => {
-            console.error(`Failed to send email to ${value.email}:`, error);
-        });
+               .then((result) => {
+                   console.log(`Email successfully sent to ${value.email}`);
+               })
+               .catch((error) => {
+                   console.error(`Failed to send email to ${value.email}:`, error);
+               });
     };
 
     useEffect(() => {
@@ -709,7 +715,7 @@ const EventPage = () => {
                     <HeaderComponent />
                 </div >
                 <div
-                    className="flex flex-col justify-center items-center py-12 bg-Dark-D2"  >
+                    className="flex flex-col justify-center items-center py-12 bg-Dark-D2" >
                     <div className="box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg bg-primary-dark" >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
@@ -717,14 +723,17 @@ const EventPage = () => {
                                 <div className="flex flex-col pt-4 space-y-6" >
                                     <div className="flex items-center space-x-3" >
                                         <CalendarDaysIcon className="text-primary-light w-6 h-6" />
-                                        <span className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventDateTime}</span >
+                                        <span
+                                            className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventDateTime}</span >
                                     </div >
-                                    <span className="text-h2 block text-primary-light font-semibold font-lalezar" >{eventTitle}</span >
+                                    <span
+                                        className="text-h2 block text-primary-light font-semibold font-lalezar" >{eventTitle}</span >
                                 </div >
                                 <div className="flex flex-col" >
-                                    <span className="text-h4 text-primary-light font-archivo font-semibold" >Description</span >
+                                    <span
+                                        className="text-h4 text-primary-light font-archivo font-semibold" >Description</span >
                                     <span className="text-body text-primary-light font-archivo"
-                                         dangerouslySetInnerHTML={{__html: formattedDescription}} />
+                                          dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                             </div >
@@ -737,7 +746,7 @@ const EventPage = () => {
                                             </span >
                                         )}
                                         <div
-                                            className="flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg bg-Dark-D2 border-primary-dark">
+                                            className="flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg bg-Dark-D2 border-primary-dark" >
                                             <TicketIcon className="text-primary-light w-6 h-6" />
                                             <span
                                                 className="font-bold text-primary-light text-body pl-3" >{isPaidEvent && '$'}{eventPrice}</span >
@@ -758,29 +767,31 @@ const EventPage = () => {
                                     {userHasRSVPed ? (
                                         <>
                                             <div
-                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple">
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple" >
                                                 <button
                                                     className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleCancel}
                                                 >
                                                     <XMarkIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                    <span className="font-bold text-primary-light text-body">{'Cancel RSVP'}</span >
+                                                    <span
+                                                        className="font-bold text-primary-light text-body" >{'Cancel RSVP'}</span >
                                                 </button >
                                             </div >
                                             <div
-                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple">
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple" >
                                                 <button
                                                     className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleModifyRSVP}
                                                 >
                                                     <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                    <span className="font-bold text-primary-light text-body">{'Modify RSVP'}</span >
+                                                    <span
+                                                        className="font-bold text-primary-light text-body" >{'Modify RSVP'}</span >
                                                 </button >
                                             </div >
                                         </>
                                     ) : (
                                         <div
-                                            className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-blue hover:border-accent-purple">
+                                            className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-blue hover:border-accent-purple" >
                                             <button
                                                 className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
                                                 onClick={
@@ -792,7 +803,7 @@ const EventPage = () => {
                                                 }
                                             >
                                                 <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
-                                                <span className="font-bold text-primary-light text-body">
+                                                <span className="font-bold text-primary-light text-body" >
                                                     {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span >
                                             </button >
                                         </div >
@@ -801,7 +812,8 @@ const EventPage = () => {
 
                                     <div className="flex flex-row gap-6 items-center" >
                                         <MapPinIcon className="text-primary-light w-6 h-6" />
-                                        <span className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventLocation}</span >
+                                        <span
+                                            className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventLocation}</span >
                                     </div >
                                     <div
                                         className="flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 bg-Dark-D2 border-primary-dark" >
@@ -809,10 +821,13 @@ const EventPage = () => {
                                         {hostDetails && (
                                             <div className="flex flex-col items-center space-y-2" >
                                                 <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
-                                                    <span className="text-h4 font-medium font-archivo text-primary-light cursor-pointer"
+                                                    <span
+                                                        className="text-h4 font-medium font-archivo text-primary-light cursor-pointer"
                                                         onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</span >
                                                 </Tooltip >
-                                                <button className="text-accent-purple" onClick={toggleChatWindow} >Host Chat</button >
+                                                <button className="text-accent-purple" onClick={toggleChatWindow} >Host
+                                                    Chat
+                                                </button >
                                             </div >
                                         )}
                                     </div >
@@ -894,11 +909,13 @@ const EventPage = () => {
                 <Modal open={modalOpen} onClose={handleModalClose} >
                     <div
                         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >
-                        <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP
-                            Successful</span >
-                        <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
+                        <div >
+
+                            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >
+                            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
                             Your RSVP has been successfully registered.
                         </span >
+                        </div >
                         <Button
                             onClick={handleModalClose}
                             variant="contained"
@@ -909,6 +926,16 @@ const EventPage = () => {
                         </Button >
                     </div >
                 </Modal >
+                <Snackbar
+                    open={snackbarState.open}
+                    autoHideDuration={6000}
+                    onClose={handleSnackbarClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                >
+                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{ width: "100%" }}>
+                        {snackbarState.message}
+                    </Alert>
+                </Snackbar>
                 <FooterComponent />
             </div >
         </>
