@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import {getStorage} from "firebase/storage";
+import { getStorage } from "firebase/storage";
 
 const FIREBASE_KEY = {
     apiKey: import.meta.env.VITE_PUBLIC_FIREBASE_API_KEY,
@@ -16,13 +16,13 @@ const FIREBASE_KEY = {
     gmKey: import.meta.env.VITE_WEATHER_GM_KEY,
     locationKey: import.meta.env.VITE_LOCATION_KEY,
 }
+
 const app = initializeApp(FIREBASE_KEY);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 const storage = getStorage(app);
-
 
 
 export { db, auth, googleProvider, storage };

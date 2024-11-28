@@ -11,7 +11,7 @@ const HeroCarousel = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
-            const eventImagesRef = ref(storage, "eventImages/");
+            const eventImagesRef = ref(storage, "heroImages/");
             try {
                 const imageFiles = await listAll(eventImagesRef);
                 const imageUrls = await Promise.all(
