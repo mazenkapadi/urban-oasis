@@ -3,7 +3,7 @@ import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import PasswordReset from "../../services/auth/ResetPassword.js";
 
-function SignInPage() {
+function ForgotPasswordPage() {
 
     const navigate = useNavigate();
     const [ email, setEmail ] = useState('');
@@ -70,4 +70,4 @@ function SignInPage() {
     );
 }
 
-export default SignInPage;
+export default ForgotPasswordPage;
