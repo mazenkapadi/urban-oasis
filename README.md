@@ -1,7 +1,3 @@
-Here’s a comprehensive and professional README tailored to your senior project:
-
----
-
 # Urban Oasis
 
 **Urban Oasis** is a seamless platform designed to simplify the way communities organize, discover, and attend local events. It connects people through shared experiences, fostering stronger community bonds and facilitating event management for hosts and attendees.
