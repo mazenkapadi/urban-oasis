@@ -413,6 +413,7 @@ const EventPage = () => {
                     console.log("Waitlist document does not exist.");
                 }
             }
+            window.location.reload();
         } catch (error) {
             console.error("Error during cancellation:", error);
         }

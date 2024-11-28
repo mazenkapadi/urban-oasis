@@ -53,18 +53,16 @@
 // }
 
 
-
-
 import QRCode from 'qrcode';
 import fetch from 'node-fetch';
 
 export async function POST(req) {
     try {
         const reqBody = await req.json();
-        const { userId, eventId, email, quantity, eventTitle, eventDateTime } = reqBody;
+        const {userId, eventId, email, quantity, eventTitle, eventDateTime} = reqBody;
 
         if (!userId || !eventId || !email || !quantity || !eventTitle || !eventDateTime) {
-            return new Response('Missing required fields', { status: 400 });
+            return new Response('Missing required fields', {status: 400});
         }
 
         // Generate a URL pointing to your RSVP validation page
@@ -92,17 +90,17 @@ export async function POST(req) {
         // Send email
         const response = await fetch(process.env.VITE_EMAIL_ENDPOINT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ recipient: email, subject, html_content }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({recipient: email, subject, html_content}),
         });
 
         if (!response.ok) {
-            return new Response('Error sending email', { status: 500 });
+            return new Response('Error sending email', {status: 500});
         }
 
-        return new Response('QR code email sent successfully', { status: 200 });
+        return new Response('QR code email sent successfully', {status: 200});
     } catch (error) {
         console.error(error);
-        return new Response('Internal server error', { status: 500 });
+        return new Response('Internal server error', {status: 500});
     }
 }
