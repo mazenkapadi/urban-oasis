@@ -4,4 +4,5 @@ export const googleMapsConfig = {
     apiKey: GEOLOCATION_KEY,
     language: 'en',
     region: 'US',
+    types: '',
 };

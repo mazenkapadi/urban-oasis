@@ -14,9 +14,12 @@ import HeaderComponent from '../components/HeaderComponent';
 import { ListBulletIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 import { formatDateForFilter } from "../utils/dateHelpers.jsx";
 
+
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
     const [viewMode, setViewMode] = useState('grid');
+    const [geoLocation, setGeoLocation] = useState(null); // To store user-specified location (lat, lng)
+    const [radius, setRadius] = useState(100 * 1609.34); // 100 miles converted to meters
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -122,7 +125,7 @@ const ViewAllEventsPage = () => {
         <InstantSearch searchClient={searchClient} indexName="events">
             <div className="view-all-events-page bg-primary-dark text-primary-light min-h-screen flex flex-col">
                 {/* Header Component */}
-                <HeaderComponent />
+                <HeaderComponent /> {/* Pass handleGeoSearch to HeaderComponent */}
 
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
@@ -138,7 +141,13 @@ const ViewAllEventsPage = () => {
                     {/* Search Results Section */}
                     <div className="lg:w-3/4 p-4 flex flex-col">
                         {/* Configure Search */}
-                        <Configure hitsPerPage={21} filters={buildFilters()} query={searchQuery}/>
+                        <Configure
+                            hitsPerPage={21}
+                            filters={buildFilters()}
+                            query={searchQuery}
+                            aroundLatLng={geoLocation ? `${geoLocation.lat},${geoLocation.lng}` : undefined}
+                            aroundRadius={geoLocation ? radius : undefined}
+                        />
 
                         {/* View Toggle Button */}
                         <div className="flex justify-end mb-4">
@@ -148,9 +157,9 @@ const ViewAllEventsPage = () => {
                                 aria-label="Toggle View"
                             >
                                 {viewMode === 'grid' ? (
-                                    <ListBulletIcon className="w-6 h-6 text-primary-light"/>
+                                    <ListBulletIcon className="w-6 h-6 text-primary-light" />
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-primary-light"/>
+                                    <Squares2X2Icon className="w-6 h-6 text-primary-light" />
                                 )}
                             </button>
                         </div>
@@ -158,7 +167,7 @@ const ViewAllEventsPage = () => {
                         {/* Hits Section */}
                         <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
                             <Hits
-                                hitComponent={(props) => <HitComponent {...props} viewMode={viewMode}/>}
+                                hitComponent={(props) => <HitComponent {...props} viewMode={viewMode} />}
                                 classNames={{
                                     list: viewMode === 'grid'
                                         ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
@@ -166,7 +175,7 @@ const ViewAllEventsPage = () => {
                                 }}
                             />
                             {/* No Results Message */}
-                            <NoResultsMessage/>
+                            <NoResultsMessage />
                         </div>
 
                         {/* Pagination Section */}
