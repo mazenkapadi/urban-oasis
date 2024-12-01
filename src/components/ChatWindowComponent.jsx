@@ -9,8 +9,10 @@ import {
     Timestamp,
 } from "firebase/firestore";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { db } from "../firebaseConfig.js";
+import { auth,db } from "../firebaseConfig.js";
 import { format } from "date-fns";
+import { onAuthStateChanged } from "firebase/auth";
+
 
 const ChatWindowComponent = ({
                                  userId,
@@ -26,6 +28,10 @@ const ChatWindowComponent = ({
     const [chatId, setChatId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
+    const [ senderName, setSenderName] = useState('');
+    const [ senderProfile, setSenderProfile] = useState('');
+
+    
 
     const createChatId = (userId, hostId) => {
         return userId < hostId
@@ -50,8 +56,8 @@ const ChatWindowComponent = ({
                 },
                 participants: [userId, hostId],
                 messages: [],
-                sender: { id: userId, name: hostDetails.name },
-                receiver: { id: hostId, name: hostDetails.name },
+                sender: { id: userId, name: senderName,profilePicture:senderProfile },
+                receiver: { id: hostId, name: hostDetails.name, profilePicture: hostDetails.profilePicture},
             };
             await setDoc(chatRef, newChatData);
             setChatId(chatId);
@@ -93,6 +99,29 @@ const ChatWindowComponent = ({
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     };
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user && userId) {
+                try {
+                    const senderRef = doc(db, 'Users', userId); // Adjust 'users' collection if needed
+                    const senderSnap = await getDoc(senderRef);
+                    if (senderSnap.exists()) {
+                        const senderData = senderSnap.data();
+                        setSenderName(`${senderData.firstName} ${senderData.lastName}`);
+                        setSenderProfile(senderData.profilePicture);
+                    } else {
+                        console.log('No such user!');
+                    }
+                } catch (error) {
+                    console.error('Error fetching sender details:', error);
+                }
+            } else {
+                console.log('No user logged in or invalid userId');
+            }
+        });
+
+        return () => unsubscribe();
+    }, [userId]);
 
     useEffect(() => {
         if (hostDetails && userId && chatWindowOpen) {
@@ -107,6 +136,7 @@ const ChatWindowComponent = ({
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
 
     return chatWindowOpen ? (
         <div className="fixed bottom-0 right-5 w-80 md:w-96 h-96 bg-primary-light dark:bg-primary-dark shadow-lg rounded-t-lg flex flex-col">
