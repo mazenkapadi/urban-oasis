@@ -1,4 +1,4 @@
-import { doc, setDoc, updateDoc, increment, getFirestore } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, increment, getFirestore, getDoc } from 'firebase/firestore';
 import { initializeApp } from "firebase/app";
 
 const FIREBASE_KEY = {
@@ -23,13 +23,13 @@ export async function POST(req) {
         const event = await req.json();
 
         if (event.type !== 'checkout.session.completed') {
-            return new Response('Event type not handled', { status: 400 });
+            return new Response('Event type not handled', {status: 400});
         }
 
         const session = event.data.object;
 
-        const { metadata, amount_total, customer_details } = session;
-        const { userId, eventId, quantity } = metadata;
+        const {metadata, amount_total, customer_details} = session;
+        const {userId, eventId, quantity} = metadata;
         const email = customer_details?.email;
 
         const rsvpData = {
@@ -40,10 +40,25 @@ export async function POST(req) {
             email,
             createdAt: new Date().toISOString(),
         };
+        //look in firebase for the event and pull eventitle and dateTime
 
         const eventRsvpsDocRef = doc(db, 'EventRSVPs', eventId);
         const userRsvpsDocRef = doc(db, 'UserRSVPs', userId);
         const eventDocRef = doc(db, 'Events', eventId);
+
+        const eventSnap = await getDoc(eventDocRef);
+        const eventData = eventSnap.data(); // Access the document data
+
+        const emaildata = {
+                userId,
+                eventId,
+                email,
+                quantity,
+                eventTitle: eventData.eventTitle, // Correctly access the event title
+                eventDateTime: eventData.eventDateTime, // Ensure eventDateTime is in the event data
+            };
+
+        console.log(emaildata); // Log to confirm the structure
 
         await setDoc(
             eventRsvpsDocRef,
@@ -52,7 +67,7 @@ export async function POST(req) {
                     [session.id]: rsvpData,
                 },
             },
-            { merge: true }
+            {merge: true}
         );
 
         await setDoc(
@@ -62,7 +77,7 @@ export async function POST(req) {
                     [session.id]: rsvpData,
                 },
             },
-            { merge: true }
+            {merge: true}
         );
 
         await updateDoc(eventDocRef, {
@@ -70,10 +85,27 @@ export async function POST(req) {
         });
 
         console.log('Checkout session processed successfully:', session.id);
+        try {
+            const response = await fetch('/api/sendQR-email', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(emaildata),
+            });
 
-        return new Response('Event processed successfully', { status: 200 });
+            if (!response.ok) {
+                console.error("Failed to send QR code email:", await response.text());
+                return;
+            }
+
+            console.log("QR code email sent successfully");
+        } catch (error) {
+            console.error("Error sending QR code email:", error);
+            alert("An error occurred. Please try again.");
+        }
+
+        return new Response('Event processed successfully', {status: 200});
     } catch (error) {
         console.error('Error processing webhook:', error);
-        return new Response('Error processing webhook', { status: 500 });
+        return new Response('Error processing webhook', {status: 500});
     }
 }

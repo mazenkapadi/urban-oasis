@@ -7,23 +7,23 @@ export default {
     theme: {
         extend: {
             colors: {
-                'primary-dark': '#0A0C0F',     // Black (Background/Dark Theme)
-                'primary-light': '#F9FAFB',    // Off-white (Background/Light Theme)
-                'accent-orange': '#EE703C',    // Vibrant Orange (Accent)
-                'accent-red': '#EB2032',       // Soft Yellow-Orange (Accent)
-                'accent-blue': '#0056FF',      // Bright Blue (Accent)
-                'accent-purple': '#8B5CF6',    // Soft Purple (Accent)
-                'Dark-D1': '#171717', // Dark Gray (Secondary)
-                'Dark-D2': '#171A1C', // Dark Gray (Secondary)
-                'Light-L1': '#E4E0DB', // Light Gray (Secondary)
-                'Light-L2': '#F2F0EB', // Light Gray (Secondary)
-                'Light-L3': '#EEEDE9', // Light Gray (Secondary)
+                'primary-dark': '#0A0C0F',
+                'primary-light': '#F9FAFB',
+                'accent-orange': '#EE703C',
+                'accent-red': '#EB2032',
+                'accent-blue': '#0056FF',
+                'accent-purple': '#8B5CF6',
+                'Dark-D1': '#171717',
+                'Dark-D2': '#171A1C',
+                'Light-L1': '#E4E0DB',
+                'Light-L2': '#F2F0EB',
+                'Light-L3': '#EEEDE9',
             },
             fontFamily: {
-                archivo: ['Archivo', 'sans-serif'],
-                inter: ['Inter', 'sans-serif'],
-                roboto: ['Roboto', 'sans-serif'],
-                lalezar: ['Lalezar', 'sans-serif'],
+                archivo: [ 'Archivo', 'sans-serif' ],
+                inter: [ 'Inter', 'sans-serif' ],
+                roboto: [ 'Roboto', 'sans-serif' ],
+                lalezar: [ 'Lalezar', 'sans-serif' ],
             },
             fontSize: {
                 h1: '4rem', // 64px (Use Lalezar in all-caps for H1)
