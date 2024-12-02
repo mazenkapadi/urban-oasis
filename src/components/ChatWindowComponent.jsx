@@ -107,7 +107,7 @@ const ChatWindowComponent = ({
                     const senderSnap = await getDoc(senderRef);
                     if (senderSnap.exists()) {
                         const senderData = senderSnap.data();
-                        setSenderName(`${senderData.firstName} ${senderData.lastName}`);
+                        setSenderName(`${senderData.name.firstName} ${senderData.name.lastName}`);
                         setSenderProfile(senderData.profilePicture);
                     } else {
                         console.log('No such user!');
