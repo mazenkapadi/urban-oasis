@@ -9,14 +9,14 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
 
     const convertTemperature = (temp, unit) => {
         if (unit === "imperial") {
-            return (temp * 9) / 5 + 32; 
+            return Math.round((temp * 9) / 5 + 32);
         }
-        return temp; 
+        return Math.round(temp); 
     };
 
-    const handleUnitChange = (event) => {
-        setUnit(event.target.checked ? "imperial" : "metric");
-    };
+    // const handleUnitChange = (event) => {
+    //     setUnit(event.target.checked ? "imperial" : "metric");
+    // };
     
 
     const fetchWeather = async (lat, lon) => {
@@ -89,7 +89,7 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
             {/* <h2 className="text-h4 text-primary-light font-archivo font-semibold" >Forecast</h2 > */}
             <div className="flex overflow-x-auto space-x-4" >
                 <div
-                    className="rounded-lg min-w-[130px] flex-shrink-0"
+                    className="flex rounded-lg flex-shrink-0"
                 >
                     {/* <p className="text-body text-primary-light font-archivo" >
                         {new Date(filteredForecast.dt_txt).toLocaleString()}
@@ -99,23 +99,30 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                         alt={filteredForecast.weather[0].description}
                         className="mx-auto h-20"
                     />
-                    <div className="justify-between flex items-center space-x-2">
-                        <p className="text-body text-primary-light font-archivo">
-                            {convertTemperature(filteredForecast.main.temp, unit).toFixed(1)}°
-                            {unit === "metric" ? "C" : "F"}
-                        </p>
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={unit === "imperial"} // If unit is Fahrenheit, the switch is checked
-                                        onChange={handleUnitChange}
-                                        name="unit-toggle"
-                                        color="primary"
-                                    />
-                                }
-                                label={unit === "metric" ? "°F" : "°C"}
-                                className="text-body text-primary-light font-archivo"
-                            />
+                    <div className="flex items-center space-x-2">
+                    <p className="text-body text-primary-light font-archivo">
+                    {convertTemperature(filteredForecast.main.temp, unit)}°
+                    {/* {unit === "metric" ? "C" : "F"} */}
+                    </p>
+                    <div className="text-body text-primary-light font-archivo flex space-x-2">
+                        <button
+                        onClick={() => setUnit("metric")}
+                        className={`cursor-pointer ${
+                            unit === "metric" ? "font-bold text-primary-light" : "text-body text-Light-L1"
+                        }`}
+                        >
+                        C
+                        </button>
+                        <div className="h-6 w-0.5 bg-primary-light"></div> 
+                        <button
+                        onClick={() => setUnit("imperial")}
+                        className={`cursor-pointer ${
+                            unit === "imperial" ? "font-bold text-primary-light " : "text-body text-Light-L1"
+                        }`}
+                        >
+                        F
+                        </button>
+                    </div>
                     </div>
 
                     
