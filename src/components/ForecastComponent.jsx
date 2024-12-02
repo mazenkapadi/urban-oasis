@@ -86,18 +86,18 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
 
     return (
         <div className="w-full mt-2 rounded-lg" >
-            <h2 className="text-h4 text-primary-light font-archivo font-semibold" >Forecast</h2 >
+            {/* <h2 className="text-h4 text-primary-light font-archivo font-semibold" >Forecast</h2 > */}
             <div className="flex overflow-x-auto space-x-4" >
                 <div
-                    className="rounded-lg min-w-[150px] flex-shrink-0"
+                    className="rounded-lg min-w-[130px] flex-shrink-0"
                 >
-                    <p className="text-body text-primary-light font-archivo" >
+                    {/* <p className="text-body text-primary-light font-archivo" >
                         {new Date(filteredForecast.dt_txt).toLocaleString()}
-                    </p >
+                    </p > */}
                     <img
                         src={`https://openweathermap.org/img/wn/${filteredForecast.weather[0].icon}@2x.png`}
                         alt={filteredForecast.weather[0].description}
-                        className="mx-auto"
+                        className="mx-auto h-20"
                     />
                     <div className="justify-between flex items-center space-x-2">
                         <p className="text-body text-primary-light font-archivo">
@@ -119,9 +119,9 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                     </div>
 
                     
-                    <p className="text-body text-primary-light font-archivo" >
-                        {filteredForecast.weather[0].description}
-                    </p >
+                    {/* <p className="text-body text-primary-light font-archivo" > */}
+                        {/* {filteredForecast.weather[0].description}
+                    </p > */}
                     
                 </div >
             </div >
