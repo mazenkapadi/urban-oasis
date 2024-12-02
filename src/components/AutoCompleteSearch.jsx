@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { autocomplete } from "@algolia/autocomplete-js";
 import { createRoot } from "react-dom/client";
 import { searchClient } from "../algoliaConfig";
-import { DateRangePicker } from "react-date-range";
+// import { DateRangePicker } from "react-date-range";
 import "@algolia/autocomplete-theme-classic";
-import "react-date-range/dist/styles.css"; // Main style for DateRangePicker
-import "react-date-range/dist/theme/default.css"; // Theme style for DateRangePicker
+// import "react-date-range/dist/styles.css"; // Main style for DateRangePicker
+// import "react-date-range/dist/theme/default.css"; // Theme style for DateRangePicker
 import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useNavigate, useLocation } from "react-router-dom";
 
