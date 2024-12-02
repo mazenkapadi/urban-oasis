@@ -1,16 +1,25 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import AutocompleteSearch from "./AutoCompleteSearch.jsx";
+import GeoSearchBar from "./GeoSearchBar";
+import EventSearchBar from "./EventSearchBar";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // Main style for DateRangePicker
+import "react-date-range/dist/theme/default.css"; // Theme style for DateRangePicker
 
-const HeaderComponent = () => {
-    const [ menuOpen, setMenuOpen ] = useState(false);
-    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
-    const [ name, setName ] = useState('');
-    const [ profilePic, setProfilePic ] = useState('');
-    const [ isHost, setIsHost ] = useState(false);
+const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [name, setName] = useState("");
+    const [profilePic, setProfilePic] = useState("");
+    const [isHost, setIsHost] = useState(false);
+    const [dateRange, setDateRange] = useState({
+        startDate: null,
+        endDate: null,
+    });
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,9 +32,9 @@ const HeaderComponent = () => {
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setName(userData.name?.firstName || 'User');
-                        setProfilePic(userData.profilePic || '');
-                        setIsHost(userData.isHost || false); // Check if user is a host
+                        setName(userData.name?.firstName || "User");
+                        setProfilePic(userData.profilePic || "");
+                        setIsHost(userData.isHost || false);
                     } else {
                         console.log("No such document in Firestore!");
                     }
@@ -51,27 +60,69 @@ const HeaderComponent = () => {
             .catch((error) => console.error("Error signing out:", error));
     };
 
+    const handleDateChange = (ranges) => {
+        const { startDate, endDate } = ranges.selection;
+        setDateRange({ startDate, endDate });
+        if (onDateRangeChange) {
+            onDateRangeChange({ startDate, endDate });
+        }
+    };
+
     return (
-        <header className="bg-transparent w-full" >
-            <div className="flex justify-between items-center" >
+        <header className="bg-transparent w-full">
+            <div className="flex justify-between items-center">
                 {/* Logo */}
-                <div className="flex items-center pl-8" >
-                    <button onClick={() => navigate("/")} >
+                <div className="flex items-center pl-8">
+                    <button onClick={() => navigate("/")}>
                         <span
-                            className="ml-1 text-white text-h1 font-lalezar"
-                            style={{textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)"}}
+                            className="ml-2 text-white text-h1 font-lalezar"
+                            style={{ textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)" }}
                         >
                             Urban Oasis
-                        </span >
-                    </button >
-                </div >
+                        </span>
+                    </button>
+                </div>
 
-                {/* Autocomplete Search */}
-                <div className="mx-8 flex-1" >
-                    <AutocompleteSearch />
-                </div >
+                {/* Search Bars */}
+                <div className="flex flex-wrap items-center gap-4 justify-center w-full md:w-auto">
+                    {/* GeoSearchBar */}
+                    <div className="flex-1 max-w-xs">
+                        <GeoSearchBar onGeoSearch={onGeoSearch} />
+                    </div>
 
-                {/* Hamburger Menu Dropdown */}
+                    {/* Date Picker */}
+                    <div className="relative flex-1 max-w-xs">
+                        <button
+                            className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            onClick={() => setShowDatePicker(!showDatePicker)}
+                        >
+                            {dateRange.startDate && dateRange.endDate
+                                ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
+                                : "Select Dates"}
+                        </button>
+                        {showDatePicker && (
+                            <div className="absolute top-12 z-50 bg-white shadow-lg p-4">
+                                <DateRangePicker
+                                    ranges={[
+                                        {
+                                            startDate: dateRange.startDate || new Date(),
+                                            endDate: dateRange.endDate || new Date(),
+                                            key: "selection",
+                                        },
+                                    ]}
+                                    onChange={handleDateChange}
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* EventSearchBar */}
+                    <div className="flex-1 max-w-xs">
+                        <EventSearchBar onEventSearch={onEventSearch} />
+                    </div>
+                </div>
+
+                {/* Hamburger Menu */}
                 <div className="relative pr-8" >
                     <button
                         onClick={toggleMenu}
@@ -84,12 +135,17 @@ const HeaderComponent = () => {
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
                         >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                  d="M4 6h16M4 12h16m-7 6h7" />
-                        </svg >
-                    </button >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 6h16M4 12h16m-7 6h7"
+                            />
+                        </svg>
+                    </button>
                     {menuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark opacity-90 rounded-lg shadow-lg text-white z-50 mr-2" >
+                        <div
+                            className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark opacity-90 rounded-lg shadow-lg text-white z-50 mr-2" >
                             <ul className="" >
                                 {isLoggedIn ? (
                                     <>
@@ -153,9 +209,9 @@ const HeaderComponent = () => {
                             </ul >
                         </div >
                     )}
-                </div >
-            </div >
-        </header >
+                </div>
+            </div>
+        </header>
     );
 };
 
