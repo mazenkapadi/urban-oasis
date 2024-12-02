@@ -32,6 +32,7 @@ export async function POST(req) {
         const {userId, eventId, quantity} = metadata;
         const email = customer_details?.email;
 
+
         const rsvpData = {
             userId,
             eventId,
@@ -54,8 +55,8 @@ export async function POST(req) {
                 eventId,
                 email,
                 quantity,
-                eventTitle: eventData.eventTitle, // Correctly access the event title
-                eventDateTime: eventData.eventDateTime, // Ensure eventDateTime is in the event data
+                eventTitle: eventData.eventTitle,
+                eventDateTime: eventData.eventDateTime,
             };
 
         console.log(emaildata); // Log to confirm the structure
