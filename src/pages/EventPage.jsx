@@ -56,8 +56,8 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
-    const [modalState, setModalState] = useState({ open: false, title: "", message: "" });
-    const [snackbarState, setSnackbarState] = useState({ open: false, message: "", severity: "success" });
+    const [ modalState, setModalState ] = useState({open: false, title: "", message: ""});
+    const [ snackbarState, setSnackbarState ] = useState({open: false, message: "", severity: "success"});
     const [ profilePicture, setProfilePicture ] = useState('');
     const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
     const [ eventPlaceId, setEventPlaceId ] = useState('');
@@ -210,7 +210,7 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
-                setModalState({ open: true, title: "Event Full", message: "This event is fully booked." });
+                setModalState({open: true, title: "Event Full", message: "This event is fully booked."});
                 return;
             }
 
@@ -252,9 +252,9 @@ const EventPage = () => {
                 alert("An error occurred. Please try again.");
             }
             setAvailableTickets(availableTickets - totalAttendees);
-            setSnackbarState({ open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success" });
+            setSnackbarState({open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success"});
         } catch (error) {
-            setSnackbarState({ open: true, message: "Failed to RSVP. Please try again.", severity: "error" });
+            setSnackbarState({open: true, message: "Failed to RSVP. Please try again.", severity: "error"});
             console.error("Error handling RSVP:", error);
         }
     };
@@ -369,7 +369,11 @@ const EventPage = () => {
 
                 if (daysUntilEvent <= 7 && isPaidEvent) {
                     console.log("Cancellations are not permitted within 7 days of the event.");
-                    setSnackbarState({ open: true, message: "Cancellations are not permitted within 7 days of the event.", severity: "error" });
+                    setSnackbarState({
+                        open: true,
+                        message: "Cancellations are not permitted within 7 days of the event.",
+                        severity: "error"
+                    });
 
                     return;
                 }
@@ -392,7 +396,7 @@ const EventPage = () => {
                     notifyWaitlist(waitlist);
                 }
 
-                setSnackbarState({ open: true, message: "RSVP Cancelled.", severity: "info" });
+                setSnackbarState({open: true, message: "RSVP Cancelled.", severity: "info"});
                 console.log("RSVP cancellation processed.");
 
                 if (isPaidEvent) {
@@ -405,7 +409,11 @@ const EventPage = () => {
                     const userInWaitlist = waitlist.some(entry => entry.userId === userId);
 
                     if (userInWaitlist) {
-                        setSnackbarState({ open: true, message: "You have been removed from the waitlist.", severity: "info" });
+                        setSnackbarState({
+                            open: true,
+                            message: "You have been removed from the waitlist.",
+                            severity: "info"
+                        });
                         const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
                         await updateDoc(waitlistDocRef, {waitlist: updatedWaitlist});
                     } else {
@@ -414,7 +422,11 @@ const EventPage = () => {
                     }
                 } else {
                     console.log("Waitlist document does not exist.");
-                    setSnackbarState({ open: true, message: "You need to RSVP or join waitlist to perform this action.", severity: "error" });
+                    setSnackbarState({
+                        open: true,
+                        message: "You need to RSVP or join waitlist to perform this action.",
+                        severity: "error"
+                    });
                 }
             }
         } catch (error) {
@@ -505,10 +517,10 @@ const EventPage = () => {
             await setDoc(waitlistDocRef, {
                 waitlist: arrayUnion(waitlistData)
             }, {merge: true});
-            setSnackbarState({ open: true, message: "Added to the waitlist successfully.", severity: "info" });
+            setSnackbarState({open: true, message: "Added to the waitlist successfully.", severity: "info"});
             console.log("User added to waitlist successfully.");
         } catch (error) {
-            setSnackbarState({ open: true, message: "Failed to join the waitlist.", severity: "error" });
+            setSnackbarState({open: true, message: "Failed to join the waitlist.", severity: "error"});
             console.error("Error adding user to waitlist:", error);
         }
     };
@@ -518,7 +530,7 @@ const EventPage = () => {
     };
 
     const handleSnackbarClose = () => {
-        setSnackbarState({ ...snackbarState, open: false });
+        setSnackbarState({...snackbarState, open: false});
     };
 
     useEffect(() => {
@@ -912,6 +924,7 @@ const EventPage = () => {
                         <div >
 
                             <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >
+                            <br />
                             <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
                             Your RSVP has been successfully registered.
                         </span >
@@ -930,12 +943,12 @@ const EventPage = () => {
                     open={snackbarState.open}
                     autoHideDuration={6000}
                     onClose={handleSnackbarClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    anchorOrigin={{vertical: "bottom", horizontal: "left"}}
                 >
-                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{ width: "100%" }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{width: "100%"}} >
                         {snackbarState.message}
-                    </Alert>
-                </Snackbar>
+                    </Alert >
+                </Snackbar >
                 <FooterComponent />
             </div >
         </>
