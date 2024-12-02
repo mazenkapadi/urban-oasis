@@ -241,18 +241,17 @@ const EventPage = () => {
 
                 if (!response.ok) {
                     console.error("Failed to send QR code email:", await response.text());
-                    alert("There was an issue sending your RSVP confirmation email.");
+                    setSnackbarState({open: true, message: "There was an issue sending your RSVP confirmation email.", severity: "error"});
                     return;
                 }
 
                 console.log("QR code email sent successfully");
-                alert("Your RSVP confirmation email with the QR code has been sent!");
+                setSnackbarState({open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success"});
             } catch (error) {
                 console.error("Error sending QR code email:", error);
-                alert("An error occurred. Please try again.");
+                setSnackbarState({open: true, message: "An error occurred. Please try again.", severity: "error"});
             }
             setAvailableTickets(availableTickets - totalAttendees);
-            setSnackbarState({open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success"});
         } catch (error) {
             setSnackbarState({open: true, message: "Failed to RSVP. Please try again.", severity: "error"});
             console.error("Error handling RSVP:", error);
@@ -303,7 +302,7 @@ const EventPage = () => {
             }
 
             if (quantity > availableTickets) {
-                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
+                setSnackbarState({open: true, message: "Only ${availableTickets} tickets are available. Please reduce your quantity.", severity: "error"});
                 return;
             }
 
@@ -418,6 +417,7 @@ const EventPage = () => {
                         await updateDoc(waitlistDocRef, {waitlist: updatedWaitlist});
                     } else {
                         alert(`You need to RSVP or join waitlist to perform this action.`);
+
                         console.log("User is not in the waitlist; no update needed.");
                     }
                 } else {
@@ -918,27 +918,51 @@ const EventPage = () => {
                         toggleChatWindow={toggleChatWindow}
                     />
                 </div >
-                <Modal open={modalOpen} onClose={handleModalClose} >
-                    <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >
-                        <div >
+                {/*<Modal open={modalOpen} onClose={handleModalClose} >*/}
+                {/*    <div*/}
+                {/*        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >*/}
+                {/*        <div >*/}
 
-                            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >
-                            <br />
-                            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
-                            Your RSVP has been successfully registered.
-                        </span >
-                        </div >
-                        <Button
+                {/*            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >*/}
+                {/*            <br />*/}
+                {/*            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >*/}
+                {/*            Your RSVP has been successfully registered.*/}
+                {/*        </span >*/}
+                {/*        </div >*/}
+                {/*        <Button*/}
+                {/*            onClick={handleModalClose}*/}
+                {/*            variant="contained"*/}
+                {/*            color="primary"*/}
+                {/*            className="mt-4 w-full py-2 btn btn-primary"*/}
+                {/*        >*/}
+                {/*            Close*/}
+                {/*        </Button >*/}
+                {/*    </div >*/}
+                {/*</Modal >*/}
+
+
+                <Modal open={modalOpen} onClose={handleModalClose}>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 bg-Light-L2">
+                        <div className="text-center">
+                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4">
+                                RSVP Successful
+                            </h2>
+                            <p className="text-body text-Dark-D1 mb-6 font-inter">
+                                Your RSVP has been successfully registered.
+                            </p>
+                        </div>
+                        <button
                             onClick={handleModalClose}
-                            variant="contained"
-                            color="primary"
-                            className="mt-4 w-full py-2 btn btn-primary"
+                            className="w-full py-3 rounded-md bg-accent-orange text-Light-L2 text-button font-medium hover:bg-accent-red transition duration-200"
                         >
                             Close
-                        </Button >
-                    </div >
-                </Modal >
+                        </button>
+                    </div>
+                </Modal>
+
+
+
+
                 <Snackbar
                     open={snackbarState.open}
                     autoHideDuration={6000}

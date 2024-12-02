@@ -18,6 +18,11 @@ const HostEventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ isPaidEvent, setIsPaidEvent ] = useState(false);
     const [ userId, setUserId ] = useState(null);
+    const [eventCapacity, setEventCapacity] = useState(0);
+    const [attendeesCount, setAttendeesCount] = useState(0);
+    const [editable, setEditable] = useState(false);
+
+
 
     const [ hostDetails, setHostDetails ] = useState({
         bio: '',
@@ -28,7 +33,6 @@ const HostEventPage = () => {
 
     const [ loading, setLoading ] = useState(true);
     const [ isHost, setIsHost ] = useState(false);
-    const [ editable, setEditable ] = useState(false);
     const [ ticketQuantity, setTicketQuantity ] = useState([]);
     const [ attendeeId, setAttendeeId ] = useState([]);
     const [ attendeeDetails, setAttendeeDetails ] = useState([]);
@@ -148,6 +152,15 @@ const HostEventPage = () => {
         }
     };
 
+    const handleCapacityChange = (e) => {
+        const newCapacity = parseInt(e.target.value, 10);
+        if (newCapacity >= attendeesCount) {
+            setEventCapacity(newCapacity);
+        } else {
+            alert(`Capacity cannot be less than the number of attendees (${attendeesCount}).`);
+        }
+    };
+
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setHostDetails((prevDetails) => ({...prevDetails, [name]: value}));
@@ -157,7 +170,7 @@ const HostEventPage = () => {
         return <LoadingPage />;
     }
 
-    const handleModifyButton = async () => {
+    const handleAttendeeCancel = async () => {
 
     };
 
@@ -240,7 +253,7 @@ const HostEventPage = () => {
             <HeaderComponent />
             <div className="event-page py-10 px-4 pt-32 bg-gray-200 min-h-screen" >
                 <div className="box-border bg-white p-8 rounded-lg shadow-lg" >
-                    <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
+                    <PhotoCarousel eventId={eventId} />
 
                     <div className="flex flex-col mt-6" >
                         <h1 className="text-3xl font-bold" >{eventTitle}</h1 >
@@ -354,7 +367,7 @@ const HostEventPage = () => {
                                         <div className="flex items-center gap-2" >
                                             <button
                                                 className="bg-accent-purple text-neutral-white font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
-                                                onClick={handleModifyButton}
+                                                onClick={handleAttendeeCancel}
                                             >
                                                 Cancel Ticket
                                             </button >
