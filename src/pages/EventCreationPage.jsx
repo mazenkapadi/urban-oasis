@@ -68,6 +68,18 @@ function EventCreationPage() {
             'Sports', 'Gaming & E-sports', 'Fitness & Training',
             'Adventure Sports', 'Hiking & Nature',
         ],
+        'All Categories': [
+            'Sports', 'Gaming & E-sports', 'Fitness & Training',
+            'Adventure Sports', 'Hiking & Nature', 'Food & Drink',
+            'Cooking & Culinary', 'Shopping & Markets', 'Travel & Outdoor',
+            'Wine Tasting', 'Dining Experiences', 'Health',
+            'Spirituality & Wellness', 'Family & Kids', 'Fashion & Beauty',
+            'Mental Health', 'Technology', 'Science & Innovation', 'Education',
+            'Workshops & Classes', 'Talks & Seminars', 'Online Courses',
+            'Business', 'Networking', 'Politics & Activism', 'Charity & Fundraisers',
+            'Conferences', 'Music', 'Art', 'Comedy', 'Theater & Performing Arts',
+            'Film & Media', 'Photography & Art Exhibits', 'Opera',
+        ],
     };
     const [ eventTitleEmpty, setEventTitleEmpty ] = useState(false);
     const [ eventDescriptionEmpty, setEventDescriptionEmpty ] = useState(false);
@@ -142,7 +154,7 @@ function EventCreationPage() {
         );
     };
 
-    const geocodePlaceId = async (placeId)=> {
+    const geocodePlaceId = async (placeId) => {
         try {
             const service = new google.maps.places.PlacesService(document.createElement('div'));
             const request = {
@@ -291,20 +303,21 @@ function EventCreationPage() {
 
 
                     <div className="box-border w-full max-w-3xl rounded-lg bg-primary-dark shadow-lg p-8" >
-                        <div className="text-center">
+                        <div className="text-center" >
                             <span
-                                className="text-h1 font-lalezar text-primary-light pb-3 text-center uppercase font-bold">Create Your Event</span>
-                        </div>
+                                className="text-h1 font-lalezar text-primary-light pb-3 text-center uppercase font-bold" >Create Your Event</span >
+                        </div >
 
                         {/* Error message */}
-                        {error && <div className="text-accent-red text-center mb-4">{error}</div>}
+                        {error && <div className="text-accent-red text-center mb-4" >{error}</div >}
 
                         <div className="flex flex-col space-y-4 pt-4" >
                             <div className="flex flex-col space-y-6" >
 
                                 {/* Event Title */}
                                 <div >
-                                    <span htmlFor="eventTitle" className="text-body font-bold font-inter text-primary-light" >Event
+                                    <span htmlFor="eventTitle"
+                                          className="text-body font-bold font-inter text-primary-light" >Event
                                         Title</span >
                                     <input
                                         type="text"
@@ -325,7 +338,7 @@ function EventCreationPage() {
                                 {/* Description */}
                                 <div >
                                     <span htmlFor="eventDescription"
-                                        className="font-inter text-body font-bold text-primary-light">Description</span >
+                                          className="font-inter text-body font-bold text-primary-light" >Description</span >
                                     <textarea
                                         id="eventDescription"
                                         value={eventDescription}
@@ -345,7 +358,7 @@ function EventCreationPage() {
                                 {/* Location */}
                                 <div >
                                     <span htmlFor="eventLocation"
-                                          className="font-inter text-body font-bold text-primary-light">Location</span >
+                                          className="font-inter text-body font-bold text-primary-light" >Location</span >
                                     <GooglePlacesAutocomplete
                                         required
                                         apiKey={googleMapsConfig.apiKey}
@@ -381,7 +394,7 @@ function EventCreationPage() {
                                                 option: (provided, state) => ({
                                                     ...provided,
                                                     color: state.isFocused ? colors["accent-blue"] : colors["primary-light"],
-                                                    backgroundColor: state.isFocused ?  colors["primary-light"] : colors["primary-dark"],
+                                                    backgroundColor: state.isFocused ? colors["primary-light"] : colors["primary-dark"],
                                                     cursor: "pointer",
                                                 }),
                                                 singleValue: (provided) => ({
@@ -404,7 +417,8 @@ function EventCreationPage() {
                                 {/* Date and Capacity */}
                                 <div className="flex space-x-4" >
                                     <div className="flex-1" >
-                                        <span htmlFor="eventDateTime" className="font-inter text-body font-bold text-primary-light" >Event
+                                        <span htmlFor="eventDateTime"
+                                              className="font-inter text-body font-bold text-primary-light" >Event
                                             Date
                                             and Time</span >
                                         <div className="relative mt-2" >
@@ -431,7 +445,7 @@ function EventCreationPage() {
                                             id="eventCapacity"
                                             value={eventCapacity === null ? '' : eventCapacity}
                                             onChange={(e) => {
-                                                const parsedValue = parseInt(e.target.value  === '' ? null : parseInt(e.target.value, 10));
+                                                const parsedValue = parseInt(e.target.value === '' ? null : parseInt(e.target.value, 10));
                                                 setEventCapacity(Math.max(parsedValue, 0));
                                             }}
                                             placeholder="Enter event capacity"
@@ -459,7 +473,8 @@ function EventCreationPage() {
 
 
                                 <div >
-                                    <span htmlFor="eventImages" className="font-inter text-body font-bold text-primary-light" >Upload
+                                    <span htmlFor="eventImages"
+                                          className="font-inter text-body font-bold text-primary-light" >Upload
                                         Event
                                         Images</span >
                                     <div className="mt-2" >
@@ -468,7 +483,8 @@ function EventCreationPage() {
                                             className="flex items-center justify-center w-full p-3 bg-primary-light rounded-md border border-Dark-D1 cursor-pointer hover:bg-accent-purple transition-all"
                                         >
                                             <PhotoIcon className="h-6 w-6 text-primary-dark mr-2" />
-                                            <span className="font-inter font-medium text-primary-dark" >Choose Images</span >
+                                            <span
+                                                className="font-inter font-medium text-primary-dark" >Choose Images</span >
                                             <input
                                                 type="file"
                                                 id="eventImages"
@@ -514,7 +530,8 @@ function EventCreationPage() {
 
                                 {/* Paid Event */}
                                 <div className="space-y-4" >
-                                    <span htmlFor="isPaidEvent" className="font-inter text-body font-bold text-primary-light" >
+                                    <span htmlFor="isPaidEvent"
+                                          className="font-inter text-body font-bold text-primary-light" >
                                         Is this a paid event?</span >
                                     <select
                                         id="isPaidEvent"
@@ -688,7 +705,7 @@ function EventCreationPage() {
                     onClose={handleModalClose}
                 >
                     <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-Light-L1"  >
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-Light-L1" >
                         <h2 className="text-h2 text-primary-dark mb-4 text-center" >
                             Event Created!
                         </h2 >

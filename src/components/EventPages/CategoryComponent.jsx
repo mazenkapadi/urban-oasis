@@ -89,17 +89,17 @@ const CategoryComponent = () => {
     }
 
     return (
-        <div className="category_container p-4">
+        <div className="category_container p-1">
             <div className="category_header mb-4">
-                <h1 className="text-2xl font-bold text-primary-dark">Categories</h1>
+                <h1 className="text-2xl font-bold text-primary-light">Categories</h1>
             </div>
-            <div className="category_body grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="category_body flex flex-row gap-2">
                 {filteredCategories.map((subcategory) => {
                     const mainCategory = mainCategoryMapping[subcategory];
                     const colorClass = categoryColors[mainCategory];
 
                     return (
-                        <div key={subcategory} className={`p-4 rounded-md shadow-md ${colorClass}`}>
+                        <div key={subcategory} className={`px-2 py-1 rounded-full shadow-md ${colorClass}`}>
                             <span className="font-medium">{subcategory}</span>
                         </div>
                     );
