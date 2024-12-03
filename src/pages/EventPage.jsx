@@ -12,8 +12,8 @@ import LoadingPage from "./service/LoadingPage.jsx"
 import { Alert, Button, Modal, Snackbar } from "@mui/material";
 import { loadStripe } from "@stripe/stripe-js";
 import { v4 as uuidv4 } from "uuid";
-import ForecastComponent from "../components/ForecastComponent.jsx";
-import ChatWindowComponent from "../components/ChatWindowComponent.jsx";
+import ForecastComponent from "../components/EventPages/ForecastComponent.jsx";
+import ChatWindowComponent from "../components/EventPages/ChatWindowComponent.jsx";
 import { googleMapsConfig } from "../locationConfig.js";
 import { useJsApiLoader } from '@react-google-maps/api';
 import Tooltip from '@mui/material/Tooltip';
@@ -36,6 +36,7 @@ import {
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
 import emailjs from '@emailjs/browser';
+import CategoryComponent from "../components/EventPages/CategoryComponent.jsx";
 
 
 const EventPage = () => {
@@ -748,6 +749,7 @@ const EventPage = () => {
                                           dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
+                                <CategoryComponent />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
                                 <div className="flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg bg-Dark-D2" >
