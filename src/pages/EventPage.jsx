@@ -36,7 +36,6 @@ import {
 } from "react-share";
 import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
 import emailjs from '@emailjs/browser';
-import themeManager from "../utils/themeManager.jsx";
 
 
 const EventPage = () => {
@@ -100,16 +99,6 @@ const EventPage = () => {
         },
         hostId: ''
     });
-    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
-
-    useEffect(() => {
-        const handleThemeChange = (isDark) => setDarkMode(isDark);
-        themeManager.addListener(handleThemeChange);
-
-        return () => {
-            themeManager.removeListener(handleThemeChange);
-        };
-    }, []);
 
     // const handleIncrement = () => {
     //     if (isPaidEvent || (quantity < 10)) {
@@ -734,54 +723,54 @@ const EventPage = () => {
     return (
         <>
             <div className="event-page min-h-screen flex flex-col" >
-                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
+                <div className="w-full bg-primary-dark" >
                     <HeaderComponent />
                 </div >
                 <div
-                    className={`flex flex-col justify-center items-center py-12 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                    <div className={`box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
+                    className="flex flex-col justify-center items-center py-12 bg-Dark-D2" >
+                    <div className="box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg bg-primary-dark" >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
                             <div className="flex content w-full flex-col gap-8" >
                                 <div className="flex flex-col pt-4 space-y-6" >
                                     <div className="flex items-center space-x-3" >
-                                        <CalendarDaysIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                        <CalendarDaysIcon className="text-primary-light w-6 h-6" />
                                         <span
-                                            className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventDateTime}</span >
+                                            className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventDateTime}</span >
                                     </div >
                                     <span
-                                        className={`text-h2 block font-semibold font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventTitle}</span >
+                                        className="text-h2 block text-primary-light font-semibold font-lalezar" >{eventTitle}</span >
                                 </div >
                                 <div className="flex flex-col" >
                                     <span
-                                        className={`text-h4 font-archivo font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Description</span >
-                                    <span className={`text-body font-archivo ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                        className="text-h4 text-primary-light font-archivo font-semibold" >Description</span >
+                                    <span className="text-body text-primary-light font-archivo"
                                           dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
                                 <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
-                                <div className={`flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
+                                <div className="flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg bg-Dark-D2" >
                                     <div className="flex space-x-4" >
                                         {availableTickets < 10 && availableTickets > 0 && (
-                                            <span className={`font-archivo text-body text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                            <span className="text-primary-light font-archivo text-body text-center" >
                                                 Only {availableTickets} tickets left!
                                             </span >
                                         )}
                                         <div
-                                            className={`flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
-                                            <TicketIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                            className="flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg bg-Dark-D2 border-primary-dark" >
+                                            <TicketIcon className="text-primary-light w-6 h-6" />
                                             <span
-                                                className={`font-bold text-body pl-3 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{isPaidEvent && '$'}{eventPrice}</span >
+                                                className="font-bold text-primary-light text-body pl-3" >{isPaidEvent && '$'}{eventPrice}</span >
                                         </div >
                                         <div
-                                            className={`flex justify-center items-center w-36 gap-3 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                            className="flex justify-center items-center w-36 h-12 gap-3 bg-opacity-30 border-4 rounded-lg  bg-Dark-D2 border-primary-dark" >
                                             <button onClick={handleDecrement} disabled={quantity === 1}
-                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                                    className="text-primary-light" >
                                                 <MinusIcon className="w-6 h-6" />
                                             </button >
-                                            <span className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{quantity}</span >
-                                            <button onClick={handleIncrement} className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                            <span className="font-bold text-primary-light text-body" >{quantity}</span >
+                                            <button onClick={handleIncrement} className="text-primary-light" >
                                                 <PlusIcon className="w-6 h-6" />
                                             </button >
                                         </div >
@@ -790,20 +779,20 @@ const EventPage = () => {
                                     {userHasRSVPed ? (
                                         <>
                                             <div
-                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple" >
                                                 <button
-                                                    className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                    className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleCancel}
                                                 >
-                                                    <XMarkIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                                    <XMarkIcon className="text-primary-light w-6 h-6 mr-2" />
                                                     <span
-                                                        className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{'Cancel RSVP'}</span >
+                                                        className="font-bold text-primary-light text-body" >{'Cancel RSVP'}</span >
                                                 </button >
                                             </div >
                                             <div
-                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                                className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-purple" >
                                                 <button
-                                                    className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                    className="flex items-center text-primary-light font-bold py-2 px-4 rounded focus:outline-none"
                                                     onClick={handleModifyRSVP}
                                                 >
                                                     <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
@@ -814,9 +803,9 @@ const EventPage = () => {
                                         </>
                                     ) : (
                                         <div
-                                            className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}  >
+                                            className="flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg bg-Dark-D2 border-primary-dark hover:bg-accent-blue hover:border-accent-purple" >
                                             <button
-                                                className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                className="flex items-center text-white font-bold py-2 px-4 rounded focus:outline-none"
                                                 onClick={
                                                     eventCapacity > eventAttendee
                                                         ? isPaidEvent
@@ -825,8 +814,8 @@ const EventPage = () => {
                                                         : handleRSVP
                                                 }
                                             >
-                                                <ShoppingCartIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
-                                                <span className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >
+                                                <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
+                                                <span className="font-bold text-primary-light text-body" >
                                                     {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span >
                                             </button >
                                         </div >
@@ -834,18 +823,18 @@ const EventPage = () => {
 
 
                                     <div className="flex flex-row gap-6 items-center" >
-                                        <MapPinIcon className={`w-6 h-6 flex-shrink-0 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                        <MapPinIcon className="text-primary-light w-6 h-6" />
                                         <span
-                                            className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventLocation}</span >
+                                            className="text-body font-bold font-archivo text-primary-light opacity-80" >{eventLocation}</span >
                                     </div >
                                     <div
-                                        className={`flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 ${darkMode ? "bg-Dark-D2 border-primary-light" : "bg-Light-L2 border-primary-dark"}`} >
-                                        <span className={`text-h4 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
+                                        className="flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 bg-Dark-D2 border-primary-dark" >
+                                        <span className="text-primary-light text-h4 font-bold font-archivo  mb-2" >Hosted by</span >
                                         {hostDetails && (
                                             <div className="flex flex-col items-center space-y-2" >
                                                 <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
                                                     <span
-                                                        className={`text-h4 font-medium font-archivo cursor-pointer ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                        className="text-h4 font-medium font-archivo text-primary-light cursor-pointer"
                                                         onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</span >
                                                 </Tooltip >
                                                 <button className="text-accent-purple" onClick={toggleChatWindow} >Host
@@ -953,12 +942,12 @@ const EventPage = () => {
 
 
                 <Modal open={modalOpen} onClose={handleModalClose}>
-                    <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`}>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 bg-Light-L2">
                         <div className="text-center">
                             <h2 className="text-h3 font-lalezar text-accent-blue mb-4">
                                 RSVP Successful
                             </h2>
-                            <p className={`text-body mb-6 font-inter ${darkMode ? "text-Dark-D1" : "text-Light-L1"}`}>
+                            <p className="text-body text-Dark-D1 mb-6 font-inter">
                                 Your RSVP has been successfully registered.
                             </p>
                         </div>
