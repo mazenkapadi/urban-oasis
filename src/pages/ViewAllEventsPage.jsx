@@ -13,6 +13,7 @@ import HitComponent from "../components/HitComponent";
 import HeaderComponent from "../components/HeaderComponent";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { formatDateForFilter } from "../utils/dateHelpers";
+import FilteredHits from "../components/FilteredHits.jsx";
 
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
@@ -245,7 +246,7 @@ const ViewAllEventsPage = () => {
 
                         {/* Hits Section */}
                         <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
-                            <Hits
+                            <FilteredHits
                                 hitComponent={(props) => (
                                     <HitComponent
                                         {...props}
