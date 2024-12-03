@@ -494,43 +494,6 @@ const HostEventPage = () => {
                             </div >
                         </div >
                     )}
-                    {showModal && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >
-                            <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >
-                                <h2 className="text-2xl font-bold mb-6" >Cancel RSVP</h2 >
-                                <p className="mb-4 text-lg" >To: {emailData.to}</p >
-                                <input
-                                    type="text"
-                                    placeholder="Subject"
-                                    value={emailData.subject}
-                                    onChange={(e) => setEmailData((prev) => ({...prev, subject: e.target.value}))}
-                                    className="w-full p-3 border rounded-lg mb-4 text-lg"
-                                />
-                                <textarea
-                                    placeholder="Message"
-                                    value={emailData.body}
-                                    onChange={(e) => setEmailData((prev) => ({...prev, body: e.target.value}))}
-                                    className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
-                                />
-                                <div className="flex justify-end gap-4" >
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
-                                    >
-                                        Cancel
-                                    </button >
-                                    <button
-                                        onClick={() => handleAttendeeCancel(eventId, rsvpId, emailData.to)}
-                                        className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
-                                    >
-                                        Confirm Cancel
-                                    </button >
-                                </div >
-                            </div >
-                        </div >
-                    )}
-
-
                 </div >
             </div >
             <FooterComponent />
