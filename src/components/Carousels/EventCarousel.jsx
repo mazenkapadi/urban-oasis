@@ -81,4 +81,5 @@ const EventCarousel = ({ rangeType, categories }) => {
     );
 };
 
+
 export default EventCarousel;

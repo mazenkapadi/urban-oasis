@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import AutocompleteSearch from "./AutoCompleteSearch.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 const HeaderComponent = () => {
     const [ menuOpen, setMenuOpen ] = useState(false);
@@ -70,6 +71,10 @@ const HeaderComponent = () => {
                 <div className="mx-8 flex-1" >
                     <AutocompleteSearch />
                 </div >
+
+                <div className="pr-5">
+                    <ThemeToggle/>
+                </div>
 
                 {/* Hamburger Menu Dropdown */}
                 <div className="relative pr-8" >
