@@ -79,7 +79,7 @@ const HeaderComponent = ({onSearch}) => {
 
     return (
         <header className="bg-transparent w-full gap-4" >
-            <div className="flex justify-between items-center px-6 py-4 space-x-4" >
+            <div className="flex justify-between items-center px-6 py-2 space-x-4" >
                 {/* Logo */}
                 <div className="flex-shrink-0" >
                     <button onClick={() => navigate("/")} >
