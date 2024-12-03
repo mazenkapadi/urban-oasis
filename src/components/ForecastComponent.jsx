@@ -1,8 +1,23 @@
 import { useState, useEffect } from "react";
+import { Switch, FormControlLabel } from '@mui/material';
 
 const ForecastComponent = ({lat, lon, eventDate}) => {
     const [ filteredForecast, setFilteredForecast ] = useState(null);
+    const [unit, setUnit] = useState("metric"); // "metric" for Celsius, "imperial" for Fahrenheit
+
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
+    const convertTemperature = (temp, unit) => {
+        if (unit === "imperial") {
+            return Math.round((temp * 9) / 5 + 32);
+        }
+        return Math.round(temp); 
+    };
+
+    // const handleUnitChange = (event) => {
+    //     setUnit(event.target.checked ? "imperial" : "metric");
+    // };
+    
 
     const fetchWeather = async (lat, lon) => {
         if (!lat || !lon || !eventDate) return;
@@ -71,27 +86,51 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
 
     return (
         <div className="w-full mt-2 rounded-lg" >
-            <h2 className="text-2xl font-bold mb-4 text-text-gray" >Forecast</h2 >
+            {/* <h2 className="text-h4 text-primary-light font-archivo font-semibold" >Forecast</h2 > */}
             <div className="flex overflow-x-auto space-x-4" >
-                {/* {filteredForecast.map((forecast, index) => ( */}
                 <div
-                    // key={index}
-                    className=" p-4 rounded-lg min-w-[150px] flex-shrink-0"
+                    className="flex rounded-lg flex-shrink-0"
                 >
-                    <p className="text-neutral-white" >
+                    {/* <p className="text-body text-primary-light font-archivo" >
                         {new Date(filteredForecast.dt_txt).toLocaleString()}
-                    </p >
+                    </p > */}
                     <img
                         src={`https://openweathermap.org/img/wn/${filteredForecast.weather[0].icon}@2x.png`}
                         alt={filteredForecast.weather[0].description}
-                        className="mx-auto"
+                        className="mx-auto h-20"
                     />
-                    <p className="text-neutral-white" >{filteredForecast.main.temp}°C</p >
-                    <p className="text-neutral-white" >
-                        {filteredForecast.weather[0].description}
-                    </p >
+                    <div className="flex items-center space-x-2">
+                    <p className="text-body text-primary-light font-archivo">
+                    {convertTemperature(filteredForecast.main.temp, unit)}°
+                    {/* {unit === "metric" ? "C" : "F"} */}
+                    </p>
+                    <div className="text-body text-primary-light font-archivo flex space-x-2">
+                        <button
+                        onClick={() => setUnit("metric")}
+                        className={`cursor-pointer ${
+                            unit === "metric" ? "font-bold text-primary-light" : "text-body text-Light-L1"
+                        }`}
+                        >
+                        C
+                        </button>
+                        <div className="h-6 w-0.5 bg-primary-light"></div> 
+                        <button
+                        onClick={() => setUnit("imperial")}
+                        className={`cursor-pointer ${
+                            unit === "imperial" ? "font-bold text-primary-light " : "text-body text-Light-L1"
+                        }`}
+                        >
+                        F
+                        </button>
+                    </div>
+                    </div>
+
+                    
+                    {/* <p className="text-body text-primary-light font-archivo" > */}
+                        {/* {filteredForecast.weather[0].description}
+                    </p > */}
+                    
                 </div >
-                {/* ))} */}
             </div >
         </div >
     );

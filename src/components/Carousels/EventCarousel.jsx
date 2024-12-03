@@ -12,6 +12,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 const EventCarousel = ({ rangeType, categories }) => {
     const [events, setEvents] = useState([]);
 
+
     useEffect(() => {
         const { startDate, endDate } = getDateRange(rangeType);
 
@@ -73,7 +74,7 @@ const EventCarousel = ({ rangeType, categories }) => {
                             </SwiperSlide>
                         ))
                     ) : (
-                        <div className="text-center text-gray-400 mt-8 w-full">No events found!</div>
+                        <div className="text-center text-gray-400 mt-8 w-full">No events found! We're always adding new events, check back later!</div>
                     )}
                 </Swiper>
             </div>

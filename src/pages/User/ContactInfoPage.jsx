@@ -38,7 +38,7 @@ const ContactInfoPage = () => {
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    setProfilePic(data.profilePic || user.photoURL); // Default to Google profile picture if none in Firestore
+                    setProfilePic(data.profilePic || user.photoURL);
                     setPrefix(data.name?.prefix || '');
                     setFirstName(data.name?.firstName || '');
                     setLastName(data.name?.lastName || '');
@@ -47,7 +47,7 @@ const ContactInfoPage = () => {
                     setAddress(data.address?.line1 || '');
                     setAddress2(data.address?.line2 || '');
                     setCity(data.address?.city || '');
-                    setState(data.address?.state || ''); // Pre-select the state
+                    setState(data.address?.state || '');
                     setZip(data.address?.zip || '');
                     setBirthday(data.birthday || '');
                     setIsHost(data.isHost || false);

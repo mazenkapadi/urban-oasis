@@ -56,8 +56,8 @@ const EventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ modalOpen, setModalOpen ] = useState(false);
-    const [modalState, setModalState] = useState({ open: false, title: "", message: "" });
-    const [snackbarState, setSnackbarState] = useState({ open: false, message: "", severity: "success" });
+    const [ modalState, setModalState ] = useState({open: false, title: "", message: ""});
+    const [ snackbarState, setSnackbarState ] = useState({open: false, message: "", severity: "success"});
     const [ profilePicture, setProfilePicture ] = useState('');
     const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
     const [ eventPlaceId, setEventPlaceId ] = useState('');
@@ -210,7 +210,7 @@ const EventPage = () => {
             const availableTickets = eventCapacity - eventAttendee;
 
             if (availableTickets <= 0) {
-                setModalState({ open: true, title: "Event Full", message: "This event is fully booked." });
+                setModalState({open: true, title: "Event Full", message: "This event is fully booked."});
                 return;
             }
 
@@ -241,20 +241,19 @@ const EventPage = () => {
 
                 if (!response.ok) {
                     console.error("Failed to send QR code email:", await response.text());
-                    alert("There was an issue sending your RSVP confirmation email.");
+                    setSnackbarState({open: true, message: "There was an issue sending your RSVP confirmation email.", severity: "error"});
                     return;
                 }
 
                 console.log("QR code email sent successfully");
-                alert("Your RSVP confirmation email with the QR code has been sent!");
+                setSnackbarState({open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success"});
             } catch (error) {
                 console.error("Error sending QR code email:", error);
-                alert("An error occurred. Please try again.");
+                setSnackbarState({open: true, message: "An error occurred. Please try again.", severity: "error"});
             }
             setAvailableTickets(availableTickets - totalAttendees);
-            setSnackbarState({ open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success" });
         } catch (error) {
-            setSnackbarState({ open: true, message: "Failed to RSVP. Please try again.", severity: "error" });
+            setSnackbarState({open: true, message: "Failed to RSVP. Please try again.", severity: "error"});
             console.error("Error handling RSVP:", error);
         }
     };
@@ -303,7 +302,7 @@ const EventPage = () => {
             }
 
             if (quantity > availableTickets) {
-                alert(`Only ${availableTickets} tickets are available. Please reduce your quantity.`);
+                setSnackbarState({open: true, message: "Only ${availableTickets} tickets are available. Please reduce your quantity.", severity: "error"});
                 return;
             }
 
@@ -369,7 +368,11 @@ const EventPage = () => {
 
                 if (daysUntilEvent <= 7 && isPaidEvent) {
                     console.log("Cancellations are not permitted within 7 days of the event.");
-                    setSnackbarState({ open: true, message: "Cancellations are not permitted within 7 days of the event.", severity: "error" });
+                    setSnackbarState({
+                        open: true,
+                        message: "Cancellations are not permitted within 7 days of the event.",
+                        severity: "error"
+                    });
 
                     return;
                 }
@@ -392,7 +395,7 @@ const EventPage = () => {
                     notifyWaitlist(waitlist);
                 }
 
-                setSnackbarState({ open: true, message: "RSVP Cancelled.", severity: "info" });
+                setSnackbarState({open: true, message: "RSVP Cancelled.", severity: "info"});
                 console.log("RSVP cancellation processed.");
 
                 if (isPaidEvent) {
@@ -405,16 +408,25 @@ const EventPage = () => {
                     const userInWaitlist = waitlist.some(entry => entry.userId === userId);
 
                     if (userInWaitlist) {
-                        setSnackbarState({ open: true, message: "You have been removed from the waitlist.", severity: "info" });
+                        setSnackbarState({
+                            open: true,
+                            message: "You have been removed from the waitlist.",
+                            severity: "info"
+                        });
                         const updatedWaitlist = waitlist.filter(entry => entry.userId !== userId);
                         await updateDoc(waitlistDocRef, {waitlist: updatedWaitlist});
                     } else {
                         alert(`You need to RSVP or join waitlist to perform this action.`);
+
                         console.log("User is not in the waitlist; no update needed.");
                     }
                 } else {
                     console.log("Waitlist document does not exist.");
-                    setSnackbarState({ open: true, message: "You need to RSVP or join waitlist to perform this action.", severity: "error" });
+                    setSnackbarState({
+                        open: true,
+                        message: "You need to RSVP or join waitlist to perform this action.",
+                        severity: "error"
+                    });
                 }
             }
         } catch (error) {
@@ -505,10 +517,10 @@ const EventPage = () => {
             await setDoc(waitlistDocRef, {
                 waitlist: arrayUnion(waitlistData)
             }, {merge: true});
-            setSnackbarState({ open: true, message: "Added to the waitlist successfully.", severity: "info" });
+            setSnackbarState({open: true, message: "Added to the waitlist successfully.", severity: "info"});
             console.log("User added to waitlist successfully.");
         } catch (error) {
-            setSnackbarState({ open: true, message: "Failed to join the waitlist.", severity: "error" });
+            setSnackbarState({open: true, message: "Failed to join the waitlist.", severity: "error"});
             console.error("Error adding user to waitlist:", error);
         }
     };
@@ -518,7 +530,7 @@ const EventPage = () => {
     };
 
     const handleSnackbarClose = () => {
-        setSnackbarState({ ...snackbarState, open: false });
+        setSnackbarState({...snackbarState, open: false});
     };
 
     useEffect(() => {
@@ -906,36 +918,61 @@ const EventPage = () => {
                         toggleChatWindow={toggleChatWindow}
                     />
                 </div >
-                <Modal open={modalOpen} onClose={handleModalClose} >
-                    <div
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >
-                        <div >
+                {/*<Modal open={modalOpen} onClose={handleModalClose} >*/}
+                {/*    <div*/}
+                {/*        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >*/}
+                {/*        <div >*/}
 
-                            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >
-                            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >
-                            Your RSVP has been successfully registered.
-                        </span >
-                        </div >
-                        <Button
+                {/*            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >*/}
+                {/*            <br />*/}
+                {/*            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >*/}
+                {/*            Your RSVP has been successfully registered.*/}
+                {/*        </span >*/}
+                {/*        </div >*/}
+                {/*        <Button*/}
+                {/*            onClick={handleModalClose}*/}
+                {/*            variant="contained"*/}
+                {/*            color="primary"*/}
+                {/*            className="mt-4 w-full py-2 btn btn-primary"*/}
+                {/*        >*/}
+                {/*            Close*/}
+                {/*        </Button >*/}
+                {/*    </div >*/}
+                {/*</Modal >*/}
+
+
+                <Modal open={modalOpen} onClose={handleModalClose}>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 bg-Light-L2">
+                        <div className="text-center">
+                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4">
+                                RSVP Successful
+                            </h2>
+                            <p className="text-body text-Dark-D1 mb-6 font-inter">
+                                Your RSVP has been successfully registered.
+                            </p>
+                        </div>
+                        <button
                             onClick={handleModalClose}
-                            variant="contained"
-                            color="primary"
-                            className="mt-4 w-full py-2 btn btn-primary"
+                            className="w-full py-3 rounded-md bg-accent-orange text-Light-L2 text-button font-medium hover:bg-accent-red transition duration-200"
                         >
                             Close
-                        </Button >
-                    </div >
-                </Modal >
+                        </button>
+                    </div>
+                </Modal>
+
+
+
+
                 <Snackbar
                     open={snackbarState.open}
                     autoHideDuration={6000}
                     onClose={handleSnackbarClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                    anchorOrigin={{vertical: "bottom", horizontal: "left"}}
                 >
-                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{ width: "100%" }}>
+                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{width: "100%"}} >
                         {snackbarState.message}
-                    </Alert>
-                </Snackbar>
+                    </Alert >
+                </Snackbar >
                 <FooterComponent />
             </div >
         </>

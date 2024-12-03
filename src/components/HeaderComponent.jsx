@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -8,17 +8,15 @@ import EventSearchBar from "./EventSearchBar";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import AutocompleteSearch from "./AutoCompleteSearch.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
-const HeaderComponent = ({ onSearch }) => {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [name, setName] = useState("");
-    const [profilePic, setProfilePic] = useState("");
-    const [isHost, setIsHost] = useState(false);
-    const [geoLocation, setGeoLocation] = useState(null);
-    const [eventQuery, setEventQuery] = useState("");
-    const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
-    const [showDatePicker, setShowDatePicker] = useState(false);
+const HeaderComponent = () => {
+    const [ menuOpen, setMenuOpen ] = useState(false);
+    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+    const [ name, setName ] = useState('');
+    const [ profilePic, setProfilePic ] = useState('');
+    const [ isHost, setIsHost ] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,9 +29,9 @@ const HeaderComponent = ({ onSearch }) => {
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setName(userData.name?.firstName || "User");
-                        setProfilePic(userData.profilePic || "");
-                        setIsHost(userData.isHost || false);
+                        setName(userData.name?.firstName || 'User');
+                        setProfilePic(userData.profilePic || '');
+                        setIsHost(userData.isHost || false); // Check if user is a host
                     } else {
                         console.log("No such document in Firestore!");
                     }
@@ -87,6 +85,18 @@ const HeaderComponent = ({ onSearch }) => {
                             style={{ textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)" }}
                         >
                             Urban Oasis
+                        </span >
+                    </button >
+                </div >
+
+                {/* Autocomplete Search */}
+                <div className="mx-8 flex-1" >
+                    <AutocompleteSearch />
+                </div >
+
+                <div className="pr-5">
+                    <ThemeToggle/>
+                </div>
                         </span>
                     </button>
                 </div>

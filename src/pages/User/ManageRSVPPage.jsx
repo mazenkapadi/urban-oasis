@@ -82,7 +82,6 @@ const ManageRSVPPage = () => {
                 [`rsvps.${rsvpId}`]: deleteField(),
             });
 
-            // Update the local state
             setRsvps((prevRsvps) => prevRsvps.filter((rsvp) => rsvp.eventId !== eventId));
             alert("RSVP canceled successfully.");
         } catch (error) {
