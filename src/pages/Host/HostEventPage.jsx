@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { deleteField, doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebaseConfig.js";
 import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
@@ -18,10 +18,9 @@ const HostEventPage = () => {
     const [ eventImages, setEventImages ] = useState([]);
     const [ isPaidEvent, setIsPaidEvent ] = useState(false);
     const [ userId, setUserId ] = useState(null);
-    const [eventCapacity, setEventCapacity] = useState(0);
-    const [attendeesCount, setAttendeesCount] = useState(0);
-    const [editable, setEditable] = useState(false);
-
+    const [ eventCapacity, setEventCapacity ] = useState(0);
+    const [ attendeesCount, setAttendeesCount ] = useState(0);
+    const [ editable, setEditable ] = useState(false);
 
 
     const [ hostDetails, setHostDetails ] = useState({
@@ -170,10 +169,45 @@ const HostEventPage = () => {
         return <LoadingPage />;
     }
 
-    const handleAttendeeCancel = async () => {
+    const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail) => {
+        try {
+            // Step 1: Cancel RSVP
+            const eventRsvpDocRef = doc(db, "EventRSVPs", eventId);
+            const userRsvpDocRef = doc(db, "UserRSVPs", userId);
 
+            await updateDoc(userRsvpDocRef, {
+                [`rsvps.${rsvpId}`]: deleteField(),
+            });
+
+            await updateDoc(eventRsvpDocRef, {
+                [`rsvps.${rsvpId}`]: deleteField(),
+            });
+
+            // Step 2: Send Email
+            const response = await fetch("/api/send-email", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    recipient: attendeeEmail,
+                    subject: emailData.subject,
+                    html_content: `<html lang="en">${emailData.body}</html>`,
+                }),
+            });
+
+            if (response.ok) {
+                alert("RSVP canceled and email sent successfully!");
+            } else {
+                const errorText = await response.text();
+                alert(`Failed to send email: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("Error handling attendee cancellation:", error);
+            alert("An error occurred while trying to cancel RSVP and send the email.");
+        } finally {
+            setShowModal(false); // Close modal
+            setEmailData({to: "", subject: "", body: ""}); // Reset email data
+        }
     };
-
     const handleSendEmail = async () => {
         try {
             const response = await fetch('/api/send-email', {
@@ -206,12 +240,18 @@ const HostEventPage = () => {
         setShowModal(true);
     };
 
+    const openCancelEmailModal = (email, eventId, rsvpId) => {
+        setEmailData((prev) => ({...prev, to: email}));
+        setShowModal(true);
+        setModalAction(() => () => handleAttendeeCancel(eventId, rsvpId, email)); // Pass function with bound params
+    };
+
     const handleBlastEmail = async () => {
         try {
             const emailPromises = attendeeDetails.map((attendee) =>
                 fetch('/api/send-email', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         recipient: attendee.email,
                         subject: blastEmailData.subject,
@@ -240,7 +280,7 @@ const HostEventPage = () => {
 
             // Reset modal and email data
             setShowBlastModal(false);
-            setBlastEmailData({ subject: '', body: '' });
+            setBlastEmailData({subject: '', body: ''});
         } catch (error) {
             console.error('Error sending blast emails:', error);
             alert('An error occurred while trying to send the blast emails.');
@@ -367,7 +407,7 @@ const HostEventPage = () => {
                                         <div className="flex items-center gap-2" >
                                             <button
                                                 className="bg-accent-purple text-neutral-white font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
-                                                onClick={handleAttendeeCancel}
+                                                onClick={() => openCancelEmailModal(attendee.email)}
                                             >
                                                 Cancel Ticket
                                             </button >
@@ -454,6 +494,42 @@ const HostEventPage = () => {
                             </div >
                         </div >
                     )}
+                    {showModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >
+                            <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >
+                                <h2 className="text-2xl font-bold mb-6" >Cancel RSVP</h2 >
+                                <p className="mb-4 text-lg" >To: {emailData.to}</p >
+                                <input
+                                    type="text"
+                                    placeholder="Subject"
+                                    value={emailData.subject}
+                                    onChange={(e) => setEmailData((prev) => ({...prev, subject: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg"
+                                />
+                                <textarea
+                                    placeholder="Message"
+                                    value={emailData.body}
+                                    onChange={(e) => setEmailData((prev) => ({...prev, body: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
+                                />
+                                <div className="flex justify-end gap-4" >
+                                    <button
+                                        onClick={() => setShowModal(false)}
+                                        className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
+                                    >
+                                        Cancel
+                                    </button >
+                                    <button
+                                        onClick={() => handleAttendeeCancel(eventId, rsvpId, emailData.to)}
+                                        className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
+                                    >
+                                        Confirm Cancel
+                                    </button >
+                                </div >
+                            </div >
+                        </div >
+                    )}
+
 
                 </div >
             </div >
