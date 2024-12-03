@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     InstantSearch,
@@ -60,6 +60,15 @@ const ViewAllEventsPage = () => {
         }
     }, [geoLocation, searchQuery, dateRange]);
 
+    useEffect(() => {
+        const shouldResetFilters =
+            !geoLocation && !searchQuery && (!dateRange?.startDate || !dateRange?.endDate);
+
+        if (shouldResetFilters && Object.keys(activeFilters).length > 0) {
+            setActiveFilters({});
+        }
+    }, [geoLocation, searchQuery, dateRange, activeFilters]);
+
     const handleViewToggle = () => {
         setViewMode(viewMode === "grid" ? "list" : "grid");
     };
@@ -88,61 +97,59 @@ const ViewAllEventsPage = () => {
         return null;
     };
 
-    const buildFilters = () => {
-        const filters = [];
+    // Optimize filters with useMemo
+    const filters = useMemo(() => {
+        const filtersArray = [];
 
-        // Add price filter
         if (activeFilters.eventPrice) {
             const { min, max } = activeFilters.eventPrice;
-            filters.push(
+            filtersArray.push(
                 `eventDetails.eventPrice >= ${min} AND eventDetails.eventPrice <= ${max}`
             );
         }
 
-        // Add date filter from FiltersComponent
         if (activeFilters.eventDateTime) {
             const dateRangeFilter = formatDateForFilter(activeFilters.eventDateTime);
             if (dateRangeFilter) {
                 const { start, end } = dateRangeFilter;
-                filters.push(
+                filtersArray.push(
                     `eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`
                 );
             }
         }
 
-        // Add date filter from HeaderComponent
         if (dateRange?.startDate && dateRange?.endDate) {
-            filters.push(
+            filtersArray.push(
                 `eventDetails.eventDateTime >= ${new Date(dateRange.startDate).getTime()} AND eventDetails.eventDateTime <= ${new Date(dateRange.endDate).getTime()}`
             );
         }
 
-        // Add paid event filter
         if (activeFilters.paidEvent !== undefined) {
-            filters.push(
+            filtersArray.push(
                 `eventDetails.paidEvent = ${activeFilters.paidEvent ? 1 : 0}`
             );
         }
 
-        // Add availability filter
         const availabilityFilter = calculateAvailabilityFilter(
             activeFilters.availability
         );
         if (availabilityFilter) {
-            filters.push(availabilityFilter);
+            filtersArray.push(availabilityFilter);
         }
 
-        // Add category filter
         if (activeFilters.categories?.length > 0) {
             const categoryFilter = activeFilters.categories
                 .map((category) => `basicInfo.categories:"${category}"`)
                 .join(" OR ");
-            filters.push(`(${categoryFilter})`);
+            filtersArray.push(`(${categoryFilter})`);
         }
 
-        console.log("Generated Filters:", filters.join(" AND "));
-        return filters.join(" AND ");
-    };
+        if (process.env.NODE_ENV === "development") {
+            console.log("Generated Filters:", filtersArray.join(" AND "));
+        }
+
+        return filtersArray.join(" AND ");
+    }, [activeFilters, dateRange]);
 
     const handleSearch = ({ geoLocation, eventQuery, dateRange }) => {
         setGeoLocation(geoLocation);
@@ -211,7 +218,7 @@ const ViewAllEventsPage = () => {
                         {/* Configure Algolia Search */}
                         <Configure
                             hitsPerPage={21}
-                            filters={buildFilters()}
+                            filters={filters}
                             query={searchQuery}
                             aroundLatLng={
                                 geoLocation
