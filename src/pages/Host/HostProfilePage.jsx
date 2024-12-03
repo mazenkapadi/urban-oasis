@@ -2,7 +2,18 @@ import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 import {auth, db} from "../../firebaseConfig.js";
 import LoadingPage from "../service/LoadingPage.jsx";
-import {addDoc, collection, doc, getDoc, getDocs, setDoc, Timestamp, updateDoc} from "firebase/firestore";
+import {
+    addDoc,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    setDoc,
+    updateDoc,
+    Timestamp,
+    where
+} from "firebase/firestore";
 import HeaderComponent from "../../components/HeaderComponent.jsx";
 import {
     Avatar,
@@ -26,6 +37,9 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';
 import StarBorderPurple500SharpIcon from '@mui/icons-material/StarBorderPurple500Sharp';
 import themeManager from "../../utils/themeManager.jsx";
+import { Swiper, SwiperSlide } from "swiper/react";
+import EventCard from "../../components/EventCards/EventCard.jsx";
+import { Pagination } from "swiper/modules";
 
 
 const HostProfilePage = () => {
