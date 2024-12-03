@@ -24,7 +24,6 @@ const ContactInfoPage = () => {
     const [birthday, setBirthday] = useState('');
     const [isHost, setIsHost] = useState(false);
     const [hostType, setHostType] = useState('individual');
-    const [bio, setBio] = useState('');
 
     // Fetch user profile when they sign in
     useEffect(() => {
@@ -53,7 +52,6 @@ const ContactInfoPage = () => {
                     setBirthday(data.birthday || '');
                     setIsHost(data.isHost || false);
                     setHostType(data.hostType || 'individual');
-                    setBio(data.bio || '');
                 } else {
                     // If no document exists, use Google profile picture by default
                     setProfilePic(user.photoURL || '');
@@ -122,7 +120,6 @@ const ContactInfoPage = () => {
             isHost,
             hostType,
             updatedAt: new Date().toISOString(),
-            bio,
         };
 
         try {
@@ -294,7 +291,7 @@ const ContactInfoPage = () => {
                         <label className="block text-white font-semibold mb-2">State</label>
                         <SelectUSState
                             id="state"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className="block w-full border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             onChange={(val) => setState(val)} // Set selected state
                             value={state} // Display selected state
                         />
@@ -309,18 +306,6 @@ const ContactInfoPage = () => {
                             className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
-                        />
-                    </div>
-
-                    {/* Bio */}
-                    <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Bio</label>
-                        <input
-                            id="bio"
-                            type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
-                            value={bio}
-                            onChange={(e) => setBio(e.target.value)}
                         />
                     </div>
                 </form>
