@@ -12,6 +12,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 const EventCarousel = ({ rangeType, categories }) => {
     const [events, setEvents] = useState([]);
 
+
     useEffect(() => {
         const { startDate, endDate } = getDateRange(rangeType);
 
