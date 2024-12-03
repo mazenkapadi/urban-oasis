@@ -145,31 +145,39 @@ const HeaderComponent = ({onSearch}) => {
                         <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)}/>
                     </div>
 
-                    {/* Date Picker */}
+                    {/*Date Picker*/}
                     <div className="flex-1 max-w-sm">
                         <button
-                            className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
+                            className="w-full h-12 px-4 border border-gray-300 rounded-full bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
                             onClick={() => setShowDatePicker(!showDatePicker)}
                         >
-                            {dateRange.startDate && dateRange.endDate
+                            {dateRange?.startDate && dateRange?.endDate
                                 ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
-                                : "All Dates"}
+                                : "Select Dates"}
                         </button>
                         {showDatePicker && (
-                            <div className="absolute top-12 z-50 bg-white shadow-lg p-4">
+                            <div className="absolute z-50 mt-2 bg-white shadow-lg p-4 rounded-md">
                                 <DateRangePicker
                                     ranges={[
                                         {
-                                            startDate: dateRange.startDate || new Date(),
-                                            endDate: dateRange.endDate || new Date(),
+                                            startDate: dateRange?.startDate || new Date(),
+                                            endDate: dateRange?.endDate || new Date(),
                                             key: "selection",
                                         },
                                     ]}
-                                    onChange={handleDateChange}
+                                    onChange={(ranges) => {
+                                        const {startDate, endDate} = ranges.selection;
+                                        setDateRange({startDate, endDate});
+                                    }}
+                                    minDate={new Date()} // Disable past dates
+                                    direction="vertical" // Ensure vertical alignment
+                                    editableDateInputs={true} // Allow manual input if needed
+                                    className="text-black"
                                 />
                             </div>
                         )}
                     </div>
+
 
                     {/* EventSearchBar */}
                     <div className="flex-1 max-w-sm">
@@ -222,7 +230,7 @@ const HeaderComponent = ({onSearch}) => {
                             <ul>
                                 {isLoggedIn ? (
                                     <>
-                                        <li>
+                                    <li>
                                             <button
                                                 onClick={() => navigate("/userProfilePage")}
                                                 className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 hover:rounded-lg w-full text-left"
