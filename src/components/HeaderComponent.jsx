@@ -8,7 +8,6 @@ import EventSearchBar from "./EventSearchBar";
 import {DateRangePicker} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import AutocompleteSearch from "./AutoCompleteSearch.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
 
 const HeaderComponent = ({onSearch}) => {
@@ -48,9 +47,74 @@ const HeaderComponent = ({onSearch}) => {
         return () => unsubscribe();
     }, []);
 
+    // Update the query string dynamically
+    useEffect(() => {
+        // Avoid navigating when on the landing page
+        if (window.location.pathname === "/") return;
+
+        const params = new URLSearchParams();
+
+        if (geoLocation) {
+            params.set("geoLocation", `${geoLocation.lat},${geoLocation.lng}`);
+        }
+
+        if (eventQuery) {
+            params.set("q", eventQuery);
+        }
+
+        if (dateRange?.startDate && dateRange?.endDate) {
+            params.set("startDate", dateRange.startDate.toISOString());
+            params.set("endDate", dateRange.endDate.toISOString());
+        }
+
+        // Navigate only if on /events page
+        if (window.location.pathname === "/events") {
+            navigate(`/events?${params.toString()}`, { replace: true });
+        }
+    }, [geoLocation, eventQuery, dateRange, navigate]);
+
+
+
+    useEffect(() => {
+        // Automatically reset search when inputs are cleared
+        if (!eventQuery && !geoLocation && !dateRange.startDate && !dateRange.endDate) {
+            if (onSearch) {
+                onSearch({ geoLocation: null, eventQuery: "", dateRange: null });
+            }
+        }
+    }, [geoLocation, eventQuery, dateRange, onSearch]);
+
     // Toggle menu
     const toggleMenu = () => {
         setMenuOpen((prev) => !prev);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
+
+    // Handle clearing inputs with backspace
+    const handleInputChange = (e, type) => {
+        const value = e.target.value;
+
+        if (type === "geo") {
+            if (!value) {
+                setGeoLocation(null); // Reset geoLocation when cleared
+            } else {
+                // Simulate setting geoLocation (mocked for demonstration)
+                setGeoLocation({ lat: 40.7128, lng: -74.0060 }); // Replace with actual input handling
+            }
+        }
+
+        if (type === "event") {
+            if (!value) {
+                setEventQuery(""); // Reset eventQuery when cleared
+            } else {
+                setEventQuery(value);
+            }
+        }
     };
 
     // Handle user sign out
@@ -66,16 +130,24 @@ const HeaderComponent = ({onSearch}) => {
 
     // Handle search functionality
     const handleSearch = () => {
-        if (onSearch) {
-            onSearch({
-                geoLocation,
-                eventQuery,
-                dateRange: dateRange.startDate && dateRange.endDate ? dateRange : null,
-            });
-        } else {
-            console.error("Search function is not provided to HeaderComponent");
+        const params = new URLSearchParams();
+
+        if (geoLocation) {
+            params.append("geoLocation", `${geoLocation.lat},${geoLocation.lng}`);
         }
+
+        if (eventQuery) {
+            params.append("q", eventQuery);
+        }
+
+        if (dateRange?.startDate && dateRange?.endDate) {
+            params.append("startDate", dateRange.startDate.toISOString());
+            params.append("endDate", dateRange.endDate.toISOString());
+        }
+
+        navigate(`/events?${params.toString()}`);
     };
+
 
     // Handle date range changes
     const handleDateChange = (ranges) => {
@@ -98,51 +170,14 @@ const HeaderComponent = ({onSearch}) => {
                     </button>
                 </div>
 
-
-                {/* Search Section */}
-                {/*<div className="flex items-center gap-4">*/}
-                {/*    <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)}/>*/}
-
-                {/*    /!* Date Picker *!/*/}
-                {/*    <div className="relative">*/}
-                {/*        <button*/}
-                {/*            className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"*/}
-                {/*            onClick={() => setShowDatePicker(!showDatePicker)}*/}
-                {/*        >*/}
-                {/*            {dateRange.startDate && dateRange.endDate*/}
-                {/*                ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`*/}
-                {/*                : "Select Dates"}*/}
-                {/*        </button>*/}
-                {/*        {showDatePicker && (*/}
-                {/*            <div className="absolute top-12 z-50 bg-white shadow-lg p-4">*/}
-                {/*                <DateRangePicker*/}
-                {/*                    ranges={[*/}
-                {/*                        {*/}
-                {/*                            startDate: dateRange.startDate || new Date(),*/}
-                {/*                            endDate: dateRange.endDate || new Date(),*/}
-                {/*                            key: "selection",*/}
-                {/*                        },*/}
-                {/*                    ]}*/}
-                {/*                    onChange={handleDateChange}*/}
-                {/*                />*/}
-                {/*            </div>*/}
-                {/*        )}*/}
-                {/*    </div>*/}
-
-                {/*    <EventSearchBar onEventSearch={(query) => setEventQuery(query)}/>*/}
-
-                {/*    <button*/}
-                {/*        className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"*/}
-                {/*        onClick={handleSearch}*/}
-                {/*    >*/}
-                {/*        Search*/}
-                {/*    </button>*/}
-                {/*</div>*/}
-
                 <div className="flex items-center gap-8 w-full px-4">
                     {/* GeoSearchBar */}
                     <div className="flex-1 max-w-sm ">
-                        <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)}/>
+                        <GeoSearchBar
+                            onGeoSearch={(geo) => setGeoLocation(geo)}
+                            onClear={() => setGeoLocation(null)}
+                            onKeyDown={handleKeyPress}
+                        />
                     </div>
 
                     {/*Date Picker*/}
@@ -165,10 +200,7 @@ const HeaderComponent = ({onSearch}) => {
                                             key: "selection",
                                         },
                                     ]}
-                                    onChange={(ranges) => {
-                                        const {startDate, endDate} = ranges.selection;
-                                        setDateRange({startDate, endDate});
-                                    }}
+                                    onChange={handleDateChange}
                                     minDate={new Date()} // Disable past dates
                                     direction="vertical" // Ensure vertical alignment
                                     editableDateInputs={true} // Allow manual input if needed
@@ -186,6 +218,7 @@ const HeaderComponent = ({onSearch}) => {
                                 type="text"
                                 value={eventQuery}
                                 onChange={(e) => setEventQuery(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                                 placeholder="Search events..."
                                 className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
                             />

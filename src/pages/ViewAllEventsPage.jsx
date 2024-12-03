@@ -25,9 +25,39 @@ const ViewAllEventsPage = () => {
     const location = useLocation();
 
     useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+
+        const geoLocationParam = searchParams.get("geoLocation");
+        const eventQueryParam = searchParams.get("q");
+        const startDateParam = searchParams.get("startDate");
+        const endDateParam = searchParams.get("endDate");
+
+        if (geoLocationParam) {
+            const [lat, lng] = geoLocationParam.split(",");
+            setGeoLocation({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }
+
+        setSearchQuery(eventQueryParam || "");
+
+        if (startDateParam && endDateParam) {
+            setDateRange({
+                startDate: new Date(startDateParam),
+                endDate: new Date(endDateParam),
+            });
+        } else {
+            setDateRange(null);
+        }
+    }, [location.search]);
+
+    useEffect(() => {
         console.log("GeoLocation updated:", geoLocation);
         console.log("SearchQuery updated:", searchQuery);
         console.log("DateRange updated:", dateRange);
+
+        // Reset filters dynamically when all fields are cleared
+        if (!geoLocation && !searchQuery && (!dateRange?.startDate || !dateRange?.endDate)) {
+            setActiveFilters({});
+        }
     }, [geoLocation, searchQuery, dateRange]);
 
     const handleViewToggle = () => {
@@ -118,6 +148,21 @@ const ViewAllEventsPage = () => {
         setGeoLocation(geoLocation);
         setSearchQuery(eventQuery);
         setDateRange(dateRange);
+
+        // Reset results if all fields are cleared
+        if (!geoLocation && !eventQuery && (!dateRange?.startDate || !dateRange?.endDate)) {
+            setActiveFilters({});
+        }
+    };
+
+    const handleEnterKey = (e) => {
+        if (e.key === "Enter") {
+            handleSearch({
+                geoLocation,
+                eventQuery: searchQuery,
+                dateRange,
+            });
+        }
     };
 
     const NoResultsMessage = () => {
@@ -148,7 +193,7 @@ const ViewAllEventsPage = () => {
         <InstantSearch searchClient={searchClient} indexName="events">
             <div className="view-all-events-page bg-primary-dark text-primary-light min-h-screen flex flex-col">
                 {/* Header Component */}
-                <HeaderComponent onSearch={handleSearch} />
+                <HeaderComponent onSearch={handleSearch} onKeyDown={handleEnterKey} />
 
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
