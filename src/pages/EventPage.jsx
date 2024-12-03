@@ -38,6 +38,7 @@ import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
 import emailjs from '@emailjs/browser';
 import themeManager from "../utils/themeManager.jsx";
 import CategoryComponent from "../components/EventPages/CategoryComponent.jsx";
+import themeManager from "../utils/themeManager.jsx";
 
 
 const EventPage = () => {
