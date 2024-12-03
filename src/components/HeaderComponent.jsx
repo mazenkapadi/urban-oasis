@@ -6,19 +6,18 @@ import { db } from "../firebaseConfig";
 import GeoSearchBar from "./GeoSearchBar";
 import EventSearchBar from "./EventSearchBar";
 import { DateRangePicker } from "react-date-range";
-import "react-date-range/dist/styles.css"; // Main style for DateRangePicker
-import "react-date-range/dist/theme/default.css"; // Theme style for DateRangePicker
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
-const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
+const HeaderComponent = ({ onSearch }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [name, setName] = useState("");
     const [profilePic, setProfilePic] = useState("");
     const [isHost, setIsHost] = useState(false);
-    const [dateRange, setDateRange] = useState({
-        startDate: null,
-        endDate: null,
-    });
+    const [geoLocation, setGeoLocation] = useState(null);
+    const [eventQuery, setEventQuery] = useState("");
+    const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
     const [showDatePicker, setShowDatePicker] = useState(false);
     const navigate = useNavigate();
 
@@ -60,22 +59,31 @@ const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
             .catch((error) => console.error("Error signing out:", error));
     };
 
+    const handleSearch = () => {
+        if (onSearch) {
+            onSearch({
+                geoLocation,
+                eventQuery,
+                dateRange: dateRange.startDate && dateRange.endDate ? dateRange : null,
+            });
+        } else {
+            console.error("Search function is not provided to HeaderComponent");
+        }
+    };
+
     const handleDateChange = (ranges) => {
         const { startDate, endDate } = ranges.selection;
         setDateRange({ startDate, endDate });
-        if (onDateRangeChange) {
-            onDateRangeChange({ startDate, endDate });
-        }
     };
 
     return (
         <header className="bg-transparent w-full">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center px-8 py-4 space-x-4">
                 {/* Logo */}
-                <div className="flex items-center pl-8">
+                <div>
                     <button onClick={() => navigate("/")}>
                         <span
-                            className="ml-2 text-white text-h1 font-lalezar"
+                            className="text-white text-h1 font-lalezar"
                             style={{ textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)" }}
                         >
                             Urban Oasis
@@ -83,15 +91,13 @@ const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
                     </button>
                 </div>
 
-                {/* Search Bars */}
-                <div className="flex flex-wrap items-center gap-4 justify-center w-full md:w-auto">
+                {/* Search Section */}
+                <div className="flex flex-grow items-center gap-4">
                     {/* GeoSearchBar */}
-                    <div className="flex-1 max-w-xs">
-                        <GeoSearchBar onGeoSearch={onGeoSearch} />
-                    </div>
+                    <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)} />
 
                     {/* Date Picker */}
-                    <div className="relative flex-1 max-w-xs">
+                    <div className="relative">
                         <button
                             className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"
                             onClick={() => setShowDatePicker(!showDatePicker)}
@@ -117,19 +123,22 @@ const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
                     </div>
 
                     {/* EventSearchBar */}
-                    <div className="flex-1 max-w-xs">
-                        <EventSearchBar onEventSearch={onEventSearch} />
-                    </div>
+                    <EventSearchBar onEventSearch={(query) => setEventQuery(query)} />
+
+                    {/* Search Button */}
+                    <button
+                        className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"
+                        onClick={handleSearch}
+                    >
+                        Search
+                    </button>
                 </div>
 
                 {/* Hamburger Menu */}
-                <div className="relative pr-8" >
-                    <button
-                        onClick={toggleMenu}
-                        className="focus:outline-none"
-                    >
+                <div className="relative">
+                    <button onClick={toggleMenu} className="focus:outline-none text-white">
                         <svg
-                            className="w-10 h-10 text-white"
+                            className="w-8 h-8"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -144,70 +153,70 @@ const HeaderComponent = ({ onGeoSearch, onEventSearch, onDateRangeChange }) => {
                         </svg>
                     </button>
                     {menuOpen && (
-                        <div
-                            className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark opacity-90 rounded-lg shadow-lg text-white z-50 mr-2" >
-                            <ul className="" >
+                        <div className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark rounded-lg shadow-lg text-white z-50">
+                            <ul>
                                 {isLoggedIn ? (
                                     <>
-                                        <li >
+                                        <li>
                                             <button
                                                 onClick={() => navigate("/userProfilePage")}
-                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 w-full text-left"
                                             >
-                                                <span >{name}</span >
+                                                <span>{name}</span>
                                                 {profilePic ? (
                                                     <img
                                                         src={profilePic}
                                                         alt="User Profile"
-                                                        className="w-8 h-8 rounded-full mr-2"
+                                                        className="w-8 h-8 rounded-full"
                                                     />
                                                 ) : (
                                                     <span
-                                                        className="w-8 h-8 flex items-center justify-center bg-gray-600 text-white rounded-full mr-2" >
+                                                        className="w-8 h-8 flex items-center justify-center bg-gray-600 text-white rounded-full"
+                                                    >
                                                         {name.charAt(0).toUpperCase()}
-                                                    </span >
+                                                    </span>
                                                 )}
-                                            </button >
-                                        </li >
-                                        <li >
+                                            </button>
+                                        </li>
+                                        <li>
                                             <button
                                                 onClick={() => navigate("/userProfilePage/host-chatlist")}
-                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
                                             >
                                                 Chat
-                                            </button >
-                                        </li >
+                                            </button>
+                                        </li>
                                         {isHost && (
-                                            <li >
+                                            <li>
                                                 <button
                                                     onClick={() => navigate("/hostProfilePage")}
-                                                    className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                    className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
                                                 >
                                                     Host Dashboard
-                                                </button >
-                                            </li >
+                                                </button>
+                                            </li>
                                         )}
-                                        <li >
+                                        <li>
                                             <button
                                                 onClick={handleSignOut}
-                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
                                             >
                                                 Log Out
-                                            </button >
-                                        </li >
+                                            </button>
+                                        </li>
                                     </>
                                 ) : (
-                                    <li >
+                                    <li>
                                         <button
                                             onClick={() => navigate("/signIn")}
-                                            className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                            className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
                                         >
                                             Sign In
-                                        </button >
-                                    </li >
+                                        </button>
+                                    </li>
                                 )}
-                            </ul >
-                        </div >
+                            </ul>
+                        </div>
                     )}
                 </div>
             </div>

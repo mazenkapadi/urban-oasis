@@ -77,12 +77,25 @@ const AutocompleteSearch = ({ onGeoSearch }) => {
                 (place, status) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         const location = place.geometry.location;
-                        setGeoLocation({ lat: location.lat(), lng: location.lng() });
+                        const newGeoLocation = { lat: location.lat(), lng: location.lng() };
+                        console.log("Extracted geoLocation:", newGeoLocation); // Debugging output
+                        setGeoLocation(newGeoLocation);
+                        console.log("This is the one after setting:" newGeoLocation);
+
+                        if (onGeoSearch) {
+                            console.log("Passing geoLocation to parent:", newGeoLocation); // Debugging output
+                            onGeoSearch(newGeoLocation); // Notify parent component
+                        }
+                    } else {
+                        console.error("Failed to fetch location details:", status); // Debugging output
                     }
                 }
             );
+        } else {
+            console.warn("No placeId found for the selected location."); // Debugging output
         }
     };
+
 
     const handleKeyDown = (e) => {
         if (e.key === "Backspace" && cityInput) {

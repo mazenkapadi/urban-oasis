@@ -29,13 +29,14 @@ const GeoSearchBar = ({ onGeoSearch }) => {
     };
 
     return (
-        <div className="relative w-full max-w-lg">
+        <div className="flex items-center space-x-4 p-6 bg-transparent relative">
             <GooglePlacesAutocomplete
                 apiKey={googleMapsConfig.apiKey}
                 selectProps={{
                     value: cityInput,
                     onChange: handleLocationChange,
                     placeholder: "Zipcode or City",
+                    className: "text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-400 focus:outline-none", // Apply Tailwind classes
                     styles: {
                         control: (provided) => ({
                             ...provided,
@@ -44,7 +45,6 @@ const GeoSearchBar = ({ onGeoSearch }) => {
                             boxShadow: "none",
                             borderRadius: "6px",
                             padding: "3px",
-                            fontSize: "16px",
                         }),
                     },
                 }}

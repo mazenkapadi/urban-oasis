@@ -114,6 +114,13 @@ const ViewAllEventsPage = () => {
         return filters.join(" AND ");
     };
 
+    const handleSearch = ({ geoLocation, eventQuery, dateRange }) => {
+        console.log("Search Data:", { geoLocation, eventQuery, dateRange });
+        setGeoLocation(geoLocation);
+        setSearchQuery(eventQuery);
+        setDateRange(dateRange);
+    };
+
     const NoResultsMessage = () => {
         const { hits } = useHits();
         return (
