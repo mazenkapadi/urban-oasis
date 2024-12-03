@@ -20,22 +20,15 @@ const ViewAllEventsPage = () => {
     const [geoLocation, setGeoLocation] = useState(null); // Store user-specified lat/lng
     const [searchQuery, setSearchQuery] = useState(""); // Store event search query
     const [radius, setRadius] = useState(100 * 1000); // Default radius: 100 km
+    const [dateRange, setDateRange] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const queryParams = new URLSearchParams(location.search);
-
     useEffect(() => {
-        console.log("Updated geoLocation:", geoLocation);
-    }, [geoLocation]);
-
-    useEffect(() => {
-        console.log("Updated radius:", radius);
-    }, [radius]);
-
-    useEffect(() => {
-        console.log("Updated searchQuery:", searchQuery);
-    }, [searchQuery]);
+        console.log("GeoLocation updated:", geoLocation);
+        console.log("SearchQuery updated:", searchQuery);
+        console.log("DateRange updated:", dateRange);
+    }, [geoLocation, searchQuery, dateRange]);
 
     const handleViewToggle = () => {
         setViewMode(viewMode === "grid" ? "list" : "grid");
@@ -68,7 +61,7 @@ const ViewAllEventsPage = () => {
     const buildFilters = () => {
         const filters = [];
 
-        // Price Filter
+        // Add price filter
         if (activeFilters.eventPrice) {
             const { min, max } = activeFilters.eventPrice;
             filters.push(
@@ -76,25 +69,32 @@ const ViewAllEventsPage = () => {
             );
         }
 
-        // Date Filter from FiltersComponent (e.g., Today, Tomorrow, Weekend)
+        // Add date filter from FiltersComponent
         if (activeFilters.eventDateTime) {
-            const dateRange = formatDateForFilter(activeFilters.eventDateTime);
-            if (dateRange) {
-                const { start, end } = dateRange;
+            const dateRangeFilter = formatDateForFilter(activeFilters.eventDateTime);
+            if (dateRangeFilter) {
+                const { start, end } = dateRangeFilter;
                 filters.push(
                     `eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`
                 );
             }
         }
 
-        // Paid Event Filter
+        // Add date filter from HeaderComponent
+        if (dateRange?.startDate && dateRange?.endDate) {
+            filters.push(
+                `eventDetails.eventDateTime >= ${new Date(dateRange.startDate).getTime()} AND eventDetails.eventDateTime <= ${new Date(dateRange.endDate).getTime()}`
+            );
+        }
+
+        // Add paid event filter
         if (activeFilters.paidEvent !== undefined) {
             filters.push(
                 `eventDetails.paidEvent = ${activeFilters.paidEvent ? 1 : 0}`
             );
         }
 
-        // Availability Filter
+        // Add availability filter
         const availabilityFilter = calculateAvailabilityFilter(
             activeFilters.availability
         );
@@ -102,8 +102,8 @@ const ViewAllEventsPage = () => {
             filters.push(availabilityFilter);
         }
 
-        // Category Filter
-        if (activeFilters.categories && activeFilters.categories.length > 0) {
+        // Add category filter
+        if (activeFilters.categories?.length > 0) {
             const categoryFilter = activeFilters.categories
                 .map((category) => `basicInfo.categories:"${category}"`)
                 .join(" OR ");
@@ -115,7 +115,6 @@ const ViewAllEventsPage = () => {
     };
 
     const handleSearch = ({ geoLocation, eventQuery, dateRange }) => {
-        console.log("Search Data:", { geoLocation, eventQuery, dateRange });
         setGeoLocation(geoLocation);
         setSearchQuery(eventQuery);
         setDateRange(dateRange);
@@ -134,8 +133,8 @@ const ViewAllEventsPage = () => {
                         onClick={() => {
                             setActiveFilters({});
                             setGeoLocation(null);
-                            setRadius(100 * 1000); // Reset to 100 km
-                            setSearchQuery(""); // Reset search query
+                            setRadius(100 * 1000); // Reset radius
+                            setSearchQuery(""); // Reset query
                         }}
                     >
                         Reset Filters
@@ -149,23 +148,7 @@ const ViewAllEventsPage = () => {
         <InstantSearch searchClient={searchClient} indexName="events">
             <div className="view-all-events-page bg-primary-dark text-primary-light min-h-screen flex flex-col">
                 {/* Header Component */}
-                <HeaderComponent
-                    onGeoSearch={(geo) => {
-                        console.log("Received geoLocation in ViewAllEventsPage:", geo);
-                        setGeoLocation(geo); // Set geolocation for Algolia
-                    }}
-                    onEventSearch={(query) => {
-                        console.log("Received search query in ViewAllEventsPage:", query);
-                        setSearchQuery(query); // Set event search query
-                    }}
-                    onDateRangeChange={(range) => {
-                        console.log("Received date range in ViewAllEventsPage:", range);
-                        setActiveFilters((prev) => ({
-                            ...prev,
-                            eventDateTime: range,
-                        }));
-                    }}
-                />
+                <HeaderComponent onSearch={handleSearch} />
 
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
@@ -180,24 +163,18 @@ const ViewAllEventsPage = () => {
 
                     {/* Search Results Section */}
                     <div className="lg:w-3/4 p-4 flex flex-col">
-                        {/* Configure Search */}
-                        {geoLocation && (
-                            <Configure
-                                hitsPerPage={21}
-                                filters={buildFilters()}
-                                query={searchQuery}
-                                aroundLatLng={`${geoLocation.lat},${geoLocation.lng}`}
-                                aroundRadius={radius}
-                            />
-                        )}
-
-                        {!geoLocation && (
-                            <Configure
-                                hitsPerPage={21}
-                                filters={buildFilters()}
-                                query={searchQuery}
-                            />
-                        )}
+                        {/* Configure Algolia Search */}
+                        <Configure
+                            hitsPerPage={21}
+                            filters={buildFilters()}
+                            query={searchQuery}
+                            aroundLatLng={
+                                geoLocation
+                                    ? `${geoLocation.lat},${geoLocation.lng}`
+                                    : undefined
+                            }
+                            aroundRadius={geoLocation ? radius : undefined}
+                        />
 
                         {/* View Toggle Button */}
                         <div className="flex justify-end mb-4">
@@ -230,9 +207,10 @@ const ViewAllEventsPage = () => {
                                             : "flex flex-col space-y-4",
                                 }}
                             />
-                            {/* No Results Message */}
-                            <NoResultsMessage />
                         </div>
+
+                        {/* No Results Message */}
+                        <NoResultsMessage />
 
                         {/* Pagination Section */}
                         <div className="flex justify-center mt-auto">
