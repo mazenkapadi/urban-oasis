@@ -7,7 +7,7 @@ export default function ThemeToggle() {
     return (
         <div
             onClick={() => setDarkMode(!darkMode)}
-            className={`relative flex items-center w-20 h-10 rounded-full cursor-pointer transition-colors duration-500 border-2 ${
+            className={`relative flex items-center w-20 h-10 rounded-full cursor-pointer transition-colors duration-500  ${
                 darkMode
                     ? "bg-primary-dark border-primary-light"
                     : "bg-primary-light border-primary-dark"

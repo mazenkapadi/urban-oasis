@@ -33,8 +33,6 @@ export async function POST(req) {
         success_url: `https://urban-oasis490.vercel.app/paymentSuccess`,
         cancel_url: `https://urban-oasis490.vercel.app/paymentCancel`,
 
-
-
     });
     console.log(session.url);
     return new Response(session.url);
