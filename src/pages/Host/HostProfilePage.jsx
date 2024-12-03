@@ -37,9 +37,12 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';
 import StarBorderPurple500SharpIcon from '@mui/icons-material/StarBorderPurple500Sharp';
 import themeManager from "../../utils/themeManager.jsx";
-import { Swiper } from 'swiper';
 import EventCard from "../../components/EventCards/EventCard.jsx";
-import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
 
 
 const HostProfilePage = () => {
