@@ -1,24 +1,29 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+import {doc, getDoc} from "firebase/firestore";
+import {db} from "../firebaseConfig";
 import GeoSearchBar from "./GeoSearchBar";
 import EventSearchBar from "./EventSearchBar";
-import { DateRangePicker } from "react-date-range";
+import {DateRangePicker} from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import AutocompleteSearch from "./AutoCompleteSearch.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
 
-const HeaderComponent = () => {
-    const [ menuOpen, setMenuOpen ] = useState(false);
-    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
-    const [ name, setName ] = useState('');
-    const [ profilePic, setProfilePic ] = useState('');
-    const [ isHost, setIsHost ] = useState(false);
+const HeaderComponent = ({onSearch}) => {
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [name, setName] = useState("User");
+    const [profilePic, setProfilePic] = useState("");
+    const [isHost, setIsHost] = useState(false);
+    const [geoLocation, setGeoLocation] = useState(null);
+    const [eventQuery, setEventQuery] = useState("");
+    const [dateRange, setDateRange] = useState({startDate: null, endDate: null});
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const navigate = useNavigate();
 
+    // Effect to handle authentication state
     useEffect(() => {
         const authInstance = getAuth();
         const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
@@ -29,11 +34,11 @@ const HeaderComponent = () => {
                     const userDocSnap = await getDoc(userDocRef);
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setName(userData.name?.firstName || 'User');
-                        setProfilePic(userData.profilePic || '');
-                        setIsHost(userData.isHost || false); // Check if user is a host
+                        setName(userData.name?.firstName || "User");
+                        setProfilePic(userData.profilePic || "");
+                        setIsHost(userData.isHost || false);
                     } else {
-                        console.log("No such document in Firestore!");
+                        console.warn("No such document in Firestore!");
                     }
                 } catch (error) {
                     console.error("Error fetching profile data from Firestore:", error);
@@ -43,10 +48,12 @@ const HeaderComponent = () => {
         return () => unsubscribe();
     }, []);
 
+    // Toggle menu
     const toggleMenu = () => {
         setMenuOpen((prev) => !prev);
     };
 
+    // Handle user sign out
     const handleSignOut = () => {
         const authInstance = getAuth();
         signOut(authInstance)
@@ -57,6 +64,7 @@ const HeaderComponent = () => {
             .catch((error) => console.error("Error signing out:", error));
     };
 
+    // Handle search functionality
     const handleSearch = () => {
         if (onSearch) {
             onSearch({
@@ -69,52 +77,83 @@ const HeaderComponent = () => {
         }
     };
 
+    // Handle date range changes
     const handleDateChange = (ranges) => {
-        const { startDate, endDate } = ranges.selection;
-        setDateRange({ startDate, endDate });
+        const {startDate, endDate} = ranges.selection;
+        setDateRange({startDate, endDate});
     };
 
     return (
-        <header className="bg-transparent w-full">
+        <header className="bg-transparent w-full gap-6">
             <div className="flex justify-between items-center px-8 py-4 space-x-4">
                 {/* Logo */}
-                <div>
+                <div className="flex-shrink-0">
                     <button onClick={() => navigate("/")}>
                         <span
                             className="text-white text-h1 font-lalezar"
-                            style={{ textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)" }}
+                            style={{textShadow: "4px 3px 4px rgba(0, 0, 0, 0.8)"}}
                         >
                             Urban Oasis
-                        </span >
-                    </button >
-                </div >
-
-                {/* Autocomplete Search */}
-                <div className="mx-8 flex-1" >
-                    <AutocompleteSearch />
-                </div >
-
-                <div className="pr-5">
-                    <ThemeToggle/>
-                </div>
                         </span>
                     </button>
                 </div>
 
+
                 {/* Search Section */}
-                <div className="flex flex-grow items-center gap-4">
+                {/*<div className="flex items-center gap-4">*/}
+                {/*    <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)}/>*/}
+
+                {/*    /!* Date Picker *!/*/}
+                {/*    <div className="relative">*/}
+                {/*        <button*/}
+                {/*            className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"*/}
+                {/*            onClick={() => setShowDatePicker(!showDatePicker)}*/}
+                {/*        >*/}
+                {/*            {dateRange.startDate && dateRange.endDate*/}
+                {/*                ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`*/}
+                {/*                : "Select Dates"}*/}
+                {/*        </button>*/}
+                {/*        {showDatePicker && (*/}
+                {/*            <div className="absolute top-12 z-50 bg-white shadow-lg p-4">*/}
+                {/*                <DateRangePicker*/}
+                {/*                    ranges={[*/}
+                {/*                        {*/}
+                {/*                            startDate: dateRange.startDate || new Date(),*/}
+                {/*                            endDate: dateRange.endDate || new Date(),*/}
+                {/*                            key: "selection",*/}
+                {/*                        },*/}
+                {/*                    ]}*/}
+                {/*                    onChange={handleDateChange}*/}
+                {/*                />*/}
+                {/*            </div>*/}
+                {/*        )}*/}
+                {/*    </div>*/}
+
+                {/*    <EventSearchBar onEventSearch={(query) => setEventQuery(query)}/>*/}
+
+                {/*    <button*/}
+                {/*        className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"*/}
+                {/*        onClick={handleSearch}*/}
+                {/*    >*/}
+                {/*        Search*/}
+                {/*    </button>*/}
+                {/*</div>*/}
+
+                <div className="flex items-center gap-8 w-full px-4">
                     {/* GeoSearchBar */}
-                    <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)} />
+                    <div className="flex-1 max-w-sm ">
+                        <GeoSearchBar onGeoSearch={(geo) => setGeoLocation(geo)}/>
+                    </div>
 
                     {/* Date Picker */}
-                    <div className="relative">
+                    <div className="flex-1 max-w-sm">
                         <button
-                            className="w-full py-2 px-4 border rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                            className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
                             onClick={() => setShowDatePicker(!showDatePicker)}
                         >
                             {dateRange.startDate && dateRange.endDate
                                 ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
-                                : "Select Dates"}
+                                : "All Dates"}
                         </button>
                         {showDatePicker && (
                             <div className="absolute top-12 z-50 bg-white shadow-lg p-4">
@@ -133,15 +172,30 @@ const HeaderComponent = () => {
                     </div>
 
                     {/* EventSearchBar */}
-                    <EventSearchBar onEventSearch={(query) => setEventQuery(query)} />
+                    <div className="flex-1 max-w-sm">
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                value={eventQuery}
+                                onChange={(e) => setEventQuery(e.target.value)}
+                                placeholder="Search events..."
+                                className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
+                            />
+                        </div>
+                    </div>
 
                     {/* Search Button */}
                     <button
-                        className="bg-red-500 text-white rounded-lg px-6 py-2 hover:bg-red-600 transition-all"
+                        className="h-12 px-6 bg-red-500 text-white rounded-full focus:ring focus:ring-red-300 focus:outline-none"
                         onClick={handleSearch}
                     >
                         Search
                     </button>
+                </div>
+
+
+                <div className="pr-5">
+                    <ThemeToggle/>
                 </div>
 
                 {/* Hamburger Menu */}
@@ -163,14 +217,15 @@ const HeaderComponent = () => {
                         </svg>
                     </button>
                     {menuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark rounded-lg shadow-lg text-white z-50">
+                        <div
+                            className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark rounded-lg shadow-lg text-white z-50">
                             <ul>
                                 {isLoggedIn ? (
                                     <>
                                         <li>
                                             <button
                                                 onClick={() => navigate("/userProfilePage")}
-                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 w-full text-left"
+                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                             >
                                                 <span>{name}</span>
                                                 {profilePic ? (
@@ -191,7 +246,7 @@ const HeaderComponent = () => {
                                         <li>
                                             <button
                                                 onClick={() => navigate("/userProfilePage/host-chatlist")}
-                                                className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
+                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                             >
                                                 Chat
                                             </button>
@@ -200,18 +255,19 @@ const HeaderComponent = () => {
                                             <li>
                                                 <button
                                                     onClick={() => navigate("/hostProfilePage")}
-                                                    className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
+                                                    className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                                 >
                                                     Host Dashboard
                                                 </button>
                                             </li>
                                         )}
+
                                         <li>
                                             <button
-                                                onClick={handleSignOut}
-                                                className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
+                                                onClick={() => navigate("/userProfilePage/host-chatlist")}
+                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                             >
-                                                Log Out
+                                                Chat
                                             </button>
                                         </li>
                                     </>
@@ -219,7 +275,7 @@ const HeaderComponent = () => {
                                     <li>
                                         <button
                                             onClick={() => navigate("/signIn")}
-                                            className="block px-4 py-2 hover:bg-gray-700 w-full text-left"
+                                            className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
                                         >
                                             Sign In
                                         </button>

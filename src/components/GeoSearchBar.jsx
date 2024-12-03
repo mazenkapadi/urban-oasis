@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import { googleMapsConfig } from "../locationConfig";
+import {googleMapsConfig} from "../locationConfig";
 
-const GeoSearchBar = ({ onGeoSearch }) => {
+const GeoSearchBar = ({onGeoSearch}) => {
     const [cityInput, setCityInput] = useState(null);
 
     const handleLocationChange = (value) => {
@@ -12,11 +12,11 @@ const GeoSearchBar = ({ onGeoSearch }) => {
         if (placeId) {
             const service = new google.maps.places.PlacesService(document.createElement("div"));
             service.getDetails(
-                { placeId, fields: ["geometry"] },
+                {placeId, fields: ["geometry"]},
                 (place, status) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {
                         const location = place.geometry.location;
-                        const newGeoLocation = { lat: location.lat(), lng: location.lng() };
+                        const newGeoLocation = {lat: location.lat(), lng: location.lng()};
                         if (onGeoSearch) {
                             onGeoSearch(newGeoLocation);
                         }
@@ -29,22 +29,26 @@ const GeoSearchBar = ({ onGeoSearch }) => {
     };
 
     return (
-        <div className="flex items-center space-x-4 p-6 bg-transparent relative">
+        <div className="relative w-full">
+            {/*className="flex items-center space-x-4 p-6 bg-transparent relative"*/}
             <GooglePlacesAutocomplete
                 apiKey={googleMapsConfig.apiKey}
                 selectProps={{
                     value: cityInput,
                     onChange: handleLocationChange,
                     placeholder: "Zipcode or City",
-                    className: "text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-400 focus:outline-none", // Apply Tailwind classes
+                    className: "w-full h-12 px-4 text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none",
                     styles: {
                         control: (provided) => ({
                             ...provided,
+                            height: "3rem", // Ensure height matches h-12
+                            padding: "0 1rem", // Match padding
+                            border: "1px solid lightgray",
+                            borderRadius: "0.5rem", // Rounded corners
                             backgroundColor: "white",
                             borderColor: "lightgray",
                             boxShadow: "none",
-                            borderRadius: "6px",
-                            padding: "3px",
+
                         }),
                     },
                 }}
