@@ -69,6 +69,18 @@ function EventCreationPage() {
             'Sports', 'Gaming & E-sports', 'Fitness & Training',
             'Adventure Sports', 'Hiking & Nature',
         ],
+        'All Categories': [
+            'Sports', 'Gaming & E-sports', 'Fitness & Training',
+            'Adventure Sports', 'Hiking & Nature', 'Food & Drink',
+            'Cooking & Culinary', 'Shopping & Markets', 'Travel & Outdoor',
+            'Wine Tasting', 'Dining Experiences', 'Health',
+            'Spirituality & Wellness', 'Family & Kids', 'Fashion & Beauty',
+            'Mental Health', 'Technology', 'Science & Innovation', 'Education',
+            'Workshops & Classes', 'Talks & Seminars', 'Online Courses',
+            'Business', 'Networking', 'Politics & Activism', 'Charity & Fundraisers',
+            'Conferences', 'Music', 'Art', 'Comedy', 'Theater & Performing Arts',
+            'Film & Media', 'Photography & Art Exhibits', 'Opera',
+        ],
     };
     const [eventTitleEmpty, setEventTitleEmpty] = useState(false);
     const [eventDescriptionEmpty, setEventDescriptionEmpty] = useState(false);
@@ -300,20 +312,21 @@ function EventCreationPage() {
                     <HeaderComponent/>
 
 
+
                     <div
                         className={`box-border w-full max-w-3xl rounded-lg shadow-lg p-8 ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
                         <div className="text-center">
                             <span
                                 className={`text-h1 font-lalezar pb-3 text-center uppercase font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Create Your Event</span>
                         </div>
-
                         {/* Error message */}
-                        {error && <div className="text-accent-red text-center mb-4">{error}</div>}
+                        {error && <div className="text-accent-red text-center mb-4" >{error}</div >}
 
                         <div className="flex flex-col space-y-4 pt-4">
                             <div className="flex flex-col space-y-6">
 
                                 {/* Event Title */}
+
                                 <div>
                                     <span htmlFor="eventTitle"
                                           className={`text-body font-bold font-inter ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Event
@@ -477,8 +490,6 @@ function EventCreationPage() {
                                         )}
                                     </div>
                                 </div>
-
-
                                 <div>
                                     <span htmlFor="eventImages"
                                           className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Upload
@@ -715,6 +726,7 @@ function EventCreationPage() {
                     onClose={handleModalClose}
                 >
                     <div
+
                         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 ${darkMode ? "bg-Light-L1" : "bg-Dark-D1"}`}>
                         <h2 className={`text-h2 mb-4 text-center ${darkMode ? "text-primary-dark" : "text-primary-light"}`}>
                             Event Created!
