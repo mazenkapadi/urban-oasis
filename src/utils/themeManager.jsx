@@ -4,7 +4,6 @@ class ThemeManager {
         this.listeners = [];
     }
 
-    // Load theme from localStorage or system preference
     loadTheme() {
         const theme = localStorage.getItem("theme");
         if (theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
@@ -15,7 +14,6 @@ class ThemeManager {
         return false;
     }
 
-    // Save theme to localStorage and apply changes
     setTheme(isDark) {
         this.isDarkMode = isDark;
         if (isDark) {
@@ -28,7 +26,6 @@ class ThemeManager {
         this.notifyListeners();
     }
 
-    // Toggle theme
     toggleTheme() {
         this.setTheme(!this.isDarkMode);
     }
