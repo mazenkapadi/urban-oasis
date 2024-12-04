@@ -36,6 +36,7 @@ const HostEventPage = () => {
     const [ attendeeId, setAttendeeId ] = useState([]);
     const [ attendeeDetails, setAttendeeDetails ] = useState([]);
     const [ showModal, setShowModal ] = useState(false);
+    const [ showCancelModal, setShowCancelModal ] = useState(false);
     const [ emailData, setEmailData ] = useState({
         to: '',
         subject: '',
@@ -171,7 +172,6 @@ const HostEventPage = () => {
 
     const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail) => {
         try {
-            // Step 1: Cancel RSVP
             const eventRsvpDocRef = doc(db, "EventRSVPs", eventId);
             const userRsvpDocRef = doc(db, "UserRSVPs", userId);
 
@@ -183,7 +183,6 @@ const HostEventPage = () => {
                 [`rsvps.${rsvpId}`]: deleteField(),
             });
 
-            // Step 2: Send Email
             const response = await fetch("/api/send-email", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -204,10 +203,11 @@ const HostEventPage = () => {
             console.error("Error handling attendee cancellation:", error);
             alert("An error occurred while trying to cancel RSVP and send the email.");
         } finally {
-            setShowModal(false); // Close modal
+            setShowCancelModal(false); // Close modal
             setEmailData({to: "", subject: "", body: ""}); // Reset email data
         }
     };
+
     const handleSendEmail = async () => {
         try {
             const response = await fetch('/api/send-email', {
@@ -242,7 +242,7 @@ const HostEventPage = () => {
 
     const openCancelEmailModal = (email, eventId, rsvpId) => {
         setEmailData((prev) => ({...prev, to: email}));
-        setShowModal(true);
+        setShowCancelModal(true);
         setModalAction(() => () => handleAttendeeCancel(eventId, rsvpId, email)); // Pass function with bound params
     };
 
@@ -480,6 +480,41 @@ const HostEventPage = () => {
                                 <div className="flex justify-end gap-4" >
                                     <button
                                         onClick={() => setShowModal(false)}
+                                        className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
+                                    >
+                                        Cancel
+                                    </button >
+                                    <button
+                                        onClick={handleSendEmail}
+                                        className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
+                                    >
+                                        Send
+                                    </button >
+                                </div >
+                            </div >
+                        </div >
+                    )}
+                    {showCancelModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >
+                            <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >
+                                <h2 className="text-2xl font-bold mb-6" >Send Cancel Email</h2 >
+                                <p className="mb-4 text-lg" >To: {emailData.to}</p >
+                                <input
+                                    type="text"
+                                    placeholder="Subject"
+                                    value={emailData.subject}
+                                    onChange={(e) => setEmailData((prev) => ({...prev, subject: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg"
+                                />
+                                <textarea
+                                    placeholder="Message"
+                                    value={emailData.body}
+                                    onChange={(e) => setEmailData((prev) => ({...prev, body: e.target.value}))}
+                                    className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
+                                />
+                                <div className="flex justify-end gap-4" >
+                                    <button
+                                        onClick={() => setShowCancelModal(false)}
                                         className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"
                                     >
                                         Cancel
