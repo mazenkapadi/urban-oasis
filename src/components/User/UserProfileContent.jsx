@@ -4,6 +4,7 @@ import { db, auth } from "../../firebaseConfig.js";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import ExploreManage from './ExploreManage';
+import themeManager from "../../utils/themeManager.jsx";
 
 const UserProfileContent = () => {
     const [ name, setName ] = useState('');
@@ -15,6 +16,16 @@ const UserProfileContent = () => {
     const [ nextEventImage, setNextEventImage ] = useState('');
     const [ timeLeft, setTimeLeft ] = useState({});
     const navigate = useNavigate();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const handleEditProfile = () => navigate('/userProfilePage/contact-info');
 
@@ -121,11 +132,11 @@ const UserProfileContent = () => {
     return (
         <div className="w-full" >
             <div className="mb-6" >
-                <h1 className="text-h2 font-bold text-white" >My Dashboard</h1 >
-                <p className="text-secondary-light-2" >Welcome back, {name.split(' ')[0] || 'User'}</p >
+                <h1 className={`text-h2 font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >My Dashboard</h1 >
+                <p className={`${darkMode ? "text-Light-L2" : "text-Dark-D2"}`} >Welcome back, {name.split(' ')[0] || 'User'}</p >
             </div >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
-                <div className="bg-secondary-dark-1 shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full" >
+                <div className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center h-full`} >
                     <div className="w-24 h-24 rounded-full bg-gray-500 flex items-center justify-center" >
                         {profilePic ? (
                             <img
@@ -134,24 +145,24 @@ const UserProfileContent = () => {
                                 className="rounded-full w-24 h-24 object-cover"
                             />
                         ) : (
-                            <span className="text-white font-bold text-2xl" >
+                            <span className={`${darkMode ? "text-primary-light" : "text-primary-dark"} font-bold text-2xl`} >
                                 {getInitials(name || 'User Name')}
                             </span >
                         )}
                     </div >
-                    <h2 className="text-xl font-lalezar my-2 text-white" >{name || 'Your Name'}</h2 >
-                    <p className=" text-secondary-light-3" >{phone}</p >
-                    <p className="text-secondary-light-3" >{email}</p >
+                    <h2 className={`text-xl font-lalezar my-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{name || 'Your Name'}</h2 >
+                    <p className={`${darkMode ? "text-Light-L2" : "text-Dark-D2"}`} >{phone}</p >
+                    <p className={`${darkMode ? "text-Light-L2" : "text-Dark-D2"}`} >{email}</p >
                     <button
                         onClick={handleEditProfile}
-                        className="mt-4 w-full bg-accent-orange text-white font-bold py-2 rounded-md hover:bg-blue-600 transition"
+                        className={`mt-4 w-full bg-accent-orange text-primary-light font-bold py-2 rounded-md hover:bg-blue-600 transition`}
                     >
                         Edit Profile
                     </button >
                 </div >
                 {nextEvent && (
                     <div className="lg:col-span-2 flex flex-col justify-between" >
-                        <h2 className="text-xl font-bold text-gray-200 mb-4" >Your Next Event</h2 >
+                        <h2 className={`text-xl font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`} >Your Next Event</h2 >
                         <div
                             className="relative shadow-md rounded-lg p-6 flex flex-col justify-center items-center text-center text-white h-full"
                             style={{

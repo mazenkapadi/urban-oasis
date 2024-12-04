@@ -15,6 +15,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline/index.js";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import themeManager from "../../utils/themeManager.jsx";
 
 const HostChatList = () => {
     const [ chats, setChats ] = useState([]);
@@ -24,6 +25,16 @@ const HostChatList = () => {
     const [ userId, setUserId ] = useState(null);
     const [ user, setUser ] = useState({});
     const messagesEndRef = useRef(null);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -131,8 +142,8 @@ const HostChatList = () => {
     return (
         <div className="h-screen flex" >
             {/* Left Sidebar */}
-            <div className="w-1/3 border-r p-4" >
-                <div className="text-lg font-semibold mb-4" >Chats</div >
+            <div className={`w-1/3 border-r p-4 ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`} >
+                <div className={`text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Chats</div >
                 {chats.map((chat) => (
                     <div
                         key={chat.id}
@@ -143,19 +154,19 @@ const HostChatList = () => {
                     >
                         <img
                             src={
-                                chat.sender.id == userId
+                                chat.sender.id === userId
                                     ? chat.receiver.profilePicture
                                     : chat.sender.profilePicture
                             }
                             alt={
-                                chat.sender.id == userId ? chat.receiver.name : chat.sender.name
+                                chat.sender.id === userId ? chat.receiver.name : chat.sender.name
                             }
                             className="w-12 h-12 rounded-full mr-3"
                         />
 
                         <div className="flex-grow" >
-                            <div className="font-medium" >{chat.event.name}</div >
-                            <div className="font-medium" >
+                            <div className={`font-medium ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{chat.event.name}</div >
+                            <div className={`font-medium ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                 {chat.sender.id === userId
                                     ? chat.receiver.name
                                     : chat.sender.name}
@@ -173,15 +184,15 @@ const HostChatList = () => {
             <div className="w-2/3 p-4 flex flex-col" >
                 {selectedChat ? (
                     <>
-                        <div className="flex items-center border-b border-gray-300 pb-3 mb-4" >
+                        <div className={`${darkMode ? "border-Light-L2" : "border-Dark-D2"} flex items-center border-b pb-3 mb-4`} >
                             <img
                                 src={selectedChat.event.image.url}
                                 alt={selectedChat.event.name}
                                 className="w-12 h-12 rounded-full mr-3"
                             />
                             <div >
-                                <div className="font-medium cursor-pointer" onClick={handleEventNavigate}>{selectedChat.event.name}</div >
-                                <div className="font-medium" >
+                                <div className={`font-medium cursor-pointer ${darkMode ? "text-primary-light" : "text-primary-dark"}`} onClick={handleEventNavigate}>{selectedChat.event.name}</div >
+                                <div className={`font-medium ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                     {selectedChat.sender.id === userId
                                         ? selectedChat.receiver.name
                                         : selectedChat.sender.name}
@@ -216,17 +227,17 @@ const HostChatList = () => {
                         </div >
 
                         {/* Input Box */}
-                        <div className="flex items-center border-t border-gray-300 pt-2" >
+                        <div className={`flex items-center border-t pt-2 ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`} >
                             <input
                                 type="text"
                                 placeholder="Type a message"
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
-                                className="flex-grow p-2 border border-gray-300 rounded-lg outline-none bg-black"
+                                className={`flex-grow p-2 border ${darkMode ? "border-Light-L2 text-primary-light bg-Dark-D1" : "border-Dark-D2 text-primary-dark bg-Light-L1"} rounded-lg outline-none`}
                             />
                             <button
                                 onClick={sendMessage}
-                                className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                                className={`ml-2 px-4 py-2 bg-accent-blue ${darkMode ? "text-primary-dark" : "text-primary-dark"} rounded-lg`}
                             >
                                 <PaperAirplaneIcon className="h-6 w-6" />
                             </button >

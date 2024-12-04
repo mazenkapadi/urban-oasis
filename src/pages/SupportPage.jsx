@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
+import themeManager from "../utils/themeManager.jsx";
 
 const SupportPage = () => {
     const [ activeTab, setActiveTab ] = useState('attending');
@@ -9,6 +10,16 @@ const SupportPage = () => {
     const [ email, setEmail ] = useState('');
     const [ phone, setPhone ] = useState('');
     const [ issue, setIssue ] = useState('');
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const faqs = {
         attending: [
@@ -77,13 +88,13 @@ const SupportPage = () => {
     };
 
     return (
-        <div className="bg-primary-dark text-primary-light flex flex-col min-h-screen font-roboto">
+        <div className={`${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"} flex flex-col min-h-screen font-roboto`}>
             <HeaderComponent />
 
             <div className="flex-grow flex flex-col md:flex-row md:p-8 gap-8">
                 {/* FAQs Section */}
-                <div className="md:w-2/3 bg-Dark-D2 rounded-lg shadow-lg p-6">
-                    <h2 className="text-h1 font-bold text-primary-light font-lalezar mb-6">Frequently Asked Questions</h2>
+                <div className={`md:w-2/3 rounded-lg shadow-lg p-6 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}>
+                    <h2 className={`text-h1 font-bold font-lalezar mb-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Frequently Asked Questions</h2>
                     <div className="flex space-x-4 mb-6 ">
                         {['attending', 'organizing', 'account'].map((tab) => (
                             <button
@@ -91,7 +102,7 @@ const SupportPage = () => {
                                 className={`pb-2 font-medium text-body ${
                                     activeTab === tab
                                         ? 'border-b-2 border-accent-purple text-accent-purple'
-                                        : 'text-Light-L2'
+                                        : darkMode ? "text-Light-L2" : "text-Dark-D2"
                                 }`}
                                 onClick={() => setActiveTab(tab)}
                             >
@@ -105,13 +116,13 @@ const SupportPage = () => {
                             <button
                                 key={index}
                                 onClick={() => toggleQuestion(index)}
-                                className="w-full text-left border border-Light-L1 rounded-md p-4 text-body font-medium hover:bg-Dark-D1 transition"
+                                className={`w-full text-left border ${darkMode ? "border-Light-L1 hover:bg-Dark-D1" : "border-Dark-D1 hover:bg-Light-L1"} rounded-md p-4 text-body font-medium transition`}
                             >
                                 <div className="flex justify-between items-center">
                                     {faq.question}
                                 </div>
                                 {openQuestion === index && (
-                                    <p className="mt-2 text-Light-L3">{faq.answer}</p>
+                                    <p className={`mt-2 ${darkMode ? "text-Light-L3" : "text-Dark-D1 opacity-75"}`}>{faq.answer}</p>
                                 )}
                             </button>
                         ))}
@@ -119,8 +130,8 @@ const SupportPage = () => {
                 </div>
 
                 {/* Support Form Section */}
-                <div className="md:w-1/3 bg-Dark-D2 rounded-lg shadow-lg p-6">
-                    <h2 className="text-h2 font-bold text-primary-light mb-4">Submit a Support Request</h2>
+                <div className={`md:w-1/3 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"} rounded-lg shadow-lg p-6`}>
+                    <h2 className={`text-h2 font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Submit a Support Request</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {[
                             { label: "Name", value: name, setter: setName, type: "text" },
@@ -128,22 +139,22 @@ const SupportPage = () => {
                             { label: "Phone Number", value: phone, setter: setPhone, type: "tel" }
                         ].map(({ label, value, setter, type }) => (
                             <div key={label}>
-                                <label className="block text-Light-L1">{label}</label>
+                                <label className={`block ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}>{label}</label>
                                 <input
                                     type={type}
                                     value={value}
                                     onChange={(e) => setter(e.target.value)}
-                                    className="w-full p-2 bg-Dark-D1 text-primary-light rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red"
+                                    className={`w-full p-2 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"} rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red`}
                                     required
                                 />
                             </div>
                         ))}
                         <div>
-                            <label className="block text-Light-L1">Describe Your Issue</label>
+                            <label className={`block ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}>Describe Your Issue</label>
                             <textarea
                                 value={issue}
                                 onChange={(e) => setIssue(e.target.value)}
-                                className="w-full p-2 bg-Dark-D1 text-primary-light rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red"
+                                className={`w-full p-2 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"} rounded-md focus:outline-none focus:ring-2 focus:ring-accent-red`}
                                 rows="4"
                                 required
                             />

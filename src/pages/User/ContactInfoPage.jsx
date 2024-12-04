@@ -4,6 +4,7 @@ import { db, auth, storage } from "../../firebaseConfig.js";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { onAuthStateChanged } from "firebase/auth";
 import SelectUSState from 'react-select-us-states';
+import themeManager from "../../utils/themeManager.jsx";
 
 const ContactInfoPage = () => {
     const [userId, setUserId] = useState(null);
@@ -25,6 +26,16 @@ const ContactInfoPage = () => {
     const [isHost, setIsHost] = useState(false);
     const [hostType, setHostType] = useState('individual');
     const [bio, setBio] = useState('');
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     // Fetch user profile when they sign in
     useEffect(() => {
@@ -138,15 +149,15 @@ const ContactInfoPage = () => {
 
     return (
         <>
-            <h1 className="text-3xl font-bold mb-8 text-white">Account Information</h1>
+            <h1 className={`text-3xl font-bold mb-8 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Account Information</h1>
 
             {/* Profile Photo Upload Section */}
             <div className="mb-10">
-                <label className="block text-lg font-semibold mb-4 text-white">Profile Photo</label>
+                <label className={`block text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Profile Photo</label>
                 <div className="flex items-center space-x-4">
                     {/* Make this section clickable */}
                     <div
-                        className="w-32 h-32 bg-gray-800 border border-gray-300 rounded-md flex items-center justify-center cursor-pointer"
+                        className={`w-32 h-32 bg-gray-800 border border-gray-300 rounded-md flex items-center justify-center cursor-pointer`}
                         onClick={() => document.getElementById('fileInput').click()} // Open file dialog when clicked
                     >
                         {profilePic ? (
@@ -175,13 +186,13 @@ const ContactInfoPage = () => {
 
             {/* Contact Information Section */}
             <div className="mb-10">
-                <h2 className="text-xl font-semibold mb-4 text-white">Contact Information</h2>
+                <h2 className={`text-xl font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Contact Information</h2>
                 <form className="grid grid-cols-2 gap-6" onSubmit={handleSave}>
                     {/* Prefix */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Prefix</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Prefix</label>
                         <select
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={prefix}
                             onChange={(e) => setPrefix(e.target.value)}
                         >
@@ -195,11 +206,11 @@ const ContactInfoPage = () => {
 
                     {/* First Name */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">First Name</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>First Name</label>
                         <input
                             id="firstName"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                         />
@@ -207,11 +218,11 @@ const ContactInfoPage = () => {
 
                     {/* Last Name */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Last Name</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Last Name</label>
                         <input
                             id="lastName"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                         />
@@ -219,11 +230,11 @@ const ContactInfoPage = () => {
 
                     {/* Suffix */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Suffix</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Suffix</label>
                         <input
                             id="suffix"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={suffix}
                             onChange={(e) => setSuffix(e.target.value)}
                         />
@@ -231,11 +242,11 @@ const ContactInfoPage = () => {
 
                     {/* Cell Phone */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Cell Phone</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Cell Phone</label>
                         <input
                             id="cellPhone"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={cellPhone}
                             onChange={(e) => setCellPhone(e.target.value)}
                         />
@@ -243,11 +254,11 @@ const ContactInfoPage = () => {
 
                     {/* Birthday */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Birthday</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Birthday</label>
                         <input
                             id="birthday"
                             type="date"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={birthday}
                             onChange={(e) => setBirthday(e.target.value)}
                         />
@@ -255,11 +266,11 @@ const ContactInfoPage = () => {
 
                     {/* Address */}
                     <div className="col-span-2">
-                        <label className="block text-white font-semibold mb-2">Address</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Address</label>
                         <input
                             id="address"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                         />
@@ -267,11 +278,11 @@ const ContactInfoPage = () => {
 
                     {/* Address 2 */}
                     <div className="col-span-2">
-                        <label className="block text-white font-semibold mb-2">Address 2</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Address 2</label>
                         <input
                             id="address2"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={address2}
                             onChange={(e) => setAddress2(e.target.value)}
                         />
@@ -279,11 +290,11 @@ const ContactInfoPage = () => {
 
                     {/* City */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">City</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>City</label>
                         <input
                             id="city"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />
@@ -291,10 +302,10 @@ const ContactInfoPage = () => {
 
                     {/* State */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">State</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>State</label>
                         <SelectUSState
                             id="state"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             onChange={(val) => setState(val)} // Set selected state
                             value={state} // Display selected state
                         />
@@ -302,11 +313,11 @@ const ContactInfoPage = () => {
 
                     {/* Zip */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Zip</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Zip</label>
                         <input
                             id="zip"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
                         />
@@ -314,11 +325,11 @@ const ContactInfoPage = () => {
 
                     {/* Bio */}
                     <div className="col-span-1">
-                        <label className="block text-white font-semibold mb-2">Bio</label>
+                        <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Bio</label>
                         <input
                             id="bio"
                             type="text"
-                            className="block w-full p-2 border border-gray-600 rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none bg-gray-800 text-white"
+                            className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
                         />

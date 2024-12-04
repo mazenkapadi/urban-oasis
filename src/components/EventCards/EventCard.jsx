@@ -1,10 +1,21 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebaseConfig.js"; // Import your Firebase auth instance
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import themeManager from "../../utils/themeManager.jsx";
 
 function EventCard({ title, location, date, price, image, eventId }) {
     const navigate = useNavigate();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const handleClick = () => {
         const user = auth.currentUser;
@@ -32,9 +43,9 @@ function EventCard({ title, location, date, price, image, eventId }) {
             </div>
 
             {/* Information Section */}
-            <div className="p-3 bg-white">
+            <div className={`p-3 ${darkMode ? "bg-Dark-D2" : "bg-Light-L3"}`}>
                 <div className="flex justify-between items-center">
-                    <h3 className="text-gray-900 text-lg font-semibold truncate">{title}</h3>
+                    <h3 className={`text-lg font-semibold truncate ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{title}</h3>
                     <p className="text-gray-500 text-xs">{date}</p>
                 </div>
                 <div className="flex items-center text-gray-500 text-sm mt-1">
