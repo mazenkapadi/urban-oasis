@@ -3,7 +3,7 @@ import { Switch, FormControlLabel } from '@mui/material';
 
 const ForecastComponent = ({lat, lon, eventDate}) => {
     const [ filteredForecast, setFilteredForecast ] = useState(null);
-    const [unit, setUnit] = useState("metric"); // "metric" for Celsius, "imperial" for Fahrenheit
+    const [ unit, setUnit ] = useState("metric"); // "metric" for Celsius, "imperial" for Fahrenheit
 
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -11,13 +11,8 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
         if (unit === "imperial") {
             return Math.round((temp * 9) / 5 + 32);
         }
-        return Math.round(temp); 
+        return Math.round(temp);
     };
-
-    // const handleUnitChange = (event) => {
-    //     setUnit(event.target.checked ? "imperial" : "metric");
-    // };
-    
 
     const fetchWeather = async (lat, lon) => {
         if (!lat || !lon || !eventDate) return;
@@ -92,44 +87,38 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                     className="flex rounded-lg flex-shrink-0"
                 >
                     {/* <p className="text-body text-primary-light font-archivo" >
-                        {new Date(filteredForecast.dt_txt).toLocaleString()}
-                    </p > */}
+                     {new Date(filteredForecast.dt_txt).toLocaleString()}
+                     </p > */}
                     <img
                         src={`https://openweathermap.org/img/wn/${filteredForecast.weather[0].icon}@2x.png`}
                         alt={filteredForecast.weather[0].description}
                         className="mx-auto h-20"
                     />
-                    <div className="flex items-center space-x-2">
-                    <p className="text-body text-primary-light font-archivo">
-                    {convertTemperature(filteredForecast.main.temp, unit)}°
-                    {/* {unit === "metric" ? "C" : "F"} */}
-                    </p>
-                    <div className="text-body text-primary-light font-archivo flex space-x-2">
-                        <button
-                        onClick={() => setUnit("metric")}
-                        className={`cursor-pointer ${
-                            unit === "metric" ? "font-bold text-primary-light" : "text-body text-Light-L1"
-                        }`}
-                        >
-                        C
-                        </button>
-                        <div className="h-6 w-0.5 bg-primary-light"></div> 
-                        <button
-                        onClick={() => setUnit("imperial")}
-                        className={`cursor-pointer ${
-                            unit === "imperial" ? "font-bold text-primary-light " : "text-body text-Light-L1"
-                        }`}
-                        >
-                        F
-                        </button>
-                    </div>
-                    </div>
-
-                    
-                    {/* <p className="text-body text-primary-light font-archivo" > */}
-                        {/* {filteredForecast.weather[0].description}
-                    </p > */}
-                    
+                    <div className="flex items-center space-x-2" >
+                        <p className="text-body text-primary-light font-archivo" >
+                            {convertTemperature(filteredForecast.main.temp, unit)}°
+                            {/* {unit === "metric" ? "C" : "F"} */}
+                        </p >
+                        <div className="text-body text-primary-light font-archivo flex space-x-2" >
+                            <button
+                                onClick={() => setUnit("metric")}
+                                className={`cursor-pointer ${
+                                    unit === "metric" ? "font-bold text-primary-light" : "text-body text-Light-L1"
+                                }`}
+                            >
+                                C
+                            </button >
+                            <div className="h-6 w-0.5 bg-primary-light" ></div >
+                            <button
+                                onClick={() => setUnit("imperial")}
+                                className={`cursor-pointer ${
+                                    unit === "imperial" ? "font-bold text-primary-light " : "text-body text-Light-L1"
+                                }`}
+                            >
+                                F
+                            </button >
+                        </div >
+                    </div >
                 </div >
             </div >
         </div >

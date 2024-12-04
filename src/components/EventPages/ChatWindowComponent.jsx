@@ -9,7 +9,7 @@ import {
     Timestamp,
 } from "firebase/firestore";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { auth,db } from "../firebaseConfig.js";
+import { auth,db } from "../../firebaseConfig.js";
 import { format } from "date-fns";
 import { onAuthStateChanged } from "firebase/auth";
 
