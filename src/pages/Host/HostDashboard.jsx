@@ -10,10 +10,16 @@ import LoadingPage from "../service/LoadingPage.jsx";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Rating } from "@mui/material";
+import themeManager from "../../utils/themeManager.jsx";
+import StarBorderPurple500SharpIcon from "@mui/icons-material/StarBorderPurple500Sharp";
+import resolveConfig from "tailwindcss/resolveConfig.js";
+import tailwindConfig from "../../../tailwind.config.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const HostDashboard = () => {
+    const fullConfig = resolveConfig(tailwindConfig);
+    const colors = fullConfig.theme.colors;
     const [ name, setName ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ hostType, setHostType ] = useState('');
@@ -25,6 +31,16 @@ const HostDashboard = () => {
     const [ error, setError ] = useState(null);
     const navigate = useNavigate();
     const [ rating, setRating ] = useState(0);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -184,29 +200,29 @@ const HostDashboard = () => {
     });
 
     return (
-        <div className="bg-gray-100 min-h-screen flex justify-start p-0" >
-            <div className="w-1/6 bg-gray-900 sticky top-0 h-screen rounded-lg" >
+        <div className={`${darkMode ? "bg-primary-dark" : "bg-primary-light"} min-h-screen flex justify-start p-0`} >
+            <div className="w-1/6 sticky top-0 h-screen rounded-lg" >
                 <SideBar />
             </div >
             <div className="flex-grow p-8" >
-                <div className="bg-gray-900 text-white shadow-md rounded-lg p-6 h-full min-h-screen" >
+                <div className={`${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L2 text-primary-dark"} shadow-md rounded-lg p-6 h-full min-h-screen`} >
                     <div className="w-full" >
                         <div className="flex justify-between items-center mb-6" >
                             <div >
-                                <h1 className="text-3xl font-bold text-white" >Host Dashboard</h1 >
-                                <p className="text-gray-300" >Welcome back, {name.split(' ')[0] || 'User'}</p >
+                                <h1 className={`text-3xl font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Host Dashboard</h1 >
+                                <p className={`${darkMode ? "text-Light-L2" : "text-Dark-D2"}`} >Welcome back, {name.split(' ')[0] || 'User'}</p >
                             </div >
                             <div className="flex justify-between items-center mb-6" >
                                 <div className="flex items-center" >
                                     <button
-                                        className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+                                        className="flex items-center bg-accent-blue text-primary-light px-4 py-2 rounded hover:bg-blue-800 transition-colors duration-300"
                                         onClick={() => navigate('/EventCreation')}
                                     >
                                         <p className="mr-2" >Create an Event</p >
                                         <PlusIcon className="h-6 w-6" />
                                     </button >
                                     <button
-                                        className="ml-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                                        className="ml-4 bg-accent-blue text-primary-light px-4 py-2 rounded hover:bg-blue-800 transition"
                                         onClick={() => navigate('/')}
                                     >
                                         View All Events
@@ -216,21 +232,25 @@ const HostDashboard = () => {
                         </div >
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
-                            <div className="bg-white shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center" >
+                            <div className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6 col-span-1 flex flex-col items-center`} >
                                 <img
                                     src={profilePicture}
                                     alt="Host Profile"
                                     className="rounded-full w-24 h-24 object-cover mb-4"
                                 />
-                                <h2 className="text-xl font-semibold mb-2 text-gray-900" >{name}</h2 >
-                                <p className="text-gray-700" >{email}</p >
-                                <p className="text-gray-700" >{hostType === 'company' ? companyName : 'Individual Host'}</p >
-                                <p className="text-gray-700 text-center" >{bio}</p >
+                                <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{name}</h2 >
+                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{email}</p >
+                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{hostType === 'company' ? companyName : 'Individual Host'}</p >
+                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"} text-center`} >{bio}</p >
                                 <Rating
                                     name="read-only"
                                     value={rating}
                                     readOnly
-                                    precision={0.2}
+                                    emptyIcon={<StarBorderPurple500SharpIcon
+                                        sx={{
+                                            color: darkMode ? colors["primary-light"] : colors["primary-dark"],
+                                        }} />}
+                                    precision={0.1}
                                 />
                                 <button
                                     onClick={() => navigate('/userProfilePage')}
@@ -241,8 +261,8 @@ const HostDashboard = () => {
                             </div >
 
                             <div className="lg:col-span-2 space-y-6" >
-                                <div className="bg-white shadow-md rounded-lg p-6" >
-                                    <h2 className="text-lg font-semibold mb-4 text-gray-900" >Your Events</h2 >
+                                <div className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6`} >
+                                    <h2 className={`text-xl font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Your Events</h2 >
                                     {displayedEvents.length > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6" >
                                             {displayedEvents.map(event => (
@@ -259,8 +279,8 @@ const HostDashboard = () => {
 
                                 {/* Statistics Section */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6" >
-                                    <div className="bg-white shadow-md rounded-lg p-6" >
-                                        <h2 className="text-lg font-semibold mb-4 text-gray-900" >Participation
+                                    <div className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6`} >
+                                        <h2 className={`text-xl font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Participation
                                             Rate</h2 >
                                         <div className="flex justify-center" >
                                             {totalCapacity > 0 ? (
@@ -271,8 +291,8 @@ const HostDashboard = () => {
                                         </div >
                                     </div >
 
-                                    <div className="bg-white shadow-md rounded-lg p-6" >
-                                        <h2 className="text-lg font-semibold mb-4 text-gray-900" >Event Status</h2 >
+                                    <div className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6`} >
+                                        <h2 className={`text-xl font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Event Status</h2 >
                                         <div className="flex justify-center" >
                                             {totalFutureEvents > 0 || totalPastEvents > 0 ? (
                                                 <Pie data={eventStatusData} />

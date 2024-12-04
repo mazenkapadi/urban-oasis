@@ -8,8 +8,13 @@ import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import ThemeToggle from "./ThemeToggle.jsx";
+import themeManager from "../utils/themeManager.jsx";
+import tailwindConfig from "../../tailwind.config.js";
+import resolveConfig from "tailwindcss/resolveConfig";
 
 const HeaderComponent = ({onSearch}) => {
+    const fullConfig = resolveConfig(tailwindConfig);
+    const colors = fullConfig.theme.colors;
     const [ menuOpen, setMenuOpen ] = useState(false);
     const [ isLoggedIn, setIsLoggedIn ] = useState(false);
     const [ name, setName ] = useState("User");
@@ -20,6 +25,16 @@ const HeaderComponent = ({onSearch}) => {
     const [ dateRange, setDateRange ] = useState({startDate: null, endDate: null});
     const [ showDatePicker, setShowDatePicker ] = useState(false);
     const navigate = useNavigate();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const authInstance = getAuth();
@@ -164,9 +179,9 @@ const HeaderComponent = ({onSearch}) => {
                 <div className="relative" >
                     <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none text-white" >
                         <svg
-                            className="w-8 h-8"
+                            className="w-8 h-8 bg-primary-light rounded-lg bg-opacity-50"
                             fill="none"
-                            stroke="currentColor"
+                            stroke={darkMode ? colors["primary-light"] : colors["primary-dark"]}
                             viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg"
                         >

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import signUp from "../../services/auth/signUp.js";
 import SignIn from "../../services/auth/signIn.js";
 import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import themeManager from "../../utils/themeManager.jsx";
 
 function SignUpPage() {
     const [firstName, setFirstName] = useState('');
@@ -14,6 +15,16 @@ function SignUpPage() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const toggleShowConfirmPassword = () => {
         setShowConfirmPassword(!showConfirmPassword);
@@ -74,10 +85,10 @@ function SignUpPage() {
                 <div className="flex-[3]">
                     <AuthLeftComponent />
                 </div>
-                <div className="flex-[2] h-screen bg-blue-800 p-4 flex items-center justify-center">
-                    <div className="signUpBox box-border rounded-lg bg-gray-900 p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto">
+                <div className={`flex-[2] h-screen p-4 flex items-center justify-center ${darkMode ? 'bg-Dark-D2' : 'bg-primary-light'}`}>
+                    <div className={`signUpBox box-border rounded-lg ${darkMode ? "bg-primary-dark" : "bg-Light-L1"} p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto`}>
                         <div className="content w-full">
-                            <h2 className="text-3xl font-bold text-white mb-6 px-2">Sign Up</h2>
+                            <h2 className={`text-3xl font-bold mb-6 px-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Sign Up</h2>
 
                             {error && <div className="text-red-500 text-sm p-2">{error}</div>}
 
@@ -85,9 +96,9 @@ function SignUpPage() {
                                 <div className="flex space-x-4">
                                     {/* First Name */}
                                     <div className="flex-1">
-                                        <label className="block text-gray-300 pb-1" htmlFor="firstName">First Name</label>
+                                        <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="firstName">First Name</label>
                                         <input
-                                            className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                                             id="firstName"
                                             type="text"
                                             placeholder="First Name"
@@ -98,9 +109,9 @@ function SignUpPage() {
 
                                     {/* Last Name */}
                                     <div className="flex-1">
-                                        <label className="block text-gray-300 pb-1" htmlFor="lastName">Last Name</label>
+                                        <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="lastName">Last Name</label>
                                         <input
-                                            className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                                             id="lastName"
                                             type="text"
                                             placeholder="Last Name"
@@ -112,9 +123,9 @@ function SignUpPage() {
                             </div>
 
                             <div className="p-2">
-                                <label className="block text-gray-300 pb-1" htmlFor="email">Email</label>
+                                <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="email">Email</label>
                                 <input
-                                    className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                                     id="email"
                                     type="email"
                                     placeholder="your@email.com"
@@ -124,10 +135,10 @@ function SignUpPage() {
                             </div>
 
                             <div className="p-2">
-                                <label className="block text-gray-300 pb-1" htmlFor="password">Password</label>
+                                <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="password">Password</label>
                                 <div className="relative">
                                     <input
-                                        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                                         id="password"
                                         type="password"
                                         placeholder="••••••"
@@ -138,10 +149,10 @@ function SignUpPage() {
                             </div>
 
                             <div className="p-2">
-                                <label className="block text-gray-300 pb-1" htmlFor="confirmPassword">Confirm Password</label>
+                                <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="confirmPassword">Confirm Password</label>
                                 <div className="relative">
                                     <input
-                                        className="shadow appearance-none border border-gray-600 rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                                         id="confirmPassword"
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         placeholder="••••••"
@@ -154,9 +165,9 @@ function SignUpPage() {
                                         className="absolute right-3 top-2 text-gray-300"
                                     >
                                         {showConfirmPassword ? (
-                                            <EyeSlashIcon className="h-5 w-5" />
+                                            <EyeSlashIcon className="h-5 w-5 text-gray-400" />
                                         ) : (
-                                            <EyeIcon className="h-5 w-5" />
+                                            <EyeIcon className="h-5 w-5 text-gray-400" />
                                         )}
                                     </button>
                                 </div>
@@ -164,25 +175,26 @@ function SignUpPage() {
 
                             <div className="flex flex-col items-center justify-center px-2">
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 hover:bg-black hover:text-white"
+                                    className={`${darkMode ? "bg-Dark-D2 text-primary-light hover:bg-primary-light hover:text-primary-dark" : "bg-primary-light text-primary-dark hover:bg-primary-dark hover:text-primary-light"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 `}
                                     aria-label="Sign Up"
                                     onClick={handleSignUpWithEmail}
                                 >
                                     Sign Up
                                 </button>
 
-                                <p className="text-sm text-gray-400 my-4">
-                                    Already have an account? <a href="/signIn" className="text-blue-500">Sign in</a>
+                                <p className={`text-sm my-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
+                                    Already have an account? <a href="/signIn" className="text-accent-blue">Sign in</a>
                                 </p>
 
-                                <div className="flex items-cent er w-full my-2">
-                                    <hr className="flex-grow border-t border-gray-400" />
-                                    <span className="mx-4 text-gray-400">or</span>
-                                    <hr className="flex-grow border-t border-gray-400" />
+                                <div className="flex items-center w-full my-2">
+                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`}/>
+                                    <span
+                                        className={`mx-4 ${darkMode ? "border-Light-L1 text-Light-L1" : "border-Dark-D1 text-Dark-D1"}`}>or</span>
+                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`}/>
                                 </div>
 
                                 <button
-                                    className="bg-white text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center transition-colors duration-300 hover:bg-black hover:text-white"
+                                    className={`${darkMode ? "bg-Dark-D2 text-primary-light hover:bg-primary-light hover:text-primary-dark" : "bg-primary-light text-primary-dark hover:bg-primary-dark hover:text-primary-light"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center transition-colors duration-300`}
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >

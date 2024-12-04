@@ -14,6 +14,7 @@ import HeaderComponent from "../components/HeaderComponent";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { formatDateForFilter } from "../utils/dateHelpers";
 import FilteredHits from "../components/FilteredHits.jsx";
+import themeManager from "../utils/themeManager.jsx";
 
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
@@ -24,6 +25,16 @@ const ViewAllEventsPage = () => {
     const [dateRange, setDateRange] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -199,14 +210,14 @@ const ViewAllEventsPage = () => {
 
     return (
         <InstantSearch searchClient={searchClient} indexName="events">
-            <div className="view-all-events-page bg-primary-dark text-primary-light min-h-screen flex flex-col">
+            <div className={`view-all-events-page ${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"} min-h-screen flex flex-col`}>
                 {/* Header Component */}
                 <HeaderComponent onSearch={handleSearch} onKeyDown={handleEnterKey} />
 
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
                     {/* Filters Section */}
-                    <div className="lg:w-1/4 p-4 border-r border-secondary-dark-1">
+                    <div className={`lg:w-1/4 p-4 border-r ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`}>
                         <FiltersComponent
                             onApplyFilters={onApplyFilters}
                             activeFilters={activeFilters}
@@ -233,11 +244,11 @@ const ViewAllEventsPage = () => {
                         <div className="flex justify-end mb-4">
                             <button
                                 onClick={handleViewToggle}
-                                className="bg-secondary-dark-1 p-2 rounded-md shadow hover:bg-secondary-dark-2"
+                                className={`${darkMode ? "bg-Dark-D2 hover:bg-Dark-D1" : "bg-Light-L2 hover:bg-Light-L1"} p-2 rounded-md shadow`}
                                 aria-label="Toggle View"
                             >
                                 {viewMode === "grid" ? (
-                                    <ListBulletIcon className="w-6 h-6 text-primary-light" />
+                                    <ListBulletIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
                                 ) : (
                                     <Squares2X2Icon className="w-6 h-6 text-primary-light" />
                                 )}

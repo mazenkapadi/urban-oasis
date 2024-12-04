@@ -6,12 +6,23 @@ import { toggleBookmark } from "../../services/toggleBookmark.js";
 import { auth, db } from "../../firebaseConfig.js";
 import { doc, getDoc } from "firebase/firestore";
 import { MapPinIcon } from '@heroicons/react/24/outline';
+import themeManager from "../../utils/themeManager.jsx";
 
 const BookmarkEventCard = ({ event, onBookmarkRemoved }) => {
     const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(true);
     const [userId, setUserId] = useState(null);
     const [imageUrl, setImageUrl] = useState('/images/placeholder.png');
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {

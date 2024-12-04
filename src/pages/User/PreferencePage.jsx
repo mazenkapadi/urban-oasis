@@ -3,6 +3,7 @@ import { Button, Modal } from "@mui/material";
 import { auth, db } from "../../firebaseConfig.js";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import themeManager from "../../utils/themeManager.jsx";
 
 const PreferencePage = () => {
     const [userId, setUserId] = useState(null);
@@ -11,6 +12,16 @@ const PreferencePage = () => {
     const [preferredDay, setPreferredDay] = useState('');
     const [preferredLocation, setPreferredLocation] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const categorizedOptions = {
         'Arts & Entertainment': [
@@ -102,15 +113,15 @@ const PreferencePage = () => {
     const handleModalClose = () => setModalOpen(false);
 
     return (
-        <div className="min-h-screen flex flex-col justify-start p-8 bg-gray-100">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Set Your Event Preferences</h1>
+        <div className={`min-h-screen flex flex-col justify-start p-8 ${darkMode ? "bg-Dark-D1" : "bg-Light-L1"}`}>
+            <h1 className={`text-3xl font-bold mb-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Set Your Event Preferences</h1>
 
-            <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Favorite Event Categories</h2>
+            <div className={`p-6 rounded-md border border-gray-200 ${darkMode ? "bg-primary-dark" : "bg-primary-light"} mb-6 shadow-sm`}>
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Favorite Event Categories</h2>
                 <div className="flex flex-col gap-4">
                     {Object.entries(categorizedOptions).map(([subcategory, options]) => (
                         <div key={subcategory} className="mb-4">
-                            <h3 className="text-md font-semibold text-gray-700 mb-2">{subcategory}</h3>
+                            <h3 className={`text-md font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`}>{subcategory}</h3>
                             <div className="flex flex-wrap gap-4">
                                 {options.map((category) => (
                                     <label key={category} className="flex items-center">
@@ -121,7 +132,7 @@ const PreferencePage = () => {
                                             onChange={() => handleCategoryChange(category)}
                                             className="mr-2"
                                         />
-                                        <span className="text-gray-700">{category}</span>
+                                        <span className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{category}</span>
                                     </label>
                                 ))}
                             </div>
@@ -130,8 +141,8 @@ const PreferencePage = () => {
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Event Time</h2>
+            <div className={`${darkMode ? "bg-primary-dark" : "bg-primary-light"} p-6 rounded-md border border-gray-200 mb-6 shadow-sm`}>
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Preferred Event Time</h2>
                 <div className="flex space-x-4">
                     {times.map((time) => (
                         <label key={time} className="flex items-center">
@@ -143,14 +154,14 @@ const PreferencePage = () => {
                                 onChange={() => setPreferredTime(time)}
                                 className="mr-2"
                             />
-                            <span className="text-gray-700">{time}</span>
+                            <span className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{time}</span>
                         </label>
                     ))}
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Day of the Week</h2>
+            <div className={`${darkMode ? "bg-primary-dark" : "bg-primary-light"} p-6 rounded-md border border-gray-200 mb-6 shadow-sm`}>
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Preferred Day of the Week</h2>
                 <div className="flex space-x-4">
                     {days.map((day) => (
                         <label key={day} className="flex items-center">
@@ -162,14 +173,14 @@ const PreferencePage = () => {
                                 onChange={() => setPreferredDay(day)}
                                 className="mr-2"
                             />
-                            <span className="text-gray-700">{day}</span>
+                            <span className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{day}</span>
                         </label>
                     ))}
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-md border border-gray-200 mb-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Preferred Location</h2>
+            <div className={`${darkMode ? "bg-primary-dark" : "bg-primary-light"} p-6 rounded-md border border-gray-200 mb-6 shadow-sm`}>
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Preferred Location</h2>
                 <input
                     type="text"
                     placeholder="Enter preferred city or location"
@@ -179,14 +190,14 @@ const PreferencePage = () => {
                 />
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-md border border-gray-200 mb-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Selected Preferences</h2>
-                <p className="text-gray-700 mb-2">
+            <div className={`${darkMode ? "bg-primary-dark" : "bg-primary-light"} p-6 rounded-md border border-gray-200 mb-6 shadow-sm`}>
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`}>Your Selected Preferences</h2>
+                <p className={`${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`}>
                     <strong>Categories:</strong> {categories.join(', ') || 'None selected'}
                 </p>
-                <p className="text-gray-700 mb-2"><strong>Time:</strong> {preferredTime || 'Not specified'}</p>
-                <p className="text-gray-700 mb-2"><strong>Day:</strong> {preferredDay || 'Not specified'}</p>
-                <p className="text-gray-700"><strong>Location:</strong> {preferredLocation || 'Not specified'}</p>
+                <p className={`${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`}><strong>Time:</strong> {preferredTime || 'Not specified'}</p>
+                <p className={`${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`}><strong>Day:</strong> {preferredDay || 'Not specified'}</p>
+                <p className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}><strong>Location:</strong> {preferredLocation || 'Not specified'}</p>
             </div>
 
             <div className="flex space-x-4">

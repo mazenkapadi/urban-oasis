@@ -5,6 +5,7 @@ import { handleAccountClosure } from '../../services/auth/CloseAccount.js';
 import UserPreferences from '../../components/User/UserPreferences.jsx';
 import { auth } from '../../firebaseConfig.js';
 import { useNavigate } from 'react-router-dom';
+import themeManager from "../../utils/themeManager.jsx";
 
 const SettingsPage = () => {
     const navigate = useNavigate();
@@ -37,6 +38,16 @@ const SettingsPage = () => {
             confirmations: false,
         },
     });
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     // Fetch the current email of the authenticated user
     useEffect(() => {
@@ -71,14 +82,14 @@ const SettingsPage = () => {
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className="p-8 bg-gray-900 min-h-screen text-white" >
+        <div className={`p-8 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"} min-h-screen`} >
             {/* Change Email Section */}
             <div className="space-y-8" >
                 <div >
                     <h2 className="text-xl font-bold mb-4" >Change Email</h2 >
                     <div className="flex items-center space-x-4" >
                         <div >
-                            <label className="block text-white" htmlFor="current_email" >Account Email Address</label >
+                            <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"}`} htmlFor="current_email" >Account Email Address</label >
                             <p id="current_email" >{currentEmail}</p >
                         </div >
                         <button

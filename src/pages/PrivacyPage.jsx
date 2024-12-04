@@ -1,10 +1,22 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
+import themeManager from "../utils/themeManager.jsx";
 
 const PrivacyPage = () => {
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
+
     return (
-        <div className="bg-primary-dark text-primary-light flex flex-col min-h-screen font-roboto">
+        <div className={`${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"} flex flex-col min-h-screen font-roboto`}>
             <HeaderComponent />
             <main className="flex-grow p-8 md:p-12">
                 <h1 className="text-h1 font-bold mb-6">Privacy and Cookie Policy</h1>
