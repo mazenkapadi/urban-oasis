@@ -179,7 +179,7 @@ const ViewAllEventsPage = () => {
             hits.length === 0 && (
                 <div className="text-center mt-8">
                     <h2 className="text-lg font-semibold text-primary-light">
-                        Oops! No events match your search criteria.
+                        Oops! No events match your selected categories right now. We’re always adding new ones, so check back soon! In the meantime, explore our other events and discover something new!
                     </h2>
                     <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
