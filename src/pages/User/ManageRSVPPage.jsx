@@ -4,12 +4,23 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { db, auth } from "../../firebaseConfig.js";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import themeManager from "../../utils/themeManager.jsx";
 
 const ManageRSVPPage = () => {
     const [userId, setUserId] = useState(null);
     const [rsvps, setRsvps] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -100,7 +111,7 @@ const ManageRSVPPage = () => {
 
     return (
         <div className="w-full p-6">
-            <h1 className="text-3xl font-bold text-white mb-6">Manage RSVPs</h1>
+            <h1 className={`text-3xl font-bold mb-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Manage RSVPs</h1>
 
             {rsvps.length === 0 ? (
                 <p className="text-gray-300">You haven't RSVP'd to any events yet.</p>
@@ -109,7 +120,7 @@ const ManageRSVPPage = () => {
                     {rsvps.map((rsvp, index) => (
                         <div
                             key={index}
-                            className="flex bg-gray-800 shadow-md rounded-lg overflow-hidden hover:bg-gray-700 transition"
+                            className={`flex ${darkMode ? "bg-primary-dark hover:bg-Dark-D1" : "bg-primary-light hover:bg-Light-L1"} shadow-md rounded-lg overflow-hidden transition`}
                         >
                             {rsvp.imageUrl && (
                                 <img
@@ -119,7 +130,7 @@ const ManageRSVPPage = () => {
                                 />
                             )}
                             <div className="p-4 flex-1">
-                                <h3 className="text-xl font-semibold text-white mb-1">{rsvp.eventTitle}</h3>
+                                <h3 className={`text-xl font-semibold mb-1 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{rsvp.eventTitle}</h3>
                                 <div className="flex items-center text-gray-400 text-sm mb-2">
                                     <MapPinIcon className="w-5 h-5 mr-1" />
                                     <span>{rsvp.location}</span>
@@ -132,7 +143,7 @@ const ManageRSVPPage = () => {
                                 <div className="flex mt-4 space-x-4">
                                     <button
                                         onClick={() => handleEditRSVP(rsvp.eventId)}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800"
+                                        className={`${darkMode ? "bg-Dark-D2 hover:bg-primary-dark text-primary-light" : "bg-Light-L2 hover:bg-primary-light text-primary-dark"} px-4 py-2 rounded-md`}
                                     >
                                         Edit RSVP
                                     </button>

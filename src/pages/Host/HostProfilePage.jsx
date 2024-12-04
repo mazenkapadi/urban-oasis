@@ -68,12 +68,6 @@ const HostProfilePage = () => {
     const [ hostedEvents, setHostedEvents ] = useState([]);
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
 
-    // useEffect(() => {
-    //     const theme = localStorage.getItem("theme");
-    //     setDarkMode(theme === "dark");
-    //     console.log(theme);
-    // }, []);
-
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
         themeManager.addListener(handleThemeChange);

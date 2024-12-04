@@ -3,11 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, where, doc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../../firebaseConfig.js";
 import BookmarkEventCard from "../EventCards/BookmarkEventCard.jsx";
+import themeManager from "../../utils/themeManager.jsx";
 
 const ExploreManage = () => {
     const navigate = useNavigate();
     const [ bookmarkedEvents, setBookmarkedEvents ] = useState([]);
     const [ userId, setUserId ] = useState(null);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchUserData = () => {
@@ -62,13 +73,13 @@ const ExploreManage = () => {
 
     return (
         <div className="mt-4" >
-            <h2 className="font-lalezar text-h3 text-white mb-4" >EXPLORE & MANAGE</h2 >
+            <h2 className={`font-lalezar text-h3 ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-4`} >EXPLORE & MANAGE</h2 >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" >
                 <div className="grid grid-rows-2 gap-6 lg:col-span-1 h-full" >
                     <div
-                        className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
-                        <h3 className="text-h4 font-lalezar text-primary-light mb-2" >My Event History</h3 >
-                        <p className="text-gray-400" >View all the events you've attended.</p >
+                        className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full`} >
+                        <h3 className={`text-h4 font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`} >My Event History</h3 >
+                        <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}>View all the events you've attended.</p >
                         <button
                             className="mt-4 bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
                             onClick={() => navigate(`/userProfilePage/event-history`, {state: {userId}})}
@@ -78,9 +89,9 @@ const ExploreManage = () => {
                     </div >
 
                     <div
-                        className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full" >
-                        <h3 className="text-h4 font-lalezar text-primary-light mb-2" >Manage RSVPs</h3 >
-                        <p className="text-gray-400" >Modify or cancel your upcoming RSVPs.</p >
+                        className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6 text-center flex flex-col justify-center h-full`} >
+                        <h3 className={`text-h4 font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`} >Manage RSVPs</h3 >
+                        <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Modify or cancel your upcoming RSVPs.</p >
                         <button
                             className="mt-4 bg-accent-blue text-white py-2 px-4 rounded-md hover:bg-blue-800 transition"
                             onClick={() => navigate('/userProfilePage/manage-rsvps')}
@@ -90,9 +101,9 @@ const ExploreManage = () => {
                     </div >
                 </div >
                 <div
-                    className="bg-secondary-dark-1 shadow-md rounded-lg p-6 text-center lg:col-span-2 lg:row-span-2 flex flex-col items-start" >
-                    <h3 className="text-h4 font-semibold text-white mb-2" >Bookmarked Events</h3 >
-                    <p className="text-gray-400 mb-4" >These are events you have bookmarked.</p >
+                    className={`${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} shadow-md rounded-lg p-6 text-center lg:col-span-2 lg:row-span-2 flex flex-col items-start`} >
+                    <h3 className={`text-h4 font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"} mb-2`} >Bookmarked Events</h3 >
+                    <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >These are events you have bookmarked.</p >
                     <div className="flex flex-col gap-4 w-full h-[300px] overflow-y-auto" >
                         {bookmarkedEvents.length > 0 ? (
                             bookmarkedEvents.map((event) => (

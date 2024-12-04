@@ -8,11 +8,22 @@ import {
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { auth } from '../firebaseConfig';
 import { toggleBookmark, getBookmarkStatus } from '../services/toggleBookmark';
+import themeManager from "../utils/themeManager.jsx";
 
 const HitComponent = ({hit, viewMode}) => {
     const navigate = useNavigate();
     const [ isBookmarked, setIsBookmarked ] = useState(false);
     const [ userId, setUserId ] = useState(null);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     // Check if the user is authenticated and update bookmark status
     useEffect(() => {
@@ -74,7 +85,7 @@ const HitComponent = ({hit, viewMode}) => {
     if (viewMode === 'grid') {
         return (
             <div
-                className="event-card w-80 min-w-[20rem] flex-shrink-0 rounded-lg overflow-hidden shadow-lg cursor-pointer transform transition-transform duration-300 hover:scale-105 snap-start bg-secondary-light-1 dark:bg-secondary-dark-2"
+                className={`w-80 min-w-[20rem] flex-shrink-0 rounded-lg overflow-hidden shadow-lg cursor-pointer transform transition-transform duration-300 hover:scale-105 snap-start ${darkMode ? 'bg-Dark-D2' : 'bg-Light-L2'}`}
                 onClick={handleClick}
             >
                 {/* Bookmark Icon */}
@@ -104,7 +115,7 @@ const HitComponent = ({hit, viewMode}) => {
                 </div >
 
                 {/* Event Information Section */}
-                <div className="p-3 bg-Light-L3 dark:bg-Dark-D2 text-primary-dark dark:text-primary-light" >
+                <div className={`p-3 ${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L2 text-primary-dark"} `} >
                     <div className="flex justify-between items-center" >
                         <h3 className="text-lg font-semibold truncate" >{title}</h3 >
                         <p className="text-sm" >{eventDate}</p >
@@ -120,7 +131,7 @@ const HitComponent = ({hit, viewMode}) => {
 
     return (
         <div
-            className="relative flex flex-row p-4 rounded-lg shadow-lg cursor-pointer bg-secondary-light-1 dark:bg-secondary-dark-2"
+            className={`relative flex flex-row p-4 rounded-lg shadow-lg cursor-pointer ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}
             onClick={handleClick}
         >
             {/* Bookmark Icon */}
@@ -147,12 +158,12 @@ const HitComponent = ({hit, viewMode}) => {
 
             {/* Event Information */}
             <div className="ml-4 flex flex-col justify-between flex-grow" >
-                <h2 className="text-lg font-semibold text-primary-dark dark:text-primary-light" >{title}</h2 >
-                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-2" >
+                <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{title}</h2 >
+                <div className={`flex items-center ${darkMode ? "text-Light-L1" : "text-Dark-D1"} mt-2`} >
                     <MapPinIcon className="w-5 h-5 mr-1" />
                     <p className="text-sm" >{location.label || 'Location not specified'}</p >
                 </div >
-                <div className="flex items-center text-secondary-dark-2 dark:text-secondary-light-1 mt-1" >
+                <div className={`flex items-center ${darkMode ? "text-Light-L1" : "text-Dark-D1"} mt-2`} >
                     <CalendarIcon className="w-5 h-5 mr-1" />
                     <p className="text-sm" >{eventDate}</p >
                 </div >

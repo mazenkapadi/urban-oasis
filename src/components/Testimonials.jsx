@@ -4,10 +4,21 @@ import { db } from '../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import themeManager from "../utils/themeManager.jsx";
 
 const Testimonials = () => {
     const [testimonials, setTestimonials] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchTestimonials = async () => {
@@ -45,15 +56,15 @@ const Testimonials = () => {
 
     return (
         <div className="">
-            <h2 className="text-3xl font-bold mb-6 text-center text-primary-dark">User Testimonials</h2>
+            <h2 className={`text-3xl font-bold mb-6 text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>User Testimonials</h2>
             {loading ? (
                 <div className="text-center text-gray-500">Loading testimonials...</div>
             ) : testimonials.length > 0 ? (
                 <Slider {...settings}>
                     {testimonials.map((testimonial) => (
                         <div key={testimonial.id} className="p-4 px-10mx-4">
-                            <div className="bg-white shadow-md rounded-lg text-center p-2 transition-transform duration-300">
-                                <p className="text-lg italic mb-4 text-primary-dark">{testimonial.content}</p>
+                            <div className={`${darkMode ? "bg-Dark-D2" : "bg-Light-L3"} shadow-md rounded-lg text-center p-2 transition-transform duration-300`}>
+                                <p className={`text-lg italic mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{testimonial.content}</p>
                                 <p className="font-semibold text-accent-blue">- {testimonial.name}</p>
                             </div>
                         </div>

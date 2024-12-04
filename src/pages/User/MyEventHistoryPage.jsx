@@ -4,6 +4,7 @@ import { db, auth } from "../../firebaseConfig.js";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import themeManager from "../../utils/themeManager.jsx";
 
 const MyEventHistoryPage = () => {
     const [userId, setUserId] = useState(null);
@@ -11,6 +12,16 @@ const MyEventHistoryPage = () => {
     const [loading, setLoading] = useState(true);
     const [sortOption, setSortOption] = useState('newest');
     const navigate = useNavigate();
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -56,6 +67,7 @@ const MyEventHistoryPage = () => {
                                 return {
                                     ...event,
                                     imageUrl,
+                                    eventTitle: eventData.basicInfo.title,
                                     location: eventData.basicInfo?.location?.label || 'Location not available',
                                     paidEvent: eventData.eventDetails?.paidEvent || false,
                                     price: eventData.eventDetails?.eventPrice || 0,
@@ -102,12 +114,12 @@ const MyEventHistoryPage = () => {
     return (
         <div className="w-full p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-white">My Events</h1>
+                <h1 className={`${darkMode ? "text-primary-light" : "text-primary-dark"} text-3xl font-bold`}>My Events</h1>
 
                 <select
                     value={sortOption}
                     onChange={(e) => handleSortChange(e.target.value)}
-                    className="bg-gray-700 text-white px-4 py-2 rounded-md"
+                    className={`px-4 py-2 rounded-md ${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"}`}
                 >
                     <option value="newest">Newest to Oldest</option>
                     <option value="oldest">Oldest to Newest</option>
@@ -122,7 +134,7 @@ const MyEventHistoryPage = () => {
                     {events.map((event, index) => (
                         <div
                             key={index}
-                            className="flex bg-gray-800 shadow-md rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer"
+                            className={`flex ${darkMode ? "bg-primary-dark hover:bg-Dark-D1" : "bg-primary-light hover:bg-Light-L1"} shadow-md rounded-lg overflow-hidden transition cursor-pointer`}
                             onClick={() => navigate(`/eventPage/${event.eventId}`)}
                         >
                             {event.imageUrl && (
@@ -133,7 +145,7 @@ const MyEventHistoryPage = () => {
                                 />
                             )}
                             <div className="p-4 flex-1">
-                                <h3 className="text-xl font-semibold text-white mb-1">{event.eventTitle}</h3>
+                                <h3 className={`text-xl font-semibold mb-1 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{event.eventTitle}</h3>
                                 <div className="flex items-center text-gray-400 text-sm mb-2">
                                     <MapPinIcon className="w-5 h-5 mr-1" />
                                     <span>{event.location}</span>
@@ -143,7 +155,7 @@ const MyEventHistoryPage = () => {
                                     <span>{new Date(event.eventDateTime).toLocaleDateString()}</span>
                                 </div>
                                 <p className="text-gray-400">RSVP Quantity: {event.quantity}</p>
-                                <div className="text-lg font-bold text-white mt-2">
+                                <div className={`text-lg font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"} mt-2`}>
                                     {event.paidEvent ? `$${event.price.toFixed(2)}` : 'Free RSVP'}
                                 </div>
                             </div>

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from 'react-router-dom';
 import FooterComponent from "../components/FooterComponent.jsx";
+import themeManager from "../utils/themeManager.jsx";
 
 function AboutPage() {
     const [ reviewerName, setReviewerName ] = useState('');
@@ -13,6 +14,16 @@ function AboutPage() {
     const [ successMessage, setSuccessMessage ] = useState('');
 
     const maxReviewLength = 140;
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    useEffect(() => {
+        const handleThemeChange = (isDark) => setDarkMode(isDark);
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     const handleReviewSubmit = async () => {
         if (!reviewerName || !reviewContent) {
@@ -76,13 +87,13 @@ function AboutPage() {
                 </div >
             </div >
 
-            <div className="flex flex-col md:flex-row items-start justify-between bg-Dark-D2 py-8 px-12 md:px-16" >
+            <div className={`flex flex-col md:flex-row items-start justify-between ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"} py-8 px-12 md:px-16`} >
                 <div className="md:w-1/2 flex flex-col justify-start space-y-4 mb-6 md:mb-0 pr-10" >
-                    <h2 className="text-h3 font-bold text-Light-L1" >Leave us a review!</h2 >
+                    <h2 className={`text-h3 font-bold ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Leave us a review!</h2 >
                     {error && <p className="text-accent-red" >{error}</p >}
                     {successMessage && <p className="text-accent-blue" >{successMessage}</p >}
 
-                    <p className="text-Light-L1" >
+                    <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >
                         <span >Need more space for your thoughts? Feel free to reach out on our </span >
                         <Link to="/support" className="text-accent-blue hover:text-accent-purple transition-colors" >
                             support page
@@ -92,28 +103,28 @@ function AboutPage() {
                 </div >
 
                 <div
-                    className="md:w-1/2 flex flex-col items-end bg-Dark-D1 p-8 rounded-lg shadow-lg w-full max-w-lg space-y-4" >
+                    className={`md:w-1/2 flex flex-col items-end ${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} p-8 rounded-lg shadow-lg w-full max-w-lg space-y-4`} >
                     <div className="w-full" >
-                        <label className="block text-Light-L1 font-medium mb-2" >Your Name</label >
+                        <label className={`block font-medium mb-2 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Your Name</label >
                         <input
                             type="text"
                             value={reviewerName}
                             onChange={(e) => setReviewerName(e.target.value)}
-                            className="w-full px-4 py-2 border border-Light-L2 rounded-md bg-Dark-D2 text-Light-L1 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden"
+                            className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
                             required
                         />
                     </div >
                     <div className="w-full" >
-                        <label className="block text-Light-L1 font-medium mb-2" >Your Review</label >
+                        <label className={`block font-medium mb-2 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Your Review</label >
                         <textarea
                             value={reviewContent}
                             onChange={(e) => setReviewContent(e.target.value)}
-                            className="w-full px-4 py-2 border border-Light-L2 rounded-md bg-Dark-D2 text-Light-L1 focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden"
+                            className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
                             rows="4"
                             maxLength={maxReviewLength}
                             required
                         />
-                        <p className="text-small text-Light-L3 mt-1 text-right" >
+                        <p className={`text-small mt-1 text-right ${darkMode ? "text-Light-L3" : "text-Dark-D2"}`} >
                             {reviewContent.length}/{maxReviewLength} characters
                         </p >
                     </div >
