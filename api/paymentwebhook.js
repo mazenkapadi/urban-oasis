@@ -61,29 +61,29 @@ export async function POST(req) {
 
         console.log(emaildata); // Log to confirm the structure
 
-        await setDoc(
-            eventRsvpsDocRef,
-            {
-                rsvps: {
-                    [session.id]: rsvpData,
-                },
-            },
-            {merge: true}
-        );
-
-        await setDoc(
-            userRsvpsDocRef,
-            {
-                rsvps: {
-                    [session.id]: rsvpData,
-                },
-            },
-            {merge: true}
-        );
-
-        await updateDoc(eventDocRef, {
-            attendeesCount: increment(parseInt(quantity)),
-        });
+        // await setDoc(
+        //     eventRsvpsDocRef,
+        //     {
+        //         rsvps: {
+        //             [session.id]: rsvpData,
+        //         },
+        //     },
+        //     {merge: true}
+        // );
+        //
+        // await setDoc(
+        //     userRsvpsDocRef,
+        //     {
+        //         rsvps: {
+        //             [session.id]: rsvpData,
+        //         },
+        //     },
+        //     {merge: true}
+        // );
+        //
+        // await updateDoc(eventDocRef, {
+        //     attendeesCount: increment(parseInt(quantity)),
+        // });
 
         console.log('Checkout session processed successfully:', session.id);
         try {
