@@ -112,12 +112,6 @@ const EventPage = () => {
         };
     }, []);
 
-    // const handleIncrement = () => {
-    //     if (isPaidEvent || (quantity < 10)) {
-    //         setQuantity(quantity + 1);
-    //     }
-    // };
-
     const handleIncrement = () => {
         const maxQuantity = isPaidEvent ? availableTickets : Math.min(availableTickets, 10);
         if (quantity < maxQuantity) {
@@ -168,11 +162,6 @@ const EventPage = () => {
 
     // Adjust the function signature to accept rsvpId as a parameter
     const saveOrUpdateRsvp = async (collectionRef, rsvpId, rsvpData, topLevelId, isEventRsvp = true) => {
-        // if (rsvpId) {
-        //     await updateDoc(collectionRef, {
-        //         [`rsvps.${rsvpId}`]: rsvpData,
-        //     });
-        // } else {
         const newRsvpId = rsvpId || uuidv4(); // Use provided rsvpId or generate a new one
         const topLevelField = isEventRsvp ? {eventId: topLevelId} : {userId: topLevelId};
 
@@ -931,28 +920,6 @@ const EventPage = () => {
                         toggleChatWindow={toggleChatWindow}
                     />
                 </div >
-                {/*<Modal open={modalOpen} onClose={handleModalClose} >*/}
-                {/*    <div*/}
-                {/*        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 rounded-lg shadow-lg p-8 bg-primary-light" >*/}
-                {/*        <div >*/}
-
-                {/*            <span className="text-h3 font-semibold text-primary-dark mb-4 text-center font-archivo" >RSVP Successful</span >*/}
-                {/*            <br />*/}
-                {/*            <span className="text-body text-secondary-dark-1 text-center mb-6 font-inter" >*/}
-                {/*            Your RSVP has been successfully registered.*/}
-                {/*        </span >*/}
-                {/*        </div >*/}
-                {/*        <Button*/}
-                {/*            onClick={handleModalClose}*/}
-                {/*            variant="contained"*/}
-                {/*            color="primary"*/}
-                {/*            className="mt-4 w-full py-2 btn btn-primary"*/}
-                {/*        >*/}
-                {/*            Close*/}
-                {/*        </Button >*/}
-                {/*    </div >*/}
-                {/*</Modal >*/}
-
 
                 <Modal open={modalOpen} onClose={handleModalClose}>
                     <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`}>
@@ -972,9 +939,6 @@ const EventPage = () => {
                         </button>
                     </div>
                 </Modal>
-
-
-
 
                 <Snackbar
                     open={snackbarState.open}
