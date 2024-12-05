@@ -34,8 +34,6 @@ const HostEventPage = () => {
 
     const [ loading, setLoading ] = useState(true);
     const [ isHost, setIsHost ] = useState(false);
-    const [ ticketQuantity, setTicketQuantity ] = useState([]);
-    const [ attendeeId, setAttendeeId ] = useState([]);
     const [ attendeeDetails, setAttendeeDetails ] = useState([]);
     const [ showModal, setShowModal ] = useState(false);
     const [ showCancelModal, setShowCancelModal ] = useState(false);
