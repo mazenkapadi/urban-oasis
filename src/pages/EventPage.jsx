@@ -546,6 +546,15 @@ const EventPage = () => {
         setSnackbarState({...snackbarState, open: false});
     };
 
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -624,8 +633,9 @@ const EventPage = () => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setEventTitle(data.basicInfo.title);
-                    setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleString());
-                    setIsPaidEvent(data.eventDetails.paidEvent);
+                    setEventDateTime(
+                        new Intl.DateTimeFormat('en-US', options).format(data.eventDetails.eventDateTime.toDate())
+                    );                    setIsPaidEvent(data.eventDetails.paidEvent);
                     setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
                     setEventLocation(data.basicInfo.location.label);
                     setEventPlaceId(data.basicInfo.location.value.place_id);

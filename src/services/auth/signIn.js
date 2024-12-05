@@ -44,6 +44,11 @@ class SignIn {
                     birthday: '',
                     isHost: false,
                     hostType: 'individual',
+                    ratings: {
+                        ratingsTotaled: 0,
+                        numRatings: 0,
+                        overall: 0
+                    },
                     updatedAt: new Date().toISOString(),
                 };
 
