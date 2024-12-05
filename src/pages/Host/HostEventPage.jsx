@@ -99,6 +99,33 @@ const HostEventPage = () => {
                 const EventRSVPDocRef = doc(db, 'EventRSVPs', eventId);
                 const EventRSVPDocSnap = await getDoc(EventRSVPDocRef);
 
+                // if (EventRSVPDocSnap.exists()) {
+                //     const data = EventRSVPDocSnap.data();
+                //     const rsvps = data.rsvps;
+                //     const attendees = [];
+                //
+                //     for (const [ key, innerMap ] of Object.entries(rsvps)) {
+                //         const userId = innerMap.userId;
+                //         const quantity = innerMap.quantity;
+                //
+                //         const attendeeDocRef = doc(db, 'Users', userId);
+                //         const attendeeDocSnap = await getDoc(attendeeDocRef);
+                //
+                //         if (attendeeDocSnap.exists()) {
+                //             const attendeeData = attendeeDocSnap.data();
+                //             attendees.push({
+                //                 firstName: attendeeData.name.firstName,
+                //                 lastName: attendeeData.name.lastName,
+                //                 quantity,
+                //                 email: attendeeData.contact.email,
+                //             });
+                //         }
+                //     }
+                //
+                //     setAttendeeDetails(attendees);
+                // }
+
+                // Inside fetchEventData
                 if (EventRSVPDocSnap.exists()) {
                     const data = EventRSVPDocSnap.data();
                     const rsvps = data.rsvps;
@@ -118,12 +145,15 @@ const HostEventPage = () => {
                                 lastName: attendeeData.name.lastName,
                                 quantity,
                                 email: attendeeData.contact.email,
+                                rsvpId: key,  // Add rsvpId here
+                                userId: userId  // Add userId here
                             });
                         }
                     }
 
                     setAttendeeDetails(attendees);
                 }
+
 
                 setLoading(false);
             }
@@ -170,45 +200,7 @@ const HostEventPage = () => {
         return <LoadingPage />;
     }
 
-    // const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail) => {
-    //     try {
-    //         const eventRsvpDocRef = doc(db, "EventRSVPs", eventId);
-    //         const userRsvpDocRef = doc(db, "UserRSVPs", userId);
-    //
-    //         await updateDoc(userRsvpDocRef, {
-    //             [`rsvps.${rsvpId}`]: deleteField(),
-    //         });
-    //
-    //         await updateDoc(eventRsvpDocRef, {
-    //             [`rsvps.${rsvpId}`]: deleteField(),
-    //         });
-    //
-    //         const response = await fetch("/api/send-email", {
-    //             method: "POST",
-    //             headers: {"Content-Type": "application/json"},
-    //             body: JSON.stringify({
-    //                 recipient: attendeeEmail,
-    //                 subject: emailData.subject,
-    //                 html_content: `<html lang="en">${emailData.body}</html>`,
-    //             }),
-    //         });
-    //
-    //         if (response.ok) {
-    //             alert("RSVP canceled and email sent successfully!");
-    //         } else {
-    //             const errorText = await response.text();
-    //             alert(`Failed to send email: ${errorText}`);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error handling attendee cancellation:", error);
-    //         alert("An error occurred while trying to cancel RSVP and send the email.");
-    //     } finally {
-    //         setShowCancelModal(false); // Close modal
-    //         setEmailData({to: "", subject: "", body: ""}); // Reset email data
-    //     }
-    // };
-
-    const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail) => {
+    const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail, attendeeUserId) => {
         if (!emailData.subject || !emailData.body) {
             alert("Please fill in both subject and body for the email.");
             return;
@@ -216,7 +208,7 @@ const HostEventPage = () => {
 
         try {
             const eventRsvpDocRef = doc(db, "EventRSVPs", eventId);
-            const userRsvpDocRef = doc(db, "UserRSVPs", userId);
+            const userRsvpDocRef = doc(db, "UserRSVPs", attendeeUserId);  // Use attendeeUserId here
 
             await updateDoc(userRsvpDocRef, {
                 [`rsvps.${rsvpId}`]: deleteField(),
@@ -246,11 +238,10 @@ const HostEventPage = () => {
             console.error("Error handling attendee cancellation:", error);
             alert("An error occurred while trying to cancel RSVP and send the email.");
         } finally {
-            setShowCancelModal(false); // Close modal
-            setEmailData({to: "", subject: "", body: ""}); // Reset email data
+            setShowCancelModal(false);
+            setEmailData({to: "", subject: "", body: ""});
         }
     };
-
 
     const handleSendEmail = async () => {
         try {
@@ -285,12 +276,20 @@ const HostEventPage = () => {
     };
 
 
-    const openCancelEmailModal = (email, eventId, rsvpId) => {
+    // const openCancelEmailModal = (email, eventId, rsvpId) => {
+    //     setEmailData((prev) => ({...prev, to: email}));
+    //     setShowCancelModal(true);
+    //
+    //     // Store eventId and rsvpId for later use
+    //     setEventData({eventId, rsvpId});
+    // };
+
+    const openCancelEmailModal = (email, eventId, rsvpId, attendeeUserId) => {
         setEmailData((prev) => ({...prev, to: email}));
         setShowCancelModal(true);
 
-        // Store eventId and rsvpId for later use
-        setEventData({eventId, rsvpId});
+        // Store eventId, rsvpId, and attendeeUserId for later use
+        setEventData({eventId, rsvpId, attendeeUserId});
     };
 
     const handleBlastEmail = async () => {
@@ -452,12 +451,15 @@ const HostEventPage = () => {
                                         </div >
 
                                         <div className="flex items-center gap-2" >
+
                                             <button
                                                 className="bg-accent-purple text-neutral-white font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
-                                                onClick={() => openCancelEmailModal(attendee.email, eventId, attendeeId[index])}
+                                                onClick={() => openCancelEmailModal(attendee.email, eventId, attendee.rsvpId, attendee.userId)}
                                             >
                                                 Cancel Ticket
                                             </button >
+
+
                                             <button
                                                 className="bg-Dark-D1 text-Light-L1 font-roboto text-button font-bold px-4 py-2 rounded-lg transition-transform transform hover:scale-105"
                                                 onClick={() => openEmailModal(attendee.email)}
@@ -542,44 +544,6 @@ const HostEventPage = () => {
                         </div >
                     )}
 
-                    {/*{showCancelModal && (*/}
-                    {/*    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >*/}
-                    {/*        <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >*/}
-                    {/*            <h2 className="text-2xl font-bold mb-6" >Send Cancel Email</h2 >*/}
-                    {/*            <p className="mb-4 text-lg" >To: {emailData.to}</p >*/}
-                    {/*            <input*/}
-                    {/*                type="text"*/}
-                    {/*                placeholder="Subject"*/}
-                    {/*                value={emailData.subject}*/}
-                    {/*                onChange={(e) => setEmailData((prev) => ({...prev, subject: e.target.value}))}*/}
-                    {/*                className="w-full p-3 border rounded-lg mb-4 text-lg"*/}
-                    {/*            />*/}
-                    {/*            <textarea*/}
-                    {/*                placeholder="Message"*/}
-                    {/*                value={emailData.body}*/}
-                    {/*                onChange={(e) => setEmailData((prev) => ({...prev, body: e.target.value}))}*/}
-                    {/*                className="w-full p-3 border rounded-lg mb-4 text-lg h-32"*/}
-                    {/*            />*/}
-                    {/*            <div className="flex justify-end gap-4" >*/}
-                    {/*                <button*/}
-                    {/*                    onClick={() => setShowCancelModal(false)}*/}
-                    {/*                    className="px-6 py-2 bg-gray-400 text-white rounded-lg text-lg"*/}
-                    {/*                >*/}
-                    {/*                    Cancel*/}
-                    {/*                </button >*/}
-                    {/*                <button*/}
-                    {/*                    onClick={() =>*/}
-                    {/*                        handleAttendeeCancel(eventData.eventId, eventData.rsvpId, emailData.to)*/}
-                    {/*                    }*/}
-                    {/*                    className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"*/}
-                    {/*                >*/}
-                    {/*                    Send*/}
-                    {/*                </button >*/}
-                    {/*            </div >*/}
-                    {/*        </div >*/}
-                    {/*    </div >*/}
-                    {/*)}*/}
-
                     {showCancelModal && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" >
                             <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]" >
@@ -588,13 +552,13 @@ const HostEventPage = () => {
                                 <input
                                     type="text"
                                     placeholder="Subject"
-                                    value={emailData.subject || `RSVP Canceled - ${eventTitle} `}
+                                    value={emailData.subject}
                                     onChange={(e) => setEmailData((prev) => ({...prev, subject: e.target.value}))}
                                     className="w-full p-3 border rounded-lg mb-4 text-lg"
                                 />
                                 <textarea
                                     placeholder="Message"
-                                    value={emailData.body || `We regret to inform you that your RSVP for the event "${eventTitle}" scheduled for ${eventDateTime} has been canceled.\n\nIf you have any questions or need further assistance, please feel free to reach out.\n\n-Team Urban Oasis`}
+                                    value={emailData.body}
                                     onChange={(e) => setEmailData((prev) => ({...prev, body: e.target.value}))}
                                     className="w-full p-3 border rounded-lg mb-4 text-lg h-32"
                                 />
@@ -605,8 +569,22 @@ const HostEventPage = () => {
                                     >
                                         Cancel
                                     </button >
+                                    {/*<button*/}
+                                    {/*    onClick={() => handleAttendeeCancel(eventData.eventId, eventData.rsvpId, emailData.to)}*/}
+                                    {/*    className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"*/}
+                                    {/*>*/}
+                                    {/*    Send*/}
+                                    {/*</button >*/}
+
                                     <button
-                                        onClick={() => handleAttendeeCancel(eventData.eventId, eventData.rsvpId, emailData.to)}
+                                        onClick={() =>
+                                            handleAttendeeCancel(
+                                                eventData.eventId,
+                                                eventData.rsvpId,
+                                                emailData.to,
+                                                eventData.attendeeUserId
+                                            )
+                                        }
                                         className="px-6 py-2 bg-blue-500 text-white rounded-lg text-lg"
                                     >
                                         Send
@@ -615,8 +593,6 @@ const HostEventPage = () => {
                             </div >
                         </div >
                     )}
-
-
                 </div >
             </div >
             <FooterComponent />
