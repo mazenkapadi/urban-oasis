@@ -183,18 +183,20 @@ const ViewAllEventsPage = () => {
             });
         }
     };
-
     const NoResultsMessage = () => {
         const { hits } = useHits();
-        return (
-            hits.length === 0 && (
+
+        // Check if there are no hits
+        if (hits.length === 0) {
+            return (
                 <div className="text-center mt-8">
                     <h2 className="text-lg font-semibold text-primary-light">
-                        Oops! No events match your selected categories right now. We’re always adding new ones, so check back soon! In the meantime, explore our other events and discover something new!
+                        Oops! No events match your search criteria.
                     </h2>
                     <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                         onClick={() => {
+                            // Reset all filters, query, and other states
                             setActiveFilters({});
                             setGeoLocation(null);
                             setRadius(100 * 1000); // Reset radius
@@ -204,9 +206,12 @@ const ViewAllEventsPage = () => {
                         Reset Filters
                     </button>
                 </div>
-            )
-        );
+            );
+        }
+
+        return null; // Don't render anything if there are results
     };
+
 
     return (
         <InstantSearch searchClient={searchClient} indexName="events">
@@ -230,7 +235,7 @@ const ViewAllEventsPage = () => {
                     <div className="lg:w-3/4 p-4 flex flex-col">
                         {/* Configure Algolia Search */}
                         <Configure
-                            hitsPerPage={21}
+                            hitsPerPage={20}
                             filters={filters}
                             query={searchQuery}
                             aroundLatLng={
@@ -275,6 +280,7 @@ const ViewAllEventsPage = () => {
                                             : "flex flex-col space-y-4",
                                 }}
                             />
+
                         </div>
 
                         {/* No Results Message */}
@@ -282,7 +288,9 @@ const ViewAllEventsPage = () => {
 
                         {/* Pagination Section */}
                         {/*<div className="flex justify-center mt-auto">*/}
-                        <div className="sticky bottom-0 bg-white dark:bg-Dark-D2 py-4 flex justify-center">
+                        {/*<div className="sticky bottom-0 bg-white dark:bg-Dark-D2 py-4 flex justify-center">*/}
+                        <div
+                            className="bg-white dark:bg-Dark-D2 py-4 flex justify-center border-t border-secondary-light-1">
                             <Pagination
                                 padding={2}
                                 classNames={{
