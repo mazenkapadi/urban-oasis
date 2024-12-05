@@ -623,7 +623,7 @@ const EventPage = () => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setEventTitle(data.basicInfo.title);
-                    setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleDateString());
+                    setEventDateTime(data.eventDetails.eventDateTime.toDate().toLocaleString());
                     setIsPaidEvent(data.eventDetails.paidEvent);
                     setEventPrice(data.eventDetails.eventPrice === 0 ? "Free" : data.eventDetails.eventPrice);
                     setEventLocation(data.basicInfo.location.label);
@@ -797,20 +797,20 @@ const EventPage = () => {
                                                     className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                     onClick={handleCancel}
                                                 >
-                                                    <XMarkIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                                    <XMarkIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
                                                     <span
-                                                        className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{'Cancel RSVP'}</span >
+                                                        className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >{'Cancel RSVP'}</span >
                                                 </button >
                                             </div >
                                             <div
                                                 className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
                                                 <button
-                                                    className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                    className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-dark" : "text-primary-light"}`}
                                                     onClick={handleModifyRSVP}
                                                 >
-                                                    <ShoppingCartIcon className="text-primary-light w-6 h-6 mr-2" />
+                                                    <ShoppingCartIcon className={`${darkMode ? "text-primary-dark" : "text-primary-light"} w-6 h-6 mr-2`} />
                                                     <span
-                                                        className="font-bold text-primary-light text-body" >{'Modify RSVP'}</span >
+                                                        className={`font-bold ${darkMode ? "text-primary-dark" : "text-primary-light"} text-body`} >{'Modify RSVP'}</span >
                                                 </button >
                                             </div >
                                         </>
@@ -841,13 +841,13 @@ const EventPage = () => {
                                             className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventLocation}</span >
                                     </div >
                                     <div
-                                        className={`flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 ${darkMode ? "bg-Dark-D2 border-primary-light" : "bg-Light-L2 border-primary-dark"}`} >
-                                        <span className={`text-h4 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
+                                        className={`flex flex-col justify-center items-center w-full h-auto rounded-lg p-4 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
+                                        <span className={`text-h5 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
                                         {hostDetails && (
                                             <div className="flex flex-col items-center space-y-2" >
                                                 <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
                                                     <span
-                                                        className={`text-h4 font-medium font-archivo cursor-pointer ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                                        className={`text-h5 font-medium font-archivo cursor-pointer ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                         onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</span >
                                                 </Tooltip >
                                                 <button className="text-accent-purple" onClick={toggleChatWindow} >Host
