@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     InstantSearch,
     Configure,
-    Hits,
-    Pagination,
     useHits,
+    Pagination,
 } from "react-instantsearch";
 import { searchClient } from "../algoliaConfig";
 import FiltersComponent from "../components/FiltersComponent";
@@ -61,15 +60,6 @@ const ViewAllEventsPage = () => {
         }
     }, [geoLocation, searchQuery, dateRange]);
 
-    useEffect(() => {
-        const shouldResetFilters =
-            !geoLocation && !searchQuery && (!dateRange?.startDate || !dateRange?.endDate);
-
-        if (shouldResetFilters && Object.keys(activeFilters).length > 0) {
-            setActiveFilters({});
-        }
-    }, [geoLocation, searchQuery, dateRange, activeFilters]);
-
     const handleViewToggle = () => {
         setViewMode(viewMode === "grid" ? "list" : "grid");
     };
@@ -98,8 +88,8 @@ const ViewAllEventsPage = () => {
         return null;
     };
 
-    // Optimize filters with useMemo
-    const filters = useMemo(() => {
+    // Compute filters dynamically
+    const calculateFilters = () => {
         const filtersArray = [];
 
         if (activeFilters.eventPrice) {
@@ -145,19 +135,15 @@ const ViewAllEventsPage = () => {
             filtersArray.push(`(${categoryFilter})`);
         }
 
-        if (process.env.NODE_ENV === "development") {
-            console.log("Generated Filters:", filtersArray.join(" AND "));
-        }
+        return filtersArray.length > 0 ? filtersArray.join(" AND ") : "";
+    };
 
-        return filtersArray.join(" AND ");
-    }, [activeFilters, dateRange]);
-
-    const handleSearch = ({ geoLocation, eventQuery, dateRange }) => {
+    const handleSearch = ({ geoLocation = null, eventQuery = "", dateRange = null }) => {
         setGeoLocation(geoLocation);
         setSearchQuery(eventQuery);
         setDateRange(dateRange);
 
-        // Reset results if all fields are cleared
+        // Reset filters if all fields are cleared
         if (!geoLocation && !eventQuery && (!dateRange?.startDate || !dateRange?.endDate)) {
             setActiveFilters({});
         }
@@ -175,11 +161,16 @@ const ViewAllEventsPage = () => {
 
     const NoResultsMessage = () => {
         const { hits } = useHits();
+
+        // Check if no hits and no search results
+        const noResults = hits.length === 0 && !searchQuery;
+
         return (
-            hits.length === 0 && (
+            noResults && (
                 <div className="text-center mt-8">
                     <h2 className="text-lg font-semibold text-primary-light">
-                        Oops! No events match your selected categories right now. We’re always adding new ones, so check back soon! In the meantime, explore our other events and discover something new!
+                        Oops! No events match your search or selected categories right now.
+                        We’re always adding new ones, so check back soon! In the meantime, explore our other events and discover something new!
                     </h2>
                     <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
@@ -197,15 +188,15 @@ const ViewAllEventsPage = () => {
         );
     };
 
+
+    const filters = calculateFilters();
+
     return (
         <InstantSearch searchClient={searchClient} indexName="events">
             <div className="view-all-events-page bg-primary-dark text-primary-light min-h-screen flex flex-col">
-                {/* Header Component */}
                 <HeaderComponent onSearch={handleSearch} onKeyDown={handleEnterKey} />
 
-                {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
-                    {/* Filters Section */}
                     <div className="lg:w-1/4 p-4 border-r border-secondary-dark-1">
                         <FiltersComponent
                             onApplyFilters={onApplyFilters}
@@ -214,9 +205,10 @@ const ViewAllEventsPage = () => {
                         />
                     </div>
 
-                    {/* Search Results Section */}
                     <div className="lg:w-3/4 p-4 flex flex-col">
-                        {/* Configure Algolia Search */}
+
+                        <NoResultsMessage />
+
                         <Configure
                             hitsPerPage={21}
                             filters={filters}
@@ -229,7 +221,6 @@ const ViewAllEventsPage = () => {
                             aroundRadius={geoLocation ? radius : undefined}
                         />
 
-                        {/* View Toggle Button */}
                         <div className="flex justify-end mb-4">
                             <button
                                 onClick={handleViewToggle}
@@ -244,7 +235,6 @@ const ViewAllEventsPage = () => {
                             </button>
                         </div>
 
-                        {/* Hits Section */}
                         <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
                             <FilteredHits
                                 hitComponent={(props) => (
@@ -262,10 +252,7 @@ const ViewAllEventsPage = () => {
                             />
                         </div>
 
-                        {/* No Results Message */}
-                        <NoResultsMessage />
 
-                        {/* Pagination Section */}
                         <div className="flex justify-center mt-auto">
                             <Pagination
                                 padding={2}
