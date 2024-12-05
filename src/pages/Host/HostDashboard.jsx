@@ -67,7 +67,7 @@ const HostDashboard = () => {
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                setName(`${data.firstName || ''} ${data.lastName || ''}`);
+                setName(`${data.name.firstName || ''} ${data.name.lastName || ''}`);
                 setEmail(data.email || '');
                 setHostType(data.hostType || '');
                 setCompanyName(data.companyName || '');
