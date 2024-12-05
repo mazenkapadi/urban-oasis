@@ -101,7 +101,7 @@ const EventPage = () => {
         },
         hostId: ''
     });
-    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -242,12 +242,20 @@ const EventPage = () => {
 
                 if (!response.ok) {
                     console.error("Failed to send QR code email:", await response.text());
-                    setSnackbarState({open: true, message: "There was an issue sending your RSVP confirmation email.", severity: "error"});
+                    setSnackbarState({
+                        open: true,
+                        message: "There was an issue sending your RSVP confirmation email.",
+                        severity: "error"
+                    });
                     return;
                 }
 
                 console.log("QR code email sent successfully");
-                setSnackbarState({open: true, message: "RSVP Successful! Confirmation email sent.", severity: "success"});
+                setSnackbarState({
+                    open: true,
+                    message: "RSVP Successful! Confirmation email sent.",
+                    severity: "success"
+                });
             } catch (error) {
                 console.error("Error sending QR code email:", error);
                 setSnackbarState({open: true, message: "An error occurred. Please try again.", severity: "error"});
@@ -303,7 +311,11 @@ const EventPage = () => {
             }
 
             if (quantity > availableTickets) {
-                setSnackbarState({open: true, message: "Only ${availableTickets} tickets are available. Please reduce your quantity.", severity: "error"});
+                setSnackbarState({
+                    open: true,
+                    message: "Only ${availableTickets} tickets are available. Please reduce your quantity.",
+                    severity: "error"
+                });
                 return;
             }
 
@@ -595,12 +607,12 @@ const EventPage = () => {
             emailData,
             import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
         )
-            .then((result) => {
-                console.log(`Email successfully sent to ${value.email}`);
-            })
-            .catch((error) => {
-                console.error(`Failed to send email to ${value.email}:`, error);
-            });
+               .then((result) => {
+                   console.log(`Email successfully sent to ${value.email}`);
+               })
+               .catch((error) => {
+                   console.error(`Failed to send email to ${value.email}:`, error);
+               });
     };
 
     useEffect(() => {
@@ -729,15 +741,20 @@ const EventPage = () => {
                 </div >
                 <div
                     className={`flex flex-col justify-center items-center py-12 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                    <div className={`box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
+                    <div
+                        className={`box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
                         <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
                         <div className="flex flex-row mt-6" >
                             <div className="flex content w-full flex-col gap-8" >
                                 <div className="flex flex-col pt-4 space-y-6" >
-                                    <div className="flex items-center space-x-3" >
-                                        <CalendarDaysIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
-                                        <span
-                                            className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventDateTime}</span >
+                                    <div className="flex  space-x-3" >
+                                        <div className=" flex items-center" >
+                                            <CalendarDaysIcon
+                                                className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                            <span
+                                                className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventDateTime}</span >
+                                        </div >
+                                        <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                                     </div >
                                     <span
                                         className={`text-h2 block font-semibold font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventTitle}</span >
@@ -745,23 +762,26 @@ const EventPage = () => {
                                 <div className="flex flex-col" >
                                     <span
                                         className={`text-h4 font-archivo font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Description</span >
-                                    <span className={`text-body font-archivo ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
-                                          dangerouslySetInnerHTML={{__html: formattedDescription}} />
+                                    <span
+                                        className={`text-body font-archivo ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                        dangerouslySetInnerHTML={{__html: formattedDescription}} />
                                 </div >
-                                <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
                                 <CategoryComponent />
                             </div >
                             <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
-                                <div className={`flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
+                                <div
+                                    className={`flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
                                     <div className="flex space-x-4" >
                                         {availableTickets < 10 && availableTickets > 0 && (
-                                            <span className={`font-archivo text-body text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                            <span
+                                                className={`font-archivo text-body text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                                 Only {availableTickets} tickets left!
                                             </span >
                                         )}
                                         <div
                                             className={`flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
-                                            <TicketIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                            <TicketIcon
+                                                className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
                                             <span
                                                 className={`font-bold text-body pl-3 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{isPaidEvent && '$'}{eventPrice}</span >
                                         </div >
@@ -771,8 +791,10 @@ const EventPage = () => {
                                                     className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                                 <MinusIcon className="w-6 h-6" />
                                             </button >
-                                            <span className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{quantity}</span >
-                                            <button onClick={handleIncrement} className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                            <span
+                                                className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{quantity}</span >
+                                            <button onClick={handleIncrement}
+                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                                 <PlusIcon className="w-6 h-6" />
                                             </button >
                                         </div >
@@ -786,7 +808,8 @@ const EventPage = () => {
                                                     className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                     onClick={handleCancel}
                                                 >
-                                                    <XMarkIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                                    <XMarkIcon
+                                                        className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
                                                     <span
                                                         className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{'Cancel RSVP'}</span >
                                                 </button >
@@ -805,7 +828,7 @@ const EventPage = () => {
                                         </>
                                     ) : (
                                         <div
-                                            className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}  >
+                                            className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
                                             <button
                                                 className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                 onClick={
@@ -816,8 +839,10 @@ const EventPage = () => {
                                                         : handleRSVP
                                                 }
                                             >
-                                                <ShoppingCartIcon className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
-                                                <span className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >
+                                                <ShoppingCartIcon
+                                                    className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
+                                                <span
+                                                    className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >
                                                     {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span >
                                             </button >
                                         </div >
@@ -825,13 +850,15 @@ const EventPage = () => {
 
 
                                     <div className="flex flex-row gap-6 items-center" >
-                                        <MapPinIcon className={`w-6 h-6 flex-shrink-0 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                        <MapPinIcon
+                                            className={`w-6 h-6 flex-shrink-0 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
                                         <span
                                             className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventLocation}</span >
                                     </div >
                                     <div
                                         className={`flex flex-col justify-center items-center w-full h-auto border-4 rounded-lg p-4 ${darkMode ? "bg-Dark-D2 border-primary-light" : "bg-Light-L2 border-primary-dark"}`} >
-                                        <span className={`text-h4 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
+                                        <span
+                                            className={`text-h4 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
                                         {hostDetails && (
                                             <div className="flex flex-col items-center space-y-2" >
                                                 <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
@@ -921,24 +948,25 @@ const EventPage = () => {
                     />
                 </div >
 
-                <Modal open={modalOpen} onClose={handleModalClose}>
-                    <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`}>
-                        <div className="text-center">
-                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4">
+                <Modal open={modalOpen} onClose={handleModalClose} >
+                    <div
+                        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`} >
+                        <div className="text-center" >
+                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4" >
                                 RSVP Successful
-                            </h2>
-                            <p className={`text-body mb-6 font-inter ${darkMode ? "text-Dark-D1" : "text-Light-L1"}`}>
+                            </h2 >
+                            <p className={`text-body mb-6 font-inter ${darkMode ? "text-Dark-D1" : "text-Light-L1"}`} >
                                 Your RSVP has been successfully registered.
-                            </p>
-                        </div>
+                            </p >
+                        </div >
                         <button
                             onClick={handleModalClose}
                             className="w-full py-3 rounded-md bg-accent-orange text-Light-L2 text-button font-medium hover:bg-accent-red transition duration-200"
                         >
                             Close
-                        </button>
-                    </div>
-                </Modal>
+                        </button >
+                    </div >
+                </Modal >
 
                 <Snackbar
                     open={snackbarState.open}
