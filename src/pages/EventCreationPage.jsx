@@ -416,7 +416,7 @@ function EventCreationPage() {
                                                     singleValue: (provided) => ({
                                                         ...provided,
                                                         color: darkMode ? colors["primary-light"] : colors["primary-dark"],
-                                                        backgroundColor: darkMode ? colors["primary-light"] : colors["primary-dark"],
+                                                        backgroundColor: darkMode ? colors["Dark-D2"] : colors["Light-L2"],
                                                     }),
 
                                                 },
@@ -575,7 +575,7 @@ function EventCreationPage() {
                                                         setEventPrice(`$${price}`);
                                                     }}
                                                     placeholder="Enter ticket price"
-                                                    className="w-full mt-2 p-3 text-box"
+                                                    className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
                                                 />
                                             </div>
 
@@ -597,7 +597,7 @@ function EventCreationPage() {
                                                 </select>
 
                                                 {refundAllowance && (
-                                                    <div>
+                                                    <div className="pt-2">
                                                         <span htmlFor="refundPolicy"
                                                               className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Refund
                                                             Policy</span>
@@ -607,7 +607,7 @@ function EventCreationPage() {
                                                             value={refundPolicy}
                                                             onChange={(e) => setRefundPolicy(e.target.value)}
                                                             placeholder="Enter refund policy"
-                                                            className="w-full mt-2 p-3 text-box"
+                                                            className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
                                                         />
                                                     </div>
                                                 )}
