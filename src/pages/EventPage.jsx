@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { arrayUnion, deleteField, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from "firebase/auth";
+import React, {useEffect, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {arrayUnion, deleteField, doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {onAuthStateChanged} from "firebase/auth";
 import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
-import { CalendarDaysIcon, MapPinIcon, MinusIcon, PlusIcon, TicketIcon } from "@heroicons/react/20/solid";
-import { ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { auth, db } from "../firebaseConfig.js";
+import {CalendarDaysIcon, MapPinIcon, MinusIcon, PlusIcon, TicketIcon} from "@heroicons/react/20/solid";
+import {ShoppingCartIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import {auth, db} from "../firebaseConfig.js";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import LoadingPage from "./service/LoadingPage.jsx"
-import { Alert, Button, Modal, Snackbar } from "@mui/material";
-import { loadStripe } from "@stripe/stripe-js";
-import { v4 as uuidv4 } from "uuid";
+import {Alert, Button, Modal, Snackbar} from "@mui/material";
+import {loadStripe} from "@stripe/stripe-js";
+import {v4 as uuidv4} from "uuid";
 import ForecastComponent from "../components/EventPages/ForecastComponent.jsx";
 import ChatWindowComponent from "../components/EventPages/ChatWindowComponent.jsx";
-import { googleMapsConfig } from "../locationConfig.js";
-import { useJsApiLoader } from '@react-google-maps/api';
+import {googleMapsConfig} from "../locationConfig.js";
+import {useJsApiLoader} from '@react-google-maps/api';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import {
@@ -41,37 +41,37 @@ import themeManager from "../utils/themeManager.jsx";
 
 
 const EventPage = () => {
-    const [ quantity, setQuantity ] = useState(1);
+    const [quantity, setQuantity] = useState(1);
     const {eventId} = useParams();
-    const [ eventTitle, setEventTitle ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventLocation, setEventLocation ] = useState('');
-    const [ eventCity, setEventCity ] = useState('');
-    const [ eventDateTime, setEventDateTime ] = useState('');
-    const [ eventPrice, setEventPrice ] = useState(0);
-    const [ eventRefundPolicy, setEventRefundPolicy ] = useState('');
-    const [ isPaidEvent, setIsPaidEvent ] = useState(false);
-    const [ userId, setUserId ] = useState(null);
-    const [ name, setName ] = useState('');
-    const [ phone, setPhone ] = useState('');
-    const [ email, setEmail ] = useState('');
-    const [ eventImages, setEventImages ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
-    const [ modalOpen, setModalOpen ] = useState(false);
-    const [ modalState, setModalState ] = useState({open: false, title: "", message: ""});
-    const [ snackbarState, setSnackbarState ] = useState({open: false, message: "", severity: "success"});
-    const [ profilePicture, setProfilePicture ] = useState('');
-    const [ chatWindowOpen, setChatWindowOpen ] = useState(false);
-    const [ eventPlaceId, setEventPlaceId ] = useState('');
-    const [ eventLong, setEventLong ] = useState(0);
-    const [ eventLat, setEventLat ] = useState(0);
-    const [ hostName, setHostName ] = useState('');
-    const [ eventCapacity, setEventCapacity ] = useState('');
-    const [ eventAttendee, setEventAttendee ] = useState('');
-    const [ userHasRSVPed, setUserHasRSVPed ] = useState(false);
-    const [ userRSVPQuantity, setUserRSVPQuantity ] = useState(0);
-    const [ availableTickets, setAvailableTickets ] = useState(0);
-    const [ cancelModalOpen, setCancelModalOpen ] = useState(false);
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [eventLocation, setEventLocation] = useState('');
+    const [eventCity, setEventCity] = useState('');
+    const [eventDateTime, setEventDateTime] = useState('');
+    const [eventPrice, setEventPrice] = useState(0);
+    const [eventRefundPolicy, setEventRefundPolicy] = useState('');
+    const [isPaidEvent, setIsPaidEvent] = useState(false);
+    const [userId, setUserId] = useState(null);
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [eventImages, setEventImages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalState, setModalState] = useState({open: false, title: "", message: ""});
+    const [snackbarState, setSnackbarState] = useState({open: false, message: "", severity: "success"});
+    const [profilePicture, setProfilePicture] = useState('');
+    const [chatWindowOpen, setChatWindowOpen] = useState(false);
+    const [eventPlaceId, setEventPlaceId] = useState('');
+    const [eventLong, setEventLong] = useState(0);
+    const [eventLat, setEventLat] = useState(0);
+    const [hostName, setHostName] = useState('');
+    const [eventCapacity, setEventCapacity] = useState('');
+    const [eventAttendee, setEventAttendee] = useState('');
+    const [userHasRSVPed, setUserHasRSVPed] = useState(false);
+    const [userRSVPQuantity, setUserRSVPQuantity] = useState(0);
+    const [availableTickets, setAvailableTickets] = useState(0);
+    const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const location = useLocation();
     const eventPageUrl = 'urban-oasis490.vercel.app' + location.pathname;
 
@@ -81,7 +81,7 @@ const EventPage = () => {
 
 
     const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-    const [ hostDetails, setHostDetails ] = useState({
+    const [hostDetails, setHostDetails] = useState({
         bio: '',
         profilePicture: '',
         companyName: '',
@@ -101,7 +101,7 @@ const EventPage = () => {
         },
         hostId: ''
     });
-    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -152,7 +152,7 @@ const EventPage = () => {
         if (!snapshot.exists()) return null;
 
         const rsvps = snapshot.data().rsvps || {};
-        for (const [ id, rsvp ] of Object.entries(rsvps)) {
+        for (const [id, rsvp] of Object.entries(rsvps)) {
             if (rsvp.userId === userId && rsvp.eventId === eventId) {
                 return id;
             }
@@ -563,21 +563,21 @@ const EventPage = () => {
     const {isLoaded} = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: googleMapsConfig.apiKey,
-        libraries: [ 'places' ],
+        libraries: ['places'],
     });
 
     useEffect(() => {
         if (isLoaded && eventPlaceId) {
             geocodePlaceId(eventPlaceId);
         }
-    }, [ isLoaded, eventPlaceId ]);
+    }, [isLoaded, eventPlaceId]);
 
     const geocodePlaceId = async (placeId) => {
         try {
             const service = new google.maps.places.PlacesService(document.createElement('div'));
             const request = {
                 placeId: placeId,
-                fields: [ 'geometry' ],
+                fields: ['geometry'],
             };
 
             service.getDetails(request, (place, status) => {
@@ -607,12 +607,12 @@ const EventPage = () => {
             emailData,
             import.meta.env.VITE_PUBLIC_EMAIL_PUBLIC_KEY
         )
-               .then((result) => {
-                   console.log(`Email successfully sent to ${value.email}`);
-               })
-               .catch((error) => {
-                   console.error(`Failed to send email to ${value.email}:`, error);
-               });
+            .then((result) => {
+                console.log(`Email successfully sent to ${value.email}`);
+            })
+            .catch((error) => {
+                console.error(`Failed to send email to ${value.email}:`, error);
+            });
     };
 
     useEffect(() => {
@@ -685,7 +685,7 @@ const EventPage = () => {
         };
 
         fetchEventData();
-    }, [ eventId ]);
+    }, [eventId]);
 
     useEffect(() => {
         const checkUserRSVP = async () => {
@@ -712,10 +712,10 @@ const EventPage = () => {
             }
         };
         checkUserRSVP();
-    }, [ userId, eventId ]);
+    }, [userId, eventId]);
 
     if (loading) {
-        return <LoadingPage />;
+        return <LoadingPage/>;
     }
 
     const handleNavigate = () => {
@@ -735,100 +735,110 @@ const EventPage = () => {
 
     return (
         <>
-            <div className="event-page min-h-screen flex flex-col" >
-                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
-                    <HeaderComponent />
-                </div >
+            <div className="event-page min-h-screen flex flex-col">
+                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
+                    <HeaderComponent/>
+                </div>
                 <div
-                    className={`flex flex-col justify-center items-center py-12 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
+                    className={`flex flex-col justify-center items-center py-12 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}>
                     <div
-                        className={`box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
-                        <PhotoCarousel eventId={eventId} eventTitle={eventTitle} />
-                        <div className="flex flex-row mt-6" >
-                            <div className="flex content w-full flex-col gap-8" >
-                                <div className="flex flex-col pt-4 space-y-6" >
-                                    <div className="flex  space-x-3" >
-                                        <div className=" flex items-center" >
-                                            <CalendarDaysIcon
-                                                className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                        className={`box-border rounded-lg p-8 flex flex-col w-10/12 h-fit shadow-lg ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
+                        <PhotoCarousel eventId={eventId} eventTitle={eventTitle}/>
+                        <div className="flex flex-row mt-6">
+                            <div className="flex content w-full flex-col gap-8">
+                                <div className="flex flex-row w-full justify-between">
+                                    <div className="flex  space-x-3">
+                                        <div className="flex flex-col pt-4 space-y-6">
+                                            <div className=" flex items-center space-x-3">
+                                                <CalendarDaysIcon
+                                                    className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
+                                                <span
+                                                    className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{eventDateTime}</span>
+                                            </div>
                                             <span
-                                                className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventDateTime}</span >
-                                        </div >
-                                        <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime} />
-                                    </div >
+                                                className={`text-h2 block font-semibold font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{eventTitle}</span>
+                                        </div>
+
+                                    </div>
+                                    <div className="flex flex-col ">
+                                        <ForecastComponent lat={eventLat} lon={eventLong} eventDate={eventDateTime}/>
+
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col">
                                     <span
-                                        className={`text-h2 block font-semibold font-lalezar ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventTitle}</span >
-                                </div >
-                                <div className="flex flex-col" >
-                                    <span
-                                        className={`text-h4 font-archivo font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Description</span >
+                                        className={`text-h4 font-archivo font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Description</span>
                                     <span
                                         className={`text-body font-archivo ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
-                                        dangerouslySetInnerHTML={{__html: formattedDescription}} />
-                                </div >
-                                <CategoryComponent />
-                            </div >
-                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 " >
+                                        dangerouslySetInnerHTML={{__html: formattedDescription}}/>
+                                </div>
+                                <CategoryComponent/>
+
+                            </div>
+
+                            <div className="flex flex-col p-6 w-1/4 h-fit gap-4 ">
                                 <div
-                                    className={`flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                                    <div className="flex space-x-4" >
+                                    className={`flex flex-col p-6 h-fit gap-4 rounded-lg shadow-lg ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}>
+                                    <div className="flex space-x-4">
                                         {availableTickets < 10 && availableTickets > 0 && (
                                             <span
-                                                className={`font-archivo text-body text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                                className={`font-archivo text-body text-center ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
                                                 Only {availableTickets} tickets left!
-                                            </span >
+                                            </span>
                                         )}
                                         <div
-                                            className={`flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                            className={`flex justify-center items-center w-52 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}>
                                             <TicketIcon
-                                                className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                                className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
                                             <span
-                                                className={`font-bold text-body pl-3 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{isPaidEvent && '$'}{eventPrice}</span >
-                                        </div >
+                                                className={`font-bold text-body pl-3 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{isPaidEvent && '$'}{eventPrice}</span>
+                                        </div>
                                         <div
-                                            className={`flex justify-center items-center w-36 gap-3 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                            className={`flex justify-center items-center w-36 gap-3 h-12  bg-opacity-30 border-4 rounded-lg ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}>
                                             <button onClick={handleDecrement} disabled={quantity === 1}
-                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
-                                                <MinusIcon className="w-6 h-6" />
-                                            </button >
+                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
+                                                <MinusIcon className="w-6 h-6"/>
+                                            </button>
                                             <span
-                                                className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{quantity}</span >
+                                                className={`font-bold text-body ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{quantity}</span>
                                             <button onClick={handleIncrement}
-                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
-                                                <PlusIcon className="w-6 h-6" />
-                                            </button >
-                                        </div >
-                                    </div >
+                                                    className={`${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
+                                                <PlusIcon className="w-6 h-6"/>
+                                            </button>
+                                        </div>
+                                    </div>
 
                                     {userHasRSVPed ? (
                                         <>
                                             <div
-                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}>
                                                 <button
                                                     className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                     onClick={handleCancel}
                                                 >
                                                     <XMarkIcon
-                                                        className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
+                                                        className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`}/>
                                                     <span
-                                                        className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >{'Cancel RSVP'}</span >
-                                                </button >
-                                            </div >
+                                                        className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`}>{'Cancel RSVP'}</span>
+                                                </button>
+                                            </div>
                                             <div
-                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                                className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}>
                                                 <button
                                                     className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-dark" : "text-primary-light"}`}
                                                     onClick={handleModifyRSVP}
                                                 >
-                                                    <ShoppingCartIcon className={`${darkMode ? "text-primary-dark" : "text-primary-light"} w-6 h-6 mr-2`} />
+                                                    <ShoppingCartIcon
+                                                        className={`${darkMode ? "text-primary-dark" : "text-primary-light"} w-6 h-6 mr-2`}/>
                                                     <span
-                                                        className={`font-bold ${darkMode ? "text-primary-dark" : "text-primary-light"} text-body`} >{'Modify RSVP'}</span >
-                                                </button >
-                                            </div >
+                                                        className={`font-bold ${darkMode ? "text-primary-dark" : "text-primary-light"} text-body`}>{'Modify RSVP'}</span>
+                                                </button>
+                                            </div>
                                         </>
                                     ) : (
                                         <div
-                                            className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`} >
+                                            className={`flex justify-center items-center w-full h-12 transition duration-300 ease-in-out border-4 rounded-lg  hover:border-accent-blue hover:bg-accent-purple ${darkMode ? "bg-Light-L2 border-primary-light" : "bg-Dark-D2 border-primary-dark"}`}>
                                             <button
                                                 className={`flex items-center font-bold py-2 px-4 rounded focus:outline-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
                                                 onClick={
@@ -840,102 +850,105 @@ const EventPage = () => {
                                                 }
                                             >
                                                 <ShoppingCartIcon
-                                                    className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`} />
+                                                    className={`w-6 h-6 mr-2 ${darkMode ? "text-primary-dark" : "text-primary-light"}`}/>
                                                 <span
-                                                    className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`} >
-                                                    {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span >
-                                            </button >
-                                        </div >
+                                                    className={`font-bold text-body ${darkMode ? "text-primary-dark" : "text-primary-light"}`}>
+                                                    {eventCapacity > eventAttendee ? isPaidEvent ? 'Checkout' : 'RSVP' : 'Join Waitlist'} </span>
+                                            </button>
+                                        </div>
                                     )}
 
 
-                                    <div className="flex flex-row gap-6 items-center" >
+                                    <div className="flex flex-row gap-6 items-center">
                                         <MapPinIcon
-                                            className={`w-6 h-6 flex-shrink-0 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                            className={`w-6 h-6 flex-shrink-0 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
                                         <span
-                                            className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{eventLocation}</span >
-                                    </div >
+                                            className={`text-body font-bold font-archivo opacity-80 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{eventLocation}</span>
+                                    </div>
                                     <div
-                                        className={`flex flex-col justify-center items-center w-full h-auto rounded-lg p-4 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                                        <span className={`text-h5 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Hosted by</span >
+                                        className={`flex flex-col justify-center items-center w-full h-auto rounded-lg p-4 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}>
+                                            <span
+                                                className={`text-h5 font-bold font-archivo mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Hosted by</span>
                                         {hostDetails && (
-                                            <div className="flex flex-col items-center space-y-2" >
-                                                <Tooltip TransitionComponent={Zoom} title={ttip} arrow >
+                                            <div className="flex flex-col items-center space-y-2">
+                                                <Tooltip TransitionComponent={Zoom} title={ttip} arrow>
                                                     <span
                                                         className={`text-h5 font-medium font-archivo cursor-pointer ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
-                                                        onClick={handleNavigate} >{hostDetails.companyName || hostDetails.name}</span >
-                                                </Tooltip >
-                                                <button className="text-accent-purple" onClick={toggleChatWindow} >Host
+                                                        onClick={handleNavigate}>{hostDetails.companyName || hostDetails.name}</span>
+                                                </Tooltip>
+                                                <button className="text-accent-purple"
+                                                        onClick={toggleChatWindow}>Host
                                                     Chat
-                                                </button >
-                                            </div >
+                                                </button>
+                                            </div>
                                         )}
-                                    </div >
-                                    <div className="flex flex-row justify-between" >
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Facebook" arrow >
-                                            <FacebookShareButton title={shareData} url={eventPageUrl} >
-                                                <FacebookIcon size={28} round />
-                                            </FacebookShareButton >
-                                        </Tooltip >
+                                    </div>
+                                    <div className="flex flex-row justify-between">
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Facebook" arrow>
+                                            <FacebookShareButton title={shareData} url={eventPageUrl}>
+                                                <FacebookIcon size={28} round/>
+                                            </FacebookShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Facebook Messenger" arrow >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Facebook Messenger"
+                                                 arrow>
                                             <FacebookMessengerShareButton url={eventPageUrl}
-                                                                          appId="root" >
-                                                <FacebookMessengerIcon size={28} round />
-                                            </FacebookMessengerShareButton >
-                                        </Tooltip >
+                                                                          appId="root">
+                                                <FacebookMessengerIcon size={28} round/>
+                                            </FacebookMessengerShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Twitter" arrow >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Twitter" arrow>
                                             <TwitterShareButton
                                                 url={eventPageUrl}
                                                 title={shareData}
                                             >
-                                                <XIcon size={28} round />
-                                            </TwitterShareButton >
-                                        </Tooltip >
+                                                <XIcon size={28} round/>
+                                            </TwitterShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Whatsapp" arrow >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Whatsapp" arrow>
                                             <WhatsappShareButton
                                                 url={eventPageUrl}
                                                 title={shareData}
                                                 separator=":: "
                                             >
-                                                <WhatsappIcon size={28} round />
-                                            </WhatsappShareButton >
-                                        </Tooltip >
+                                                <WhatsappIcon size={28} round/>
+                                            </WhatsappShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Linkedin" arrow >
-                                            <LinkedinShareButton url={eventPageUrl} title={shareData} >
-                                                <LinkedinIcon size={28} round />
-                                            </LinkedinShareButton >
-                                        </Tooltip >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Linkedin" arrow>
+                                            <LinkedinShareButton url={eventPageUrl} title={shareData}>
+                                                <LinkedinIcon size={28} round/>
+                                            </LinkedinShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Reddit" arrow >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Reddit" arrow>
                                             <RedditShareButton
                                                 url={eventPageUrl}
                                                 title={shareData}
                                                 windowWidth={660}
                                                 windowHeight={460}
                                             >
-                                                <RedditIcon size={28} round />
-                                            </RedditShareButton >
-                                        </Tooltip >
+                                                <RedditIcon size={28} round/>
+                                            </RedditShareButton>
+                                        </Tooltip>
 
-                                        <Tooltip TransitionComponent={Zoom} title="Share to Email" arrow >
+                                        <Tooltip TransitionComponent={Zoom} title="Share to Email" arrow>
                                             <EmailShareButton
                                                 url={eventPageUrl}
                                                 subject={"Check out this event on Urban Oasis!"}
                                                 body={shareData}
                                             >
-                                                <EmailIcon size={28} round />
-                                            </EmailShareButton >
-                                        </Tooltip >
-                                    </div >
-                                </div >
-                                <GoogleMapComponent lat={eventLat} lon={eventLong} />
-                            </div >
-                        </div >
-                    </div >
+                                                <EmailIcon size={28} round/>
+                                            </EmailShareButton>
+                                        </Tooltip>
+                                    </div>
+                                </div>
+                                <GoogleMapComponent lat={eventLat} lon={eventLong}/>
+                            </div>
+                        </div>
+                    </div>
                     <ChatWindowComponent
                         userId={userId}
                         hostDetails={hostDetails}
@@ -945,27 +958,27 @@ const EventPage = () => {
                         chatWindowOpen={chatWindowOpen}
                         toggleChatWindow={toggleChatWindow}
                     />
-                </div >
+                </div>
 
-                <Modal open={modalOpen} onClose={handleModalClose} >
+                <Modal open={modalOpen} onClose={handleModalClose}>
                     <div
-                        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`} >
-                        <div className="text-center" >
-                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4" >
+                        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md rounded-lg shadow-xl p-6 ${darkMode ? "bg-Light-L2" : "bg-Dark-D2"}`}>
+                        <div className="text-center">
+                            <h2 className="text-h3 font-lalezar text-accent-blue mb-4">
                                 RSVP Successful
-                            </h2 >
-                            <p className={`text-body mb-6 font-inter ${darkMode ? "text-Dark-D1" : "text-Light-L1"}`} >
+                            </h2>
+                            <p className={`text-body mb-6 font-inter ${darkMode ? "text-Dark-D1" : "text-Light-L1"}`}>
                                 Your RSVP has been successfully registered.
-                            </p >
-                        </div >
+                            </p>
+                        </div>
                         <button
                             onClick={handleModalClose}
                             className="w-full py-3 rounded-md bg-accent-orange text-Light-L2 text-button font-medium hover:bg-accent-red transition duration-200"
                         >
                             Close
-                        </button >
-                    </div >
-                </Modal >
+                        </button>
+                    </div>
+                </Modal>
 
                 <Snackbar
                     open={snackbarState.open}
@@ -973,12 +986,12 @@ const EventPage = () => {
                     onClose={handleSnackbarClose}
                     anchorOrigin={{vertical: "bottom", horizontal: "left"}}
                 >
-                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{width: "100%"}} >
+                    <Alert onClose={handleSnackbarClose} severity={snackbarState.severity} sx={{width: "100%"}}>
                         {snackbarState.message}
-                    </Alert >
-                </Snackbar >
-                <FooterComponent />
-            </div >
+                    </Alert>
+                </Snackbar>
+                <FooterComponent/>
+            </div>
         </>
     );
 };
