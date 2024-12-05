@@ -190,7 +190,7 @@ const ViewAllEventsPage = () => {
             hits.length === 0 && (
                 <div className="text-center mt-8">
                     <h2 className="text-lg font-semibold text-primary-light">
-                        Oops! No events match your search criteria.
+                        Oops! No events match your selected categories right now. We’re always adding new ones, so check back soon! In the meantime, explore our other events and discover something new!
                     </h2>
                     <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
@@ -218,7 +218,7 @@ const ViewAllEventsPage = () => {
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
                 {/* Filters Section */}
-                    <div className={`lg:w-1/4 p-4 border-r ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`}>
+                    <div className={`lg:w-1/4 p-4 border-r ${darkMode ? "border-Light-L2" : "border-Dark-D2"}overflow-auto`}>
                         <FiltersComponent
                             onApplyFilters={onApplyFilters}
                             activeFilters={activeFilters}
@@ -249,15 +249,18 @@ const ViewAllEventsPage = () => {
                                 aria-label="Toggle View"
                             >
                                 {viewMode === "grid" ? (
-                                    <ListBulletIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                    <ListBulletIcon
+                                        className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-primary-light" />
+                                    <Squares2X2Icon className="w-6 h-6 text-primary-light"/>
                                 )}
                             </button>
                         </div>
 
                         {/* Hits Section */}
-                        <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
+                        {/*<div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">*/}
+
+                        <div className="flex-grow overflow-auto p-4">
                             <FilteredHits
                                 hitComponent={(props) => (
                                     <HitComponent
@@ -275,10 +278,11 @@ const ViewAllEventsPage = () => {
                         </div>
 
                         {/* No Results Message */}
-                        <NoResultsMessage />
+                        <NoResultsMessage/>
 
                         {/* Pagination Section */}
-                        <div className="flex justify-center mt-auto">
+                        {/*<div className="flex justify-center mt-auto">*/}
+                        <div className="sticky bottom-0 bg-white dark:bg-Dark-D2 py-4 flex justify-center">
                             <Pagination
                                 padding={2}
                                 classNames={{
