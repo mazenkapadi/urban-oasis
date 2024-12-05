@@ -253,7 +253,7 @@ const HostDashboard = () => {
                                     precision={0.1}
                                 />
                                 <button
-                                    onClick={() => navigate('/userProfilePage')}
+                                    onClick={() => navigate('/userProfilePage/contact-info')}
                                     className="mt-4 w-full bg-blue-800 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition"
                                 >
                                     Edit Profile
