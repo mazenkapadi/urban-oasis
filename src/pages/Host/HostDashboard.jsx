@@ -29,9 +29,14 @@ const HostDashboard = () => {
     const [ hostedEvents, setHostedEvents ] = useState([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ error, setError ] = useState(null);
-    const navigate = useNavigate();
     const [ rating, setRating ] = useState(0);
+    const [ userId, setUserId ] = useState(null);
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const navigate = useNavigate();
+
+    const handleNavigate = () => {
+        navigate(`/host/${userId}`);
+    };
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -68,7 +73,8 @@ const HostDashboard = () => {
                 setCompanyName(data.companyName || '');
                 setBio(data.bio || '');
                 setProfilePicture(data.profilePicture || 'https://via.placeholder.com/150');
-                setRating(data.ratings.overall)
+                setRating(data.ratings.overall);
+                setUserId(data.uid);
 
                 if (!data.isHost) {
                     navigate('/hostSignUp');
@@ -238,10 +244,10 @@ const HostDashboard = () => {
                                     alt="Host Profile"
                                     className="rounded-full w-24 h-24 object-cover mb-4"
                                 />
-                                <h2 className={`text-xl font-semibold mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{name}</h2 >
-                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{email}</p >
-                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{hostType === 'company' ? companyName : 'Individual Host'}</p >
-                                <p className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"} text-center`} >{bio}</p >
+                                <h2 onClick={handleNavigate} className={`text-xl font-semibold mb-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{name}</h2 >
+                                <p onClick={handleNavigate} className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{email}</p >
+                                <p onClick={handleNavigate} className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >{hostType === 'company' ? companyName : 'Individual Host'}</p >
+                                <p onClick={handleNavigate} className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"} text-center`} >{bio}</p >
                                 <Rating
                                     name="read-only"
                                     value={rating}

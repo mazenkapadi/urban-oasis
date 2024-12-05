@@ -31,7 +31,7 @@ import ListItem from '@mui/material/ListItem';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../../components/FooterComponent.jsx";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';

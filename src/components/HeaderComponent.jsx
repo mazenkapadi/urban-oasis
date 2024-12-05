@@ -245,14 +245,14 @@ const HeaderComponent = ({onSearch}) => {
 
                     {menuOpen && (
                         <div
-                            className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark opacity-90 rounded-lg shadow-lg text-white z-50 mr-2" >
+                            className={`absolute right-0 mt-2 w-48 ${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"} opacity-90 rounded-lg shadow-lg z-50 mr-2`} >
                             <ul className="" >
                                 {isLoggedIn ? (
                                     <>
                                         <li >
                                             <button
                                                 onClick={() => navigate("/userProfilePage")}
-                                                className="flex items-center px-4 py-2 justify-between hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className={`flex items-center px-4 py-2 justify-between ${darkMode ? "hover:bg-Dark-D1" : "hover:bg-Light-L1"} hover:rounded-lg w-full text-left`}
                                             >
                                                 <span >{name}</span >
                                                 {profilePic ? (
@@ -272,7 +272,7 @@ const HeaderComponent = ({onSearch}) => {
                                         <li >
                                             <button
                                                 onClick={() => navigate("/userProfilePage/host-chatlist")}
-                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className={`block px-4 py-2 ${darkMode ? "hover:bg-Dark-D1" : "hover:bg-Light-L1"} hover:rounded-lg w-full text-left`}
                                             >
                                                 Chat
                                             </button >
@@ -281,7 +281,7 @@ const HeaderComponent = ({onSearch}) => {
                                             <li >
                                                 <button
                                                     onClick={() => navigate("/hostProfilePage")}
-                                                    className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                    className={`block px-4 py-2 ${darkMode ? "hover:bg-Dark-D1" : "hover:bg-Light-L1"} hover:rounded-lg w-full text-left`}
                                                 >
                                                     Host Dashboard
                                                 </button >
@@ -290,7 +290,7 @@ const HeaderComponent = ({onSearch}) => {
                                         <li >
                                             <button
                                                 onClick={handleSignOut}
-                                                className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                                className={`block px-4 py-2 ${darkMode ? "hover:bg-Dark-D1" : "hover:bg-Light-L1"} hover:rounded-lg w-full text-left`}
                                             >
                                                 Log Out
                                             </button >
@@ -300,7 +300,7 @@ const HeaderComponent = ({onSearch}) => {
                                     <li >
                                         <button
                                             onClick={() => navigate("/signIn")}
-                                            className="block px-4 py-2 hover:bg-gray-700 hover:rounded-lg w-full text-left"
+                                            className={`block px-4 py-2 ${darkMode ? "hover:bg-Dark-D1" : "hover:bg-Light-L1"} hover:rounded-lg w-full text-left`}
                                         >
                                             Sign In
                                         </button >
