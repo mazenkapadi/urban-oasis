@@ -4,6 +4,7 @@ import signIn from "../../services/auth/signIn.js";
 import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import themeManager from "../../utils/themeManager.jsx";
+import Tooltip from "@mui/material/Tooltip";
 
 function SignInPage() {
     const [ email, setEmail ] = useState('');
@@ -12,6 +13,9 @@ function SignInPage() {
     const [ showPassword, setShowPassword ] = useState(false);
     const navigate = useNavigate();
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const [showEmailTooltip, setShowEmailTooltip] = useState(false);
+    const [showPwdTooltip, setShowPwdTooltip] = useState(false);
+    const [showConfirmFirestoreTooltip, setShowConfirmFirestoreTooltip] = useState(false);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -27,16 +31,23 @@ function SignInPage() {
     };
 
     const handleSignInWithEmail = async () => {
-        if (!email || !password) {
-            setError('Email and password are required');
-            return;
+        if (!email) {
+            setShowEmailTooltip(true);
+            if (!password) {
+                setShowPwdTooltip(true);
+            } else {
+                setShowPwdTooltip(false);
+            }
+        } else {
+            setShowEmailTooltip(false);
         }
+
         try {
             await signIn.signInWithEmail(email, password);
             navigate('/');
-            setError(null);
-        } catch (error) {
-            setError(error.message);
+            setShowConfirmFirestoreTooltip(false)
+        } catch {
+            setShowConfirmFirestoreTooltip(true)
         }
     };
 
@@ -66,62 +77,88 @@ function SignInPage() {
 
                             <div className="p-2">
                                 <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="email">Email</label>
-                                <input
-                                    className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
-                                    id="email"
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
+                                <Tooltip
+                                    title="Email is required"
+                                    open={showEmailTooltip}
+                                    arrow
+                                    placement="right"
+                                >
+                                    <input
+                                        className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+                                        id="email"
+                                        type="email"
+                                        placeholder="your@email.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </Tooltip>
+
                             </div>
 
                             <div className="p-2">
                                 <div className="pb-1">
                                     <div className="flex justify-between">
-                                        <label className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="password">Password</label>
-                                        <a href="/forgotPassword" className="text-sm text-accent-blue">Forgot your password?</a>
+                                        <label className={`${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
+                                               htmlFor="password">Password</label>
+                                        <a href="/forgotPassword" className="text-sm text-accent-blue">Forgot your
+                                            password?</a>
                                     </div>
                                 </div>
                                 <div className="relative">
-                                    <input
-                                        className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
-                                        id="password"
-                                        type={showPassword ? 'text' : 'password'} // Toggle between text and password
-                                        placeholder="••••••"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                    <button
-                                        type="button"
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                                        onClick={toggleShowPassword}
-                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    <Tooltip
+                                        title="Password is required"
+                                        open={showPwdTooltip}
+                                        arrow
+                                        placement="right"
                                     >
-                                        {showPassword ? (
-                                            <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                                        ) : (
-                                            <EyeIcon className="h-5 w-5 text-gray-400" />
-                                        )}
-                                    </button>
+                                        <input
+                                            className={`shadow appearance-none border ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+                                            id="password"
+                                            type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                            placeholder="••••••"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                            onClick={toggleShowPassword}
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        >
+                                            {showPassword ? (
+                                                <EyeSlashIcon className="h-5 w-5 text-gray-400"/>
+                                            ) : (
+                                                <EyeIcon className="h-5 w-5 text-gray-400"/>
+                                            )}
+                                        </button>
+                                    </Tooltip>
+
                                 </div>
                             </div>
 
                             <div className="flex flex-col items-center justify-center px-2">
-                                <button
-                                    className={`${darkMode ? "bg-Dark-D2 text-primary-light hover:bg-primary-light hover:text-primary-dark" : "bg-primary-light text-primary-dark hover:bg-primary-dark hover:text-primary-light"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 `}
-                                    aria-label="Sign In"
-                                    onClick={handleSignInWithEmail}
+                                <Tooltip
+                                    title="Could not sign in"
+                                    open={showConfirmFirestoreTooltip}
+                                    arrow
+                                    placement="right"
                                 >
-                                    Sign In
-                                </button>
+                                    <button
+                                        className={`${darkMode ? "bg-Dark-D2 text-primary-light hover:bg-primary-light hover:text-primary-dark" : "bg-primary-light text-primary-dark hover:bg-primary-dark hover:text-primary-light"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 `}
+                                        aria-label="Sign In"
+                                        onClick={handleSignInWithEmail}
+                                    >
+                                        Sign In
+                                    </button>
+                                </Tooltip>
+
 
                                 <p className={`text-sm my-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
                                     Don’t have an account? <a href="/signUp" className="text-accent-blue">Sign Up</a>
                                 </p>
 
                                 <div className="flex items-center w-full my-2">
-                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`} />
+                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`}/>
                                     <span className={`mx-4 ${darkMode ? "border-Light-L1 text-Light-L1" : "border-Dark-D1 text-Dark-D1"}`}>or</span>
                                     <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`} />
                                 </div>
