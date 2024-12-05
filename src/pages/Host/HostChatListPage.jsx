@@ -164,14 +164,14 @@ const HostChatList = () => {
                             className="w-12 h-12 rounded-full mr-3"
                         />
 
-                        <div className="flex-grow" >
+                        <div className="flex-grow w-1/3" >
                             <div className={`font-medium ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{chat.event.name}</div >
                             <div className={`font-medium ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
                                 {chat.sender.id === userId
                                     ? chat.receiver.name
                                     : chat.sender.name}
                             </div >
-                            <div className="text-sm text-gray-600 truncate" >
+                            <div className="text-sm text-gray-600  truncate" >
                                 {chat.messages.length > 0
                                     ? chat.messages[chat.messages.length - 1].msg
                                     : "No messages yet"}
