@@ -252,12 +252,14 @@ const HostProfilePage = () => {
     return (
         <>
             <div
-                className={`host-profile-page flex-col min-h-screen flex pt-2 px-4 ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                <HeaderComponent />
-                <div className="pb-10" >
-                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-24 pb-10" >
+                className={`host-profile-page flex-col min-h-screen flex  ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
+                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
+                    <HeaderComponent/>
+                </div>
+                <div className="pb-10 pt-2 px-4">
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 pb-10">
 
-                        <div
+                    <div
                             className={`rounded-lg shadow-lg p-6 space-y-2 ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
 
                             <div
@@ -382,7 +384,7 @@ const HostProfilePage = () => {
                                                     <Rating value={review.rating} readOnly precision={0.1}
                                                             emptyIcon={<StarBorderPurple500SharpIcon
                                                                 sx={{
-                                                                    color: darkMode ? colors["primary-dark"] : colors["primary-light"],
+                                                                    color: darkMode ? colors["primary-light"] : colors["primary-dark"],
                                                                     fontSize: 30
                                                                 }} />}
                                                             size="large" />

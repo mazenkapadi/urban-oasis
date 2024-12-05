@@ -9,16 +9,16 @@ import FooterComponent from "../components/FooterComponent.jsx";
 import HeaderComponent from "../components/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import {googleMapsConfig} from "../locationConfig.js";
-import {Modal, Button, ImageList, ImageListItem, Alert} from '@mui/material';
+import {Modal, Button, ImageList, ImageListItem} from '@mui/material';
 import {CalendarDaysIcon} from "@heroicons/react/24/outline";
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';
 import themeManager from "../utils/themeManager.jsx";
+import Tooltip from "@mui/material/Tooltip";
 
 function EventCreationPage() {
     const fullConfig = resolveConfig(tailwindConfig);
     const colors = fullConfig.theme.colors;
-    const [hostId] = useState('defaultUserID');
     const [userId, setUserId] = useState(null);
     const [eventTitle, setEventTitle] = useState('');
     const [eventDescription, setEventDescription] = useState('');
@@ -28,7 +28,6 @@ function EventCreationPage() {
     const [eventImages, setEventImages] = useState([]);
     const [eventPrice, setEventPrice] = useState('');
     const [isPaidEvent, setIsPaidEvent] = useState(false);
-    const [error, setError] = useState(null); // Fixed error handling
     const [petAllowance, setPetAllowance] = useState(false);
     const [refundAllowance, setRefundAllowance] = useState(false);
     const [refundPolicy, setRefundPolicy] = useState('');
@@ -82,12 +81,12 @@ function EventCreationPage() {
             'Film & Media', 'Photography & Art Exhibits', 'Opera',
         ],
     };
-    const [eventTitleEmpty, setEventTitleEmpty] = useState(false);
-    const [eventDescriptionEmpty, setEventDescriptionEmpty] = useState(false);
-    const [eventLocationEmpty, setEventLocationEmpty] = useState(false);
-    const [eventDateTimeEmpty, setEventDateTimeEmpty] = useState(false);
-    const [eventCapacityEmpty, setEventCapacityEmpty] = useState(false);
     const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
+    const [showTitleTooltip, setShowTitleTooltip] = useState(false);
+    const [showDescTooltip, setShowDescTooltip] = useState(false);
+    const [showDNTTooltip, setShowDNTTooltip] = useState(false);
+    const [showCapacityTooltip, setShowCapacityTooltip] = useState(false);
+    const [showConfirmFirestoreTooltip, setShowConfirmFirestoreTooltip] = useState(false);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -194,20 +193,17 @@ function EventCreationPage() {
 
             if (eventTitle === "" || eventDescription === "" || eventLocation === "" || eventDateTime === "" || eventCapacity === null) {
                 if (eventTitle === "") {
-                    setEventTitleEmpty(true);
-                } else setEventTitleEmpty(false);
+                    setShowTitleTooltip(true);
+                } else setShowTitleTooltip(false);
                 if (eventDescription === "") {
-                    setEventDescriptionEmpty(true);
-                } else setEventDescriptionEmpty(false);
-                if (eventLocation === "") {
-                    setEventLocationEmpty(true);
-                } else setEventLocationEmpty(false);
+                    setShowDescTooltip(true);
+                } else setShowDescTooltip(false);
                 if (eventDateTime === "") {
-                    setEventDateTimeEmpty(true);
-                } else setEventDateTimeEmpty(false);
+                    setShowDNTTooltip(true);
+                } else setShowDNTTooltip(false);
                 if (eventCapacity === null) {
-                    setEventCapacityEmpty(true);
-                } else setEventCapacityEmpty(false);
+                    setShowCapacityTooltip(true);
+                } else setShowCapacityTooltip(false);
                 return;
             }
 
@@ -252,10 +248,10 @@ function EventCreationPage() {
                 }
             };
             await eventCreation.writeEventData(eventData);
-            setError(null);
+            setShowConfirmFirestoreTooltip(false);
             setModalOpen(true);
-        } catch (error) {
-            setError(error.message);
+        } catch {
+            setShowConfirmFirestoreTooltip(true);
         }
 
 
@@ -283,12 +279,13 @@ function EventCreationPage() {
         setSelectedSubcategories([]);
         setEventImagesUrls([]);
         setPreviewImages(false);
-        setEventTitleEmpty(false);
-        setEventDescriptionEmpty(false);
-        setEventLocationEmpty(false);
-        setEventCapacityEmpty(false);
         setEventLong(0);
         setEventLat(0);
+        setShowTitleTooltip(false);
+        setShowDescTooltip(false);
+        setShowDNTTooltip(false);
+        setShowCapacityTooltip(false);
+        setShowConfirmFirestoreTooltip(false);
     };
 
     const handleModalClose = () => {
@@ -311,16 +308,12 @@ function EventCreationPage() {
                     className={`flex flex-col justify-center items-center pb-10 px-4 min-h-screen ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}>
                     <HeaderComponent/>
 
-
-
                     <div
                         className={`box-border w-full max-w-3xl rounded-lg shadow-lg p-8 ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
                         <div className="text-center">
                             <span
                                 className={`text-h1 font-lalezar pb-3 text-center uppercase font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Create Your Event</span>
                         </div>
-                        {/* Error message */}
-                        {error && <div className="text-accent-red text-center mb-4" >{error}</div >}
 
                         <div className="flex flex-col space-y-4 pt-4">
                             <div className="flex flex-col space-y-6">
@@ -331,107 +324,106 @@ function EventCreationPage() {
                                     <span htmlFor="eventTitle"
                                           className={`text-body font-bold font-inter ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Event
                                         Title</span>
-                                    <input
-                                        type="text"
-                                        id="eventTitle"
-                                        value={eventTitle}
-                                        onChange={(e) => setEventTitle(e.target.value)}
-                                        placeholder="Enter event title"
-                                        className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
-                                        required
-                                    />
+                                    <Tooltip
+                                        title="Event Title is required"
+                                        open={showTitleTooltip}
+                                        arrow
+                                        placement="bottom"
+                                    >
+                                        <input
+                                            type="text"
+                                            id="eventTitle"
+                                            value={eventTitle}
+                                            onChange={(e) => setEventTitle(e.target.value)}
+                                            placeholder="Enter event title"
+                                            className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
+                                            required
+                                        />
+                                    </Tooltip>
                                 </div>
-                                {eventTitleEmpty && (
-                                    <Alert severity="error">
-                                        Event Title cannot be empty.
-                                    </Alert>
-                                )}
 
                                 {/* Description */}
                                 <div>
                                     <span htmlFor="eventDescription"
                                           className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Description</span>
-                                    <textarea
-                                        id="eventDescription"
-                                        value={eventDescription}
-                                        onChange={(e) => setEventDescription(e.target.value)}
-                                        placeholder="Enter event description"
-                                        className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
-                                        rows="4"
-                                        required
-                                    />
+                                    <Tooltip
+                                        title="Event Description is required"
+                                        open={showDescTooltip}
+                                        arrow
+                                        placement="bottom"
+                                    >
+                                        <textarea
+                                            id="eventDescription"
+                                            value={eventDescription}
+                                            onChange={(e) => setEventDescription(e.target.value)}
+                                            placeholder="Enter event description"
+                                            className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
+                                            rows="4"
+                                            required
+                                        />
+                                    </Tooltip>
                                 </div>
-                                {eventDescriptionEmpty && (
-                                    <Alert severity="error">
-                                        Event Description cannot be empty.
-                                    </Alert>
-                                )}
 
                                 {/* Location */}
                                 <div>
                                     <span htmlFor="eventLocation"
                                           className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Location</span>
-                                    <GooglePlacesAutocomplete
-                                        required
-                                        apiKey={googleMapsConfig.apiKey}
-                                        selectProps={{
-                                            value: eventLocation, onChange: handleLocationChange,
-                                            styles: {
-                                                placeholder: (base) => ({
-                                                    ...base,
-                                                    color: '#9ca3af',
-                                                }),
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    backgroundColor: darkMode ? colors["Dark-D2"] : colors["Light-L2"],
-                                                    borderColor: state.isFocused ? (darkMode ? colors["Light-L1"] : colors["Dark-D1"]) : (darkMode ? colors["Dark-D1"] : colors["Light-L1"]),
-                                                    ':hover': {
+                                        <GooglePlacesAutocomplete
+                                            required
+                                            apiKey={googleMapsConfig.apiKey}
+                                            selectProps={{
+                                                value: eventLocation, onChange: handleLocationChange,
+                                                styles: {
+                                                    placeholder: (base) => ({
+                                                        ...base,
+                                                        color: '#9ca3af',
+                                                    }),
+                                                    control: (provided, state) => ({
+                                                        ...provided,
+                                                        backgroundColor: darkMode ? colors["Dark-D2"] : colors["Light-L2"],
+                                                        borderColor: state.isFocused ? (darkMode ? colors["Light-L1"] : colors["Dark-D1"]) : (darkMode ? colors["Dark-D1"] : colors["Light-L1"]),
+                                                        ':hover': {
+                                                            borderColor: darkMode ? colors["Light-L1"] : colors["Dark-D1"],
+                                                        },
+                                                        // borderWidth: state.isFocused ? '2px' : '1px',
+                                                        width: '100%',
+                                                        marginTop: '2px',
+                                                        padding: '3px',
+                                                        borderRadius: '6px',
+                                                    }),
+                                                    menu: (provided) => ({
+                                                        ...provided,
+                                                        backgroundColor: darkMode ? colors["Dark-D2"] : colors["Light-L2"],
                                                         borderColor: darkMode ? colors["Light-L1"] : colors["Dark-D1"],
-                                                    },
-                                                    // borderWidth: state.isFocused ? '2px' : '1px',
-                                                    width: '100%',
-                                                    marginTop: '2px',
-                                                    padding: '3px',
-                                                    borderRadius: '6px',
-                                                }),
-                                                menu: (provided) => ({
-                                                    ...provided,
-                                                    backgroundColor: darkMode ? colors["Dark-D2"] : colors["Light-L2"],
-                                                    borderColor: darkMode ? colors["Light-L1"] : colors["Dark-D1"],
-                                                    maxHeight: "200px",
-                                                    overflowY: "auto",
-                                                }),
-                                                input: (provided, state) => ({
-                                                    ...provided,
-                                                    color: darkMode ? colors["primary-light"] : colors["primary-dark"],
-                                                    borderColor: state.isFocused ? (darkMode ? colors["Light-L1"] : colors["Dark-D1"]) : (darkMode ? colors["Dark-D1"] : colors["Light-L1"]),
-                                                    ':hover': {
-                                                        borderColor: darkMode ? colors["Light-L1"] : colors["Dark-D1"],
-                                                    },
-                                                    border: 'none',
-                                                }),
-                                                option: (provided, state) => ({
-                                                    ...provided,
-                                                    color: state.isFocused ? (darkMode ? colors["primary-dark"] : colors["primary-light"]) : (darkMode ? colors["primary-light"] : colors["primary-dark"]),
-                                                    backgroundColor: state.isFocused ? (darkMode ? colors["Light-L2"] : colors["Dark-D2"]) : (darkMode ? colors["Dark-D2"] : colors["Light-L2"]),
-                                                    cursor: "pointer",
-                                                }),
-                                                singleValue: (provided) => ({
-                                                    ...provided,
-                                                    color: darkMode ? colors["primary-light"] : colors["primary-dark"],
-                                                    backgroundColor: darkMode ? colors["primary-light"] : colors["primary-dark"],
-                                                }),
+                                                        maxHeight: "200px",
+                                                        overflowY: "auto",
+                                                    }),
+                                                    input: (provided, state) => ({
+                                                        ...provided,
+                                                        color: darkMode ? colors["primary-light"] : colors["primary-dark"],
+                                                        borderColor: state.isFocused ? (darkMode ? colors["Light-L1"] : colors["Dark-D1"]) : (darkMode ? colors["Dark-D1"] : colors["Light-L1"]),
+                                                        ':hover': {
+                                                            borderColor: darkMode ? colors["Light-L1"] : colors["Dark-D1"],
+                                                        },
+                                                        border: 'none',
+                                                    }),
+                                                    option: (provided, state) => ({
+                                                        ...provided,
+                                                        color: state.isFocused ? (darkMode ? colors["primary-dark"] : colors["primary-light"]) : (darkMode ? colors["primary-light"] : colors["primary-dark"]),
+                                                        backgroundColor: state.isFocused ? (darkMode ? colors["Light-L2"] : colors["Dark-D2"]) : (darkMode ? colors["Dark-D2"] : colors["Light-L2"]),
+                                                        cursor: "pointer",
+                                                    }),
+                                                    singleValue: (provided) => ({
+                                                        ...provided,
+                                                        color: darkMode ? colors["primary-light"] : colors["primary-dark"],
+                                                        backgroundColor: darkMode ? colors["primary-light"] : colors["primary-dark"],
+                                                    }),
 
-                                            },
-                                            placeholder: 'Enter location',
-                                        }}
-                                    />
+                                                },
+                                                placeholder: 'Enter location',
+                                            }}
+                                        />
                                 </div>
-                                {eventLocationEmpty && (
-                                    <Alert severity="error">
-                                        Event Location cannot be empty.
-                                    </Alert>
-                                )}
 
                                 {/* Date and Capacity */}
                                 <div className="flex space-x-4">
@@ -440,56 +432,55 @@ function EventCreationPage() {
                                               className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Event
                                             Date
                                             and Time</span>
-                                        <div className="relative mt-2">
-                                            <input
-                                                type="datetime-local"
-                                                id="eventDateTime"
-                                                value={eventDateTime}
-                                                onChange={(e) => setEventDateTime(e.target.value)}
-                                                className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
-                                                required
-                                            />
-                                            <div
-                                                className={`absolute inset-y-0 right-3 flex items-center pointer-events-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
+                                        <Tooltip
+                                            title="Event Date and Time are required"
+                                            open={showDNTTooltip}
+                                            arrow
+                                            placement="left"
+                                        >
+                                            <div className="relative mt-2">
+                                                <input
+                                                    type="datetime-local"
+                                                    id="eventDateTime"
+                                                    value={eventDateTime}
+                                                    onChange={(e) => setEventDateTime(e.target.value)}
+                                                    className={`w-full mt-2 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
+                                                    required
+                                                />
+                                                <div
+                                                    className={`absolute inset-y-0 right-3 flex items-center pointer-events-none ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
 
-                                                < CalendarDaysIcon
-                                                    className={`h-5 w-5`}/>
+                                                    < CalendarDaysIcon
+                                                        className={`h-5 w-5`}/>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Tooltip>
                                     </div>
                                     <div className="flex-1">
                                         <span htmlFor="eventCapacity"
                                               className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Capacity</span>
-                                        <input
-                                            type="number"
-                                            id="eventCapacity"
-                                            value={eventCapacity === null ? '' : eventCapacity}
-                                            onChange={(e) => {
-                                                const parsedValue = parseInt(e.target.value === '' ? null : parseInt(e.target.value, 10));
-                                                setEventCapacity(Math.max(parsedValue, 0));
-                                            }}
-                                            placeholder="Enter event capacity"
-                                            className={`relative w-full mt-4 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
-                                            required
-                                        />
+                                        <Tooltip
+                                            title="Event Capacity is required"
+                                            open={showCapacityTooltip}
+                                            arrow
+                                            placement="right"
+                                        >
+                                            <input
+                                                type="number"
+                                                id="eventCapacity"
+                                                value={eventCapacity === null ? '' : eventCapacity}
+                                                onChange={(e) => {
+                                                    const parsedValue = parseInt(e.target.value === '' ? null : parseInt(e.target.value, 10));
+                                                    setEventCapacity(Math.max(parsedValue, 0));
+                                                }}
+                                                placeholder="Enter event capacity"
+                                                className={`relative w-full mt-4 p-3 rounded-md ${darkMode ? "text-primary-light border-Dark-D1 bg-Dark-D2" : "text-primary-dark border-Light-L1 bg-Light-L2"}`}
+                                                required
+                                            />
+                                        </Tooltip>
                                     </div>
                                 </div>
-                                <div className="flex space-x-4">
-                                    <div className="flex-1">
-                                        {eventDateTimeEmpty && (
-                                            <Alert severity="error">
-                                                Event Date and Time cannot be empty.
-                                            </Alert>
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        {eventCapacityEmpty && (
-                                            <Alert severity="error">
-                                                Event Capacity cannot be empty.
-                                            </Alert>
-                                        )}
-                                    </div>
-                                </div>
+
                                 <div>
                                     <span htmlFor="eventImages"
                                           className={`font-inter text-body font-bold ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Upload
@@ -710,12 +701,20 @@ function EventCreationPage() {
                                 )}
 
 
-                                <button
-                                    onClick={handleSubmit}
-                                    className="mt-6 w-full py-3 btn btn-primary"
+                                <Tooltip
+                                    title="Could not create event"
+                                    open={showConfirmFirestoreTooltip}
+                                    arrow
+                                    placement="bottom"
                                 >
-                                    Create Event
-                                </button>
+                                    <button
+                                        onClick={handleSubmit}
+                                        className="mt-6 w-full py-3 btn btn-primary"
+                                    >
+                                        Create Event
+                                    </button>
+                                </Tooltip>
+
                             </div>
                         </div>
                     </div>

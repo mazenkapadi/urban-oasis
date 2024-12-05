@@ -120,7 +120,7 @@ const HitComponent = ({hit, viewMode}) => {
                 </div >
 
                 {/* Event Information Section */}
-                <div className={`p-3 ${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L2 text-primary-dark"} `} >
+                <div className={`p-3 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L2 text-primary-dark"} `} >
                     <div className="flex justify-between items-center" >
                         <h3 className="text-lg font-semibold truncate" >{title}</h3 >
                         <p className="text-sm" >{eventDate}</p >

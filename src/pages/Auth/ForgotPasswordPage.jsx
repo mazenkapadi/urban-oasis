@@ -3,6 +3,7 @@ import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
 import { useNavigate } from "react-router-dom";
 import PasswordReset from "../../services/auth/ResetPassword.js";
 import themeManager from "../../utils/themeManager.jsx";
+import Tooltip from "@mui/material/Tooltip";
 
 function ForgotPasswordPage() {
 
@@ -10,6 +11,7 @@ function ForgotPasswordPage() {
     const [ email, setEmail ] = useState('');
     const [ loading, setLoading ] = useState(false);
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const [showTooltip, setShowTooltip] = useState(false);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -24,8 +26,10 @@ function ForgotPasswordPage() {
 
     const handleResetPassword = async () => {
         if (!email) {
-            alert("Email is required")
+            setShowTooltip(true);
             return
+        } else {
+            setShowTooltip(false);
         }
 
         try {
@@ -54,16 +58,25 @@ function ForgotPasswordPage() {
                                 <label className={`block pb-10 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} htmlFor="email" >If the email address you
                                     provided is associated with an account, you will receive a password reset email
                                     shortly. </label >
-                                <input
-                                    className={`shadow appearance-none border rounded w-full py-2 px-3 ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} leading-tight focus:outline-none focus:shadow-outline`}
-                                    id="email"
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div >
-                            <div className="flex flex-col items-center justify-center px-2" >
+                                <Tooltip
+                                    title="This field cannot be empty"
+                                    open={showTooltip}
+                                    arrow
+                                    placement="right"
+                                >
+                                    <input
+                                        className={`shadow appearance-none border rounded w-full py-2 px-3 ${darkMode ? "border-Light-L1 text-Dark-D1" : "border-Dark-D1 text-Dark-D1"} leading-tight focus:outline-none focus:shadow-outline`}
+                                        id="email"
+                                        type="email"
+                                        placeholder="your@email.com"
+                                        value={email}
+                                        error={setShowTooltip}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </Tooltip>
+
+                            </div>
+                            <div className="flex flex-col items-center justify-center px-2">
                                 <button
                                     className={`${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L2 text-primary-dark"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full mt-4 transition-colors duration-300 ease-in-out ${loading ? 'bg-Dark-D1' : 'hover:bg-Dark-D2 hover:text-primary-light'}`}
                                     aria-label="Sign In"
