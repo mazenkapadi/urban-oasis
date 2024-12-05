@@ -210,13 +210,14 @@ const ViewAllEventsPage = () => {
 
     return (
         <InstantSearch searchClient={searchClient} indexName="events">
-            <div className={`view-all-events-page ${darkMode ? "bg-primary-dark text-primary-light" : "bg-primary-light text-primary-dark"} min-h-screen flex flex-col`}>
+            <div className={`view-all-events-page ${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L1 text-primary-dark"} min-h-screen flex flex-col`}>
                 {/* Header Component */}
-                <HeaderComponent onSearch={handleSearch} onKeyDown={handleEnterKey} />
-
+                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
+                    <HeaderComponent/>
+                </div>
                 {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
-                    {/* Filters Section */}
+                {/* Filters Section */}
                     <div className={`lg:w-1/4 p-4 border-r ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`}>
                         <FiltersComponent
                             onApplyFilters={onApplyFilters}
