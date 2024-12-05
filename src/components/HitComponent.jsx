@@ -59,7 +59,12 @@ const HitComponent = ({hit, viewMode}) => {
 
     // Navigate to the event details page
     const handleClick = () => {
-        navigate(`/eventPage/${hit.objectID}`);
+        const user = auth.currentUser;
+        if (user) {
+            navigate(`/eventPage/${hit.objectID}`);
+        } else {
+            navigate(`/signIn`);
+        }
     };
 
     // Destructure event details from the hit object

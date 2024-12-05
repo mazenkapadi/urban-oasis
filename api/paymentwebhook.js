@@ -51,13 +51,13 @@ export async function POST(req) {
         const eventData = eventSnap.data(); // Access the document data
 
         const emaildata = {
-                userId,
-                eventId,
-                email,
-                quantity,
-                eventTitle: eventData.eventTitle,
-                eventDateTime: eventData.eventDateTime,
-            };
+            userId,
+            eventId,
+            email,
+            quantity,
+            eventTitle: eventData.eventTitle,
+            eventDateTime: eventData.eventDateTime,
+        };
 
         console.log(emaildata); // Log to confirm the structure
 
