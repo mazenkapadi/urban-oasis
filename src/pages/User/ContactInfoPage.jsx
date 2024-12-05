@@ -326,9 +326,10 @@ const ContactInfoPage = () => {
                     {/* Bio */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Bio</label>
-                        <input
+                        <textarea
                             id="bio"
                             type="text"
+                            rows="4"
                             className={`block w-full p-2 border ${darkMode ? "border-primary-dark bg-Dark-D1 text-primary-light" : "border-primary-light bg-Light-L1 text-primary-dark"} rounded-md focus:border-blue-500 focus:ring-blue-500 focus:outline-none`}
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}

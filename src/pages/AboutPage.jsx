@@ -6,12 +6,17 @@ import { db } from "../firebaseConfig";
 import { Link } from 'react-router-dom';
 import FooterComponent from "../components/FooterComponent.jsx";
 import themeManager from "../utils/themeManager.jsx";
+import Tooltip from "@mui/material/Tooltip";
 
 function AboutPage() {
     const [ reviewerName, setReviewerName ] = useState('');
     const [ reviewContent, setReviewContent ] = useState('');
     const [ error, setError ] = useState('');
     const [ successMessage, setSuccessMessage ] = useState('');
+
+    const [showNameTooltip, setShowNameTooltip] = useState(false);
+    const [showReviewTooltip, setShowReviewTooltip] = useState(false);
+    const [showConfirmReviewTooltip, setShowConfirmReviewTooltip] = useState(false);
 
     const maxReviewLength = 140;
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
@@ -26,10 +31,19 @@ function AboutPage() {
     }, []);
 
     const handleReviewSubmit = async () => {
-        if (!reviewerName || !reviewContent) {
-            setError("Please fill in all fields.");
+        if (reviewerName === '') {
+            setShowNameTooltip(true);
+        } else {
+            setShowNameTooltip(false);
+        }
+        if (reviewContent === '') {
+            setShowReviewTooltip(true);
+        } else setShowReviewTooltip(false);
+
+        if (setShowNameTooltip || setShowReviewTooltip) {
             return;
         }
+
 
         try {
             await addDoc(collection(db, "Testimonials"), {
@@ -39,11 +53,11 @@ function AboutPage() {
             });
             setReviewerName('');
             setReviewContent('');
-            setError('');
+            setShowConfirmReviewTooltip(false);
             setSuccessMessage("Thank you for your review!");
             setTimeout(() => setSuccessMessage(''), 3000);
         } catch (error) {
-            setError("Failed to submit review. Please try again.");
+            setShowConfirmReviewTooltip(true);
             console.error("Error writing review to Firestore:", error);
         }
     };
@@ -106,38 +120,61 @@ function AboutPage() {
                     className={`md:w-1/2 flex flex-col items-end ${darkMode ? "bg-Dark-D1" : "bg-Light-L1"} p-8 rounded-lg shadow-lg w-full max-w-lg space-y-4`} >
                     <div className="w-full" >
                         <label className={`block font-medium mb-2 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Your Name</label >
-                        <input
-                            type="text"
-                            value={reviewerName}
-                            onChange={(e) => setReviewerName(e.target.value)}
-                            className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
-                            required
-                        />
-                    </div >
-                    <div className="w-full" >
-                        <label className={`block font-medium mb-2 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`} >Your Review</label >
-                        <textarea
-                            value={reviewContent}
-                            onChange={(e) => setReviewContent(e.target.value)}
-                            className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
-                            rows="4"
-                            maxLength={maxReviewLength}
-                            required
-                        />
-                        <p className={`text-small mt-1 text-right ${darkMode ? "text-Light-L3" : "text-Dark-D2"}`} >
+                        <Tooltip
+                            title="Name is required"
+                            open={showNameTooltip}
+                            arrow
+                            placement="right"
+                        >
+                            <input
+                                type="text"
+                                value={reviewerName}
+                                onChange={(e) => setReviewerName(e.target.value)}
+                                className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
+                                required
+                            />
+                        </Tooltip>
+
+                    </div>
+                    <div className="w-full">
+                        <label className={`block font-medium mb-2 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}>Your
+                            Review</label>
+                        <Tooltip
+                            title="Review is required"
+                            open={showReviewTooltip}
+                            arrow
+                            placement="right"
+                        >
+                            <textarea
+                                value={reviewContent}
+                                onChange={(e) => setReviewContent(e.target.value)}
+                                className={`w-full px-4 py-2 border rounded-md ${darkMode ? "bg-Dark-D2 text-Light-L1 border-Light-L2" : "bg-Light-L2 text-Dark-D1 border-Dark-D2"} focus:outline-none focus:ring-2 focus:ring-accent-blue focus:border-hidden`}
+                                rows="4"
+                                maxLength={maxReviewLength}
+                                required
+                            />
+                        </Tooltip>
+                        <p className={`text-small mt-1 text-right ${darkMode ? "text-Light-L3" : "text-Dark-D2"}`}>
                             {reviewContent.length}/{maxReviewLength} characters
-                        </p >
-                    </div >
-                    <button
-                        onClick={handleReviewSubmit}
-                        className="w-full bg-accent-blue text-Light-L1 py-2 rounded-md hover:bg-accent-purple transition"
+                        </p>
+                    </div>
+                    <Tooltip
+                        title="Could not submit review"
+                        open={showConfirmReviewTooltip}
+                        arrow
+                        placement="bottom"
                     >
-                        Submit Review
-                    </button >
-                </div >
-            </div >
-            <FooterComponent />
-        </div >
+                        <button
+                            onClick={handleReviewSubmit}
+                            className="w-full bg-accent-blue text-Light-L1 py-2 rounded-md hover:bg-accent-purple transition"
+                        >
+                            Submit Review
+                        </button>
+                    </Tooltip>
+                </div>
+            </div>
+            <FooterComponent/>
+        </div>
     );
 }
 

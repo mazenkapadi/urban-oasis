@@ -34,6 +34,7 @@ export default {
                 h2: '3rem', // 48px (Use Roboto Bold for buttons)
                 h3: '2.25rem', // 36px
                 h4: '1.5rem', // 24px
+                h5: '1.25rem',
                 body: '1rem', // 16px (Use Roboto Regular for body text)
                 small: '0.875rem', // 14px
                 button: '1.125rem', // 18px (Roboto Bold for emphasized buttons)
