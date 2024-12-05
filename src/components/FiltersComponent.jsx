@@ -15,21 +15,21 @@ const FiltersComponent = ({
     const fullConfig = resolveConfig(tailwindConfig);
     const colors = fullConfig.theme.colors;
     const categories = [
-        { label: "Film & Media", count: 2 },
-        { label: "Food & Drink", count: 4 },
-        { label: "Art", count: 2 },
-        { label: "Comedy", count: 2 },
-        { label: "Family & Kids", count: 1 },
-        { label: "Health", count: 3 },
-        { label: "Mental Health", count: 2 },
-        { label: "Music", count: 2 },
-        { label: "Networking", count: 1 },
-        { label: "Photography & Art Exhibits", count: 2 },
-        { label: "Shopping & Markets", count: 1 },
-        { label: "Spirituality & Wellness", count: 2 },
-        { label: "Technology", count: 0 },
-        { label: "Uncategorized", count: 1 },
-        { label: "Wine Tasting", count: 1 },
+        { label: "Film & Media"},
+        { label: "Food & Drink"},
+        { label: "Art" },
+        { label: "Comedy"},
+        { label: "Family & Kids" },
+        { label: "Health"},
+        { label: "Mental Health"},
+        { label: "Music" },
+        { label: "Networking" },
+        { label: "Photography & Art Exhibits"},
+        { label: "Shopping & Markets" },
+        { label: "Spirituality & Wellness"},
+        { label: "Technology"},
+        { label: "Uncategorized"},
+        { label: "Wine Tasting"},
     ];
 
     const [showMoreCategories, setShowMoreCategories] = useState(false);
@@ -105,7 +105,7 @@ const FiltersComponent = ({
 
     const displayedCategories = showMoreCategories
         ? categories
-        : categories.slice(0, visibleCategoryCount);
+        : categories.slice(0);
 
     return (
         <div className={`p-6 sticky top-0 ${darkMode ? "bg-Dark-D1 text-primary-light border-Dark-D2" :  "bg-Light-L3 text-primary-dark border-Light-L1"} border-r h-full font-roboto`}>
@@ -220,23 +220,29 @@ const FiltersComponent = ({
                 </ul>
             </div>
 
+
             {/* Category Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Category</h3>
                 <ul className="space-y-2">
-                    {displayedCategories.map((category) => (
-                        <li key={category.label}>
-                            <label className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    checked={activeFilters.categories?.includes(category.label)}
-                                    onChange={() => handleCategoryChange(category.label)}
-                                    className="mr-2"
-                                />
-                                {category.label} ({category.count})
-                            </label>
-                        </li>
-                    ))}
+                    {displayedCategories.map((category, index) => {
+                        if (!showMoreCategories && index >= visibleCategoryCount) {
+                            return null; // Limit categories in "Show Less" mode
+                        }
+                        return (
+                            <li key={category.label}>
+                                <label className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={activeFilters.categories?.includes(category.label)}
+                                        onChange={() => handleCategoryChange(category.label)}
+                                        className="mr-2"
+                                    />
+                                    {category.label}
+                                </label>
+                            </li>
+                        );
+                    })}
                 </ul>
                 <button
                     onClick={toggleShowMoreCategories}
@@ -245,6 +251,7 @@ const FiltersComponent = ({
                     {showMoreCategories ? "Show Less" : "Show More"}
                 </button>
             </div>
+
         </div>
     );
 };

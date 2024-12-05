@@ -12,7 +12,7 @@ import themeManager from "../utils/themeManager.jsx";
 import tailwindConfig from "../../tailwind.config.js";
 import resolveConfig from "tailwindcss/resolveConfig";
 
-const HeaderComponent = ({onSearch}) => {
+const HeaderComponent = ({ onSearch = () => {} }) => {
     const fullConfig = resolveConfig(tailwindConfig);
     const colors = fullConfig.theme.colors;
     const [ menuOpen, setMenuOpen ] = useState(false);
@@ -24,8 +24,23 @@ const HeaderComponent = ({onSearch}) => {
     const [ eventQuery, setEventQuery ] = useState("");
     const [ dateRange, setDateRange ] = useState({startDate: null, endDate: null});
     const [ showDatePicker, setShowDatePicker ] = useState(false);
+    const [zipCodeValue, setZipCodeValue] = useState("");
     const navigate = useNavigate();
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+
+    const clearSearch = () => {
+        setEventQuery("");
+        onSearch({
+            geoLocation,
+            eventQuery: "" ,
+            dateRange});
+        navigate(`/events`);
+    };
+
+    const clearZipCode = () => {
+        setZipCodeValue("");
+        onSearch({ geoLocation: null }); // Clear the geoLocation search
+    };
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -115,6 +130,15 @@ const HeaderComponent = ({onSearch}) => {
                             onGeoSearch={(geo) => setGeoLocation(geo)}
                             onClear={() => setGeoLocation(null)}
                         />
+                        {zipCodeValue && (
+                            <button
+                                onClick={clearZipCode}
+                                className="absolute top-1/2 transform -translate-y-1/2 right-2 text-gray-500 hover:text-red-500 focus:outline-none"
+                                aria-label="Clear ZIP code search"
+                            >
+                                ✖
+                            </button>
+                        )}
                     </div >
 
                     {/* Date Picker */}
@@ -158,6 +182,15 @@ const HeaderComponent = ({onSearch}) => {
                                 placeholder="Search events..."
                                 className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
                             />
+                            {eventQuery && (
+                                <button
+                                    onClick={clearSearch}
+                                    className="absolute top-1/2 transform -translate-y-1/2 right-2 text-gray-500 hover:text-red-500 focus:outline-none"
+                                    aria-label="Clear search"
+                                >
+                                    ✖
+                                </button>
+                            )}
                         </div >
                     </div >
 

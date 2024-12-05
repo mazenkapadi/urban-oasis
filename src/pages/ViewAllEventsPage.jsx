@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
     InstantSearch,
     Configure,
-    Hits,
     Pagination,
     useHits,
 } from "react-instantsearch";
@@ -19,13 +18,16 @@ import themeManager from "../utils/themeManager.jsx";
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});
     const [viewMode, setViewMode] = useState("grid");
-    const [geoLocation, setGeoLocation] = useState(null); // Store user-specified lat/lng
-    const [searchQuery, setSearchQuery] = useState(""); // Store event search query
-    const [radius, setRadius] = useState(100 * 1000); // Default radius: 100 km
+    const [geoLocation, setGeoLocation] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [radius, setRadius] = useState(100 * 1000);
     const [dateRange, setDateRange] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
+    const handleViewToggle = () => {
+        setViewMode(viewMode === "grid" ? "list" : "grid");
+    };
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -38,7 +40,6 @@ const ViewAllEventsPage = () => {
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
-
         const geoLocationParam = searchParams.get("geoLocation");
         const eventQueryParam = searchParams.get("q");
         const startDateParam = searchParams.get("startDate");
@@ -61,30 +62,6 @@ const ViewAllEventsPage = () => {
         }
     }, [location.search]);
 
-    useEffect(() => {
-        console.log("GeoLocation updated:", geoLocation);
-        console.log("SearchQuery updated:", searchQuery);
-        console.log("DateRange updated:", dateRange);
-
-        // Reset filters dynamically when all fields are cleared
-        if (!geoLocation && !searchQuery && (!dateRange?.startDate || !dateRange?.endDate)) {
-            setActiveFilters({});
-        }
-    }, [geoLocation, searchQuery, dateRange]);
-
-    useEffect(() => {
-        const shouldResetFilters =
-            !geoLocation && !searchQuery && (!dateRange?.startDate || !dateRange?.endDate);
-
-        if (shouldResetFilters && Object.keys(activeFilters).length > 0) {
-            setActiveFilters({});
-        }
-    }, [geoLocation, searchQuery, dateRange, activeFilters]);
-
-    const handleViewToggle = () => {
-        setViewMode(viewMode === "grid" ? "list" : "grid");
-    };
-
     const onApplyFilters = (newFilters) => {
         setActiveFilters((prevFilters) => ({
             ...prevFilters,
@@ -100,17 +77,7 @@ const ViewAllEventsPage = () => {
         });
     };
 
-    const calculateAvailabilityFilter = (availability) => {
-        if (availability === "Available") {
-            return `eventDetails.capacity > attendeesCount`;
-        } else if (availability === "Unavailable") {
-            return `eventDetails.capacity <= attendeesCount`;
-        }
-        return null;
-    };
-
-    // Optimize filters with useMemo
-    const filters = useMemo(() => {
+    const calculateFilters = () => {
         const filtersArray = [];
 
         if (activeFilters.eventPrice) {
@@ -130,23 +97,10 @@ const ViewAllEventsPage = () => {
             }
         }
 
-        if (dateRange?.startDate && dateRange?.endDate) {
-            filtersArray.push(
-                `eventDetails.eventDateTime >= ${new Date(dateRange.startDate).getTime()} AND eventDetails.eventDateTime <= ${new Date(dateRange.endDate).getTime()}`
-            );
-        }
-
         if (activeFilters.paidEvent !== undefined) {
             filtersArray.push(
                 `eventDetails.paidEvent = ${activeFilters.paidEvent ? 1 : 0}`
             );
-        }
-
-        const availabilityFilter = calculateAvailabilityFilter(
-            activeFilters.availability
-        );
-        if (availabilityFilter) {
-            filtersArray.push(availabilityFilter);
         }
 
         if (activeFilters.categories?.length > 0) {
@@ -156,38 +110,16 @@ const ViewAllEventsPage = () => {
             filtersArray.push(`(${categoryFilter})`);
         }
 
-        if (process.env.NODE_ENV === "development") {
-            console.log("Generated Filters:", filtersArray.join(" AND "));
-        }
-
-        return filtersArray.join(" AND ");
-    }, [activeFilters, dateRange]);
-
-    const handleSearch = ({ geoLocation, eventQuery, dateRange }) => {
-        setGeoLocation(geoLocation);
-        setSearchQuery(eventQuery);
-        setDateRange(dateRange);
-
-        // Reset results if all fields are cleared
-        if (!geoLocation && !eventQuery && (!dateRange?.startDate || !dateRange?.endDate)) {
-            setActiveFilters({});
-        }
+        return filtersArray.length > 0 ? filtersArray.join(" AND ") : "";
     };
 
-    const handleEnterKey = (e) => {
-        if (e.key === "Enter") {
-            handleSearch({
-                geoLocation,
-                eventQuery: searchQuery,
-                dateRange,
-            });
-        }
-    };
+    const filters = useMemo(() => calculateFilters(), [activeFilters, dateRange]);
 
     const NoResultsMessage = () => {
         const { hits } = useHits();
-        return (
-            hits.length === 0 && (
+
+        if (hits.length === 0) {
+            return (
                 <div className="text-center mt-8">
                     <h2 className="text-lg font-semibold text-primary-light">
                         Oops! No events match your search criteria.
@@ -197,42 +129,45 @@ const ViewAllEventsPage = () => {
                         onClick={() => {
                             setActiveFilters({});
                             setGeoLocation(null);
-                            setRadius(100 * 1000); // Reset radius
-                            setSearchQuery(""); // Reset query
+                            setSearchQuery("");
                         }}
                     >
                         Reset Filters
                     </button>
                 </div>
-            )
-        );
+            );
+        }
+
+        return null;
     };
 
     return (
         <InstantSearch searchClient={searchClient} indexName="events">
-            <div className={`view-all-events-page ${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L1 text-primary-dark"} min-h-screen flex flex-col`}>
-                {/* Header Component */}
+            <div
+                className={`view-all-events-page ${
+                    darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L1 text-primary-dark"
+                } min-h-screen flex flex-col`}
+            >
                 <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
-                    <HeaderComponent/>
+                    <HeaderComponent />
                 </div>
-                {/* Main Content */}
                 <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
-                {/* Filters Section */}
-                    <div className={`lg:w-1/4 p-4 border-r ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`}>
+                    <div
+                        className={`lg:w-1/4 p-4 border-r ${
+                            darkMode ? "border-Light-L2" : "border-Dark-D2"
+                        } overflow-auto`}
+                    >
                         <FiltersComponent
                             onApplyFilters={onApplyFilters}
                             activeFilters={activeFilters}
                             removeFilter={removeFilter}
                         />
                     </div>
-
-                    {/* Search Results Section */}
                     <div className="lg:w-3/4 p-4 flex flex-col">
-                        {/* Configure Algolia Search */}
                         <Configure
-                            hitsPerPage={21}
-                            filters={filters}
-                            query={searchQuery}
+                            hitsPerPage={20}
+                            filters={filters || undefined}
+                            query={searchQuery || undefined}
                             aroundLatLng={
                                 geoLocation
                                     ? `${geoLocation.lat},${geoLocation.lng}`
@@ -249,15 +184,18 @@ const ViewAllEventsPage = () => {
                                 aria-label="Toggle View"
                             >
                                 {viewMode === "grid" ? (
-                                    <ListBulletIcon className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
+                                    <ListBulletIcon
+                                        className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-primary-light" />
+                                    <Squares2X2Icon className="w-6 h-6 text-primary-light"/>
                                 )}
                             </button>
                         </div>
 
                         {/* Hits Section */}
-                        <div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">
+                        {/*<div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">*/}
+
+                        <div className="flex-grow overflow-auto p-4">
                             <FilteredHits
                                 hitComponent={(props) => (
                                     <HitComponent
@@ -273,12 +211,10 @@ const ViewAllEventsPage = () => {
                                 }}
                             />
                         </div>
-
-                        {/* No Results Message */}
                         <NoResultsMessage />
-
-                        {/* Pagination Section */}
-                        <div className="flex justify-center mt-auto">
+                        <div
+                            className="bg-white dark:bg-Dark-D2 py-4 flex justify-center border-t border-secondary-light-1"
+                        >
                             <Pagination
                                 padding={2}
                                 classNames={{
