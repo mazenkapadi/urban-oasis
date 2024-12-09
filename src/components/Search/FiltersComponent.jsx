@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
-import { formatDateForFilter } from "../utils/dateHelpers.jsx";
-import themeManager from "../utils/themeManager.jsx";
+import { formatDateForFilter } from "../../utils/dateHelpers.jsx";
+import themeManager from "../../utils/themeManager.jsx";
 import resolveConfig from "tailwindcss/resolveConfig.js";
-import tailwindConfig from "../../tailwind.config.js";
+import tailwindConfig from "../../../tailwind.config.js";
 
 const FiltersComponent = ({
                               activeFilters,

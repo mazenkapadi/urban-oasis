@@ -2,19 +2,19 @@ import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {arrayUnion, deleteField, doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
 import {onAuthStateChanged} from "firebase/auth";
-import PhotoCarousel from "../components/Carousels/PhotoCarousel.jsx";
+import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
 import {CalendarDaysIcon, MapPinIcon, MinusIcon, PlusIcon, TicketIcon} from "@heroicons/react/20/solid";
 import {ShoppingCartIcon, XMarkIcon} from "@heroicons/react/24/outline";
-import {auth, db} from "../firebaseConfig.js";
-import HeaderComponent from "../components/HeaderComponent.jsx";
-import FooterComponent from "../components/FooterComponent.jsx";
-import LoadingPage from "./service/LoadingPage.jsx"
+import {auth, db} from "../../firebaseConfig.js";
+import HeaderComponent from "../../components/Search/HeaderComponent.jsx";
+import FooterComponent from "../../components/FooterComponent.jsx";
+import LoadingPage from "../service/LoadingPage.jsx"
 import {Alert, Button, Modal, Snackbar} from "@mui/material";
 import {loadStripe} from "@stripe/stripe-js";
 import {v4 as uuidv4} from "uuid";
-import ForecastComponent from "../components/EventPages/ForecastComponent.jsx";
-import ChatWindowComponent from "../components/EventPages/ChatWindowComponent.jsx";
-import {googleMapsConfig} from "../locationConfig.js";
+import ForecastComponent from "../../components/EventPages/ForecastComponent.jsx";
+import ChatWindowComponent from "../../components/EventPages/ChatWindowComponent.jsx";
+import {googleMapsConfig} from "../../locationConfig.js";
 import {useJsApiLoader} from '@react-google-maps/api';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
@@ -34,10 +34,10 @@ import {
     WhatsappShareButton,
     XIcon,
 } from "react-share";
-import GoogleMapComponent from "../components/GoogleMapComponent.jsx"
+import GoogleMapComponent from "../../components/GoogleMapComponent.jsx"
 import emailjs from '@emailjs/browser';
-import CategoryComponent from "../components/EventPages/CategoryComponent.jsx";
-import themeManager from "../utils/themeManager.jsx";
+import CategoryComponent from "../../components/EventPages/CategoryComponent.jsx";
+import themeManager from "../../utils/themeManager.jsx";
 
 
 const EventPage = () => {

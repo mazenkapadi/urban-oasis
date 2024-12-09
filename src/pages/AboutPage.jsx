@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";
-import HeaderComponent from "../components/HeaderComponent.jsx";
+import HeaderComponent from "../components/Search/HeaderComponent.jsx";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from 'react-router-dom';

@@ -5,7 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { db, auth, storage } from "../../firebaseConfig.js";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import PhotoCarousel from "../../components/Carousels/PhotoCarousel.jsx";
-import HeaderComponent from "../../components/HeaderComponent.jsx";
+import HeaderComponent from "../../components/Search/HeaderComponent.jsx";
 import FooterComponent from "../../components/FooterComponent.jsx";
 import LoadingPage from "../service/LoadingPage.jsx";
 import { ImageList, ImageListItem } from '@mui/material';

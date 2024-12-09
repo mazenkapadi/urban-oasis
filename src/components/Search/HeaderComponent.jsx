@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import GeoSearchBar from "./GeoSearchBar";
+import { db } from "../../firebaseConfig.js";
+import GeoSearchBar from "./GeoSearchBar.jsx";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import ThemeToggle from "./ThemeToggle.jsx";
-import themeManager from "../utils/themeManager.jsx";
-import tailwindConfig from "../../tailwind.config.js";
+import ThemeToggle from "../ThemeToggle.jsx";
+import themeManager from "../../utils/themeManager.jsx";
+import tailwindConfig from "../../../tailwind.config.js";
 import resolveConfig from "tailwindcss/resolveConfig";
 
 const HeaderComponent = ({ onSearch = () => {} }) => {

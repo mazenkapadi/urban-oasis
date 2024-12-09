@@ -6,9 +6,9 @@ import {
     MapPinIcon,
 } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
-import { auth } from '../firebaseConfig';
-import { toggleBookmark, getBookmarkStatus } from '../services/toggleBookmark';
-import themeManager from "../utils/themeManager.jsx";
+import { auth } from '../../firebaseConfig.js';
+import { toggleBookmark, getBookmarkStatus } from '../../services/toggleBookmark.js';
+import themeManager from "../../utils/themeManager.jsx";
 
 const HitComponent = ({hit, viewMode}) => {
     const navigate = useNavigate();

@@ -14,7 +14,7 @@ import {
     Timestamp,
     where
 } from "firebase/firestore";
-import HeaderComponent from "../../components/HeaderComponent.jsx";
+import HeaderComponent from "../../components/Search/HeaderComponent.jsx";
 import {
     Avatar,
     Button,

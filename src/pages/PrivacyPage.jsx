@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import HeaderComponent from "../components/HeaderComponent.jsx";
+import HeaderComponent from "../components/Search/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import themeManager from "../utils/themeManager.jsx";
 

@@ -6,14 +6,14 @@ import {
     Pagination,
     useHits,
 } from "react-instantsearch";
-import { searchClient } from "../algoliaConfig";
-import FiltersComponent from "../components/FiltersComponent";
-import HitComponent from "../components/HitComponent";
-import HeaderComponent from "../components/HeaderComponent";
+import { searchClient } from "../../algoliaConfig.js";
+import FiltersComponent from "../../components/Search/FiltersComponent.jsx";
+import HitComponent from "../../components/Search/HitComponent.jsx";
+import HeaderComponent from "../../components/Search/HeaderComponent.jsx";
 import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import { formatDateForFilter } from "../utils/dateHelpers";
-import FilteredHits from "../components/FilteredHits.jsx";
-import themeManager from "../utils/themeManager.jsx";
+import { formatDateForFilter } from "../../utils/dateHelpers.jsx";
+import FilteredHits from "../../components/Search/FilteredHits.jsx";
+import themeManager from "../../utils/themeManager.jsx";
 
 const ViewAllEventsPage = () => {
     const [activeFilters, setActiveFilters] = useState({});

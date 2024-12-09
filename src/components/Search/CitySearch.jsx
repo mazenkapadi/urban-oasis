@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchCitySuggestions } from "../services/locationServices";
+import { fetchCitySuggestions } from "../../services/locationServices.js";
 
 const CitySearch = ({ onCitySelect }) => {
     const [input, setInput] = useState("");

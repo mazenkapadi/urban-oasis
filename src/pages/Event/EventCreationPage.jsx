@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import eventCreation from "../services/eventCreation.js";
-import {auth, storage} from "../firebaseConfig.js";
+import eventCreation from "../../services/eventCreation.js";
+import {auth, storage} from "../../firebaseConfig.js";
 import {onAuthStateChanged} from "firebase/auth";
 import {Timestamp} from "firebase/firestore";
 import {PhotoIcon} from "@heroicons/react/24/outline/index.js";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
-import FooterComponent from "../components/FooterComponent.jsx";
-import HeaderComponent from "../components/HeaderComponent.jsx";
+import FooterComponent from "../../components/FooterComponent.jsx";
+import HeaderComponent from "../../components/Search/HeaderComponent.jsx";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import {googleMapsConfig} from "../locationConfig.js";
+import {googleMapsConfig} from "../../locationConfig.js";
 import {Modal, Button, ImageList, ImageListItem} from '@mui/material';
 import {CalendarDaysIcon} from "@heroicons/react/24/outline";
 import resolveConfig from 'tailwindcss/resolveConfig';
-import tailwindConfig from '/tailwind.config.js';
-import themeManager from "../utils/themeManager.jsx";
+import tailwindConfig from '/Users/deepamondal/urban-oasis/tailwind.config.js';
+import themeManager from "../../utils/themeManager.jsx";
 import Tooltip from "@mui/material/Tooltip";
 
 function EventCreationPage() {

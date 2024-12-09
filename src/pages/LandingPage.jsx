@@ -1,4 +1,4 @@
-import HeaderComponent from "../components/HeaderComponent.jsx";
+import HeaderComponent from "../components/Search/HeaderComponent.jsx";
 import FooterComponent from "../components/FooterComponent.jsx";
 import EventCarousel from "../components/Carousels/EventCarousel.jsx";
 import HeroCarousel from "../components/Carousels/HeroCarousel.jsx";

@@ -71,7 +71,7 @@
 
 import React, {useState} from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import {googleMapsConfig} from "../locationConfig";
+import {googleMapsConfig} from "../../locationConfig.js";
 
 const GeoSearchBar = ({onGeoSearch}) => {
     const [cityInput, setCityInput] = useState(null);
@@ -112,10 +112,10 @@ const GeoSearchBar = ({onGeoSearch}) => {
                     styles: {
                         control: (provided) => ({
                             ...provided,
-                            height: "3rem", // Ensure height matches h-12
-                            padding: "0 1rem", // Match padding
+                            height: "3rem",
+                            padding: "0 1rem",
                             border: "1px solid lightgray",
-                            borderRadius: "0.5rem", // Rounded corners
+                            borderRadius: "0.5rem",
                             backgroundColor: "white",
                             borderColor: "lightgray",
                             boxShadow: "none",
