@@ -95,6 +95,14 @@ function LandingPage() {
 
             <div className={`flex-grow pt-2 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"}`} >
                 <div className="container mx-auto px-6 space-y-8" >
+                    <div id="weekEvents" >
+                        <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
+                        <EventCarousel rangeType="week" />
+                    </div >
+                    <div >
+                        <h1 className="text-3xl font-bold mb-1" >Events Later this Month</h1 >
+                        <EventCarousel rangeType="month" />
+                    </div >
                     {userPreferences && userPreferences.categories && userPreferences.categories.length > 0 && (
                         <div >
                             <h1 className="text-3xl font-bold mb-1" >Suggested Events For You</h1 >
@@ -104,14 +112,6 @@ function LandingPage() {
                             />
                         </div >
                     )}
-                    <div id="weekEvents" >
-                        <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
-                        <EventCarousel rangeType="week" />
-                    </div >
-                    <div >
-                        <h1 className="text-3xl font-bold mb-1" >Events Later this Month</h1 >
-                        <EventCarousel rangeType="month" />
-                    </div >
                 </div >
                 <div className="flex justify-center mt-8 pb-6" >
                     <button

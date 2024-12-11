@@ -16,7 +16,6 @@ export default {
                 'accent-orange': '#EE703C',
                 'accent-red': '#EB2032',
                 'accent-blue': '#0056FF',
-                'accent-purple': '#8B5CF6',
                 'Dark-D1': '#171717',
                 'Dark-D2': '#171A1C',
                 'Light-L1': '#E4E0DB',
