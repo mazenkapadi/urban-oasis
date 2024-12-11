@@ -91,8 +91,6 @@ const HostChatList = () => {
     };
 
     const selectChat = (chat) => {
-        // console.log(chat.sender.id == userId);
-
         setSelectedChat(chat);
     };
     useEffect(() => {
@@ -129,7 +127,6 @@ const HostChatList = () => {
     const navigate = useNavigate();
 
     const handleEventNavigate = () => {
-        // console.log(selectedChat.event.id);
         navigate(`/eventPage/${selectedChat.event.id}`);
     }
 
@@ -141,7 +138,6 @@ const HostChatList = () => {
 
     return (
         <div className="h-screen flex" >
-            {/* Left Sidebar */}
             <div className={`w-1/3 border-r p-4 ${darkMode ? "border-Light-L2" : "border-Dark-D2"}`} >
                 <div className={`text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Chats</div >
                 {chats.map((chat) => (

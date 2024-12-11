@@ -16,7 +16,7 @@ const TermsServicePage = () => {
         };
     }, []);
 
-    const navigate = useNavigate(); // Hook to programmatically navigate
+    const navigate = useNavigate();
 
     const handleSupportNavigation = () => {
         navigate("/support");

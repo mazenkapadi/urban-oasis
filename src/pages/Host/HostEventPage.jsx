@@ -96,7 +96,6 @@ const HostEventPage = () => {
         ],
     };
 
-    // Get Authenticated User ID
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -106,7 +105,6 @@ const HostEventPage = () => {
         return () => unsubscribe();
     }, []);
 
-    // Fetch event and host data
     useEffect(() => {
         const fetchEventData = async () => {
             if (eventId) {
@@ -125,8 +123,6 @@ const HostEventPage = () => {
                     setAttendeesCount(data.attendeesCount || 0);
                     setEventImages(data.eventDetails.images || []);
                     setSelectedSubcategories(data.basicInfo.categories || []);
-                    // Optionally, set selectedPrimaryCategory if you store it in your data
-                    // setSelectedPrimaryCategory(data.basicInfo.primaryCategory || '');
 
                     if (data.hostId === userId) {
                         setIsHost(true);
@@ -170,8 +166,8 @@ const HostEventPage = () => {
                                 lastName: attendeeData.name.lastName,
                                 quantity,
                                 email: attendeeData.contact.email,
-                                rsvpId: key,  // Add rsvpId here
-                                userId: userId  // Add userId here
+                                rsvpId: key,
+                                userId: userId
                             });
                         }
                     }
@@ -188,7 +184,6 @@ const HostEventPage = () => {
 
     const toggleEditMode = () => {
         if (editable) {
-            // Reset state variables to original values
             setEventTitle('');
             setEventDescription('');
             setEventCapacity(0);
@@ -198,8 +193,7 @@ const HostEventPage = () => {
             setEventImagesUrls([]);
             setNewEventImages([]);
             setPreviewImages(false);
-            // Re-fetch event data to reset
-            fetchEventData();
+            // fetchEventData();
         }
         setEditable(!editable);
     };
@@ -226,13 +220,11 @@ const HostEventPage = () => {
         if (!editable) return;
 
         try {
-            // Upload new images if any
             let uploadedImages = [];
             if (newEventImages.length > 0) {
                 uploadedImages = await handleImageUpload(eventTitle, newEventImages);
             }
 
-            // Prepare the updated event data
             const updatedEventData = {
                 'basicInfo.title': eventTitle,
                 'basicInfo.description': eventDescription,
@@ -241,12 +233,10 @@ const HostEventPage = () => {
             };
 
             if (uploadedImages.length > 0) {
-                // Combine new images with existing images
                 const allImages = [ ...eventImages, ...uploadedImages ];
                 updatedEventData['eventDetails.images'] = allImages;
             }
 
-            // Update the event document in Firestore
             const eventDocRef = doc(db, 'Events', eventId);
             await updateDoc(eventDocRef, updatedEventData);
 
@@ -266,15 +256,15 @@ const HostEventPage = () => {
         }
     };
 
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setHostDetails((prevDetails) => ({...prevDetails, [name]: value}));
-    };
+    // const handleInputChange = (e) => {
+    //     const {name, value} = e.target;
+    //     setHostDetails((prevDetails) => ({...prevDetails, [name]: value}));
+    // };
 
     const handlePrimaryCategoryChange = (e) => {
         const selectedCategory = e.target.value;
         setSelectedPrimaryCategory(selectedCategory);
-        setSelectedSubcategories([]); // Reset subcategories when a new primary category is selected
+        setSelectedSubcategories([]);
     };
 
     const handleSubcategoryChange = (subcategory) => {
@@ -295,7 +285,6 @@ const HostEventPage = () => {
 
     const handleImageUpload = async (eventTitle, imageFiles) => {
         if (!imageFiles || !imageFiles.length) {
-            // No new images uploaded
             return [];
         }
 
@@ -325,7 +314,6 @@ const HostEventPage = () => {
     }
 
     const handleAttendeeCancel = async (eventId, rsvpId, attendeeEmail, attendeeUserId) => {
-        // Pre-fill default subject and body if they are empty
         const subject = emailData.subject || `RSVP Canceled - ${eventTitle}`;
         const body = emailData.body || `We regret to inform you that your RSVP for the event "${eventTitle}" scheduled for ${eventDateTime} has been canceled.\n\nIf you have any questions or need further assistance, please feel free to reach out.\n\n-Team Urban Oasis`;
 
@@ -409,7 +397,6 @@ const HostEventPage = () => {
 
         setShowCancelModal(true);
 
-        // Store eventId, rsvpId, and attendeeUserId for later use
         setEventData({eventId, rsvpId, attendeeUserId});
     };
 
@@ -427,10 +414,8 @@ const HostEventPage = () => {
                 })
             );
 
-            // Execute all email requests concurrently
             const results = await Promise.allSettled(emailPromises);
 
-            // Handle results: Collect failures and successes
             const failedEmails = [];
             results.forEach((result, index) => {
                 if (result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.ok)) {
@@ -438,14 +423,12 @@ const HostEventPage = () => {
                 }
             });
 
-            // Alert user about the results
             if (failedEmails.length > 0) {
                 alert(`Some emails failed to send: ${failedEmails.join(', ')}`);
             } else {
                 alert('All blast emails sent successfully!');
             }
 
-            // Reset modal and email data
             setShowBlastModal(false);
             setBlastEmailData({subject: '', body: ''});
         } catch (error) {

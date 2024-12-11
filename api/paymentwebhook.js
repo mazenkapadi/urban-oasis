@@ -59,7 +59,9 @@ export async function POST(req) {
             eventDateTime: eventData.eventDateTime,
         };
 
-        console.log(emaildata); // Log to confirm the structure
+        console.log(emaildata);
+
+        //ToDo: Bring the logic to the backend
 
         // await setDoc(
         //     eventRsvpsDocRef,

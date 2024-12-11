@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { BookmarkIcon as OutlineBookmarkIcon, CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { BookmarkIcon as SolidBookmarkIcon } from '@heroicons/react/20/solid';
 import { useEffect, useState } from "react";
-// import { getBookmarkStatus, toggleBookmark } from "../../services/toggleBookmark.js";
 import { auth } from "../../firebaseConfig.js";
 import { toggleBookmark } from "../../services/toggleBookmark.js";
 
@@ -15,7 +14,6 @@ const WideEventCard = ({ event }) => {
         return auth.onAuthStateChanged(user => {
             if (user) {
                 setUserId(user.uid);
-                // checkIfBookmarked(user.uid, event.id);
             }
         });
     }, [event.id]);

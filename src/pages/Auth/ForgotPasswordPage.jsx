@@ -22,7 +22,6 @@ function ForgotPasswordPage() {
         };
     }, []);
 
-    //TODO: Fix resetPasswordHandler
 
     const handleResetPassword = async () => {
         if (!email) {

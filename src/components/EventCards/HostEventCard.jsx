@@ -25,7 +25,6 @@ const HostEventCard = ({ event, status }) => {
 
     return (
         <div className={`relative shadow-md hover:shadow-lg transition-shadow duration-200 rounded-lg p-4 ${cardBgColor} max-w-md mx-auto`}>
-            {/* Status Badge positioned at the top right */}
             <span className={`absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-medium ${statusBgColor}`}>
                 {statusText}
             </span>

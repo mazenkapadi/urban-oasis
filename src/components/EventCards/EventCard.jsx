@@ -42,7 +42,6 @@ function EventCard({ title, location, date, price, image, eventId }) {
                 </div>
             </div>
 
-            {/* Information Section */}
             <div className={`p-3 ${darkMode ? "bg-Dark-D2" : "bg-Light-L3"}`}>
                 <div className="flex justify-between items-center">
                     <h3 className={`text-lg font-semibold truncate ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>{title}</h3>

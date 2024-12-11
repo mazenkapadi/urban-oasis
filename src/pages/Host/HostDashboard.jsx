@@ -52,7 +52,7 @@ const HostDashboard = () => {
             if (user) {
                 await fetchHostData(user.uid);
             } else {
-                navigate('/login'); // Change to your login route
+                navigate('/login');
             }
         });
 
@@ -137,12 +137,11 @@ const HostDashboard = () => {
 
 
     const handleEventClick = (eventId) => {
-        navigate(`/hostEventPage/${eventId}`); // Assuming you have a detailed Event page
+        navigate(`/hostEventPage/${eventId}`);
     };
 
     const currentDateTime = new Date();
 
-    // Combine past and future events with a status tag
     const allEvents = hostedEvents.map(event => {
         const eventDate = event.eventDetails.eventDateTime.toDate();
         return {
@@ -154,7 +153,7 @@ const HostDashboard = () => {
     const futureEvents = allEvents.filter(event => event.status === 'Future').slice(0, 2); // Get only 2 future events
     const pastEvents = allEvents.filter(event => event.status === 'Past').slice(0, 1); // Get only 1 past event
 
-    const displayedEvents = [ ...futureEvents, ...pastEvents ]; // Combine future and past events
+    const displayedEvents = [ ...futureEvents, ...pastEvents ];
 
     // Calculate statistics
     const totalFutureEvents = futureEvents.length;
@@ -164,7 +163,7 @@ const HostDashboard = () => {
 
 
     if (isLoading) {
-        return <LoadingPage />; // Render the LoadingPage component
+        return <LoadingPage />;
     }
 
     if (error) {
@@ -199,7 +198,7 @@ const HostDashboard = () => {
         datasets: [
             {
                 data: [ 1 ],
-                backgroundColor: [ '#171A1C' ], // Gray color for no data
+                backgroundColor: [ '#171A1C' ],
                 hoverBackgroundColor: [ '#171A2D' ],
             }
         ]

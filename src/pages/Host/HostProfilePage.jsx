@@ -31,7 +31,7 @@ import ListItem from '@mui/material/ListItem';
 import EmailTwoToneIcon from '@mui/icons-material/EmailTwoTone';
 import SendIcon from '@mui/icons-material/Send';
 import FooterComponent from "../../components/FooterComponent.jsx";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '/tailwind.config.js';
@@ -89,7 +89,6 @@ const HostProfilePage = () => {
     useEffect(() => {
         const fetchEventData = async () => {
 
-            // Fetch host data if available
             if (hostId) {
                 const hostDocRef = doc(db, 'Users', hostId);
                 const hostDocSnap = await getDoc(hostDocRef);
@@ -105,12 +104,7 @@ const HostProfilePage = () => {
 
                     });
                 }
-                // const reviewDocRef = collection(db, 'Users', userId, 'Ratings');
-                // const reviewDocSnap = await getDocs(reviewDocRef);
-                // if (reviewDocSnap.exists()) {
-                //     const reviewData = reviewDocSnap.data();
-                //     setReviewDetails(reviewData);
-                // }
+
                 const querySnapshot = await getDocs(collection(db, "Users", hostId, 'Ratings'));
                 const reviewsWithUserInfo = await Promise.all(querySnapshot.docs.map(async (docs) => {
                     const reviewData = docs.data();
@@ -196,11 +190,7 @@ const HostProfilePage = () => {
     const futureEvents = allEvents.filter(event => event.status === 'Future');
 
     const displayedEvents = [ ...futureEvents ];
-    // const calculateAverageRating = (ratingsTotaled) => {
-    //     if (!ratingsTotaled) return 0;
-    //     const totalRating = ;
-    //     return totalRating / ratingsTotaled.length;
-    // };
+
 
     const handleSubmit = async () => {
         try {
@@ -253,13 +243,13 @@ const HostProfilePage = () => {
         <>
             <div
                 className={`host-profile-page flex-col min-h-screen flex  ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`} >
-                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
-                    <HeaderComponent/>
-                </div>
-                <div className="pb-10 pt-2 px-4">
-                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 pb-10">
+                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
+                    <HeaderComponent />
+                </div >
+                <div className="pb-10 pt-2 px-4" >
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 pb-10" >
 
-                    <div
+                        <div
                             className={`rounded-lg shadow-lg p-6 space-y-2 ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
 
                             <div

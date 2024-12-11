@@ -24,7 +24,6 @@ const PrivacyPage = () => {
                     At UrbanOasis, we value your privacy and are committed to protecting your personal data. This page outlines our Privacy Policy and Cookie Policy, detailing how we collect, use, and safeguard your information.
                 </p>
 
-                {/* Privacy Policy Section */}
                 <div>
                     <h2 className="text-h2 font-bold mb-6">Privacy Policy</h2>
                     <section className="mb-6">

@@ -46,7 +46,6 @@ const UserProfileContent = () => {
         return () => unsubscribe();
     }, []);
 
-    // Function to fetch user data from Firestore
     const fetchUserData = async (userId) => {
         try {
             const userDoc = await getDoc(doc(db, 'Users', userId));
@@ -55,11 +54,9 @@ const UserProfileContent = () => {
                 setName(`${data.name?.firstName || ''} ${data.name?.lastName || ''}`);
                 setPhone(data.contact?.cellPhone || 'Phone number not available');
 
-                // Check profile picture: uploaded picture, Google profile picture, or initials
                 const profilePicture = data.profilePic || auth.currentUser?.photoURL || '';
                 setProfilePic(profilePicture);
             } else {
-                // Default to Google profile picture if no document exists
                 setProfilePic(auth.currentUser?.photoURL || '');
             }
         } catch (error) {
@@ -67,7 +64,6 @@ const UserProfileContent = () => {
         }
     };
 
-    // Function to fetch user RSVPs
     const fetchUserRSVPs = async (userId) => {
         try {
             const rsvpDoc = await getDoc(doc(db, 'UserRSVPs', userId));
@@ -89,7 +85,6 @@ const UserProfileContent = () => {
         }
     };
 
-    // Function to fetch the event image
     const fetchEventImage = async (eventId) => {
         try {
             const eventDoc = await getDoc(doc(db, 'Events', eventId));
@@ -105,7 +100,6 @@ const UserProfileContent = () => {
         }
     };
 
-    // Effect to calculate time left for the next event
     useEffect(() => {
         const calculateTimeLeft = () => {
             if (nextEvent && nextEvent.eventDateTime) {
@@ -128,7 +122,6 @@ const UserProfileContent = () => {
         return () => clearInterval(timer);
     }, [ nextEvent ]);
 
-    // JSX for UserProfileContent component
     return (
         <div className="w-full" >
             <div className="mb-6" >

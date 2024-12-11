@@ -155,7 +155,6 @@ const ContactInfoPage = () => {
             <div className="mb-10">
                 <label className={`block text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Profile Photo</label>
                 <div className="flex items-center space-x-4">
-                    {/* Make this section clickable */}
                     <div
                         className={`w-32 h-32 bg-gray-800 border border-gray-300 rounded-md flex items-center justify-center cursor-pointer`}
                         onClick={() => document.getElementById('fileInput').click()} // Open file dialog when clicked
@@ -171,7 +170,6 @@ const ContactInfoPage = () => {
                         )}
                     </div>
 
-                    {/* Hidden file input */}
                     <input
                         id="fileInput"
                         type="file"
@@ -184,11 +182,9 @@ const ContactInfoPage = () => {
                 </div>
             </div>
 
-            {/* Contact Information Section */}
             <div className="mb-10">
                 <h2 className={`text-xl font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Contact Information</h2>
                 <form className="grid grid-cols-2 gap-6" onSubmit={handleSave}>
-                    {/* Prefix */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Prefix</label>
                         <select
@@ -204,7 +200,6 @@ const ContactInfoPage = () => {
                         </select>
                     </div>
 
-                    {/* First Name */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>First Name</label>
                         <input
@@ -216,7 +211,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Last Name */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Last Name</label>
                         <input
@@ -228,7 +222,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Suffix */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Suffix</label>
                         <input
@@ -240,7 +233,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Cell Phone */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Cell Phone</label>
                         <input
@@ -252,7 +244,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Birthday */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Birthday</label>
                         <input
@@ -264,7 +255,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Address */}
                     <div className="col-span-2">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Address</label>
                         <input
@@ -276,7 +266,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Address 2 */}
                     <div className="col-span-2">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Address 2</label>
                         <input
@@ -288,7 +277,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* City */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>City</label>
                         <input
@@ -300,7 +288,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* State */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>State</label>
                         <SelectUSState
@@ -311,7 +298,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Zip */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Zip</label>
                         <input
@@ -323,7 +309,6 @@ const ContactInfoPage = () => {
                         />
                     </div>
 
-                    {/* Bio */}
                     <div className="col-span-1">
                         <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"} font-semibold mb-2`}>Bio</label>
                         <textarea

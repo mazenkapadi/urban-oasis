@@ -2,7 +2,6 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig.js';
 
 export async function createUser(userData) {
-    // Basic validation - you can add more comprehensive validation here
     if (!userData.userId || !userData.name || !userData.contact) {
         throw new Error('Missing required fields in userData');
     }
@@ -12,12 +11,11 @@ export async function createUser(userData) {
         console.log('User created successfully!');
     } catch (error) {
         console.error('Error creating user: ', error);
-        throw error; // Re-throw the error for handling in the component
+        throw error;
     }
 }
 
 export async function updateUser(userId, userData) {
-    // Basic validation - you can add more comprehensive validation here
     if (!userId || !userData) {
         throw new Error('Missing userId or userData');
     }

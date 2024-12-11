@@ -5,7 +5,6 @@ const UserPreferences = ({preferences, togglePreference}) => {
         <div >
             <h2 className="text-xl font-bold mb-4" >Email Preferences</h2 >
             <form className="space-y-6" >
-                {/* Attending Events */}
                 <div >
                     <h3 className="text-lg font-semibold mb-2" >Attending Events</h3 >
                     <div className="space-y-2" >
@@ -30,7 +29,6 @@ const UserPreferences = ({preferences, togglePreference}) => {
                     </div >
                 </div >
 
-                {/* Notifications */}
                 <div >
                     <h3 className="text-lg font-semibold mb-2" >Notifications</h3 >
                     <div className="space-y-2" >
@@ -64,7 +62,6 @@ const UserPreferences = ({preferences, togglePreference}) => {
                     </div >
                 </div >
 
-                {/* Hosting Events */}
                 <div >
                     <h3 className="text-lg font-semibold mb-2" >Hosting Events</h3 >
                     <div className="space-y-2" >
@@ -98,7 +95,6 @@ const UserPreferences = ({preferences, togglePreference}) => {
                     </div >
                 </div >
 
-                {/* Save Preferences Button */}
                 <button
                     id="save_preferences_button"
                     onClick={(e) => {
@@ -115,7 +111,6 @@ const UserPreferences = ({preferences, togglePreference}) => {
     );
 };
 
-// Add PropTypes validation
 UserPreferences.propTypes = {
     preferences: PropTypes.shape({
         attendingEvents: PropTypes.shape({

@@ -5,7 +5,7 @@ const LoadingPage = () => {
     useEffect(() => {
         const element = document.getElementById('animated-text');
         if (element) {
-            element.classList.add('animate-pulse'); // Apply animation on component mount
+            element.classList.add('animate-pulse');
         }
     }, []);
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Switch, FormControlLabel } from '@mui/material';
 
 const ForecastComponent = ({lat, lon, eventDate}) => {
     const [ filteredForecast, setFilteredForecast ] = useState(null);
@@ -76,19 +75,15 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
     }, [ lat, lon, eventDate ]);
 
     if (!filteredForecast) {
-        return null; // Return null or a loading indicator
+        return null;
     }
 
     return (
         <div className="w-full mt-2 rounded-lg" >
-            {/* <h2 className="text-h4 text-primary-light font-archivo font-semibold" >Forecast</h2 > */}
             <div className="flex overflow-x-auto space-x-4" >
                 <div
                     className="flex rounded-lg flex-shrink-0"
                 >
-                    {/* <p className="text-body text-primary-light font-archivo" >
-                     {new Date(filteredForecast.dt_txt).toLocaleString()}
-                     </p > */}
                     <img
                         src={`https://openweathermap.org/img/wn/${filteredForecast.weather[0].icon}@2x.png`}
                         alt={filteredForecast.weather[0].description}
@@ -97,7 +92,6 @@ const ForecastComponent = ({lat, lon, eventDate}) => {
                     <div className="flex items-center space-x-2" >
                         <p className="text-body text-primary-light font-archivo" >
                             {convertTemperature(filteredForecast.main.temp, unit)}°
-                            {/* {unit === "metric" ? "C" : "F"} */}
                         </p >
                         <div className="text-body text-primary-light font-archivo flex space-x-2" >
                             <button

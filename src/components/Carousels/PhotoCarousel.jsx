@@ -99,9 +99,6 @@ const PhotoCarousel = ({ eventId }, { eventTitle }) => {
                 },
             },
         ],
-        afterChange: (currentSlide) => {
-            setActiveSlide(currentSlide);
-        },
     };
 
     return (

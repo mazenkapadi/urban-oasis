@@ -33,8 +33,8 @@ const FiltersComponent = ({
     ];
 
     const [showMoreCategories, setShowMoreCategories] = useState(false);
-    const visibleCategoryCount = 5; // Number of categories to show in "Show Less" mode
-    const [priceRange, setPriceRange] = useState([0, 1000]); // Default price range
+    const visibleCategoryCount = 5;
+    const [priceRange, setPriceRange] = useState([0, 1000]);
     const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
 
     useEffect(() => {
@@ -46,7 +46,6 @@ const FiltersComponent = ({
         };
     }, []);
 
-    // Handle Paid/Free Filter
     const handlePaidChange = (paidStatus) => {
         if (paidStatus !== null) {
             onApplyFilters({ paidEvent: paidStatus });
@@ -55,7 +54,6 @@ const FiltersComponent = ({
         }
     };
 
-    // Handle Slider Change for Price Range
     const handleSliderChange = (event, newValue) => {
         setPriceRange(newValue);
         onApplyFilters({
@@ -63,7 +61,6 @@ const FiltersComponent = ({
         });
     };
 
-    // Handle Date Filter
     const handleDateChange = (filter) => {
         const dateRange = formatDateForFilter(filter);
 
@@ -74,7 +71,6 @@ const FiltersComponent = ({
         }
     };
 
-    // Handle Categories Filter
     const handleCategoryChange = (category) => {
         const updatedCategories = activeFilters.categories || [];
         const newCategories = updatedCategories.includes(category)
@@ -119,7 +115,6 @@ const FiltersComponent = ({
                 </button>
             </h2>
 
-            {/* Date Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Date</h3>
                 <ul className="space-y-2">
@@ -138,7 +133,6 @@ const FiltersComponent = ({
                 </ul>
             </div>
 
-            {/* Price Range Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Price Range</h3>
                 <Box className="flex flex-col gap-2">
@@ -158,10 +152,10 @@ const FiltersComponent = ({
                             value={priceRange[0]}
                             onChange={(e) => handleSliderChange(null, [Number(e.target.value), priceRange[1]])}
                             InputLabelProps={{
-                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]}, // Make label white in dark mode
+                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]},
                             }}
                             InputProps={{
-                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]}, // Make input text white in dark mode
+                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]},
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
@@ -178,10 +172,10 @@ const FiltersComponent = ({
                             value={priceRange[1]}
                             onChange={(e) => handleSliderChange(null, [priceRange[0], Number(e.target.value)])}
                             InputLabelProps={{
-                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]}, // Make label white in dark mode
+                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]},
                             }}
                             InputProps={{
-                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]}, // Make input text white in dark mode
+                                style: { color: darkMode ? colors["primary-light"] : colors["primary-dark"]},
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
@@ -195,7 +189,6 @@ const FiltersComponent = ({
                 </Box>
             </div>
 
-            {/* Paid Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Price</h3>
                 <ul>
@@ -221,7 +214,6 @@ const FiltersComponent = ({
             </div>
 
 
-            {/* Category Filter */}
             <div className="mb-6">
                 <h3 className="font-semibold mb-1">Category</h3>
                 <ul className="space-y-2">

@@ -103,7 +103,7 @@ const ChatWindowComponent = ({
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user && userId) {
                 try {
-                    const senderRef = doc(db, 'Users', userId); // Adjust 'users' collection if needed
+                    const senderRef = doc(db, 'Users', userId);
                     const senderSnap = await getDoc(senderRef);
                     if (senderSnap.exists()) {
                         const senderData = senderSnap.data();
@@ -140,7 +140,6 @@ const ChatWindowComponent = ({
 
     return chatWindowOpen ? (
         <div className="fixed bottom-0 right-5 w-80 md:w-96 h-96 bg-primary-light dark:bg-primary-dark shadow-lg rounded-t-lg flex flex-col">
-            {/* Chat Header */}
             <div className="flex items-center justify-between p-3 bg-accent-blue rounded-t-lg">
                 <div className="flex items-center space-x-2">
                     <img
@@ -160,7 +159,6 @@ const ChatWindowComponent = ({
                 </button>
             </div>
 
-            {/* Messages Container */}
             <div className="flex-1 overflow-y-auto p-4 bg-Light-L2 dark:bg-Dark-D2">
                 {isLoading ? (
                     <div className="text-center text-gray-500">Loading messages...</div>
@@ -191,7 +189,6 @@ const ChatWindowComponent = ({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input */}
             <div className="p-2 bg-Light-L2 dark:bg-Dark-D2">
                 <div className="flex items-center space-x-2">
                     <input

@@ -1,31 +1,31 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import signUp from "../../services/auth/signUp.js";
 import SignIn from "../../services/auth/signIn.js";
 import AuthLeftComponent from "../../components/AuthLeftComponent.jsx";
-import {useNavigate} from "react-router-dom";
-import {EyeIcon, EyeSlashIcon} from '@heroicons/react/24/outline';
+import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import themeManager from "../../utils/themeManager.jsx";
 import Tooltip from "@mui/material/Tooltip";
 
 function SignUpPage() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [ firstName, setFirstName ] = useState('');
+    const [ lastName, setLastName ] = useState('');
+    const [ email, setEmail ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ confirmPassword, setConfirmPassword ] = useState('');
+    const [ error, setError ] = useState(null);
     const navigate = useNavigate();
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
-    const [showEmailTooltip, setShowEmailTooltip] = useState(false);
-    const [showPwdTooltip, setShowPwdTooltip] = useState(false);
-    const [showPwdConfirmTooltip, setShowPwdConfirmTooltip] = useState(false);
-    const [showFirstTooltip, setShowFirstTooltip] = useState(false);
-    const [showLastTooltip, setShowLastTooltip] = useState(false);
-    const [showInvalidEmailTooltip, setShowInvalidEmailTooltip] = useState(false);
-    const [showInvalidPasswordTooltip, setShowInvalidPasswordTooltip] = useState(false);
-    const [showMatchTooltip, setShowMatchTooltip] = useState(false);
-    const [showConfirmFirestoreTooltip, setShowConfirmFirestoreTooltip] = useState(false);
+    const [ showConfirmPassword, setShowConfirmPassword ] = useState(false);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
+    const [ showEmailTooltip, setShowEmailTooltip ] = useState(false);
+    const [ showPwdTooltip, setShowPwdTooltip ] = useState(false);
+    const [ showPwdConfirmTooltip, setShowPwdConfirmTooltip ] = useState(false);
+    const [ showFirstTooltip, setShowFirstTooltip ] = useState(false);
+    const [ showLastTooltip, setShowLastTooltip ] = useState(false);
+    const [ showInvalidEmailTooltip, setShowInvalidEmailTooltip ] = useState(false);
+    const [ showInvalidPasswordTooltip, setShowInvalidPasswordTooltip ] = useState(false);
+    const [ showMatchTooltip, setShowMatchTooltip ] = useState(false);
+    const [ showConfirmFirestoreTooltip, setShowConfirmFirestoreTooltip ] = useState(false);
 
     useEffect(() => {
         const handleThemeChange = (isDark) => setDarkMode(isDark);
@@ -126,26 +126,25 @@ function SignUpPage() {
 
     return (
         <>
-            <div className="flex w-screen h-screen">
-                <div className="flex-[3]">
-                    <AuthLeftComponent/>
-                </div>
+            <div className="flex w-screen h-screen" >
+                <div className="flex-[3]" >
+                    <AuthLeftComponent />
+                </div >
                 <div
-                    className={`flex-[2] h-screen p-4 flex items-center justify-center ${darkMode ? 'bg-Dark-D2' : 'bg-primary-light'}`}>
+                    className={`flex-[2] h-screen p-4 flex items-center justify-center ${darkMode ? 'bg-Dark-D2' : 'bg-primary-light'}`} >
                     <div
-                        className={`signUpBox box-border rounded-lg ${darkMode ? "bg-primary-dark" : "bg-Light-L1"} p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto`}>
-                        <div className="content w-full">
-                            <h2 className={`text-3xl font-bold mb-6 px-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Sign
-                                Up</h2>
+                        className={`signUpBox box-border rounded-lg ${darkMode ? "bg-primary-dark" : "bg-Light-L1"} p-6 flex items-center justify-center w-full max-w-sm md:max-w-md h-auto`} >
+                        <div className="content w-full" >
+                            <h2 className={`text-3xl font-bold mb-6 px-2 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >Sign
+                                Up</h2 >
 
-                            {error && <div className="text-red-500 text-sm p-2">{error}</div>}
+                            {error && <div className="text-red-500 text-sm p-2" >{error}</div >}
 
-                            <div className="p-2">
-                                <div className="flex space-x-4">
-                                    {/* First Name */}
-                                    <div className="flex-1">
+                            <div className="p-2" >
+                                <div className="flex space-x-4" >
+                                    <div className="flex-1" >
                                         <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
-                                               htmlFor="firstName">First Name</label>
+                                               htmlFor="firstName" >First Name</label >
                                         <Tooltip
                                             title="First Name is required"
                                             open={showFirstTooltip}
@@ -160,14 +159,13 @@ function SignUpPage() {
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
                                             />
-                                        </Tooltip>
+                                        </Tooltip >
 
-                                    </div>
+                                    </div >
 
-                                    {/* Last Name */}
-                                    <div className="flex-1">
+                                    <div className="flex-1" >
                                         <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
-                                               htmlFor="lastName">Last Name</label>
+                                               htmlFor="lastName" >Last Name</label >
                                         <Tooltip
                                             title="Last Name is required"
                                             open={showLastTooltip}
@@ -182,15 +180,15 @@ function SignUpPage() {
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
                                             />
-                                        </Tooltip>
+                                        </Tooltip >
 
-                                    </div>
-                                </div>
-                            </div>
+                                    </div >
+                                </div >
+                            </div >
 
-                            <div className="p-2">
+                            <div className="p-2" >
                                 <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
-                                       htmlFor="email">Email</label>
+                                       htmlFor="email" >Email</label >
                                 <Tooltip
                                     title="Email is required"
                                     open={showEmailTooltip}
@@ -211,16 +209,16 @@ function SignUpPage() {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                         />
-                                    </Tooltip>
-                                </Tooltip>
+                                    </Tooltip >
+                                </Tooltip >
 
 
-                            </div>
+                            </div >
 
-                            <div className="p-2">
+                            <div className="p-2" >
                                 <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
-                                       htmlFor="password">Password</label>
-                                <div className="relative">
+                                       htmlFor="password" >Password</label >
+                                <div className="relative" >
                                     <Tooltip
                                         title="Password is required"
                                         open={showPwdTooltip}
@@ -247,17 +245,17 @@ function SignUpPage() {
                                                     value={password}
                                                     onChange={(e) => setPassword(e.target.value)}
                                                 />
-                                            </Tooltip>
-                                        </Tooltip>
-                                    </Tooltip>
+                                            </Tooltip >
+                                        </Tooltip >
+                                    </Tooltip >
 
-                                </div>
-                            </div>
+                                </div >
+                            </div >
 
-                            <div className="p-2">
+                            <div className="p-2" >
                                 <label className={`block pb-1 ${darkMode ? "text-Light-L1" : "text-Dark-D1"}`}
-                                       htmlFor="confirmPassword">Confirm Password</label>
-                                <div className="relative">
+                                       htmlFor="confirmPassword" >Confirm Password</label >
+                                <div className="relative" >
                                     <Tooltip
                                         title="Confirm Password is required"
                                         open={showPwdConfirmTooltip}
@@ -290,20 +288,20 @@ function SignUpPage() {
                                                     className="absolute right-3 top-2 text-gray-300"
                                                 >
                                                     {showConfirmPassword ? (
-                                                        <EyeSlashIcon className="h-5 w-5 text-gray-400"/>
+                                                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
                                                     ) : (
-                                                        <EyeIcon className="h-5 w-5 text-gray-400"/>
+                                                        <EyeIcon className="h-5 w-5 text-gray-400" />
                                                     )}
-                                                </button>
-                                            </Tooltip>
-                                        </Tooltip>
+                                                </button >
+                                            </Tooltip >
+                                        </Tooltip >
 
-                                    </Tooltip>
+                                    </Tooltip >
 
-                                </div>
-                            </div>
+                                </div >
+                            </div >
 
-                            <div className="flex flex-col items-center justify-center px-2">
+                            <div className="flex flex-col items-center justify-center px-2" >
                                 <Tooltip
                                     title="Could not create user"
                                     open={showConfirmFirestoreTooltip}
@@ -316,34 +314,36 @@ function SignUpPage() {
                                         onClick={handleSignUpWithEmail}
                                     >
                                         Sign Up
-                                    </button>
-                                </Tooltip>
+                                    </button >
+                                </Tooltip >
 
 
-                                <p className={`text-sm my-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>
-                                    Already have an account? <a href="/signIn" className="text-accent-blue">Sign in</a>
-                                </p>
+                                <p className={`text-sm my-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >
+                                    Already have an account? <a href="/signIn" className="text-accent-blue" >Sign
+                                    in</a >
+                                </p >
 
-                                <div className="flex items-center w-full my-2">
-                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`}/>
+                                <div className="flex items-center w-full my-2" >
+                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`} />
                                     <span
-                                        className={`mx-4 ${darkMode ? "border-Light-L1 text-Light-L1" : "border-Dark-D1 text-Dark-D1"}`}>or</span>
-                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`}/>
-                                </div>
+                                        className={`mx-4 ${darkMode ? "border-Light-L1 text-Light-L1" : "border-Dark-D1 text-Dark-D1"}`} >or</span >
+                                    <hr className={`flex-grow border-t ${darkMode ? "border-Light-L1" : "border-Dark-D1"}`} />
+                                </div >
 
                                 <button
                                     className={`${darkMode ? "bg-Dark-D2 text-primary-light hover:bg-primary-light hover:text-primary-dark" : "bg-primary-light text-primary-dark hover:bg-primary-dark hover:text-primary-light"} font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full flex items-center justify-center transition-colors duration-300`}
                                     aria-label="Sign Up with Google"
                                     onClick={handleSignInWithGoogle}
                                 >
-                                    <img src="/google.svg" alt="Google logo" className="pr-0.5" width="24" height="24"/>
-                                    <p className="ml-2">Sign Up with Google</p>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                    <img src="/google.svg" alt="Google logo" className="pr-0.5" width="24"
+                                         height="24" />
+                                    <p className="ml-2" >Sign Up with Google</p >
+                                </button >
+                            </div >
+                        </div >
+                    </div >
+                </div >
+            </div >
         </>
     );
 }

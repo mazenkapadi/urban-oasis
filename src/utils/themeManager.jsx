@@ -30,22 +30,18 @@ class ThemeManager {
         this.setTheme(!this.isDarkMode);
     }
 
-    // Add a listener for theme changes
     addListener(listener) {
         this.listeners.push(listener);
     }
 
-    // Remove a listener
     removeListener(listener) {
         this.listeners = this.listeners.filter((l) => l !== listener);
     }
 
-    // Notify all listeners of a theme change
     notifyListeners() {
         this.listeners.forEach((listener) => listener(this.isDarkMode));
     }
 }
 
-// Export a singleton instance
 const themeManager = new ThemeManager();
 export default themeManager;

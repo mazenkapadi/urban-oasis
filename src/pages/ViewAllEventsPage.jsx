@@ -16,15 +16,14 @@ import FilteredHits from "../components/FilteredHits.jsx";
 import themeManager from "../utils/themeManager.jsx";
 
 const ViewAllEventsPage = () => {
-    const [activeFilters, setActiveFilters] = useState({});
-    const [viewMode, setViewMode] = useState("grid");
-    const [geoLocation, setGeoLocation] = useState(null);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [radius, setRadius] = useState(100 * 1000);
-    const [dateRange, setDateRange] = useState(null);
-    const navigate = useNavigate();
+    const [ activeFilters, setActiveFilters ] = useState({});
+    const [ viewMode, setViewMode ] = useState("grid");
+    const [ geoLocation, setGeoLocation ] = useState(null);
+    const [ searchQuery, setSearchQuery ] = useState("");
+    const [ radius ] = useState(100 * 1000);
+    const [ dateRange, setDateRange ] = useState(null);
     const location = useLocation();
-    const [darkMode, setDarkMode] = useState(themeManager.isDarkMode);
+    const [ darkMode, setDarkMode ] = useState(themeManager.isDarkMode);
     const handleViewToggle = () => {
         setViewMode(viewMode === "grid" ? "list" : "grid");
     };
@@ -46,8 +45,8 @@ const ViewAllEventsPage = () => {
         const endDateParam = searchParams.get("endDate");
 
         if (geoLocationParam) {
-            const [lat, lng] = geoLocationParam.split(",");
-            setGeoLocation({ lat: parseFloat(lat), lng: parseFloat(lng) });
+            const [ lat, lng ] = geoLocationParam.split(",");
+            setGeoLocation({lat: parseFloat(lat), lng: parseFloat(lng)});
         }
 
         setSearchQuery(eventQueryParam || "");
@@ -60,7 +59,7 @@ const ViewAllEventsPage = () => {
         } else {
             setDateRange(null);
         }
-    }, [location.search]);
+    }, [ location.search ]);
 
     const onApplyFilters = (newFilters) => {
         setActiveFilters((prevFilters) => ({
@@ -71,7 +70,7 @@ const ViewAllEventsPage = () => {
 
     const removeFilter = (filterKey) => {
         setActiveFilters((prevFilters) => {
-            const updatedFilters = { ...prevFilters };
+            const updatedFilters = {...prevFilters};
             delete updatedFilters[filterKey];
             return updatedFilters;
         });
@@ -81,7 +80,7 @@ const ViewAllEventsPage = () => {
         const filtersArray = [];
 
         if (activeFilters.eventPrice) {
-            const { min, max } = activeFilters.eventPrice;
+            const {min, max} = activeFilters.eventPrice;
             filtersArray.push(
                 `eventDetails.eventPrice >= ${min} AND eventDetails.eventPrice <= ${max}`
             );
@@ -90,7 +89,7 @@ const ViewAllEventsPage = () => {
         if (activeFilters.eventDateTime) {
             const dateRangeFilter = formatDateForFilter(activeFilters.eventDateTime);
             if (dateRangeFilter) {
-                const { start, end } = dateRangeFilter;
+                const {start, end} = dateRangeFilter;
                 filtersArray.push(
                     `eventDetails.eventDateTime >= ${start} AND eventDetails.eventDateTime <= ${end}`
                 );
@@ -105,25 +104,25 @@ const ViewAllEventsPage = () => {
 
         if (activeFilters.categories?.length > 0) {
             const categoryFilter = activeFilters.categories
-                .map((category) => `basicInfo.categories:"${category}"`)
-                .join(" OR ");
+                                                .map((category) => `basicInfo.categories:"${category}"`)
+                                                .join(" OR ");
             filtersArray.push(`(${categoryFilter})`);
         }
 
         return filtersArray.length > 0 ? filtersArray.join(" AND ") : "";
     };
 
-    const filters = useMemo(() => calculateFilters(), [activeFilters, dateRange]);
+    const filters = useMemo(() => calculateFilters(), [ activeFilters, dateRange ]);
 
     const NoResultsMessage = () => {
-        const { hits } = useHits();
+        const {hits} = useHits();
 
         if (hits.length === 0) {
             return (
-                <div className="text-center mt-8">
-                    <h2 className="text-lg font-semibold text-primary-light">
+                <div className="text-center mt-8" >
+                    <h2 className="text-lg font-semibold text-primary-light" >
                         Oops! No events match your search criteria.
-                    </h2>
+                    </h2 >
                     <button
                         className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
                         onClick={() => {
@@ -133,8 +132,8 @@ const ViewAllEventsPage = () => {
                         }}
                     >
                         Reset Filters
-                    </button>
-                </div>
+                    </button >
+                </div >
             );
         }
 
@@ -142,16 +141,16 @@ const ViewAllEventsPage = () => {
     };
 
     return (
-        <InstantSearch searchClient={searchClient} indexName="events">
+        <InstantSearch searchClient={searchClient} indexName="events" >
             <div
                 className={`view-all-events-page ${
                     darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L1 text-primary-dark"
                 } min-h-screen flex flex-col`}
             >
-                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`}>
+                <div className={`w-full ${darkMode ? "bg-primary-dark" : "bg-primary-light"}`} >
                     <HeaderComponent />
-                </div>
-                <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4">
+                </div >
+                <div className="flex-grow flex flex-col lg:flex-row lg:items-start p-4" >
                     <div
                         className={`lg:w-1/4 p-4 border-r ${
                             darkMode ? "border-Light-L2" : "border-Dark-D2"
@@ -162,8 +161,8 @@ const ViewAllEventsPage = () => {
                             activeFilters={activeFilters}
                             removeFilter={removeFilter}
                         />
-                    </div>
-                    <div className="lg:w-3/4 p-4 flex flex-col">
+                    </div >
+                    <div className="lg:w-3/4 p-4 flex flex-col" >
                         <Configure
                             hitsPerPage={20}
                             filters={filters || undefined}
@@ -177,7 +176,7 @@ const ViewAllEventsPage = () => {
                         />
 
                         {/* View Toggle Button */}
-                        <div className="flex justify-end mb-4">
+                        <div className="flex justify-end mb-4" >
                             <button
                                 onClick={handleViewToggle}
                                 className={`${darkMode ? "bg-Dark-D2 hover:bg-Dark-D1" : "bg-Light-L2 hover:bg-Light-L1"} p-2 rounded-md shadow`}
@@ -185,17 +184,15 @@ const ViewAllEventsPage = () => {
                             >
                                 {viewMode === "grid" ? (
                                     <ListBulletIcon
-                                        className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}/>
+                                        className={`w-6 h-6 ${darkMode ? "text-primary-light" : "text-primary-dark"}`} />
                                 ) : (
-                                    <Squares2X2Icon className="w-6 h-6 text-primary-light"/>
+                                    <Squares2X2Icon className="w-6 h-6 text-primary-light" />
                                 )}
-                            </button>
-                        </div>
+                            </button >
+                        </div >
 
-                        {/* Hits Section */}
-                        {/*<div className="min-h-[1000px] max-h-[calc(100vh-180px)] overflow-auto">*/}
 
-                        <div className="flex-grow overflow-auto p-4">
+                        <div className="flex-grow overflow-auto p-4" >
                             <FilteredHits
                                 hitComponent={(props) => (
                                     <HitComponent
@@ -210,7 +207,7 @@ const ViewAllEventsPage = () => {
                                             : "flex flex-col space-y-4",
                                 }}
                             />
-                        </div>
+                        </div >
                         <NoResultsMessage />
                         <div
                             className="bg-white dark:bg-Dark-D2 py-4 flex justify-center border-t border-secondary-light-1"
@@ -224,11 +221,11 @@ const ViewAllEventsPage = () => {
                                     disabledItem: "cursor-not-allowed opacity-50",
                                 }}
                             />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </InstantSearch>
+                        </div >
+                    </div >
+                </div >
+            </div >
+        </InstantSearch >
     );
 };
 

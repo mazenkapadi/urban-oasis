@@ -56,14 +56,13 @@ function HostSignUpPage() {
         console.log(`User isHost status updated to: true, Host Type: ${hostType}`);
         console.log("Host Details:", hostDetails);
 
-        // Update Firestore with host details
         if (user) {
             const userRef = doc(db, 'Users', user.uid);
             await setDoc(userRef, {
                 isHost: true,
                 hostType: hostType,
                 ...hostDetails
-            }, { merge: true }); // Merge to avoid overwriting other data
+            }, { merge: true });
         }
     };
 
@@ -130,7 +129,6 @@ function HostSignUpPage() {
                 </select>
             </div>
 
-            {/* Conditional Forms */}
             {hostType && (
                 <div className={`w-full max-w-lg p-6 ${darkMode ? "bg-primary-dark" : "bg-primary-light"} rounded-lg shadow-md mb-6 animate-fade-in`}>
                     {hostType === 'individual' ? (
@@ -149,7 +147,6 @@ function HostSignUpPage() {
                 </div>
             )}
 
-            {/* Host Location Form */}
             {(hostType === 'individual' || hostType === 'company') && (
                 <div className={`w-full max-w-lg p-6 ${darkMode ? "bg-primary-dark" : "bg-primary-light"} rounded-lg shadow-md mb-6 animate-fade-in`}>
                     <h3 className={`text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Host Location</h3>
@@ -161,7 +158,6 @@ function HostSignUpPage() {
                 </div>
             )}
 
-            {/* Host Ratings */}
             {(hostType === 'individual' || hostType === 'company') && (
                 <div className={`w-full max-w-lg p-6 ${darkMode ? "bg-primary-dark" : "bg-primary-light"} rounded-lg shadow-md mb-6 animate-fade-in`}>
                     <h3 className={`text-lg font-semibold mb-4 ${darkMode ? "text-primary-light" : "text-primary-dark"}`}>Host Ratings</h3>
@@ -171,7 +167,6 @@ function HostSignUpPage() {
                 </div>
             )}
 
-            {/* Agree Button */}
             <button
                 onClick={handleAgreeClick}
                 className={`w-full max-w-lg bg-accent-blue text-white py-3 px-6 rounded-lg font-medium ${

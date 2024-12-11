@@ -55,14 +55,11 @@ const ExploreManage = () => {
         if (!userId) return;
 
         try {
-            // Correctly reference the document using userId and eventId
             const bookmarkId = `${userId}_${eventId}`;
             const bookmarkRef = doc(db, "Bookmarks", bookmarkId);
 
-            // Delete the bookmark document from Firestore
             await deleteDoc(bookmarkRef);
 
-            // Update the local state to remove the bookmark
             setBookmarkedEvents((prevEvents) =>
                 prevEvents.filter((event) => event.eventId !== eventId)
             );

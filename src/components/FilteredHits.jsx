@@ -4,7 +4,6 @@ import { useHits } from "react-instantsearch";
 const FilteredHits = ({ hitComponent, classNames, viewMode }) => {
     const { hits } = useHits();
 
-    // Filter out past events
     const filteredHits = hits.filter(
         (hit) =>
             hit.eventDetails?.eventDateTime &&

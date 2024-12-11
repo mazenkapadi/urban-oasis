@@ -6,7 +6,7 @@ const EventSearchBar = ({ onEventSearch }) => {
     const handleInputChange = (e) => {
         setEventInput(e.target.value);
         if (onEventSearch) {
-            onEventSearch(e.target.value); // Update the parent as the input changes
+            onEventSearch(e.target.value);
         }
     };
 

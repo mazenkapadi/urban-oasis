@@ -25,7 +25,6 @@ const HitComponent = ({hit, viewMode}) => {
         };
     }, []);
 
-    // Check if the user is authenticated and update bookmark status
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
@@ -36,7 +35,6 @@ const HitComponent = ({hit, viewMode}) => {
         return () => unsubscribe();
     }, [ hit.objectID ]);
 
-    // Function to check if the event is bookmarked
     const checkIfBookmarked = async (userId, eventId) => {
         try {
             const isBookmarked = await getBookmarkStatus(userId, eventId);
@@ -46,7 +44,6 @@ const HitComponent = ({hit, viewMode}) => {
         }
     };
 
-    // Toggle the bookmark status
     const handleBookmarkToggle = async (e) => {
         e.stopPropagation();
         try {
@@ -57,7 +54,6 @@ const HitComponent = ({hit, viewMode}) => {
         }
     };
 
-    // Navigate to the event details page
     const handleClick = () => {
         const user = auth.currentUser;
         if (user) {
@@ -67,13 +63,11 @@ const HitComponent = ({hit, viewMode}) => {
         }
     };
 
-    // Destructure event details from the hit object
     const {
         basicInfo: {title = 'Untitled Event', location = {}},
         eventDetails: {eventDateTime, eventPrice = 0, images = [], paidEvent = false},
     } = hit;
 
-    // Format event date to MM/DD/YYYY
     const formatEventDate = (timestamp) => {
         if (!timestamp) return 'Invalid Date';
         const date = new Date(timestamp);
@@ -86,7 +80,6 @@ const HitComponent = ({hit, viewMode}) => {
     const imageUrl = images.length > 0 ? images[0].url : '/images/placeholder.png';
     const eventDate = formatEventDate(eventDateTime);
 
-    // Render for Grid View (using EventCard style)
     if (viewMode === 'grid') {
         return (
             <div
@@ -108,7 +101,6 @@ const HitComponent = ({hit, viewMode}) => {
                     </button >
                 )}
 
-                {/* Event Image */}
                 <div
                     className="relative h-40 bg-cover bg-center"
                     style={{backgroundImage: `url(${imageUrl})`}}
@@ -119,7 +111,6 @@ const HitComponent = ({hit, viewMode}) => {
                     </div >
                 </div >
 
-                {/* Event Information Section */}
                 <div className={`p-3 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L2 text-primary-dark"} `} >
                     <div className="flex justify-between items-center" >
                         <h3 className="text-lg font-semibold truncate" >{title}</h3 >
@@ -139,7 +130,6 @@ const HitComponent = ({hit, viewMode}) => {
             className={`relative flex flex-row p-4 rounded-lg shadow-lg cursor-pointer ${darkMode ? "bg-Dark-D2" : "bg-Light-L2"}`}
             onClick={handleClick}
         >
-            {/* Bookmark Icon */}
             {userId && (
                 <button
                     onClick={handleBookmarkToggle}
@@ -154,14 +144,12 @@ const HitComponent = ({hit, viewMode}) => {
                 </button >
             )}
 
-            {/* Event Image */}
             <img
                 src={imageUrl}
                 alt={title}
                 className="w-32 h-32 object-cover rounded-md"
             />
 
-            {/* Event Information */}
             <div className="ml-4 flex flex-col justify-between flex-grow" >
                 <h2 className={`text-lg font-semibold ${darkMode ? "text-primary-light" : "text-primary-dark"}`} >{title}</h2 >
                 <div className={`flex items-center ${darkMode ? "text-Light-L1" : "text-Dark-D1"} mt-2`} >

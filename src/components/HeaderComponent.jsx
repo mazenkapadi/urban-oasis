@@ -39,7 +39,7 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
 
     const clearZipCode = () => {
         setZipCodeValue("");
-        onSearch({ geoLocation: null }); // Clear the geoLocation search
+        onSearch({ geoLocation: null });
     };
 
     useEffect(() => {
@@ -110,7 +110,6 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
     return (
         <header className="bg-transparent w-full gap-4" >
             <div className="flex justify-between items-center px-6 py-2 space-x-4" >
-                {/* Logo */}
                 <div className="flex-shrink-0" >
                     <button onClick={() => navigate("/")} >
                         <span
@@ -122,9 +121,7 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                     </button >
                 </div >
 
-                {/* Search and Date Filters */}
                 <div className="flex items-center gap-8 w-full px-4" >
-                    {/* GeoSearchBar */}
                     <div className="flex-1 max-w-sm" >
                         <GeoSearchBar
                             onGeoSearch={(geo) => setGeoLocation(geo)}
@@ -141,7 +138,6 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                         )}
                     </div >
 
-                    {/* Date Picker */}
                     <div className="flex-1 max-w-sm" >
                         <button
                             className="w-full h-12 px-4 border border-gray-300 rounded-md bg-white text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
@@ -171,7 +167,6 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                         )}
                     </div >
 
-                    {/* Event Search */}
                     <div className="flex-1 max-w-sm" >
                         <div className="relative w-full" >
                             <input
@@ -194,7 +189,6 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                         </div >
                     </div >
 
-                    {/* Search Button */}
                     <button
                         className="h-12 px-6 bg-red-500 text-white rounded-full focus:ring focus:ring-red-300 focus:outline-none"
                         onClick={handleSearch}
@@ -203,12 +197,10 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                     </button >
                 </div >
 
-                {/* Theme Toggle */}
                 <div className="pr-5" >
                     <ThemeToggle />
                 </div >
 
-                {/* User Menu */}
                 <div className="relative" >
                     <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none text-white" >
                         <svg
@@ -222,59 +214,6 @@ const HeaderComponent = ({ onSearch = () => {} }) => {
                                   d="M4 6h16M4 12h16m-7 6h7" />
                         </svg >
                     </button >
-                    {/*{menuOpen && (*/}
-                    {/*    <div className="absolute right-0 mt-2 w-48 bg-primary-light dark:bg-primary-dark rounded-lg shadow-lg text-white z-50">*/}
-                    {/*        <ul>*/}
-                    {/*            {isLoggedIn ? (*/}
-                    {/*                <>*/}
-                    {/*                    <li>*/}
-                    {/*                        <button*/}
-                    {/*                            onClick={() => navigate("/userProfilePage")}*/}
-                    {/*                            className="block px-4 py-2 hover:bg-gray-700 rounded-lg w-full text-left"*/}
-                    {/*                        >*/}
-                    {/*                            {name} <img src={profilePic} alt="Profile" className="w-6 h-6 rounded-full inline-block" />*/}
-                    {/*                        </button>*/}
-                    {/*                    </li>*/}
-                    {/*                    <li>*/}
-                    {/*                        <button*/}
-                    {/*                            onClick={() => navigate("/userProfilePage/host-chatlist")}*/}
-                    {/*                            className="block px-4 py-2 hover:bg-gray-700 rounded-lg w-full text-left"*/}
-                    {/*                        >*/}
-                    {/*                            Chat*/}
-                    {/*                        </button>*/}
-                    {/*                    </li>*/}
-                    {/*                    {isHost && (*/}
-                    {/*                        <li>*/}
-                    {/*                            <button*/}
-                    {/*                                onClick={() => navigate("/hostProfilePage")}*/}
-                    {/*                                className="block px-4 py-2 hover:bg-gray-700 rounded-lg w-full text-left"*/}
-                    {/*                            >*/}
-                    {/*                                Host Dashboard*/}
-                    {/*                            </button>*/}
-                    {/*                        </li>*/}
-                    {/*                    )}*/}
-                    {/*                    <li>*/}
-                    {/*                        <button*/}
-                    {/*                            onClick={handleSignOut}*/}
-                    {/*                            className="block px-4 py-2 hover:bg-gray-700 rounded-lg w-full text-left"*/}
-                    {/*                        >*/}
-                    {/*                            Logout*/}
-                    {/*                        </button>*/}
-                    {/*                    </li>*/}
-                    {/*                </>*/}
-                    {/*            ) : (*/}
-                    {/*                <li>*/}
-                    {/*                    <button*/}
-                    {/*                        onClick={() => navigate("/signIn")}*/}
-                    {/*                        className="block px-4 py-2 hover:bg-gray-700 rounded-lg w-full text-left"*/}
-                    {/*                    >*/}
-                    {/*                        Sign In*/}
-                    {/*                    </button>*/}
-                    {/*                </li>*/}
-                    {/*            )}*/}
-                    {/*        </ul>*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
 
                     {menuOpen && (
                         <div

@@ -49,7 +49,6 @@ const SettingsPage = () => {
         };
     }, []);
 
-    // Fetch the current email of the authenticated user
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
@@ -57,39 +56,40 @@ const SettingsPage = () => {
         }
     }, []);
 
-    // Handle Password Reset using the PasswordReset class
     const handlePasswordChange = async () => {
         try {
-            const result = await PasswordReset.resetPassword(currentEmail); // Call the resetPassword method from PasswordReset class
-            console.log(result.message); // Log the success message
-            setIsPasswordResetSent(true); // Set the state to indicate email was sent
+            const result = await PasswordReset.resetPassword(currentEmail);
+            console.log(result.message);
+            setIsPasswordResetSent(true);
         } catch (error) {
-            console.error(error.message); // Log any error that occurs during the process
+            console.error(error.message);
         }
     };
 
     const handleAccountClosureClick = () => {
-        handleAccountClosure(currentEmail, password, () => navigate('/')); // Navigate to main page after success
+        handleAccountClosure(currentEmail, password, () => navigate('/'));
     };
 
     const closeModal = () => {
         setNewEmail('');
         setPassword('');
-        setModalError(''); // Clear modal error
-        setIsModalOpen(false); // Close modal
+        setModalError('');
+        setIsModalOpen(false);
     };
 
     const buttonClass = "bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-800 transition w-1/2 max-w-xs";
 
     return (
-        <div className={`p-8 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"} min-h-screen`} >
+        <div
+            className={`p-8 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"} min-h-screen`} >
             {/* Change Email Section */}
             <div className="space-y-8" >
                 <div >
                     <h2 className="text-xl font-bold mb-4" >Change Email</h2 >
                     <div className="flex items-center space-x-4" >
                         <div >
-                            <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"}`} htmlFor="current_email" >Account Email Address</label >
+                            <label className={`block ${darkMode ? "text-primary-light" : "text-primary-dark"}`}
+                                   htmlFor="current_email" >Account Email Address</label >
                             <p id="current_email" >{currentEmail}</p >
                         </div >
                         <button
@@ -109,14 +109,13 @@ const SettingsPage = () => {
                     </div >
                 )}
 
-                {/* Change Password Section */}
                 <div >
                     <h2 className="text-xl font-bold mb-4" >Change Password</h2 >
                     <div className="flex flex-col space-y-4" >
                         <p >Click below to receive an email to reset your password.</p >
                         <button
                             id="password_reset_button"
-                            onClick={handlePasswordChange} // Using the PasswordReset class
+                            onClick={handlePasswordChange}
                             className={buttonClass}
                         >
                             {isPasswordResetSent ? 'Resend Email' : 'Change Password'}
@@ -125,7 +124,6 @@ const SettingsPage = () => {
                 </div >
 
 
-                {/* User Preferences Component */}
                 <UserPreferences preferences={preferences}
                                  togglePreference={(category, key) => setPreferences(prev => ({
                                      ...prev,
@@ -135,7 +133,6 @@ const SettingsPage = () => {
                                      },
                                  }))} />
 
-                {/* Close Account Section */}
                 <div >
                     <h2 className="text-xl font-bold mb-4" >**DANGER ZONE**</h2 >
                     <h2 className="text-xl font-bold mb-4 pl-1" >Close Account</h2 >
@@ -149,7 +146,6 @@ const SettingsPage = () => {
                 </div >
             </div >
 
-            {/* Modal for Changing Email */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" >
                     <div className="bg-gray-800 rounded-lg shadow-lg p-8 max-w-md w-full relative" >
@@ -186,7 +182,6 @@ const SettingsPage = () => {
                                 Save
                             </button >
 
-                            {/* Error message inside modal */}
                             {modalError && (
                                 <div className="text-red-500 mt-2" id="modal_error_message" >
                                     {modalError}

@@ -54,27 +54,33 @@ const SideBar = () => {
     return (
         <div
             className={`flex flex-col ${darkMode ? "bg-Dark-D2 text-primary-light" : "bg-Light-L2 text-primary-dark"} shadow-lg rounded-lg p-6 h-[calc(100vh-2rem)] fixed top-4 left-4 overflow-y-auto`} >
-            <Link to="/#" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/#"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <HomeIcon className="sidebar-icon" />
                 <span >HomePage</span >
             </Link >
-            <Link to="/userProfilePage" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/userProfilePage"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <UserCircleIcon className="sidebar-icon" />
                 <span >Profile</span >
             </Link >
-            <Link to="/userProfilePage/contact-info" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/userProfilePage/contact-info"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <BiTask className="sidebar-icon" />
                 <span >Contact Info</span >
             </Link >
-            <Link to="/userProfilePage/host-chatlist" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/userProfilePage/host-chatlist"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <ChatBubbleLeftRightIcon className="sidebar-icon" />
                 <span >Chats</span >
             </Link >
-            <Link to="/userProfilePage/preferences" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/userProfilePage/preferences"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <AdjustmentsHorizontalIcon className="sidebar-icon" />
                 <span >Event Preferences</span >
             </Link >
-            <Link to="/userProfilePage/settings" className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
+            <Link to="/userProfilePage/settings"
+                  className={`flex items-center p-3 rounded-lg ${darkMode ? "hover:bg-Light-L3 hover:text-primary-dark" : "hover:bg-Dark-D1 hover:text-primary-light"}  transition duration-300`} >
                 <Cog6ToothIcon className="sidebar-icon" />
                 <span >Settings</span >
             </Link >
