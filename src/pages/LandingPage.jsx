@@ -96,7 +96,7 @@ function LandingPage() {
             <div className={`flex-grow pt-2 ${darkMode ? "bg-Dark-D1 text-primary-light" : "bg-Light-L1 text-primary-dark"}`} >
                 <div className="container mx-auto px-6 space-y-8" >
                     <div id="weekEvents" >
-                        <h1 className="text-3xl font-bold mb-1" >Events this Week</h1 >
+                        <h1 className="text-3xl font-bold pt-8 mb-1" >Events this Week</h1 >
                         <EventCarousel rangeType="week" />
                     </div >
                     <div >
